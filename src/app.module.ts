@@ -13,6 +13,7 @@ import {
   envValidationSchema,
 } from './config';
 import { PrismaModule } from './prisma/prisma.module';
+import { CloudinaryModule } from './common/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { PrismaModule } from './prisma/prisma.module';
       ],
     }),
     PrismaModule,
+    CloudinaryModule,
   ],
   controllers: [],
   providers: [],
