@@ -70,24 +70,24 @@ model Role {
 }
 
 model User {
-  id           String     @id @default(cuid())
-  firstName    String
-  lastName     String
-  email        String     @unique
-  phone        String?    @unique
-  password     String
-  avatar       String?
+  id        String  @id @default(cuid())
+  firstName String
+  lastName  String
+  email     String  @unique
+  phone     String? @unique
+  password  String
+  avatar    String?
 
-  status       UserStatus @default(ACTIVE)
-  isVerified   Boolean    @default(false)
-  lastLoginAt  DateTime?
+  status      UserStatus @default(ACTIVE)
+  isVerified  Boolean    @default(false)
+  lastLoginAt DateTime?
 
   roleId String
-  role   Role @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Restrict)
 
   refreshTokens RefreshToken[]
-  orders         Order[]
-  employee       Employee?
+  orders        Order[]
+  employee      Employee?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -97,18 +97,25 @@ model User {
 }
 
 model RefreshToken {
-  id        String   @id @default(cuid())
-  token     String   @unique
-  expiresAt DateTime
-  revokedAt DateTime?
+  id String @id @default(cuid())
+
+  tokenHash String
+
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  lastUsedAt DateTime?
+
+  userAgent String?
+  ipAddress String?
 
   userId String
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+  @@index([expiresAt])
   @@map("refresh_tokens")
 }
 
@@ -135,18 +142,18 @@ model Category {
 }
 
 model Product {
-  id            String   @id @default(cuid())
-  name          String
-  slug          String   @unique
-  sku           String   @unique
-  barcode       String?  @unique
-  description   String?
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  sku         String  @unique
+  barcode     String? @unique
+  description String?
 
   purchasePrice Decimal
   sellingPrice  Decimal
 
-  stock         Int      @default(0)
-  minimumStock  Int      @default(0)
+  stock        Int @default(0)
+  minimumStock Int @default(0)
 
   thumbnail String?
   isActive  Boolean @default(true)
@@ -154,7 +161,7 @@ model Product {
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
 
-  images ProductImage[]
+  images     ProductImage[]
   orderItems OrderItem[]
 
   createdAt DateTime @default(now())
@@ -185,7 +192,7 @@ model ProductImage {
 //
 
 model Customer {
-  id      String @id @default(cuid())
+  id String @id @default(cuid())
 
   name    String
   email   String? @unique
@@ -218,7 +225,7 @@ model Order {
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
 
   userId String
-  user   User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   orderItems OrderItem[]
 
@@ -238,7 +245,7 @@ model OrderItem {
   subtotal  Decimal
 
   orderId String
-  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
@@ -265,7 +272,7 @@ model Employee {
   joiningDate DateTime
 
   userId String @unique
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -281,8 +288,8 @@ model Settings {
   companyPhone   String
   companyAddress String
 
-  logo     String?
-  favicon  String?
+  logo    String?
+  favicon String?
 
   currency String @default("BDT")
   timezone String @default("Asia/Dhaka")
