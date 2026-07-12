@@ -8,7 +8,7 @@ export class LoginDto {
     description: "The email address of the user",
     example: "user@example.com"
   })
-  email: string;
+  email!: string;
 
   @IsString()
   @IsNotEmpty()
@@ -16,5 +16,5 @@ export class LoginDto {
     description: "The password of the user",
     example: "password123"
   })
-  password: string;
+  password!: string;
 }

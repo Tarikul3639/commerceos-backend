@@ -19,7 +19,7 @@ export class RegisterDto {
         description: 'The first name of the user',
         example: 'John',
     })
-    firstName: string;
+    firstName!: string;
 
     @IsString()
     @IsNotEmpty()
@@ -29,7 +29,7 @@ export class RegisterDto {
         description: 'The last name of the user',
         example: 'Doe',
     })
-    lastName: string;
+    lastName?: string;
 
     @IsEmail()
     @IsNotEmpty()
@@ -37,7 +37,7 @@ export class RegisterDto {
         description: 'The email address of the user',
         example: 'user@example.com',
     })
-    email: string;
+    email!: string;
 
     @IsOptional()
     @IsPhoneNumber()
@@ -62,5 +62,5 @@ export class RegisterDto {
         description: 'The password of the user',
         example: 'Password123!',
     })
-    password: string;
+    password!: string;
 }
