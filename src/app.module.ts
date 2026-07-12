@@ -14,6 +14,7 @@ import {
 } from './config';
 import { PrismaModule } from './prisma/prisma.module';
 import { CloudinaryModule } from './common/cloudinary/cloudinary.module';
+import { MailModule } from './common/mail';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { CloudinaryModule } from './common/cloudinary/cloudinary.module';
         swaggerConfig,
       ],
     }),
+    MailModule,
     PrismaModule,
     CloudinaryModule,
   ],

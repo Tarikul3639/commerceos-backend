@@ -56,7 +56,6 @@ export class CloudinaryService {
     const { resourceType = 'image' } = options;
 
     await this.delete(publicId, resourceType);
-
     return this.upload(filePath, folder, options);
   }
 }
