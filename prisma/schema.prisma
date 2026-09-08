@@ -15,6 +15,7 @@ datasource db {
 //
 
 enum RoleName {
+  SUPER_ADMIN
   ADMIN
   MANAGER
   EMPLOYEE
@@ -24,6 +25,7 @@ enum UserStatus {
   ACTIVE
   INACTIVE
   SUSPENDED
+  DELETED
 }
 
 enum PaymentMethod {
@@ -50,24 +52,117 @@ enum OrderStatus {
   CANCELLED
 }
 
-//
-// ============================
-// AUTH
-// ============================
-//
+enum ActivityType {
+  CREATE
+  UPDATE
+  DELETE
 
-model Role {
-  id          String   @id @default(cuid())
-  name        RoleName @unique
-  description String?
+  LOGIN
+  LOGOUT
+  PASSWORD_CHANGE
 
-  users User[]
+  STATUS_CHANGE
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  APPROVE
+  REJECT
+  COMPLETE
+  CANCEL
 
-  @@map("roles")
+  OTHER
 }
+
+enum ActivityModule {
+  AUTH
+  USER
+  ROLE
+  PERMISSION
+
+  PRODUCT
+  CATEGORY
+  BRAND
+  SUPPLIER
+  WAREHOUSE
+  INVENTORY
+  PURCHASE
+  STOCK_TRANSFER
+  STOCK_MOVEMENT
+  DISCOUNT
+
+  CUSTOMER
+  CART
+  ORDER
+  PAYMENT
+  ORDER_RETURN
+  PURCHASE_RETURN
+
+  EMPLOYEE
+  SETTINGS
+  NOTIFICATION
+
+  OTHER
+}
+
+enum StockMovementType {
+  PURCHASE
+  SALE
+  ORDER_RETURN
+  PURCHASE_RETURN
+  TRANSFER_IN
+  TRANSFER_OUT
+  ADJUSTMENT
+  DAMAGE
+}
+
+enum PurchaseStatus {
+  PENDING
+  RECEIVED
+  CANCELLED
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+enum PaymentType {
+  PAYMENT
+  REFUND
+}
+
+enum StockTransferStatus {
+  PENDING
+  IN_TRANSIT
+  COMPLETED
+  CANCELLED
+}
+
+enum OrderReturnStatus {
+  PENDING
+  APPROVED
+  PARTIALLY_PAID
+  REJECTED
+  COMPLETED
+}
+
+enum PurchaseReturnStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+}
+
+//
+// ============================================================
+// AUTH & ACCESS CONTROL
+// ============================================================
+//
 
 model User {
   id        String  @id @default(cuid())
@@ -78,8 +173,13 @@ model User {
   password  String
   avatar    String?
 
-  status      UserStatus @default(ACTIVE)
-  isVerified  Boolean    @default(false)
+  // User status and verification
+  status UserStatus @default(ACTIVE)
+
+  // Stores the timestamp when the user was soft deleted
+  deletedAt DateTime?
+
+  isVerified  Boolean   @default(false)
   lastLoginAt DateTime?
 
   roleId String
@@ -89,11 +189,76 @@ model User {
   orders        Order[]
   employee      Employee?
 
+  discounts      Discount[]
+  stockMovements StockMovement[]
+  stockTransfers StockTransfer[]
+
+  purchases Purchase[]
+  payments  Payment[]
+
+  createdOrderReturns  OrderReturn[] @relation("OrderReturnCreatedBy")
+  approvedOrderReturns OrderReturn[] @relation("OrderReturnApprovedBy")
+
+  createdPurchaseReturns  PurchaseReturn[] @relation("PurchaseReturnCreatedBy")
+  approvedPurchaseReturns PurchaseReturn[] @relation("PurchaseReturnApprovedBy")
+
+  // Activity Logs
+  activityLogs  ActivityLog[]
+  // Notifications
+  notifications Notification[]
+
+  // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([roleId])
+  @@index([status])
+  @@index([deletedAt])
   @@map("users")
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        RoleName @unique
+  description String?
+
+  users           User[]
+  rolePermissions RolePermission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("roles")
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  // Relationships of RolePermission with Role and Permission models
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  // Relationships of RolePermission with Role and Permission models
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  // Indexes for RolePermission model
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+model Permission {
+  id String @id @default(uuid())
+
+  name        String  @unique
+  description String?
+
+  rolePermissions RolePermission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("permissions")
 }
 
 model RefreshToken {
@@ -120,60 +285,234 @@ model RefreshToken {
 }
 
 //
-// ============================
-// INVENTORY
-// ============================
+// ============================================================
+// INVENTORY & PRODUCT MANAGEMENT
+// ============================================================
 //
 
 model Category {
-  id          String  @id @default(cuid())
+  id String @id @default(cuid())
+
   name        String  @unique
   slug        String  @unique
   description String?
   image       String?
-  isActive    Boolean @default(true)
+
+  // Controls whether the category can currently be used
+  isActive Boolean @default(true)
+
+  // Stores the timestamp when the category was soft deleted
+  deletedAt DateTime?
 
   products Product[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([deletedAt])
   @@map("categories")
 }
 
-model Product {
-  id          String  @id @default(cuid())
-  name        String
+model Brand {
+  id String @id @default(cuid())
+
+  name        String  @unique
   slug        String  @unique
-  sku         String  @unique
-  barcode     String? @unique
+  description String?
+  image       String?
+
+  // Controls whether the brand can currently be used
+  isActive Boolean @default(true)
+
+  // Stores the timestamp when the brand was soft deleted
+  deletedAt DateTime?
+
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([deletedAt])
+  @@map("brands")
+}
+
+model Supplier {
+  id String @id @default(cuid())
+
+  name String
+
+  email String? @unique
+  phone String? @unique
+
+  address String?
+
+  // The primary person to contact at the supplier
+  contactPerson String?
+
+  // Controls whether the supplier can currently be used
+  isActive Boolean @default(true)
+
+  // Stores the timestamp when the supplier was soft deleted
+  deletedAt DateTime?
+
+  purchases Purchase[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([deletedAt])
+  @@map("suppliers")
+}
+
+model Product {
+  id String @id @default(cuid())
+
+  name String
+
+  slug String @unique
+
   description String?
 
-  purchasePrice Decimal
-  sellingPrice  Decimal
-
-  stock        Int @default(0)
-  minimumStock Int @default(0)
-
+  // Optional thumbnail image for the product
   thumbnail String?
-  isActive  Boolean @default(true)
+
+  // Controls whether the product can currently be sold or used
+  isActive Boolean @default(true)
+
+  // Stores the timestamp when the product was soft deleted
+  deletedAt DateTime?
 
   categoryId String
-  category   Category @relation(fields: [categoryId], references: [id])
 
-  images     ProductImage[]
-  orderItems OrderItem[]
+  category Category @relation(fields: [categoryId], references: [id])
+
+  // Optional brand associated with the product
+  brandId String?
+
+  brand Brand? @relation(fields: [brandId], references: [id])
+
+  images ProductImage[]
+
+  // Discounts associated with this product
+  discounts ProductDiscount[]
+
+  // Variants associated with this product
+  productVariants ProductVariant[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([categoryId])
+  @@index([brandId])
+  @@index([deletedAt])
   @@map("products")
 }
 
+model Attribute {
+  id String @id @default(cuid())
+
+  // The name of the product attribute
+  name String @unique
+
+  values AttributeValue[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("attributes")
+}
+
+model AttributeValue {
+  id String @id @default(cuid())
+
+  // The value of the product attribute
+  value String
+
+  // Minimum quantity before this variant is considered low in stock
+  minimumStock Int @default(0)
+
+  attributeId String
+  attribute   Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+
+  variantValues VariantAttributeValue[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Prevents duplicate values for the same attribute
+  @@unique([attributeId, value])
+  @@index([attributeId])
+  @@map("attribute_values")
+}
+
+model ProductVariant {
+  id String @id @default(cuid())
+
+  // Unique stock keeping unit for this variant
+  sku String @unique
+
+  // Optional image specific to this product variant
+  image String?
+
+  // Optional barcode used for product scanning
+  barcode String? @unique
+
+  // The cost price paid to purchase this variant
+  purchasePrice Decimal
+
+  // The price charged to customers for this variant
+  sellingPrice Decimal
+
+  // Controls whether this variant can currently be sold
+  isActive Boolean @default(true)
+
+  // Stores the timestamp when the variant was soft deleted
+  deletedAt DateTime?
+
+  productId String
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  attributeValues VariantAttributeValue[]
+  inventories     Inventory[]
+  purchaseItems   PurchaseItem[]
+
+  stockMovements     StockMovement[]
+  stockTransferItems StockTransferItem[]
+
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+  @@index([deletedAt])
+  @@map("product_variants")
+}
+
+model VariantAttributeValue {
+  variantId String
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  attributeValueId String
+
+  attributeValue AttributeValue @relation(fields: [attributeValueId], references: [id])
+  createdAt      DateTime       @default(now())
+
+  // Prevents duplicate attribute values in the same variant
+  @@id([variantId, attributeValueId])
+  @@index([attributeValueId])
+  @@map("variant_attribute_values")
+}
+
 model ProductImage {
-  id       String @id @default(cuid())
+  id String @id @default(cuid())
+
   imageUrl String
+
+  // Defines the display order of the product image
+  sortOrder Int     @default(0)
 
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -185,10 +524,281 @@ model ProductImage {
   @@map("product_images")
 }
 
+model Warehouse {
+  id      String  @id @default(cuid())
+  name    String  @unique
+  address String?
+
+  // Controls whether the warehouse can currently be used
+  isActive Boolean @default(true)
+
+  // Stores the timestamp when the warehouse was soft deleted
+  deletedAt DateTime?
+
+  inventories        Inventory[]
+  purchases          Purchase[]
+  stockMovements     StockMovement[]
+  fromStockTransfers StockTransfer[] @relation("FromWarehouse")
+  toStockTransfers   StockTransfer[] @relation("ToWarehouse")
+  orders             Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([deletedAt])
+  @@map("warehouses")
+}
+
+model StockTransfer {
+  id String @id @default(cuid())
+
+  transferNo String @unique
+
+  status StockTransferStatus @default(PENDING)
+
+  // Optional note about this stock transfer
+  notes String?
+
+  fromWarehouseId String
+  fromWarehouse   Warehouse @relation("FromWarehouse", fields: [fromWarehouseId], references: [id])
+
+  toWarehouseId String
+  toWarehouse   Warehouse @relation("ToWarehouse", fields: [toWarehouseId], references: [id])
+
+  items StockTransferItem[]
+
+  // User who created this stock transfer
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([fromWarehouseId])
+  @@index([toWarehouseId])
+  @@index([userId])
+  @@index([status])
+  @@map("stock_transfers")
+}
+
+model StockTransferItem {
+  id String @id @default(cuid())
+
+  quantity Int
+
+  transferId String
+  transfer   StockTransfer @relation(fields: [transferId], references: [id], onDelete: Cascade)
+
+  variantId String
+
+  // Product variant being transferred
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([transferId, variantId])
+  @@index([transferId])
+  @@index([variantId])
+  @@map("stock_transfer_items")
+}
+
+model Inventory {
+  id String @id @default(cuid())
+
+  // Current available quantity of the variant in this warehouse
+  quantity Int @default(0)
+
+  // Quantity reserved for pending orders
+  reservedQuantity Int @default(0)
+
+  variantId String
+  variant   ProductVariant @relation(fields: [variantId], references: [id])
+
+  warehouseId String
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // One product variant can have only one inventory record per warehouse
+  @@unique([variantId, warehouseId])
+  @@index([variantId])
+  @@index([warehouseId])
+  @@map("inventories")
+}
+
+model Purchase {
+  id String @id @default(cuid())
+
+  invoiceNo String @unique
+
+  subtotal Decimal
+
+  discount Decimal @default(0)
+
+  tax Decimal @default(0)
+
+  total Decimal
+
+  status PurchaseStatus @default(PENDING)
+
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
+
+  // Warehouse where the purchased products will be added
+  warehouseId String
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id])
+
+  purchaseItems PurchaseItem[]
+  returns       PurchaseReturn[]
+
+  // The user who created this purchase
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([supplierId])
+  @@index([warehouseId])
+  @@index([userId])
+  @@index([status])
+  @@map("purchases")
+}
+
+model PurchaseItem {
+  id String @id @default(cuid())
+
+  quantity Int
+
+  // Purchase price per unit
+  unitPrice Decimal
+
+  subtotal Decimal
+
+  purchaseId String
+  purchase   Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  variantId String
+
+  // Product variant included in this purchase
+  variant ProductVariant @relation(fields: [variantId], references: [id])
+
+  returnItems PurchaseReturnItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([purchaseId])
+  @@index([variantId])
+  @@map("purchase_items")
+}
+
+model StockMovement {
+  id String @id @default(cuid())
+
+  type StockMovementType
+
+  // Positive value increases stock, negative value decreases stock
+  quantity Int
+
+  // Stock quantity before the movement
+  previousQuantity Int
+
+  // Stock quantity after the movement
+  currentQuantity Int
+
+  // Optional explanation for the stock change
+  reason String?
+
+  variantId String
+
+  // Product variant affected by this stock movement
+  variant ProductVariant @relation(fields: [variantId], references: [id])
+
+  warehouseId String
+
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id])
+
+  // User who performed this stock movement
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+
+  @@index([variantId])
+  @@index([warehouseId])
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("stock_movements")
+}
+
+model Discount {
+  id String @id @default(cuid())
+
+  name String
+
+  description String?
+
+  // Defines whether the discount is a percentage or fixed amount
+  type DiscountType
+
+  // The discount amount or percentage value
+  value Decimal
+
+  // The date and time when the discount becomes active
+  startDate DateTime?
+
+  // The date and time when the discount expires
+  endDate DateTime?
+
+  // Controls whether the discount can currently be applied
+  isActive Boolean @default(true)
+
+  // Stores the timestamp when the discount was soft deleted
+  deletedAt DateTime?
+
+  createdById String
+  // The user who created this discount
+  createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Restrict)
+
+  products ProductDiscount[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([deletedAt])
+  @@map("discounts")
+}
+
+model ProductDiscount {
+  id String @id @default(cuid())
+
+  productId String
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  discountId String
+
+  discount Discount @relation(fields: [discountId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([productId, discountId])
+  @@index([productId])
+  @@index([discountId])
+  @@map("product_discounts")
+}
+
 //
-// ============================
-// SALES
-// ============================
+// ============================================================
+// SALES & CUSTOMER MANAGEMENT
+// ============================================================
 //
 
 model Customer {
@@ -200,11 +810,50 @@ model Customer {
   address String?
 
   orders Order[]
+  cart   Cart?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("customers")
+}
+
+model Cart {
+  id String @id @default(cuid())
+
+  customerId String   @unique
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  items CartItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("carts")
+}
+
+model CartItem {
+  id String @id @default(cuid())
+
+  quantity Int
+
+  cartId String
+
+  cart Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)
+
+  variantId String
+
+  // Product variant added to this cart
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Prevents the same product variant from being added multiple times to the same cart
+  @@unique([cartId, variantId])
+  @@index([cartId])
+  @@index([variantId])
+  @@map("cart_items")
 }
 
 model Order {
@@ -217,7 +866,6 @@ model Order {
   tax      Decimal @default(0)
   total    Decimal
 
-  paymentMethod PaymentMethod
   paymentStatus PaymentStatus @default(PENDING)
   status        OrderStatus   @default(PENDING)
 
@@ -227,41 +875,219 @@ model Order {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
 
+  warehouseId String
+  // The warehouse from which the order items will be fulfilled
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id])
+
   orderItems OrderItem[]
+  payments   Payment[]
+
+  returns OrderReturn[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([customerId])
   @@index([userId])
+  @@index([warehouseId])
+  @@index([status])
+  @@index([paymentStatus])
   @@map("orders")
 }
 
 model OrderItem {
   id String @id @default(cuid())
 
-  quantity  Int
+  quantity Int
+
+  // The price of the variant at the time the order was placed
   unitPrice Decimal
-  subtotal  Decimal
+
+  subtotal Decimal
 
   orderId String
-  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  variantId String
+
+  // Product variant included in this order
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+  returnItems OrderReturnItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([orderId])
-  @@index([productId])
+  @@index([variantId])
   @@map("order_items")
 }
 
+model Payment {
+  id String @id @default(cuid())
+
+  amount Decimal
+
+  method PaymentMethod
+
+  status PaymentStatus @default(PENDING)
+
+  // Defines whether this record is a payment or a refund
+  type PaymentType @default(PAYMENT)
+
+  // Transaction reference from the payment provider
+  transactionId String?
+
+  // Additional information about the payment
+  notes String?
+
+  // The order this payment is associated with
+  orderId String
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  // User who recorded or processed the payment
+  userId String?
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([userId])
+  @@index([status])
+  @@index([method])
+  @@map("payments")
+}
+
+model OrderReturn {
+  id String @id @default(cuid())
+
+  returnNo String @unique
+
+  status OrderReturnStatus @default(PENDING)
+
+  // Reason provided for returning the order
+  reason String?
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  items OrderReturnItem[]
+
+  // User who processed the return
+  createdById String
+  createdBy   User   @relation("OrderReturnCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  // User who approved or rejected the return
+  approvedById String?
+  approvedBy   User?   @relation("OrderReturnApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
+
+  approvedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([createdById])
+  @@index([approvedById])
+  @@index([status])
+  @@map("order_returns")
+}
+
+model OrderReturnItem {
+  id String @id @default(cuid())
+
+  quantity Int
+
+  // Reason for returning this specific item
+  reason String?
+
+  returnId String
+
+  orderReturn OrderReturn @relation(fields: [returnId], references: [id], onDelete: Cascade)
+
+  // The original order item being returned
+  orderItemId String
+
+  orderItem OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([returnId, orderItemId])
+  @@index([returnId])
+  @@index([orderItemId])
+  @@map("order_return_items")
+}
+
+model PurchaseReturn {
+  id String @id @default(cuid())
+
+  returnNo String @unique
+
+  status PurchaseReturnStatus @default(PENDING)
+
+  // Reason for returning products to the supplier
+  reason String?
+
+  purchaseId String
+  purchase   Purchase @relation(fields: [purchaseId], references: [id], onDelete: Restrict)
+
+  items PurchaseReturnItem[]
+
+  // User who processed the purchase return
+  createdById String
+  createdBy   User   @relation("PurchaseReturnCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  // User who approved or rejected the purchase return
+  approvedById String?
+  approvedBy   User?   @relation("PurchaseReturnApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
+
+  approvedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([purchaseId])
+  @@index([createdById])
+  @@index([approvedById])
+  @@index([status])
+  @@map("purchase_returns")
+}
+
+model PurchaseReturnItem {
+  id String @id @default(cuid())
+
+  quantity Int
+
+  // Reason for returning this specific item
+  reason String?
+
+  returnId String
+
+  purchaseReturn PurchaseReturn @relation(fields: [returnId], references: [id], onDelete: Cascade)
+
+  // The original purchase item being returned
+  purchaseItemId String
+
+  purchaseItem PurchaseItem @relation(fields: [purchaseItemId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([returnId, purchaseItemId])
+  @@index([returnId])
+  @@index([purchaseItemId])
+  @@map("purchase_return_items")
+}
+
 //
-// ============================
-// SYSTEM
-// ============================
+// ============================================================
+// SYSTEM & AUDIT
+// ============================================================
 //
 
 model Employee {
@@ -298,4 +1124,64 @@ model Settings {
   updatedAt DateTime @updatedAt
 
   @@map("settings")
+}
+
+model ActivityLog {
+  id String @id @default(cuid())
+
+  type   ActivityType
+  module ActivityModule
+
+  action String
+
+  description String?
+
+  // Which entity the activity has occurred on, its type and id
+  entityType String?
+  entityId   String?
+  // Old value before the change
+  oldValue   Json?
+
+  // New value after the change
+  newValue Json?
+
+  // Metadata about the activity
+  ipAddress String?
+  userAgent String?
+  userId    String?
+  // The user who performed the activity
+  user      User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([module])
+  @@index([type])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("activity_logs")
+}
+
+model Notification {
+  id String @id @default(cuid())
+
+  title String
+
+  message String
+
+  type NotificationType @default(INFO)
+
+  // Indicates whether the notification has been read
+  isRead Boolean @default(false)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
 }

@@ -14,6 +14,9 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    },
     "strict": true,
     "incremental": true,
     "skipLibCheck": true,
@@ -23,6 +26,6 @@
     "strictBindCallApply": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
+    "exactOptionalPropertyTypes": true
   }
 }
