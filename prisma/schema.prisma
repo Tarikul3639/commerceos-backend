@@ -8,11 +8,11 @@ datasource db {
   provider = "postgresql"
 }
 
-//
-// ============================
-// ENUMS
-// ============================
-//
+/**
+ * ============================================================
+ * ENUMS
+ * ============================================================
+ */
 
 enum RoleName {
   SUPER_ADMIN
@@ -158,11 +158,17 @@ enum NotificationType {
   ERROR
 }
 
-//
-// ============================================================
-// AUTH & ACCESS CONTROL
-// ============================================================
-//
+enum EmailStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+/**
+ * ============================================================
+ * AUTH & ACCESS CONTROL
+ * ============================================================
+ */
 
 model User {
   id        String  @id @default(cuid())
@@ -206,6 +212,8 @@ model User {
   activityLogs  ActivityLog[]
   // Notifications
   notifications Notification[]
+  // Email Logs
+  triggeredEmails EmailLog[]
 
   // Timestamps
   createdAt DateTime @default(now())
@@ -284,11 +292,11 @@ model RefreshToken {
   @@map("refresh_tokens")
 }
 
-//
-// ============================================================
-// INVENTORY & PRODUCT MANAGEMENT
-// ============================================================
-//
+/**
+ * ============================================================
+ * PRODUCT CATALOG
+ * ============================================================
+ */
 
 model Category {
   id String @id @default(cuid())
@@ -334,34 +342,6 @@ model Brand {
 
   @@index([deletedAt])
   @@map("brands")
-}
-
-model Supplier {
-  id String @id @default(cuid())
-
-  name String
-
-  email String? @unique
-  phone String? @unique
-
-  address String?
-
-  // The primary person to contact at the supplier
-  contactPerson String?
-
-  // Controls whether the supplier can currently be used
-  isActive Boolean @default(true)
-
-  // Stores the timestamp when the supplier was soft deleted
-  deletedAt DateTime?
-
-  purchases Purchase[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([deletedAt])
-  @@map("suppliers")
 }
 
 model Product {
@@ -512,7 +492,7 @@ model ProductImage {
   imageUrl String
 
   // Defines the display order of the product image
-  sortOrder Int     @default(0)
+  sortOrder Int @default(0)
 
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -523,6 +503,12 @@ model ProductImage {
   @@index([productId])
   @@map("product_images")
 }
+
+/**
+ * ============================================================
+ * INVENTORY & WAREHOUSE
+ * ============================================================
+ */
 
 model Warehouse {
   id      String  @id @default(cuid())
@@ -627,6 +613,40 @@ model Inventory {
   @@index([variantId])
   @@index([warehouseId])
   @@map("inventories")
+}
+
+/**
+ * ============================================================
+ * PURCHASE & SUPPLIER
+ * ============================================================
+ */
+
+model Supplier {
+  id String @id @default(cuid())
+
+  name String
+
+  email String? @unique
+  phone String? @unique
+
+  address String?
+
+  // The primary person to contact at the supplier
+  contactPerson String?
+
+  // Controls whether the supplier can currently be used
+  isActive Boolean @default(true)
+
+  // Stores the timestamp when the supplier was soft deleted
+  deletedAt DateTime?
+
+  purchases Purchase[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([deletedAt])
+  @@map("suppliers")
 }
 
 model Purchase {
@@ -795,11 +815,11 @@ model ProductDiscount {
   @@map("product_discounts")
 }
 
-//
-// ============================================================
-// SALES & CUSTOMER MANAGEMENT
-// ============================================================
-//
+/**
+ * ============================================================
+ * SALES
+ * ============================================================
+ */
 
 model Customer {
   id String @id @default(cuid())
@@ -1084,11 +1104,11 @@ model PurchaseReturnItem {
   @@map("purchase_return_items")
 }
 
-//
-// ============================================================
-// SYSTEM & AUDIT
-// ============================================================
-//
+/**
+ * ============================================================
+ * SYSTEM & AUDIT
+ * ============================================================
+ */
 
 model Employee {
   id String @id @default(cuid())
@@ -1174,14 +1194,71 @@ model Notification {
   // Indicates whether the notification has been read
   isRead Boolean @default(false)
 
+  // Optional URL or frontend path related to this notification
+  link String?
+
+  // The related entity type
+  entityType String?
+
+  // The related entity ID
+  entityId String?
+
   userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
+
   updatedAt DateTime @updatedAt
 
   @@index([userId])
   @@index([isRead])
+  @@index([entityType, entityId])
   @@index([createdAt])
   @@map("notifications")
+}
+
+model EmailLog {
+  id String @id @default(cuid())
+
+  // Email address of the recipient
+  to String
+
+  // Subject of the email
+  subject String
+
+  // Email content
+  body String
+
+  status EmailStatus @default(PENDING)
+
+  // Error message if sending the email fails
+  errorMessage String?
+
+  // The timestamp when the email was successfully sent
+  sentAt DateTime?
+
+  // The related entity type
+  entityType String?
+
+  // The related entity ID
+  entityId String?
+
+  // Number of times the email sending was attempted
+  attemptCount Int @default(0)
+
+  // The user who triggered this email
+  triggeredById String?
+  triggeredBy   User?   @relation(fields: [triggeredById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([to])
+  @@index([status])
+  @@index([triggeredById])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("email_logs")
 }
