@@ -164,6 +164,12 @@ enum EmailStatus {
   FAILED
 }
 
+enum CustomerStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
 /**
  * ============================================================
  * AUTH & ACCESS CONTROL
@@ -191,7 +197,7 @@ model User {
   roleId String
   role   Role   @relation(fields: [roleId], references: [id], onDelete: Restrict)
 
-  refreshTokens RefreshToken[]
+  refreshTokens UserRefreshToken[]
   orders        Order[]
   employee      Employee?
 
@@ -209,9 +215,9 @@ model User {
   approvedPurchaseReturns PurchaseReturn[] @relation("PurchaseReturnApprovedBy")
 
   // Activity Logs
-  activityLogs  ActivityLog[]
+  activityLogs    ActivityLog[]
   // Notifications
-  notifications Notification[]
+  notifications   Notification[]
   // Email Logs
   triggeredEmails EmailLog[]
 
@@ -269,7 +275,7 @@ model Permission {
   @@map("permissions")
 }
 
-model RefreshToken {
+model UserRefreshToken {
   id String @id @default(cuid())
 
   tokenHash String
@@ -824,18 +830,66 @@ model ProductDiscount {
 model Customer {
   id String @id @default(cuid())
 
-  name    String
-  email   String? @unique
-  phone   String  @unique
+  name String
+
+  email String @unique
+
+  phone String @unique
+
   address String?
 
+  // Controls the current status of the customer account
+
+  status CustomerStatus @default(ACTIVE)
+
+  // Indicates whether the customer's email has been verified
+
+  isVerified Boolean @default(false)
+
+  // Stores the timestamp of the customer's last successful login
+
+  lastLoginAt DateTime?
+
+  // Stores the timestamp when the customer was soft deleted
+
+  deletedAt DateTime?
+
+  refreshTokens CustomerRefreshToken[]
+
   orders Order[]
-  cart   Cart?
+
+  cart Cart?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([status])
+  @@index([deletedAt])
   @@map("customers")
+}
+
+model CustomerRefreshToken {
+  id String @id @default(cuid())
+
+  tokenHash String
+
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  lastUsedAt DateTime?
+
+  userAgent String?
+  ipAddress String?
+
+  customerId String
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([expiresAt])
+  @@map("customer_refresh_tokens")
 }
 
 model Cart {
