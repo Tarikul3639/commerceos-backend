@@ -197,9 +197,15 @@ model User {
   roleId String
   role   Role   @relation(fields: [roleId], references: [id], onDelete: Restrict)
 
-  refreshTokens UserRefreshToken[]
-  orders        Order[]
-  employee      Employee?
+  // Stores refresh token records for this user
+  refreshTokens           UserRefreshToken[]
+  // Stores password reset token records for this user
+  passwordResetTokens     UserPasswordResetToken[]
+  // Stores email verification token records for this user
+  emailVerificationTokens UserEmailVerificationToken[]
+
+  orders   Order[]
+  employee Employee?
 
   discounts      Discount[]
   stockMovements StockMovement[]
@@ -278,7 +284,8 @@ model Permission {
 model UserRefreshToken {
   id String @id @default(cuid())
 
-  tokenHash String
+  // Hashed Refresh Token
+  tokenHash String @unique
 
   expiresAt  DateTime
   revokedAt  DateTime?
@@ -295,7 +302,45 @@ model UserRefreshToken {
 
   @@index([userId])
   @@index([expiresAt])
-  @@map("refresh_tokens")
+  @@index([revokedAt])
+  @@map("user_refresh_tokens")
+}
+
+model UserPasswordResetToken {
+  id String @id @default(cuid())
+
+  // Hashed Reset Token
+  tokenHash String @unique
+
+  expiresAt DateTime
+  usedAt    DateTime?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("user_password_reset_tokens")
+}
+
+model UserEmailVerificationToken {
+  id        String @id @default(cuid())
+  // Hashed Verification Token
+  tokenHash String @unique
+
+  expiresAt  DateTime
+  verifiedAt DateTime?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("user_email_verification_tokens")
 }
 
 /**
@@ -806,12 +851,10 @@ model ProductDiscount {
   id String @id @default(cuid())
 
   productId String
-
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   discountId String
-
-  discount Discount @relation(fields: [discountId], references: [id], onDelete: Cascade)
+  discount   Discount @relation(fields: [discountId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
@@ -830,35 +873,30 @@ model ProductDiscount {
 model Customer {
   id String @id @default(cuid())
 
-  name String
-
-  email String @unique
-
-  phone String @unique
-
-  address String?
+  name     String
+  email    String  @unique
+  phone    String  @unique
+  password String?
+  address  String?
 
   // Controls the current status of the customer account
-
   status CustomerStatus @default(ACTIVE)
 
   // Indicates whether the customer's email has been verified
-
   isVerified Boolean @default(false)
 
   // Stores the timestamp of the customer's last successful login
-
   lastLoginAt DateTime?
 
   // Stores the timestamp when the customer was soft deleted
-
   deletedAt DateTime?
 
-  refreshTokens CustomerRefreshToken[]
+  refreshTokens           CustomerRefreshToken[]
+  passwordResetTokens     CustomerPasswordResetToken[]
+  emailVerificationTokens CustomerEmailVerificationToken[]
 
   orders Order[]
-
-  cart Cart?
+  cart   Cart?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -890,6 +928,51 @@ model CustomerRefreshToken {
   @@index([customerId])
   @@index([expiresAt])
   @@map("customer_refresh_tokens")
+}
+
+model CustomerEmailVerificationToken {
+  id String @id @default(cuid())
+
+  tokenHash String @unique
+
+  expiresAt DateTime
+
+  verifiedAt DateTime?
+
+  customerId String
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([customerId])
+  @@index([expiresAt])
+  @@map("customer_email_verification_tokens")
+}
+
+model CustomerPasswordResetToken {
+  id String @id @default(cuid())
+
+  // Stores the hashed password reset token
+  tokenHash String @unique
+
+  // Defines when the password reset token expires
+
+  expiresAt DateTime
+
+  // Stores when the token was successfully used
+
+  usedAt DateTime?
+
+  customerId String
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([customerId])
+  @@index([expiresAt])
+  @@map("customer_password_reset_tokens")
 }
 
 model Cart {

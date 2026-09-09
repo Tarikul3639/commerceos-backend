@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { PrismaService } from '../../../../common/prisma/prisma.service';
-import { RefreshToken } from '../../../../lib/prisma/client';
+import { UserRefreshToken } from '../../../../lib/prisma/client';
 
 import {
     comparePassword,
@@ -16,6 +16,12 @@ export class RefreshTokenService {
         private readonly configService: ConfigService,
     ) { }
 
+    /**
+     * Save a new refresh token for a user.
+     *
+     * Multiple active sessions are allowed.
+     * Each browser/device can have its own refresh token.
+   */
     async save(
         userId: string,
         refreshToken: string,
@@ -28,32 +34,27 @@ export class RefreshTokenService {
             this.configService.getOrThrow<number>('bcrypt.saltRounds'),
         );
 
-        // Revoke all active refresh tokens for this user
-        await this.prismaService.refreshToken.updateMany({
-            where: {
-                userId,
-                revokedAt: null,
-            },
+        await this.prismaService.userRefreshToken.create({
             data: {
-                revokedAt: new Date(),
+                tokenHash,
+                expiresAt,
+                userId,
+
+                ...(userAgent ? { userAgent } : {}),
+                ...(ipAddress ? { ipAddress } : {}),
             },
-        });
-
-        const data = {
-            tokenHash,
-            expiresAt,
-            userId,
-            ...(userAgent ? { userAgent } : {}),
-            ...(ipAddress ? { ipAddress } : {}),
-        };
-
-        await this.prismaService.refreshToken.create({
-            data,
         });
     }
 
-    async validate(userId: string, refreshToken: string): Promise<RefreshToken> {
-        const tokens = await this.prismaService.refreshToken.findMany({
+    /**
+     * Validate a refresh token and return
+     * the matching database session.
+     */
+    async validate(
+        userId: string,
+        refreshToken: string,
+    ): Promise<UserRefreshToken> {
+        const tokens = await this.prismaService.userRefreshToken.findMany({
             where: {
                 userId,
                 revokedAt: null,
@@ -64,16 +65,20 @@ export class RefreshTokenService {
         });
 
         for (const token of tokens) {
-            const isMatch = await comparePassword(refreshToken, token.tokenHash);
+            const isMatch = await comparePassword(
+                refreshToken,
+                token.tokenHash,
+            );
 
             if (!isMatch) {
                 continue;
             }
 
-            await this.prismaService.refreshToken.update({
+            await this.prismaService.userRefreshToken.update({
                 where: {
                     id: token.id,
                 },
+
                 data: {
                     lastUsedAt: new Date(),
                 },
@@ -85,8 +90,12 @@ export class RefreshTokenService {
         throw new UnauthorizedException('Invalid refresh token.');
     }
 
+    /**
+     * Revoke a specific session.
+     * @param tokenId The ID of the refresh token to revoke.
+     */
     async revoke(tokenId: string): Promise<void> {
-        await this.prismaService.refreshToken.update({
+        await this.prismaService.userRefreshToken.update({
             where: {
                 id: tokenId,
             },
@@ -96,8 +105,12 @@ export class RefreshTokenService {
         });
     }
 
+    /**
+     * Revoke all active sessions
+     * for a specific user.
+     */
     async revokeAll(userId: string): Promise<void> {
-        await this.prismaService.refreshToken.updateMany({
+        await this.prismaService.userRefreshToken.updateMany({
             where: {
                 userId,
                 revokedAt: null,
@@ -108,8 +121,11 @@ export class RefreshTokenService {
         });
     }
 
+    /**
+     * Remove expired refresh tokens.
+     */
     async removeExpiredTokens(): Promise<void> {
-        await this.prismaService.refreshToken.deleteMany({
+        await this.prismaService.userRefreshToken.deleteMany({
             where: {
                 expiresAt: {
                     lt: new Date(),

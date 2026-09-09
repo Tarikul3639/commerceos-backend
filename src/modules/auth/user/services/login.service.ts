@@ -24,8 +24,8 @@ export class LoginService {
 
     async execute(
         loginDto: LoginDto,
-        userAgent?: string,
         ipAddress?: string,
+        userAgent?: string,
     ): Promise<AuthTokens> {
         const { email, password } = loginDto;
 
