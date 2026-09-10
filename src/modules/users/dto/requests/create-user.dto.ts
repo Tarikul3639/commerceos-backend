@@ -4,35 +4,28 @@ import {
     IsOptional,
     IsPhoneNumber,
     IsString,
+    IsUrl,
     Matches,
     MaxLength,
     MinLength,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateUserDto {
     @IsString()
     @IsNotEmpty()
     @MinLength(2)
-    @MaxLength(50)
+    @MaxLength(100)
     @ApiProperty({
-        description: 'The first name of the user',
-        example: 'John',
+        description: 'The full name of the user',
+        example: 'John Doe',
     })
-    firstName!: string;
-
-    @IsString()
-    @IsNotEmpty()
-    @MinLength(2)
-    @MaxLength(50)
-    @ApiProperty({
-        description: 'The last name of the user',
-        example: 'Doe',
-    })
-    lastName?: string;
+    name!: string;
 
     @IsEmail()
     @IsNotEmpty()
+    @MaxLength(255)
     @ApiProperty({
         description: 'The email address of the user',
         example: 'user@example.com',
@@ -41,11 +34,21 @@ export class CreateUserDto {
 
     @IsOptional()
     @IsPhoneNumber()
-    @ApiProperty({
+    @ApiPropertyOptional({
         description: 'The phone number of the user',
-        example: '+1234567890',
+        example: '+8801712345678',
     })
     phone?: string;
+
+    @IsOptional()
+    @IsString()
+    @MaxLength(255)
+    @IsUrl()
+    @ApiPropertyOptional({
+        description: "The URL of the user's avatar image",
+        example: 'https://example.com/avatar.jpg',
+    })
+    avatar?: string;
 
     @IsString()
     @IsNotEmpty()
@@ -63,4 +66,12 @@ export class CreateUserDto {
         example: 'Password123!',
     })
     password!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty({
+        description: 'The role ID assigned to the user',
+        example: 'cmf123456789',
+    })
+    roleId!: string;
 }

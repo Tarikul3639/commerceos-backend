@@ -4,12 +4,12 @@ import { PrismaService } from '../../../../common/prisma/prisma.service';
 import { UserStatus } from '../../../../lib/prisma/client';
 
 import { comparePassword } from '../../../../common/utils/password.util';
-import { JwtPayload } from '../../../../common/interfaces/jwt-payload.interface';
+import { UserJwtPayload } from '../../../../common/interfaces/user-jwt-payload.interface';
 
 import { LoginDto } from '../dto/requests/login.dto';
-import { AuthTokens } from '../../common/interfaces/auth-tokens.interface';
+import { AuthTokens } from '../interfaces/auth-tokens.interface';
 
-import { TokenService } from '../../common/services/token.service';
+import { TokenService } from './token.service';
 import { RefreshTokenService } from './refresh-token.service';
 
 @Injectable()
@@ -95,11 +95,11 @@ export class LoginService {
         id: string;
         email: string;
         role: {
-            name: JwtPayload['role'];
+            name: UserJwtPayload['role'];
         };
-    }): JwtPayload {
+    }): UserJwtPayload {
         return {
-            sub: user.id,
+            id: user.id,
             email: user.email,
             role: user.role.name,
         };

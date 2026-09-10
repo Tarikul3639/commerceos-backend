@@ -7,6 +7,11 @@ export default registerAs('auth', () => ({
 
         refreshSecret: process.env.JWT_USER_REFRESH_SECRET,
         refreshExpiresIn: process.env.JWT_USER_REFRESH_EXPIRES_IN,
+
+        passwordResetExpiresIn: process.env.JWT_USER_PASSWORD_RESET_EXPIRES_IN,
+
+        emailVerificationExpiresIn:
+            process.env.JWT_USER_EMAIL_VERIFICATION_EXPIRES_IN,
     },
 
     customer: {
@@ -15,5 +20,10 @@ export default registerAs('auth', () => ({
 
         refreshSecret: process.env.JWT_CUSTOMER_REFRESH_SECRET,
         refreshExpiresIn: process.env.JWT_CUSTOMER_REFRESH_EXPIRES_IN,
+
+        passwordResetExpiresIn: process.env.JWT_CUSTOMER_PASSWORD_RESET_EXPIRES_IN,
+
+        emailVerificationExpiresIn:
+            process.env.JWT_CUSTOMER_EMAIL_VERIFICATION_EXPIRES_IN,
     },
 }));

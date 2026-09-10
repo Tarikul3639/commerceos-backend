@@ -9,6 +9,6 @@ export class LogoutService {
         // Validate the refresh token and ensure it belongs to the user
         const token = await this.refreshTokenService.validate(userId, refreshToken);
         // Revoke the specific refresh token
-        await this.refreshTokenService.revoke(refreshToken);
+        await this.refreshTokenService.revoke(token.id);
     }
 }

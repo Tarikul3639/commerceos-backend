@@ -9,8 +9,18 @@ const envValidationSchema = Joi.object({
     API_VERSION: Joi.string().required(),
     APP_VERSION: Joi.string().required(),
     APP_NAME: Joi.string().required(),
+    FRONTEND_URL: Joi.string().required(),
     // Bcrypt salt rounds for hashing passwords
     BCRYPT_SALT_ROUNDS: Joi.number().default(10),
+    // ============================
+    // PASSWORD RESET CONFIGURATION
+    // ============================
+    JWT_USER_PASSWORD_RESET_EXPIRES_IN: Joi.string()
+        .pattern(/^\d+(ms|s|m|h|d|w|y)$/)
+        .required(),
+    JWT_CUSTOMER_PASSWORD_RESET_EXPIRES_IN: Joi.string()
+        .pattern(/^\d+(ms|s|m|h|d|w|y)$/)
+        .required(),
     // ============================
     // USER JWT CONFIGURATION
     // ============================
@@ -31,6 +41,15 @@ const envValidationSchema = Joi.object({
         .required(),
     JWT_CUSTOMER_REFRESH_SECRET: Joi.string().required(),
     JWT_CUSTOMER_REFRESH_EXPIRES_IN: Joi.string()
+        .pattern(/^\d+(ms|s|m|h|d|w|y)$/)
+        .required(),
+    // ============================
+    // EMAIL VERIFICATION CONFIGURATION
+    // ============================
+    JWT_USER_EMAIL_VERIFICATION_EXPIRES_IN: Joi.string()
+        .pattern(/^\d+(ms|s|m|h|d|w|y)$/)
+        .required(),
+    JWT_CUSTOMER_EMAIL_VERIFICATION_EXPIRES_IN: Joi.string()
         .pattern(/^\d+(ms|s|m|h|d|w|y)$/)
         .required(),
 

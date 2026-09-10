@@ -14,8 +14,10 @@ import {
 } from './config';
 import { PrismaModule } from './common/prisma/prisma.module';
 import { CloudinaryModule } from './common/cloudinary/cloudinary.module';
-import { MailModule } from './common/mail';
+import { MailModule } from './common/mail/mail.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/user.module';
+import { RoleModule } from './modules/roles/role.module';
 
 @Module({
   imports: [
@@ -48,6 +50,8 @@ import { AuthModule } from './modules/auth/auth.module';
     CloudinaryModule,
     
     AuthModule,
+    UsersModule,
+    RoleModule,
   ],
   controllers: [],
   providers: [],

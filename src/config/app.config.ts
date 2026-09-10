@@ -8,4 +8,5 @@ export default registerAs("app", () => ({
     apiVersion: process.env.API_VERSION,
     nodeEnv: process.env.NODE_ENV,
     isProduction: process.env.NODE_ENV === "production",
+    frontendUrl: process.env.FRONTEND_URL,
 }));

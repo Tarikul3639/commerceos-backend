@@ -1,12 +1,15 @@
-import "dotenv/config";
-import bcrypt from "bcrypt";
-import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient, RoleName } from "../src/lib/prisma/client";
+import 'dotenv/config';
+
+import bcrypt from 'bcrypt';
+
+import { PrismaPg } from '@prisma/adapter-pg';
+
+import { PrismaClient, RoleName } from '../src/lib/prisma/client';
 
 const connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
-    throw new Error("DATABASE_URL environment variable is not set.");
+    throw new Error('DATABASE_URL environment variable is not set.');
 }
 
 const adapter = new PrismaPg({
@@ -18,81 +21,95 @@ const prisma = new PrismaClient({
 });
 
 async function main() {
-    console.log("🌱 Seeding database...");
+    console.log('🌱 Seeding database...');
 
-    // ============================
-    // Roles
-    // ============================
+    /**
+     * Roles
+     */
 
     const adminRole = await prisma.role.upsert({
         where: {
             name: RoleName.ADMIN,
         },
+
         update: {},
+
         create: {
             name: RoleName.ADMIN,
-            description: "System Administrator",
+            description: 'System Administrator',
         },
     });
 
-    const managerRole = await prisma.role.upsert({
+    await prisma.role.upsert({
         where: {
             name: RoleName.MANAGER,
         },
+
         update: {},
+
         create: {
             name: RoleName.MANAGER,
-            description: "Store Manager",
+            description: 'Store Manager',
         },
     });
 
-    const employeeRole = await prisma.role.upsert({
+    await prisma.role.upsert({
         where: {
             name: RoleName.EMPLOYEE,
         },
+
         update: {},
+
         create: {
             name: RoleName.EMPLOYEE,
-            description: "Store Employee",
+            description: 'Store Employee',
         },
     });
 
-    // ============================
-    // Admin User
-    // ============================
+    console.log('✅ Roles created');
 
-    const hashedPassword = await bcrypt.hash("Admin@123", 10);
+    /**
+     * Admin User
+     */
+
+    const email = 'tarikulislam3639@gmail.com';
+    const password = 'Admin@123';
+
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     await prisma.user.upsert({
         where: {
-            email: "admin@commerceos.com",
+            email,
         },
+
         update: {},
+
         create: {
-            firstName: "System",
-            lastName: "Administrator",
-            email: "admin@commerceos.com",
+            name: 'Admin User',
+            email,
             password: hashedPassword,
             isVerified: true,
             roleId: adminRole.id,
         },
     });
 
-    console.log("✅ Roles Created");
-    console.log("✅ Admin User Created");
+    console.log('✅ Admin user created');
 
     console.table([
         {
-            email: "admin@commerceos.com",
-            password: "Admin@123",
-            role: "ADMIN",
+            email,
+            password,
+            role: RoleName.ADMIN,
         },
     ]);
+
+    console.log('🌱 Database seeding completed');
 }
 
 main()
-    .catch((error) => {
-        console.error(error);
+    .catch((error: unknown) => {
+        console.error('❌ Database seeding failed:', error);
+
         process.exit(1);
     })
     .finally(async () => {

@@ -170,6 +170,44 @@ enum CustomerStatus {
   SUSPENDED
 }
 
+enum PermissionName {
+  // USER
+  USER_CREATE
+  USER_READ
+  USER_UPDATE
+  USER_DELETE
+
+  // ROLE
+  ROLE_CREATE
+  ROLE_READ
+  ROLE_UPDATE
+  ROLE_DELETE
+
+  // PRODUCT
+  PRODUCT_CREATE
+  PRODUCT_READ
+  PRODUCT_UPDATE
+  PRODUCT_DELETE
+
+  // ORDER
+  ORDER_CREATE
+  ORDER_READ
+  ORDER_UPDATE
+  ORDER_DELETE
+
+  // PURCHASE
+  PURCHASE_CREATE
+  PURCHASE_READ
+  PURCHASE_UPDATE
+  PURCHASE_DELETE
+
+  // STOCK
+  STOCK_CREATE
+  STOCK_READ
+  STOCK_UPDATE
+  STOCK_DELETE
+}
+
 /**
  * ============================================================
  * AUTH & ACCESS CONTROL
@@ -177,13 +215,12 @@ enum CustomerStatus {
  */
 
 model User {
-  id        String  @id @default(cuid())
-  firstName String
-  lastName  String
-  email     String  @unique
-  phone     String? @unique
-  password  String
-  avatar    String?
+  id       String  @id @default(cuid())
+  name     String
+  email    String  @unique
+  phone    String? @unique
+  password String
+  avatar   String?
 
   // User status and verification
   status UserStatus @default(ACTIVE)
@@ -252,33 +289,18 @@ model Role {
 }
 
 model RolePermission {
-  roleId       String
-  permissionId String
-  // Relationships of RolePermission with Role and Permission models
-  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  // Relationships of RolePermission with Role and Permission models
-  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  // The role to which this permission is assigned
+  roleId     String
+  role       Role           @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  // Fixed permission enum
+  permission PermissionName
 
   createdAt DateTime @default(now())
 
-  // Indexes for RolePermission model
-  @@id([roleId, permissionId])
-  @@index([permissionId])
+  // A role cannot have the same permission twice
+  @@id([roleId, permission])
+  @@index([permission])
   @@map("role_permissions")
-}
-
-model Permission {
-  id String @id @default(uuid())
-
-  name        String  @unique
-  description String?
-
-  rolePermissions RolePermission[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("permissions")
 }
 
 model UserRefreshToken {
@@ -875,8 +897,8 @@ model Customer {
 
   name     String
   email    String  @unique
-  phone    String  @unique
-  password String?
+  phone    String? @unique
+  password String
   address  String?
 
   // Controls the current status of the customer account
@@ -1223,8 +1245,7 @@ model PurchaseReturnItem {
   // Reason for returning this specific item
   reason String?
 
-  returnId String
-
+  returnId       String
   purchaseReturn PurchaseReturn @relation(fields: [returnId], references: [id], onDelete: Cascade)
 
   // The original purchase item being returned

@@ -1,19 +1,3 @@
-export interface MailOptions {
-  to: string;
-  subject: string;
+import { ISendMailOptions } from '@nestjs-modules/mailer';
 
-  text?: string;
-  html?: string;
-
-  template?: string;
-  context?: Record<string, unknown>;
-
-  cc?: string | string[];
-  bcc?: string | string[];
-
-  attachments?: {
-    filename: string;
-    path: string;
-    contentType?: string;
-  }[];
-}
+export interface MailOptions extends ISendMailOptions { }
