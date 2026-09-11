@@ -5,7 +5,11 @@ export type ResourceType = 'image' | 'raw' | 'video';
 export const CloudinaryFolder = Object.freeze({
   PRODUCTS: 'products',
   CATEGORIES: 'categories',
+  BRANDS: 'brands',
+
   USERS: 'users',
+  CUSTOMERS: 'customers',
+
   DOCUMENTS: 'documents',
   SETTINGS: 'settings',
   REPORTS: 'reports',
