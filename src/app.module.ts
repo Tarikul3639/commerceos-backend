@@ -25,6 +25,10 @@ import { RoleModule } from './modules/roles/role.module';
 import { CustomerModule } from './modules/customers/customer.module';
 
 import { CategoryModule } from './modules/catalog/categories/category.module';
+import { BrandModule } from './modules/catalog/brands/brand.module';
+import { AttributeModule } from './modules/catalog/attributes/attribute.module';
+import { ProductModule } from './modules/catalog/products/product.module';
+import { DiscountModule } from './modules/catalog/discounts/discount.module';
 
 @Module({
   imports: [
@@ -63,6 +67,10 @@ import { CategoryModule } from './modules/catalog/categories/category.module';
     CustomerModule,
 
     CategoryModule,
+    BrandModule,
+    AttributeModule,
+    ProductModule,
+    DiscountModule,
   ],
   controllers: [],
   providers: [],

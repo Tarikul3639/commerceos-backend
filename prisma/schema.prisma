@@ -859,6 +859,33 @@ model StockMovement {
   @@map("stock_movements")
 }
 
+model ProductDiscount {
+  id String @id @default(cuid())
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  discountId String
+  discount   Discount @relation(fields: [discountId], references: [id], onDelete: Cascade)
+
+  // Indicates whether this discount assignment is currently active
+  isActive Boolean @default(true)
+  // Stores the timestamp when this discount assignment was soft deleted
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Prevents the same discount from being assigned to the same product multiple times
+  @@unique([productId, discountId])
+  // Useful for finding active discounts for a product
+  @@index([productId, isActive])
+  @@index([productId])
+  @@index([discountId])
+  @@index([deletedAt])
+  @@map("product_discounts")
+}
+
 model Discount {
   id String @id @default(cuid())
 
@@ -896,23 +923,6 @@ model Discount {
   @@index([isActive])
   @@index([deletedAt])
   @@map("discounts")
-}
-
-model ProductDiscount {
-  id String @id @default(cuid())
-
-  productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  discountId String
-  discount   Discount @relation(fields: [discountId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-
-  @@unique([productId, discountId])
-  @@index([productId])
-  @@index([discountId])
-  @@map("product_discounts")
 }
 
 /**
