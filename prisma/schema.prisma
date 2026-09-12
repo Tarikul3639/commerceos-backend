@@ -400,7 +400,7 @@ model Category {
 
   image    String?
   // Cloudinary public ID used to delete the image
-  publicId String?  @unique
+  publicId String? @unique
 
   // Controls whether the category can currently be used
   isActive Boolean @default(true)
@@ -462,11 +462,11 @@ model Product {
   deletedAt DateTime?
 
   categoryId String
-  category Category @relation(fields: [categoryId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
 
   // Optional brand associated with the product
   brandId String?
-  brand Brand? @relation(fields: [brandId], references: [id])
+  brand   Brand?  @relation(fields: [brandId], references: [id])
 
   images ProductImage[]
 
@@ -529,7 +529,7 @@ model ProductVariant {
   sku String @unique
 
   // Optional image specific to this product variant
-  image String?
+  image    String?
   // Cloudinary public ID used to delete the image
   publicId String? @unique
 
@@ -869,7 +869,7 @@ model ProductDiscount {
   discount   Discount @relation(fields: [discountId], references: [id], onDelete: Cascade)
 
   // Indicates whether this discount assignment is currently active
-  isActive Boolean @default(true)
+  isActive  Boolean   @default(true)
   // Stores the timestamp when this discount assignment was soft deleted
   deletedAt DateTime?
 
