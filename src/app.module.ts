@@ -30,6 +30,10 @@ import { AttributeModule } from './modules/catalog/attributes/attribute.module';
 import { ProductModule } from './modules/catalog/products/product.module';
 import { DiscountModule } from './modules/catalog/discounts/discount.module';
 
+import { WarehouseModule } from './modules/inventory/warehouses/warehouse.module';
+import { StockModule } from './modules/inventory/stocks/stock.module';
+import { StockMovementModule } from './modules/inventory/stock-movements/stock-movement.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -71,6 +75,10 @@ import { DiscountModule } from './modules/catalog/discounts/discount.module';
     AttributeModule,
     ProductModule,
     DiscountModule,
+
+    WarehouseModule,
+    StockModule,
+    StockMovementModule,
   ],
   controllers: [],
   providers: [],

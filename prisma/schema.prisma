@@ -637,6 +637,44 @@ model Warehouse {
   @@map("warehouses")
 }
 
+model StockMovement {
+  id String @id @default(cuid())
+
+  type StockMovementType
+
+  // Positive value increases stock, negative value decreases stock
+  quantity Int
+
+  // Stock quantity before the movement
+  previousQuantity Int
+
+  // Stock quantity after the movement
+  currentQuantity Int
+
+  // Optional explanation for the stock change
+  reason String?
+
+  variantId String
+  // Product variant affected by this stock movement
+  variant ProductVariant @relation(fields: [variantId], references: [id])
+
+  warehouseId String
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id])
+
+  // User who performed this stock movement
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+
+  @@index([variantId])
+  @@index([warehouseId])
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("stock_movements")
+}
+
 model StockTransfer {
   id String @id @default(cuid())
 
@@ -657,7 +695,6 @@ model StockTransfer {
 
   // User who created this stock transfer
   userId String
-
   user User @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   createdAt DateTime @default(now())
@@ -816,47 +853,6 @@ model PurchaseItem {
   @@index([purchaseId])
   @@index([variantId])
   @@map("purchase_items")
-}
-
-model StockMovement {
-  id String @id @default(cuid())
-
-  type StockMovementType
-
-  // Positive value increases stock, negative value decreases stock
-  quantity Int
-
-  // Stock quantity before the movement
-  previousQuantity Int
-
-  // Stock quantity after the movement
-  currentQuantity Int
-
-  // Optional explanation for the stock change
-  reason String?
-
-  variantId String
-
-  // Product variant affected by this stock movement
-  variant ProductVariant @relation(fields: [variantId], references: [id])
-
-  warehouseId String
-
-  warehouse Warehouse @relation(fields: [warehouseId], references: [id])
-
-  // User who performed this stock movement
-  userId String
-
-  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
-
-  createdAt DateTime @default(now())
-
-  @@index([variantId])
-  @@index([warehouseId])
-  @@index([userId])
-  @@index([type])
-  @@index([createdAt])
-  @@map("stock_movements")
 }
 
 model ProductDiscount {

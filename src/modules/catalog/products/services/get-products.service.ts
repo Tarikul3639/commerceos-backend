@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+
+import { Prisma } from '../../../../lib/prisma/client';
 import { PrismaService } from '../../../../common/prisma/prisma.service';
 
 import { ProductQueryDto } from '../dto/requests/product-query.dto';
@@ -21,11 +23,13 @@ export class GetProductsService {
             limit = '10',
         } = query;
 
+        // Minimum page 1
         const currentPage = Math.max(Number(page), 1);
-
+        // Minimum limit 1 and Maximum 100
         const pageSize = Math.min(Math.max(Number(limit), 1), 100);
 
-        const where = {
+        // Filter & Query
+        const where: Prisma.ProductWhereInput = {
             deletedAt: null,
 
             ...(search && {
@@ -33,17 +37,16 @@ export class GetProductsService {
                     {
                         name: {
                             contains: search.trim(),
-                            mode: 'insensitive' as const,
-                        },
+                            mode: 'insensitive'
+                        }
                     },
-
                     {
                         slug: {
                             contains: search.trim(),
-                            mode: 'insensitive' as const,
-                        },
+                            mode: 'insensitive'
+                        }
                     },
-                ],
+                ]
             }),
 
             ...(categoryId && {
