@@ -1274,7 +1274,6 @@ model PurchaseReturnItem {
 
   // The original purchase item being returned
   purchaseItemId String
-
   purchaseItem PurchaseItem @relation(fields: [purchaseItemId], references: [id], onDelete: Restrict)
 
   createdAt DateTime @default(now())

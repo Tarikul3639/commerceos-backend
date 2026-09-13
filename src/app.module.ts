@@ -35,6 +35,8 @@ import { StockModule } from './modules/inventory/stocks/stock.module';
 import { StockMovementModule } from './modules/inventory/stock-movements/stock-movement.module';
 import { StockTransferModule } from './modules/inventory/stock-transfers/stock-transfer.module';
 
+import { PurchaseModule } from './modules/purchases/purchase.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -81,6 +83,8 @@ import { StockTransferModule } from './modules/inventory/stock-transfers/stock-t
     StockModule,
     StockMovementModule,
     StockTransferModule,
+
+    PurchaseModule,
   ],
   controllers: [],
   providers: [],
