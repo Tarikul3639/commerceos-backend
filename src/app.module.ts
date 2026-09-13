@@ -33,6 +33,7 @@ import { DiscountModule } from './modules/catalog/discounts/discount.module';
 import { WarehouseModule } from './modules/inventory/warehouses/warehouse.module';
 import { StockModule } from './modules/inventory/stocks/stock.module';
 import { StockMovementModule } from './modules/inventory/stock-movements/stock-movement.module';
+import { StockTransferModule } from './modules/inventory/stock-transfers/stock-transfer.module';
 
 @Module({
   imports: [
@@ -79,6 +80,7 @@ import { StockMovementModule } from './modules/inventory/stock-movements/stock-m
     WarehouseModule,
     StockModule,
     StockMovementModule,
+    StockTransferModule,
   ],
   controllers: [],
   providers: [],
