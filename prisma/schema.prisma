@@ -1136,7 +1136,6 @@ model Payment {
   amount Decimal
 
   method PaymentMethod
-
   status PaymentStatus @default(PENDING)
 
   // Defines whether this record is a payment or a refund

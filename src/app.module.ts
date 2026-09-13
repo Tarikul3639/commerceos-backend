@@ -36,6 +36,8 @@ import { StockMovementModule } from './modules/inventory/stock-movements/stock-m
 import { StockTransferModule } from './modules/inventory/stock-transfers/stock-transfer.module';
 
 import { PurchaseModule } from './modules/purchases/purchase.module';
+import { SupplierModule } from './modules/suppliers/supplier.module';
+import { OrderModule } from './modules/orders/order.module';
 
 @Module({
   imports: [
@@ -85,6 +87,8 @@ import { PurchaseModule } from './modules/purchases/purchase.module';
     StockTransferModule,
 
     PurchaseModule,
+    SupplierModule,
+    OrderModule,
   ],
   controllers: [],
   providers: [],
