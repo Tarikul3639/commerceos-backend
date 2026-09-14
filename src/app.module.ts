@@ -38,6 +38,8 @@ import { StockTransferModule } from './modules/inventory/stock-transfers/stock-t
 import { PurchaseModule } from './modules/purchases/purchase.module';
 import { SupplierModule } from './modules/suppliers/supplier.module';
 import { OrderModule } from './modules/orders/order.module';
+import { CartModule } from './modules/carts/cart.module';
+import { BannerModule } from './modules/banners/banner.module';
 
 @Module({
   imports: [
@@ -89,6 +91,9 @@ import { OrderModule } from './modules/orders/order.module';
     PurchaseModule,
     SupplierModule,
     OrderModule,
+    CartModule,
+
+    BannerModule,
   ],
   controllers: [],
   providers: [],

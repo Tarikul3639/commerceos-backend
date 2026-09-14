@@ -209,6 +209,21 @@ enum PermissionName {
   STOCK_DELETE
 }
 
+enum BannerType {
+  HERO
+  PROMOTION
+  OFFER
+  PRODUCT
+  CATEGORY
+  CUSTOM
+}
+
+enum BannerPosition {
+  HOME_TOP
+  HOME_MIDDLE
+  HOME_BOTTOM
+}
+
 /**
  * ============================================================
  * AUTH & ACCESS CONTROL
@@ -656,14 +671,14 @@ model StockMovement {
 
   variantId String
   // Product variant affected by this stock movement
-  variant ProductVariant @relation(fields: [variantId], references: [id])
+  variant   ProductVariant @relation(fields: [variantId], references: [id])
 
   warehouseId String
-  warehouse Warehouse @relation(fields: [warehouseId], references: [id])
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id])
 
   // User who performed this stock movement
   userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   createdAt DateTime @default(now())
 
@@ -695,7 +710,7 @@ model StockTransfer {
 
   // User who created this stock transfer
   userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1273,7 +1288,7 @@ model PurchaseReturnItem {
 
   // The original purchase item being returned
   purchaseItemId String
-  purchaseItem PurchaseItem @relation(fields: [purchaseItemId], references: [id], onDelete: Restrict)
+  purchaseItem   PurchaseItem @relation(fields: [purchaseItemId], references: [id], onDelete: Restrict)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1424,4 +1439,38 @@ model EmailLog {
   @@index([entityType, entityId])
   @@index([createdAt])
   @@map("email_logs")
+}
+
+model Banner {
+  id    String  @id @default(cuid())
+  title String?
+
+  // Banner image URL
+  imageUrl       String
+  // Optional image for mobile devices
+  mobileImageUrl String?
+
+  type     BannerType
+  position BannerPosition
+
+  // Redirect URL when banner is clicked
+  link       String?
+  buttonText String?
+
+  // Controls display order
+  sortOrder Int @default(0)
+
+  isActive Boolean @default(true)
+
+  // Banner visibility period
+  startAt DateTime?
+  endAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type])
+  @@index([position])
+  @@index([isActive])
+  @@map("banners")
 }
