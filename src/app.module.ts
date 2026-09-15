@@ -21,6 +21,7 @@ import { CloudinaryModule } from './common/cloudinary/cloudinary.module';
 import { MailModule } from './common/mail/mail.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/user.module';
+import { EmployeeModule } from './modules/employees/employee.module';
 import { RoleModule } from './modules/roles/role.module';
 import { CustomerModule } from './modules/customers/customer.module';
 
@@ -41,6 +42,7 @@ import { OrderModule } from './modules/orders/order.module';
 import { CartModule } from './modules/carts/cart.module';
 import { BannerModule } from './modules/banners/banner.module';
 
+import { ActivityLogModule } from './modules/activity-logs/activity-log.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { NotificationModule } from './modules/notifications/notification.module';
 
@@ -76,6 +78,7 @@ import { NotificationModule } from './modules/notifications/notification.module'
     
     AuthModule,
     UsersModule,
+    EmployeeModule,
     RoleModule,
 
     CustomerModule,
@@ -98,6 +101,7 @@ import { NotificationModule } from './modules/notifications/notification.module'
 
     BannerModule,
 
+    ActivityLogModule,
     SettingsModule,
     NotificationModule,
   ],
