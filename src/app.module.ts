@@ -41,6 +41,9 @@ import { OrderModule } from './modules/orders/order.module';
 import { CartModule } from './modules/carts/cart.module';
 import { BannerModule } from './modules/banners/banner.module';
 
+import { SettingsModule } from './modules/settings/settings.module';
+import { NotificationModule } from './modules/notifications/notification.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -94,6 +97,9 @@ import { BannerModule } from './modules/banners/banner.module';
     CartModule,
 
     BannerModule,
+
+    SettingsModule,
+    NotificationModule,
   ],
   controllers: [],
   providers: [],
