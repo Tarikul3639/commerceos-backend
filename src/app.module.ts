@@ -46,6 +46,8 @@ import { ActivityLogModule } from './modules/activity-logs/activity-log.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { NotificationModule } from './modules/notifications/notification.module';
 
+import { DashboardModule } from './modules/dashboard/dashboard.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -75,6 +77,8 @@ import { NotificationModule } from './modules/notifications/notification.module'
     MailModule,
     PrismaModule,
     CloudinaryModule,
+    
+    DashboardModule,
     
     AuthModule,
     UsersModule,
