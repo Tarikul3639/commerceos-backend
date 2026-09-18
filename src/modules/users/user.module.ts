@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { PrismaModule } from '../../common/prisma/prisma.module';
+import { AuthModule } from '../auth/auth.module';
 
 // Controller
 import { UserController } from './controllers/user.controller';
@@ -17,6 +18,7 @@ import { DeleteUserService } from './services/delete-user.service';
 @Module({
     imports: [
         PrismaModule,
+        AuthModule,
     ],
 
     controllers: [
@@ -35,4 +37,4 @@ import { DeleteUserService } from './services/delete-user.service';
 
     exports: [],
 })
-export class UsersModule {}
+export class UsersModule { }

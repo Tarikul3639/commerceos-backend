@@ -27,12 +27,17 @@ export class TokenService {
         });
     }
 
-    async generateRefreshToken(payload: UserJwtPayload): Promise<{
+    async generateRefreshToken(
+        payload: UserJwtPayload,
+        remember = false,
+    ): Promise<{
         token: string;
         expiresAt: Date;
     }> {
         const expiresIn = this.configService.getOrThrow<StringValue>(
-            'auth.user.refreshExpiresIn',
+            remember
+                ? 'auth.user.rememberRefreshExpiresIn'
+                : 'auth.user.refreshExpiresIn',
         );
 
         const token = await this.jwtService.signAsync(payload, {
@@ -46,10 +51,10 @@ export class TokenService {
         };
     }
 
-    async generateAuthTokens(payload: UserJwtPayload): Promise<AuthTokens> {
+    async generateAuthTokens(payload: UserJwtPayload, remember = false): Promise<AuthTokens> {
         const [accessToken, refresh] = await Promise.all([
             this.generateAccessToken(payload),
-            this.generateRefreshToken(payload),
+            this.generateRefreshToken(payload, remember),
         ]);
 
         return {

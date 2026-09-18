@@ -103,6 +103,7 @@ import { CustomerVerifyEmailService } from './customer/services/verify-email.ser
 
     exports: [
         JwtModule,
+        VerifyEmailService
     ],
 })
 export class AuthModule { }

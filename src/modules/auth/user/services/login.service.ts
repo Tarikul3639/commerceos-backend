@@ -27,7 +27,7 @@ export class LoginService {
         ipAddress?: string,
         userAgent?: string,
     ): Promise<AuthTokens> {
-        const { email, password } = loginDto;
+        const { email, password, remember = false } = loginDto;
 
         const user = await this.prismaService.user.findUnique({
             where: { email },
@@ -46,13 +46,13 @@ export class LoginService {
         });
 
         if (!user) {
-            throw new UnauthorizedException('Invalid email or password.');
+            throw new UnauthorizedException('This email is not registered. Please contact support team.');
         }
 
         const isPasswordValid = await comparePassword(password, user.password);
 
         if (!isPasswordValid) {
-            throw new UnauthorizedException('Invalid email or password.');
+            throw new UnauthorizedException('Invalid password. Please try again.');
         }
 
         if (!user.isVerified) {
@@ -67,6 +67,7 @@ export class LoginService {
 
         const tokens = await this.tokenService.generateAuthTokens(
             this.createJwtPayload(user),
+            remember,
         );
 
         await this.refreshTokenService.save(

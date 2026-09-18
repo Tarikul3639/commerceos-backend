@@ -1,14 +1,30 @@
 import { Injectable } from '@nestjs/common';
+
 import { PrismaService } from '../../../common/prisma/prisma.service';
+
 import { CreateUserDto } from '../dto/requests/create-user.dto';
 import { UserResponseDto } from '../dto/responses/user-response.dto';
 
+import { VerifyEmailService } from '../../auth/user/services/verify-email.service';
+
 @Injectable()
 export class CreateUserService {
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly verifyEmailService: VerifyEmailService,
+    ) {}
 
-    async execute(createUserDto: CreateUserDto): Promise<UserResponseDto> {
-        const { name, email, phone, avatar, password, roleId } = createUserDto;
+    async execute(
+        createUserDto: CreateUserDto,
+    ): Promise<UserResponseDto> {
+        const {
+            name,
+            email,
+            phone,
+            avatar,
+            password,
+            roleId,
+        } = createUserDto;
 
         const user = await this.prisma.user.create({
             data: {
@@ -20,6 +36,10 @@ export class CreateUserService {
                 ...(avatar && { avatar }),
             },
         });
+
+        await this.verifyEmailService.sendVerificationEmailByUserId(
+            user.id,
+        );
 
         return {
             id: user.id,

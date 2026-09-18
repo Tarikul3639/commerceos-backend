@@ -14,15 +14,16 @@ import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
 
 import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
-
 import { USER_REFRESH_TOKEN_COOKIE } from '../../../../common/constants/cookie.constants';
-
 import { CookieUtil } from '../../../../common/utils/cookie.util';
 
+import {
+    VerifyEmailDto,
+    ResendVerificationEmailDto,
+} from '../dto/requests/verify-email.dto';
 import { LoginDto } from '../dto/requests/login.dto';
 import { ForgotPasswordDto } from '../dto/requests/forgot-password.dto';
 import { ResetPasswordDto } from '../dto/requests/reset-password.dto';
-import { VerifyEmailDto } from '../dto/requests/verify-email.dto';
 import { ChangePasswordDto } from '../dto/requests/change-password.dto';
 
 import { LoginService } from '../services/login.service';
@@ -56,9 +57,7 @@ export class UserAuthController {
     @HttpCode(HttpStatus.OK)
     async login(
         @Body() loginDto: LoginDto,
-
         @Req() request: Request,
-
         @Res({ passthrough: true })
         response: Response,
     ) {
@@ -202,14 +201,12 @@ export class UserAuthController {
      */
     @Post('resend-verification-email')
     @HttpCode(HttpStatus.OK)
-    async resendVerificationEmail(
-        @CurrentUser('id')
-        userId: string,
-    ) {
-        await this.verifyEmailService.execute(userId);
+    async resendVerificationEmail(@Body() dto: ResendVerificationEmailDto) {
+        await this.verifyEmailService.sendVerificationEmailByEmail(dto.email);
 
         return {
-            message: 'Verification email sent successfully',
+            message:
+                'If an account exists with this email, a verification email has been sent.',
         };
     }
 }

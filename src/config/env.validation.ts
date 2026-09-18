@@ -32,6 +32,9 @@ const envValidationSchema = Joi.object({
     JWT_USER_REFRESH_EXPIRES_IN: Joi.string()
         .pattern(/^\d+(ms|s|m|h|d|w|y)$/)
         .required(),
+    JWT_USER_REMEMBER_REFRESH_EXPIRES_IN: Joi.string()
+        .pattern(/^\d+(ms|s|m|h|d|w|y)$/)
+        .required(),
     // ============================
     // CUSTOMER JWT CONFIGURATION
     // ============================

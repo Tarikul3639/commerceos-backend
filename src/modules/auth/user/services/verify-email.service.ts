@@ -18,12 +18,11 @@ export class VerifyEmailService {
         private readonly mailService: MailService,
     ) { }
 
-    async execute(userId: string): Promise<void> {
+    async sendVerificationEmailByUserId(userId: string): Promise<void> {
         const user = await this.prismaService.user.findUnique({
             where: {
                 id: userId,
             },
-
             select: {
                 id: true,
                 name: true,
@@ -40,21 +39,49 @@ export class VerifyEmailService {
             return;
         }
 
+        await this.sendVerificationEmail(user);
+    }
+
+    async sendVerificationEmailByEmail(email: string): Promise<void> {
+        const user = await this.prismaService.user.findUnique({
+            where: {
+                email,
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                isVerified: true,
+            },
+        });
+
+        if (!user || user.isVerified) {
+            return;
+        }
+
+        await this.sendVerificationEmail(user);
+    }
+
+    private async sendVerificationEmail(user: {
+        id: string;
+        name: string;
+        email: string;
+        isVerified: boolean;
+    }): Promise<void> {
         const token = this.tokenService.generateRandomToken();
         const tokenHash = this.tokenService.hashToken(token);
+
         const expiresIn = this.configService.getOrThrow<StringValue>(
             'auth.user.emailVerificationExpiresIn',
         );
 
         const expiresAt = new Date(Date.now() + ms(expiresIn));
 
-        // Invalidate previous unused verification tokens
         await this.prismaService.userEmailVerificationToken.updateMany({
             where: {
                 userId: user.id,
                 verifiedAt: null,
             },
-
             data: {
                 verifiedAt: new Date(),
             },
@@ -68,7 +95,9 @@ export class VerifyEmailService {
             },
         });
 
-        const frontendUrl = this.configService.getOrThrow<string>('app.frontendUrl');
+        const frontendUrl =
+            this.configService.getOrThrow<string>('app.frontendUrl');
+
         const verificationUrl = `${frontendUrl}/verify-email?token=${token}`;
 
         await this.mailService.sendVerifyEmail(user.email, {
@@ -87,10 +116,6 @@ export class VerifyEmailService {
             await this.prismaService.userEmailVerificationToken.findUnique({
                 where: {
                     tokenHash,
-                },
-
-                include: {
-                    user: true,
                 },
             });
 
@@ -113,7 +138,6 @@ export class VerifyEmailService {
                 where: {
                     id: verificationToken.userId,
                 },
-
                 data: {
                     isVerified: true,
                 },
@@ -123,7 +147,6 @@ export class VerifyEmailService {
                 where: {
                     id: verificationToken.id,
                 },
-
                 data: {
                     verifiedAt: new Date(),
                 },
