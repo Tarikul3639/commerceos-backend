@@ -7,7 +7,6 @@ import {
     Post,
     Put,
     Query,
-    Req,
 } from '@nestjs/common';
 
 import {
@@ -19,7 +18,6 @@ import {
 } from '@nestjs/swagger';
 
 import { CurrentUser } from '../../../common/decorators/current-user.decorator';
-import type { CurrentUserPayload } from '@/common/interfaces/current-user.interface';
 
 import { CreatePurchaseDto } from '../dto/requests/create-purchase.dto';
 import { UpdatePurchaseDto } from '../dto/requests/update-purchase.dto';
@@ -59,10 +57,10 @@ export class PurchaseController {
     })
     async create(
         @Body() createPurchaseDto: CreatePurchaseDto,
-        @CurrentUser() user: CurrentUserPayload,
+        @CurrentUser('id') userId: string,
     ) {
         return this.createPurchaseService.execute(
-            user.id,
+            userId,
             createPurchaseDto,
         );
     }
@@ -128,11 +126,11 @@ export class PurchaseController {
     async receive(
         @Param('id') id: string,
         @Body() receivePurchaseDto: ReceivePurchaseDto,
-        @CurrentUser() user: CurrentUserPayload,
+        @CurrentUser('id') userId: string,
     ) {
         return this.receivePurchaseService.execute(
             id,
-            user.id,
+            userId,
             receivePurchaseDto,
         );
     }

@@ -9,11 +9,17 @@ import {
     hashPassword,
 } from '../../../../common/utils/password.util';
 
+import { UserJwtPayload } from '../../../../common/interfaces/user-jwt-payload.interface';
+import { AuthTokensPayload } from '../interfaces/auth-tokens.interface';
+
+import { TokenService } from './token.service';
+
 @Injectable()
 export class RefreshTokenService {
     constructor(
         private readonly prismaService: PrismaService,
         private readonly configService: ConfigService,
+        private readonly tokenService: TokenService,
     ) { }
 
     /**
@@ -21,7 +27,7 @@ export class RefreshTokenService {
      *
      * Multiple active sessions are allowed.
      * Each browser/device can have its own refresh token.
-   */
+     */
     async save(
         userId: string,
         refreshToken: string,
@@ -87,11 +93,75 @@ export class RefreshTokenService {
             return token;
         }
 
-        throw new UnauthorizedException('Invalid refresh token.');
+        throw new UnauthorizedException(
+            'Invalid refresh token.',
+        );
+    }
+
+    /**
+     * Rotate a refresh token.
+     *
+     * The old refresh token is revoked and
+     * a new access/refresh token pair is generated.
+     */
+    async rotate(
+        refreshToken: string,
+        userAgent?: string,
+        ipAddress?: string,
+    ): Promise<AuthTokensPayload> {
+        if (!refreshToken) {
+            throw new UnauthorizedException(
+                'Refresh token is required.',
+            );
+        }
+
+        let payload: UserJwtPayload;
+
+        try {
+            payload =
+                await this.tokenService.verifyRefreshToken(
+                    refreshToken,
+                );
+        } catch {
+            throw new UnauthorizedException(
+                'Invalid or expired refresh token.',
+            );
+        }
+
+        const storedToken = await this.validate(
+            payload.id,
+            refreshToken,
+        );
+
+        await this.revoke(storedToken.id);
+
+        const tokens =
+            await this.tokenService.generateAuthTokens({
+                id: payload.id,
+                email: payload.email,
+                name: payload.name,
+                role: payload.role,
+                permissions: payload.permissions,
+            });
+
+        await this.save(
+            payload.id,
+            tokens.refreshToken,
+            tokens.refreshTokenExpiresAt,
+            userAgent,
+            ipAddress,
+        );
+
+        return {
+            accessToken: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
+            refreshTokenExpiresAt: tokens.refreshTokenExpiresAt,
+        };
     }
 
     /**
      * Revoke a specific session.
+     *
      * @param tokenId The ID of the refresh token to revoke.
      */
     async revoke(tokenId: string): Promise<void> {
@@ -99,6 +169,7 @@ export class RefreshTokenService {
             where: {
                 id: tokenId,
             },
+
             data: {
                 revokedAt: new Date(),
             },
@@ -115,6 +186,7 @@ export class RefreshTokenService {
                 userId,
                 revokedAt: null,
             },
+
             data: {
                 revokedAt: new Date(),
             },

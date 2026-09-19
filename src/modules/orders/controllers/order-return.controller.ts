@@ -25,7 +25,6 @@ import { GetOrderReturnService } from '../services/get-order-return.service';
 import { GetOrderReturnsService } from '../services/get-order-returns.service';
 
 import { CurrentUser } from '../../../common/decorators/current-user.decorator';
-import type { CurrentUserPayload } from '../../../common/interfaces/current-user.interface';
 
 @ApiTags('Order Returns')
 @ApiBearerAuth()
@@ -55,12 +54,12 @@ export class OrderReturnController {
         @Body()
         createOrderReturnDto: CreateOrderReturnDto,
 
-        @CurrentUser() user: CurrentUserPayload,
+        @CurrentUser('id') userId: string,
     ) {
         return this.createOrderReturnService.execute(
             orderId,
             createOrderReturnDto,
-            user.id,
+            userId,
         );
     }
 

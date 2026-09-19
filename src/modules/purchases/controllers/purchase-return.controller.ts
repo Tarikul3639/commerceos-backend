@@ -9,7 +9,6 @@ import {
 } from '@nestjs/swagger';
 
 import { CurrentUser } from '../../../common/decorators/current-user.decorator';
-import type { CurrentUserPayload } from '@/common/interfaces/current-user.interface';
 
 import { CreatePurchaseReturnDto } from '../dto/requests/create-purchase-return.dto';
 import { PurchaseReturnQueryDto } from '../dto/requests/purchase-return-query.dto';
@@ -40,10 +39,10 @@ export class PurchaseReturnController {
     })
     async create(
         @Body() createPurchaseReturnDto: CreatePurchaseReturnDto,
-        @CurrentUser() user: CurrentUserPayload,
+        @CurrentUser('id') userId: string,
     ) {
         return this.createPurchaseReturnService.execute(
-            user.id,
+            userId,
             createPurchaseReturnDto,
         );
     }

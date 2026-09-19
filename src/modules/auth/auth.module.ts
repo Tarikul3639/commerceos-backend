@@ -1,15 +1,22 @@
+// Framework
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
 
 import type { StringValue } from 'ms';
 
+// Common Modules
 import { PrismaModule } from '../../common/prisma/prisma.module';
 import { MailModule } from '../../common/mail/mail.module';
 
-import { PassportModule } from '@nestjs/passport';
+// Customer Authentication
 import { CustomerJwtStrategy } from '../../common/strategies/customer-jwt.strategy';
 import { CustomerJwtAuthGuard } from '../../common/guards/customer-jwt-auth.guard';
+
+// User Authentication
+import { UserJwtStrategy } from '../../common/strategies/user-jwt.strategy';
+import { UserJwtAuthGuard } from '../../common/guards/user-jwt-auth.guard';
 
 // Controllers
 import { UserAuthController } from './user/controllers/user-auth.controller';
@@ -22,11 +29,11 @@ import { LogoutService } from './user/services/logout.service';
 import { LogoutAllService } from './user/services/logout-all.service';
 import { RefreshTokenService } from './user/services/refresh-token.service';
 
+import { GetCurrentUserService } from './user/services/get-current-user.service';
 import { ChangePasswordService } from './user/services/change-password.service';
 import { ForgotPasswordService } from './user/services/forgot-password.service';
 import { ResetPasswordService } from './user/services/reset-password.service';
 import { VerifyEmailService } from './user/services/verify-email.service';
-
 
 // Customer Auth Services
 import { CustomerRegisterService } from './customer/services/register.service';
@@ -46,6 +53,7 @@ import { CustomerVerifyEmailService } from './customer/services/verify-email.ser
         MailModule,
         PrismaModule,
         PassportModule,
+
         JwtModule.registerAsync({
             inject: [ConfigService],
 
@@ -72,13 +80,19 @@ import { CustomerVerifyEmailService } from './customer/services/verify-email.ser
     ],
 
     providers: [
+        // Customer Authentication
         CustomerJwtStrategy,
         CustomerJwtAuthGuard,
 
-        TokenService,
+        // User Authentication
+        UserJwtStrategy,
+        UserJwtAuthGuard,
 
+        // User Auth Services
+        TokenService,
         RefreshTokenService,
 
+        GetCurrentUserService,
         LoginService,
         LogoutService,
         LogoutAllService,
@@ -88,6 +102,7 @@ import { CustomerVerifyEmailService } from './customer/services/verify-email.ser
         ResetPasswordService,
         VerifyEmailService,
 
+        // Customer Auth Services
         CustomerRegisterService,
         CustomerTokenService,
         CustomerLoginService,
@@ -103,7 +118,8 @@ import { CustomerVerifyEmailService } from './customer/services/verify-email.ser
 
     exports: [
         JwtModule,
-        VerifyEmailService
+        VerifyEmailService,
+        GetCurrentUserService,
     ],
 })
 export class AuthModule { }

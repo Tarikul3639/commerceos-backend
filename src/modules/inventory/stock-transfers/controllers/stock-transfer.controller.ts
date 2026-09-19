@@ -33,8 +33,6 @@ import { CancelStockTransferService } from '../services/cancel-stock-transfer.se
 // Current User
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 
-import type { CurrentUserPayload } from '@/common/interfaces/current-user.interface';
-
 @ApiTags('Stock Transfers')
 @Controller('stock-transfers')
 export class StockTransferController {
@@ -64,12 +62,11 @@ export class StockTransferController {
         @Body()
         createStockTransferDto: CreateStockTransferDto,
 
-        @CurrentUser()
-        user: CurrentUserPayload,
+        @CurrentUser('id') userId: string,
     ) {
         const stockTransfer =
             await this.createStockTransferService.execute(
-                user.id,
+                userId,
                 createStockTransferDto,
             );
 

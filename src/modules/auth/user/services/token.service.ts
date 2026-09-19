@@ -7,7 +7,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import ms, { type StringValue } from 'ms';
 
 import { UserJwtPayload } from '../../../../common/interfaces/user-jwt-payload.interface';
-import { AuthTokens } from '../interfaces/auth-tokens.interface';
+import { AuthTokensPayload } from '../interfaces/auth-tokens.interface';
 
 @Injectable()
 export class TokenService {
@@ -51,7 +51,7 @@ export class TokenService {
         };
     }
 
-    async generateAuthTokens(payload: UserJwtPayload, remember = false): Promise<AuthTokens> {
+    async generateAuthTokens(payload: UserJwtPayload, remember = false): Promise<AuthTokensPayload> {
         const [accessToken, refresh] = await Promise.all([
             this.generateAccessToken(payload),
             this.generateRefreshToken(payload, remember),

@@ -29,8 +29,6 @@ import { AssignProductDiscountService } from '../services/assign-product-discoun
 import { RemoveProductDiscountService } from '../services/remove-product-discount.service';
 
 import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
-import type { CurrentUserPayload } from '../../../../common/interfaces/current-user.interface';
-
 // import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
 
 @ApiTags('Discounts')
@@ -56,10 +54,10 @@ export class DiscountController {
     })
     async create(
         @Body() createDiscountDto: CreateDiscountDto,
-        @CurrentUser() user: CurrentUserPayload,
+        @CurrentUser('id') userId: string,
     ) {
         const discount = await this.createDiscountService.execute(
-            user.id,
+            userId,
             createDiscountDto,
         );
 

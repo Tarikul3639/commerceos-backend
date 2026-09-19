@@ -12,7 +12,6 @@ import {
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import type { CurrentUserPayload } from '@/common/interfaces/current-user.interface';
 
 // DTOs
 import { AdjustStockDto } from '../dto/requests/adjust-stock.dto';
@@ -44,11 +43,10 @@ export class StockController {
         @Body()
         adjustStockDto: AdjustStockDto,
 
-        @CurrentUser()
-        user: CurrentUserPayload,
+        @CurrentUser('id') userId: string,
     ) {
         const stock = await this.adjustStockService.execute(
-            user.id,
+            userId,
             adjustStockDto,
         );
 

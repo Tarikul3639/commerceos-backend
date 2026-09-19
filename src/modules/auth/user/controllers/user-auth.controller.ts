@@ -3,17 +3,20 @@ import {
     Controller,
     HttpCode,
     HttpStatus,
+    UseGuards,
     Post,
     Req,
     Res,
+    Get,
 } from '@nestjs/common';
 
-import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
 
 import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
+import { UserJwtAuthGuard } from '../../../../common/guards/user-jwt-auth.guard';
 import { USER_REFRESH_TOKEN_COOKIE } from '../../../../common/constants/cookie.constants';
 import { CookieUtil } from '../../../../common/utils/cookie.util';
 
@@ -25,14 +28,17 @@ import { LoginDto } from '../dto/requests/login.dto';
 import { ForgotPasswordDto } from '../dto/requests/forgot-password.dto';
 import { ResetPasswordDto } from '../dto/requests/reset-password.dto';
 import { ChangePasswordDto } from '../dto/requests/change-password.dto';
+import { CurrentUserResponseDto } from '../dto/responses/current-user-response.dto';
 
 import { LoginService } from '../services/login.service';
+import { RefreshTokenService } from '../services/refresh-token.service';
 import { LogoutService } from '../services/logout.service';
 import { LogoutAllService } from '../services/logout-all.service';
 import { ChangePasswordService } from '../services/change-password.service';
 import { ForgotPasswordService } from '../services/forgot-password.service';
 import { ResetPasswordService } from '../services/reset-password.service';
 import { VerifyEmailService } from '../services/verify-email.service';
+import { GetCurrentUserService } from '../services/get-current-user.service';
 
 @ApiTags('User Authentication')
 @Controller('auth/user')
@@ -40,7 +46,10 @@ export class UserAuthController {
     constructor(
         private readonly configService: ConfigService,
 
+        private readonly getCurrentUserService: GetCurrentUserService,
+
         private readonly loginService: LoginService,
+        private readonly refreshTokenService: RefreshTokenService,
         private readonly logoutService: LogoutService,
         private readonly logoutAllService: LogoutAllService,
 
@@ -49,6 +58,25 @@ export class UserAuthController {
         private readonly resetPasswordService: ResetPasswordService,
         private readonly verifyEmailService: VerifyEmailService,
     ) { }
+
+    /**
+     * Get current authenticated user
+     */
+    @Get('me')
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(UserJwtAuthGuard)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Current authenticated user',
+        type: CurrentUserResponseDto,
+    })
+    async getCurrentUser(
+        @CurrentUser('id') userId: string,
+    ): Promise<CurrentUserResponseDto> {
+        console.log('User ID: ', userId);
+
+        return this.getCurrentUserService.execute(userId);
+    }
 
     /**
      * Login user
@@ -81,6 +109,41 @@ export class UserAuthController {
 
         return {
             message: 'Login successful',
+        };
+    }
+
+    /**
+     * Refresh access token
+     */
+    @Post('refresh')
+    @HttpCode(HttpStatus.OK)
+    async refresh(
+        @Req() request: Request,
+        @Res({ passthrough: true })
+        response: Response,
+    ) {
+        const refreshToken = request.cookies?.[USER_REFRESH_TOKEN_COOKIE];
+
+        const result = await this.refreshTokenService.rotate(
+            refreshToken,
+            request.headers['user-agent'],
+            request.ip,
+        );
+
+        CookieUtil.setUserAccessToken(
+            response,
+            result.accessToken,
+            this.configService,
+        );
+
+        CookieUtil.setUserRefreshToken(
+            response,
+            result.refreshToken,
+            this.configService,
+        );
+
+        return {
+            message: 'Token refreshed successfully',
         };
     }
 

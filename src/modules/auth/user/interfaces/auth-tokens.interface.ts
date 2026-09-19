@@ -1,4 +1,4 @@
-export interface AuthTokens {
+export interface AuthTokensPayload {
   accessToken: string;
   refreshToken: string;
   refreshTokenExpiresAt: Date;

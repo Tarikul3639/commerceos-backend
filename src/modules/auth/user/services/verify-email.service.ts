@@ -118,6 +118,8 @@ export class VerifyEmailService {
                     tokenHash,
                 },
             });
+            
+        // console.log('verificationToken:', verificationToken);
 
         if (!verificationToken) {
             throw new UnauthorizedException('Invalid verification token.');

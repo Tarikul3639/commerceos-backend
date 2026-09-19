@@ -7,7 +7,7 @@ import { comparePassword } from '../../../../common/utils/password.util';
 import { UserJwtPayload } from '../../../../common/interfaces/user-jwt-payload.interface';
 
 import { LoginDto } from '../dto/requests/login.dto';
-import { AuthTokens } from '../interfaces/auth-tokens.interface';
+import { AuthTokensPayload } from '../interfaces/auth-tokens.interface';
 
 import { TokenService } from './token.service';
 import { RefreshTokenService } from './refresh-token.service';
@@ -26,27 +26,40 @@ export class LoginService {
         loginDto: LoginDto,
         ipAddress?: string,
         userAgent?: string,
-    ): Promise<AuthTokens> {
+    ): Promise<AuthTokensPayload> {
         const { email, password, remember = false } = loginDto;
 
         const user = await this.prismaService.user.findUnique({
-            where: { email },
+            where: {
+                email,
+            },
+
             select: {
                 id: true,
+                name: true,
                 email: true,
                 password: true,
                 status: true,
                 isVerified: true,
+
                 role: {
                     select: {
                         name: true,
+
+                        rolePermissions: {
+                            select: {
+                                permission: true,
+                            },
+                        },
                     },
                 },
             },
         });
 
         if (!user) {
-            throw new UnauthorizedException('This email is not registered. Please contact support team.');
+            throw new UnauthorizedException(
+                'This email is not registered. Please contact support team.',
+            );
         }
 
         const isPasswordValid = await comparePassword(password, user.password);
@@ -65,8 +78,10 @@ export class LoginService {
             throw new UnauthorizedException('Your account is not active.');
         }
 
+        const jwtPayload = this.createJwtPayload(user);
+
         const tokens = await this.tokenService.generateAuthTokens(
-            this.createJwtPayload(user),
+            jwtPayload,
             remember,
         );
 
@@ -82,6 +97,7 @@ export class LoginService {
             where: {
                 id: user.id,
             },
+
             data: {
                 lastLoginAt: new Date(),
             },
@@ -94,15 +110,23 @@ export class LoginService {
 
     private createJwtPayload(user: {
         id: string;
+        name: string;
         email: string;
         role: {
             name: UserJwtPayload['role'];
+            rolePermissions: Array<{
+                permission: UserJwtPayload['permissions'][number];
+            }>;
         };
     }): UserJwtPayload {
         return {
             id: user.id,
+            name: user.name,
             email: user.email,
             role: user.role.name,
+            permissions: user.role.rolePermissions.map(
+                ({ permission }) => permission,
+            ),
         };
     }
 }

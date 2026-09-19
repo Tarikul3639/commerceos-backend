@@ -14,7 +14,6 @@ import {
 } from '@nestjs/swagger';
 
 import { CurrentUser } from '../../../common/decorators/current-user.decorator';
-import type { CurrentUserPayload } from '../../../common/interfaces/current-user.interface';
 
 import { NotificationQueryDto } from '../dto/requests/notification-query.dto';
 
@@ -42,10 +41,10 @@ export class NotificationController {
     })
     findAll(
         @Query() query: NotificationQueryDto,
-        @CurrentUser() user: CurrentUserPayload,
+        @CurrentUser('id') userId: string,
     ) {
         return this.getNotificationsService.execute(
-            user.id,
+            userId,
             query,
         );
     }
@@ -56,11 +55,11 @@ export class NotificationController {
     })
     findOne(
         @Param('id') id: string,
-        @CurrentUser() user: CurrentUserPayload,
+        @CurrentUser('id') userId: string,
     ) {
         return this.getNotificationService.execute(
             id,
-            user.id,
+            userId,
         );
     }
 
@@ -69,10 +68,10 @@ export class NotificationController {
         summary: 'Mark all notifications as read',
     })
     markAllAsRead(
-        @CurrentUser() user: CurrentUserPayload,
+        @CurrentUser('id') userId: string,
     ) {
         return this.markAllNotificationsReadService.execute(
-            user.id,
+            userId,
         );
     }
 
@@ -82,11 +81,11 @@ export class NotificationController {
     })
     markAsRead(
         @Param('id') id: string,
-        @CurrentUser() user: CurrentUserPayload,
+        @CurrentUser('id') userId: string,
     ) {
         return this.markNotificationReadService.execute(
             id,
-            user.id,
+            userId,
         );
     }
 
@@ -96,11 +95,11 @@ export class NotificationController {
     })
     remove(
         @Param('id') id: string,
-        @CurrentUser() user: CurrentUserPayload,
+        @CurrentUser('id') userId: string,
     ) {
         return this.deleteNotificationService.execute(
             id,
-            user.id,
+            userId,
         );
     }
 }

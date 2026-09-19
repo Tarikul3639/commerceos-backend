@@ -1,9 +1,11 @@
+import type { Request } from 'express';
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 
 import { CustomerJwtPayload } from '../interfaces/customer-jwt-payload.interface';
+import { CUSTOMER_ACCESS_TOKEN_COOKIE } from '../constants/cookie.constants';
 
 @Injectable()
 export class CustomerJwtStrategy extends PassportStrategy(
@@ -12,7 +14,11 @@ export class CustomerJwtStrategy extends PassportStrategy(
 ) {
     constructor(private readonly configService: ConfigService) {
         super({
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+            jwtFromRequest: ExtractJwt.fromExtractors([
+                (request: Request) => {
+                    return request?.cookies?.[CUSTOMER_ACCESS_TOKEN_COOKIE] ?? null;
+                },
+            ]),
 
             secretOrKey: configService.getOrThrow<string>(
                 'auth.customer.accessSecret',
@@ -21,9 +27,6 @@ export class CustomerJwtStrategy extends PassportStrategy(
     }
 
     async validate(payload: CustomerJwtPayload) {
-        return {
-            id: payload.id,
-            email: payload.email,
-        };
+        return payload;
     }
 }
