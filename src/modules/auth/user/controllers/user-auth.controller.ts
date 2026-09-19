@@ -73,8 +73,6 @@ export class UserAuthController {
     async getCurrentUser(
         @CurrentUser('id') userId: string,
     ): Promise<CurrentUserResponseDto> {
-        console.log('User ID: ', userId);
-
         return this.getCurrentUserService.execute(userId);
     }
 
