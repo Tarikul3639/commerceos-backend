@@ -15,10 +15,10 @@ import { StockSummaryResponseDto } from "../dto/responses/stock-summary-response
 import { OrderSummaryResponseDto } from "../dto/responses/order-summary-response.dto"
 import { CustomerSummaryResponseDto } from "../dto/responses/customer-summary-response.dto"
 import { EmployeeSummaryResponseDto } from "../dto/responses/employee-summary-response.dto"
-import { TopProductsResponseDto } from "../dto/responses/top-products-response.dto"
-import { TopCustomersResponseDto } from "../dto/responses/top-customers-response.dto"
-import { LowStockProductsResponseDto } from "../dto/responses/low-stock-products-response.dto"
-import { RecentActivitiesResponseDto } from "../dto/responses/recent-activities-response.dto"
+import { TopProductItemDto } from "../dto/responses/top-products-response.dto"
+import { TopCustomerItemDto } from "../dto/responses/top-customers-response.dto"
+import { LowStockProductItemDto } from "../dto/responses/low-stock-products-response.dto"
+import { RecentActivityItemDto } from "../dto/responses/recent-activities-response.dto"
 
 import { GetDashboardOverviewService } from "../services/get-dashboard-overview.service"
 import { GetSalesSummaryService } from "../services/get-sales-summary.service"
@@ -148,7 +148,8 @@ export class DashboardController {
     @ApiResponse({
         status: 200,
         description: "Top selling products",
-        type: TopProductsResponseDto,
+        type: [TopProductItemDto],
+        isArray: true,
     })
     getTopProducts(@Query() query: DashboardQueryDto) {
         return this.getTopProductsService.execute(query)
@@ -161,7 +162,8 @@ export class DashboardController {
     @ApiResponse({
         status: 200,
         description: "Top customers",
-        type: TopCustomersResponseDto,
+        type: [TopCustomerItemDto],
+        isArray: true,
     })
     getTopCustomers(@Query() query: DashboardQueryDto) {
         return this.getTopCustomersService.execute(query)
@@ -174,7 +176,8 @@ export class DashboardController {
     @ApiResponse({
         status: 200,
         description: "Low stock products",
-        type: LowStockProductsResponseDto,
+        type: [LowStockProductItemDto],
+        isArray: true,
     })
     getLowStockProducts(@Query() query: DashboardQueryDto) {
         return this.getLowStockProductsService.execute(query)
@@ -187,7 +190,8 @@ export class DashboardController {
     @ApiResponse({
         status: 200,
         description: "Recent dashboard activities",
-        type: RecentActivitiesResponseDto,
+        type: [RecentActivityItemDto],
+        isArray: true,
     })
     getRecentActivities(@Query() query: DashboardQueryDto) {
         return this.getRecentActivitiesService.execute(query)

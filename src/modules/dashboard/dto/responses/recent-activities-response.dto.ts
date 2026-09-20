@@ -49,10 +49,3 @@ export class RecentActivityItemDto {
     @ApiProperty()
     createdAt!: Date;
 }
-
-export class RecentActivitiesResponseDto {
-    @ApiProperty({
-        type: [RecentActivityItemDto],
-    })
-    data!: RecentActivityItemDto[];
-}

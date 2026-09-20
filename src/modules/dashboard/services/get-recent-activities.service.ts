@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../../../common/prisma/prisma.service';
 import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto';
-import { RecentActivitiesResponseDto } from '../dto/responses/recent-activities-response.dto';
+import { RecentActivityItemDto } from '../dto/responses/recent-activities-response.dto';
 
 @Injectable()
 export class GetRecentActivitiesService {
@@ -10,7 +10,7 @@ export class GetRecentActivitiesService {
 
     async execute(
         _query: DashboardQueryDto,
-    ): Promise<RecentActivitiesResponseDto> {
+    ): Promise<RecentActivityItemDto[]> {
         /**
          * Get the latest activity logs.
          *
@@ -47,26 +47,24 @@ export class GetRecentActivitiesService {
          * Transform activity logs into
          * the dashboard response format.
          */
-        return {
-            data: logs.map((log) => ({
-                id: log.id,
-                type: log.type,
-                module: log.module,
-                action: log.action,
-                description: log.description,
-                entityType: log.entityType,
-                entityId: log.entityId,
-                userId: log.userId,
-                user: log.user
-                    ? {
-                        id: log.user.id,
-                        name: log.user.name,
-                        email: log.user.email,
-                        avatar: log.user.avatar ?? null,
-                    }
-                    : null,
-                createdAt: log.createdAt,
-            })),
-        };
+        return logs.map((log) => ({
+            id: log.id,
+            type: log.type,
+            module: log.module,
+            action: log.action,
+            description: log.description,
+            entityType: log.entityType,
+            entityId: log.entityId,
+            userId: log.userId,
+            user: log.user
+                ? {
+                    id: log.user.id,
+                    name: log.user.name,
+                    email: log.user.email,
+                    avatar: log.user.avatar ?? null,
+                }
+                : null,
+            createdAt: log.createdAt,
+        }))
     }
 }

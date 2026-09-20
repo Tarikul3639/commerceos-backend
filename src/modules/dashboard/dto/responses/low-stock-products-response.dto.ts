@@ -31,10 +31,3 @@ export class LowStockProductItemDto {
     })
     quantity!: number;
 }
-
-export class LowStockProductsResponseDto {
-    @ApiProperty({
-        type: [LowStockProductItemDto],
-    })
-    data!: LowStockProductItemDto[];
-}

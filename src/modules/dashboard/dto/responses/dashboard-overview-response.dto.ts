@@ -6,59 +6,59 @@ import { StockSummaryResponseDto } from "./stock-summary-response.dto"
 import { OrderSummaryResponseDto } from "./order-summary-response.dto"
 import { CustomerSummaryResponseDto } from "./customer-summary-response.dto"
 import { EmployeeSummaryResponseDto } from "./employee-summary-response.dto"
-import { TopProductsResponseDto } from "./top-products-response.dto"
-import { TopCustomersResponseDto } from "./top-customers-response.dto"
-import { LowStockProductsResponseDto } from "./low-stock-products-response.dto"
-import { RecentActivitiesResponseDto } from "./recent-activities-response.dto"
+import { TopProductItemDto } from "./top-products-response.dto"
+import { TopCustomerItemDto } from "./top-customers-response.dto"
+import { LowStockProductItemDto } from "./low-stock-products-response.dto"
+import { RecentActivityItemDto } from "./recent-activities-response.dto"
 
 export class DashboardOverviewResponseDto {
     @ApiProperty({
-        type: SalesSummaryResponseDto,
+        type: () => SalesSummaryResponseDto,
     })
     sales!: SalesSummaryResponseDto
 
     @ApiProperty({
-        type: PurchaseSummaryResponseDto,
+        type: () => PurchaseSummaryResponseDto,
     })
     purchases!: PurchaseSummaryResponseDto
 
     @ApiProperty({
-        type: StockSummaryResponseDto,
+        type: () => StockSummaryResponseDto,
     })
     stock!: StockSummaryResponseDto
 
     @ApiProperty({
-        type: OrderSummaryResponseDto,
+        type: () => OrderSummaryResponseDto,
     })
     orders!: OrderSummaryResponseDto
 
     @ApiProperty({
-        type: CustomerSummaryResponseDto,
+        type: () => CustomerSummaryResponseDto,
     })
     customers!: CustomerSummaryResponseDto
 
     @ApiProperty({
-        type: EmployeeSummaryResponseDto,
+        type: () => EmployeeSummaryResponseDto,
     })
     employees!: EmployeeSummaryResponseDto
 
     @ApiProperty({
-        type: TopProductsResponseDto,
+        type: [TopProductItemDto],
     })
-    topProducts!: TopProductsResponseDto
+    topProducts!: TopProductItemDto[]
 
     @ApiProperty({
-        type: TopCustomersResponseDto,
+        type: [TopCustomerItemDto],
     })
-    topCustomers!: TopCustomersResponseDto
+    topCustomers!: TopCustomerItemDto[]
 
     @ApiProperty({
-        type: LowStockProductsResponseDto,
+        type: [LowStockProductItemDto],
     })
-    lowStockProducts!: LowStockProductsResponseDto
+    lowStockProducts!: LowStockProductItemDto[]
 
     @ApiProperty({
-        type: RecentActivitiesResponseDto,
+        type: [RecentActivityItemDto],
     })
-    recentActivities!: RecentActivitiesResponseDto
+    recentActivities!: RecentActivityItemDto[]
 }

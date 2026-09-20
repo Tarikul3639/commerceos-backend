@@ -3,7 +3,7 @@ import { Prisma } from '@/lib/prisma/client';
 
 import { PrismaService } from '../../../common/prisma/prisma.service';
 import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto';
-import { TopProductsResponseDto } from '../dto/responses/top-products-response.dto';
+import { TopProductItemDto } from '../dto/responses/top-products-response.dto';
 import { getDashboardDateRange } from '../utils/dashboard-date-range.util';
 import { getCreatedAtFilter } from '../utils/dashboard-where.util';
 
@@ -11,7 +11,7 @@ import { getCreatedAtFilter } from '../utils/dashboard-where.util';
 export class GetTopProductsService {
     constructor(private readonly prisma: PrismaService) { }
 
-    async execute(query: DashboardQueryDto): Promise<TopProductsResponseDto> {
+    async execute(query: DashboardQueryDto): Promise<TopProductItemDto[]> {
         /**
          * Get the selected dashboard date range.
          */
@@ -151,8 +151,6 @@ export class GetTopProductsService {
         /**
          * Return the top products response.
          */
-        return {
-            data,
-        };
+        return data;
     }
 }

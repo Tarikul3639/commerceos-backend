@@ -28,10 +28,3 @@ export class TopProductItemDto {
     })
     totalRevenue!: string;
 }
-
-export class TopProductsResponseDto {
-    @ApiProperty({
-        type: [TopProductItemDto],
-    })
-    data!: TopProductItemDto[];
-}
