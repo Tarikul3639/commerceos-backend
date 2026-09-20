@@ -1,9 +1,17 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
     IsDateString,
-    IsIn,
+    IsEnum,
     IsOptional,
 } from 'class-validator';
+
+export enum DashboardPeriod {
+    SEVEN_DAYS = '7d',
+    THIRTY_DAYS = '30d',
+    THREE_MONTHS = '3m',
+    SIX_MONTHS = '6m',
+    ONE_YEAR = '1y',
+}
 
 export class DashboardQueryDto {
     @ApiPropertyOptional({
@@ -24,10 +32,10 @@ export class DashboardQueryDto {
 
     @ApiPropertyOptional({
         example: '30d',
-        enum: ['7d', '30d', '3m', '6m', '1y'],
-        default: '30d',
+        enum: DashboardPeriod,
+        default: DashboardPeriod.THIRTY_DAYS,
     })
     @IsOptional()
-    @IsIn(['7d', '30d', '3m', '6m', '1y'])
-    period?: string = '30d';
+    @IsEnum(DashboardPeriod)
+    period: DashboardPeriod = DashboardPeriod.THIRTY_DAYS;
 }

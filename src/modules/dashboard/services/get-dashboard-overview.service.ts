@@ -1,21 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common"
 
-import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto';
-import { DashboardOverviewResponseDto } from '../dto/responses/dashboard-overview-response.dto';
+import { DashboardQueryDto } from "../dto/requests/dashboard-query.dto"
+import { DashboardOverviewResponseDto } from "../dto/responses/dashboard-overview-response.dto"
 
-import { GetSalesSummaryService } from './get-sales-summary.service';
-import { GetPurchaseSummaryService } from './get-purchase-summary.service';
-import { GetStockSummaryService } from './get-stock-summary.service';
-import { GetOrderSummaryService } from './get-order-summary.service';
-import { GetCustomerSummaryService } from './get-customer-summary.service';
-import { GetEmployeeSummaryService } from './get-employee-summary.service';
-import { GetRevenueChartService } from './get-revenue-chart.service';
-import { GetSalesChartService } from './get-sales-chart.service';
-import { GetPurchaseChartService } from './get-purchase-chart.service';
-import { GetTopProductsService } from './get-top-products.service';
-import { GetTopCustomersService } from './get-top-customers.service';
-import { GetLowStockProductsService } from './get-low-stock-products.service';
-import { GetRecentActivitiesService } from './get-recent-activities.service';
+import { GetSalesSummaryService } from "./get-sales-summary.service"
+import { GetPurchaseSummaryService } from "./get-purchase-summary.service"
+import { GetStockSummaryService } from "./get-stock-summary.service"
+import { GetOrderSummaryService } from "./get-order-summary.service"
+import { GetCustomerSummaryService } from "./get-customer-summary.service"
+import { GetEmployeeSummaryService } from "./get-employee-summary.service"
+import { GetTopProductsService } from "./get-top-products.service"
+import { GetTopCustomersService } from "./get-top-customers.service"
+import { GetLowStockProductsService } from "./get-low-stock-products.service"
+import { GetRecentActivitiesService } from "./get-recent-activities.service"
 
 @Injectable()
 export class GetDashboardOverviewService {
@@ -26,9 +23,6 @@ export class GetDashboardOverviewService {
         private readonly orderSummaryService: GetOrderSummaryService,
         private readonly customerSummaryService: GetCustomerSummaryService,
         private readonly employeeSummaryService: GetEmployeeSummaryService,
-        private readonly revenueChartService: GetRevenueChartService,
-        private readonly salesChartService: GetSalesChartService,
-        private readonly purchaseChartService: GetPurchaseChartService,
         private readonly topProductsService: GetTopProductsService,
         private readonly topCustomersService: GetTopCustomersService,
         private readonly lowStockProductsService: GetLowStockProductsService,
@@ -45,9 +39,6 @@ export class GetDashboardOverviewService {
             orders,
             customers,
             employees,
-            revenueChart,
-            salesChart,
-            purchaseChart,
             topProducts,
             topCustomers,
             lowStockProducts,
@@ -59,14 +50,11 @@ export class GetDashboardOverviewService {
             this.orderSummaryService.execute(query),
             this.customerSummaryService.execute(query),
             this.employeeSummaryService.execute(query),
-            this.revenueChartService.execute(query),
-            this.salesChartService.execute(query),
-            this.purchaseChartService.execute(query),
             this.topProductsService.execute(query),
             this.topCustomersService.execute(query),
             this.lowStockProductsService.execute(query),
             this.recentActivitiesService.execute(query),
-        ]);
+        ])
 
         return {
             sales,
@@ -75,13 +63,10 @@ export class GetDashboardOverviewService {
             orders,
             customers,
             employees,
-            revenueChart,
-            salesChart,
-            purchaseChart,
             topProducts,
             topCustomers,
             lowStockProducts,
             recentActivities,
-        };
+        }
     }
 }

@@ -47,6 +47,7 @@ import { SettingsModule } from './modules/settings/settings.module';
 import { NotificationModule } from './modules/notifications/notification.module';
 
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { AnalyticsModule } from './modules/analytics/analytics.module';
 
 @Module({
   imports: [
@@ -79,6 +80,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     CloudinaryModule,
     
     DashboardModule,
+    AnalyticsModule,
     
     AuthModule,
     UsersModule,

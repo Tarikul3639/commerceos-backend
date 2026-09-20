@@ -2,20 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@/lib/prisma/client';
 
 import { PrismaService } from '../../../common/prisma/prisma.service';
-import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto';
+import { AnalyticsQueryDto } from '../dto/requests/analytics-query.dto'
 import { RevenueChartResponseDto } from '../dto/responses/revenue-chart-response.dto';
-import { getDashboardDateRange } from '../utils/dashboard-date-range.util';
-import { getCreatedAtFilter } from '../utils/dashboard-where.util';
+import { getAnalyticsDateRange } from '../utils/analytics-date-range.util';
+import { getCreatedAtFilter } from "../utils/analytics-where.util";
 
 @Injectable()
 export class GetRevenueChartService {
     constructor(private readonly prisma: PrismaService) { }
 
-    async execute(query: DashboardQueryDto): Promise<RevenueChartResponseDto> {
+    async execute(query: AnalyticsQueryDto): Promise<RevenueChartResponseDto> {
         /**
-         * Get the selected dashboard date range.
+         * Get the selected analytics date range.
          */
-        const { startDate, endDate } = getDashboardDateRange(query);
+        const { startDate, endDate } = getAnalyticsDateRange(query);
 
         /**
          * Build the order filter using
