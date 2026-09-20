@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from "@nestjs/common"
+import { Controller, Get, Query, ValidationPipe } from "@nestjs/common"
 import {
     ApiBearerAuth,
     ApiOperation,
@@ -15,10 +15,10 @@ import { StockSummaryResponseDto } from "../dto/responses/stock-summary-response
 import { OrderSummaryResponseDto } from "../dto/responses/order-summary-response.dto"
 import { CustomerSummaryResponseDto } from "../dto/responses/customer-summary-response.dto"
 import { EmployeeSummaryResponseDto } from "../dto/responses/employee-summary-response.dto"
-import { TopProductItemDto } from "../dto/responses/top-products-response.dto"
-import { TopCustomerItemDto } from "../dto/responses/top-customers-response.dto"
 import { LowStockProductItemDto } from "../dto/responses/low-stock-products-response.dto"
 import { RecentActivityItemDto } from "../dto/responses/recent-activities-response.dto"
+import { RecentOrderItemDto } from "../dto/responses/recent-orders-response.dto"
+import { RecentOrdersQueryDto } from "../dto/requests/recent-orders-query.dto"
 
 import { GetDashboardOverviewService } from "../services/get-dashboard-overview.service"
 import { GetSalesSummaryService } from "../services/get-sales-summary.service"
@@ -27,10 +27,9 @@ import { GetStockSummaryService } from "../services/get-stock-summary.service"
 import { GetOrderSummaryService } from "../services/get-order-summary.service"
 import { GetCustomerSummaryService } from "../services/get-customer-summary.service"
 import { GetEmployeeSummaryService } from "../services/get-employee-summary.service"
-import { GetTopProductsService } from "../services/get-top-products.service"
-import { GetTopCustomersService } from "../services/get-top-customers.service"
 import { GetLowStockProductsService } from "../services/get-low-stock-products.service"
 import { GetRecentActivitiesService } from "../services/get-recent-activities.service"
+import { GetRecentOrdersService } from "../services/get-recent-orders.service"
 
 @ApiTags("Dashboard")
 @ApiBearerAuth()
@@ -44,10 +43,9 @@ export class DashboardController {
         private readonly getOrderSummaryService: GetOrderSummaryService,
         private readonly getCustomerSummaryService: GetCustomerSummaryService,
         private readonly getEmployeeSummaryService: GetEmployeeSummaryService,
-        private readonly getTopProductsService: GetTopProductsService,
-        private readonly getTopCustomersService: GetTopCustomersService,
         private readonly getLowStockProductsService: GetLowStockProductsService,
         private readonly getRecentActivitiesService: GetRecentActivitiesService,
+        private readonly getRecentOrdersService: GetRecentOrdersService,
     ) { }
 
     @Get()
@@ -141,34 +139,6 @@ export class DashboardController {
         return this.getEmployeeSummaryService.execute(query)
     }
 
-    @Get("top-products")
-    @ApiOperation({
-        summary: "Get top selling products",
-    })
-    @ApiResponse({
-        status: 200,
-        description: "Top selling products",
-        type: [TopProductItemDto],
-        isArray: true,
-    })
-    getTopProducts(@Query() query: DashboardQueryDto) {
-        return this.getTopProductsService.execute(query)
-    }
-
-    @Get("top-customers")
-    @ApiOperation({
-        summary: "Get top customers",
-    })
-    @ApiResponse({
-        status: 200,
-        description: "Top customers",
-        type: [TopCustomerItemDto],
-        isArray: true,
-    })
-    getTopCustomers(@Query() query: DashboardQueryDto) {
-        return this.getTopCustomersService.execute(query)
-    }
-
     @Get("low-stock-products")
     @ApiOperation({
         summary: "Get low stock products",
@@ -195,5 +165,22 @@ export class DashboardController {
     })
     getRecentActivities(@Query() query: DashboardQueryDto) {
         return this.getRecentActivitiesService.execute(query)
+    }
+
+    @Get("recent-orders")
+    @ApiOperation({
+        summary: "Get recent orders across all order statuses",
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Recent dashboard orders",
+        type: [RecentOrderItemDto],
+        isArray: true,
+    })
+    getRecentOrders(
+        @Query(new ValidationPipe({ transform: true, whitelist: true }))
+        query: RecentOrdersQueryDto,
+    ) {
+        return this.getRecentOrdersService.execute(query.limit)
     }
 }

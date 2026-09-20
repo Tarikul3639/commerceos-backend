@@ -6,10 +6,9 @@ import { StockSummaryResponseDto } from "./stock-summary-response.dto"
 import { OrderSummaryResponseDto } from "./order-summary-response.dto"
 import { CustomerSummaryResponseDto } from "./customer-summary-response.dto"
 import { EmployeeSummaryResponseDto } from "./employee-summary-response.dto"
-import { TopProductItemDto } from "./top-products-response.dto"
-import { TopCustomerItemDto } from "./top-customers-response.dto"
 import { LowStockProductItemDto } from "./low-stock-products-response.dto"
 import { RecentActivityItemDto } from "./recent-activities-response.dto"
+import { RecentOrderItemDto } from "./recent-orders-response.dto"
 
 export class DashboardOverviewResponseDto {
     @ApiProperty({
@@ -43,16 +42,6 @@ export class DashboardOverviewResponseDto {
     employees!: EmployeeSummaryResponseDto
 
     @ApiProperty({
-        type: [TopProductItemDto],
-    })
-    topProducts!: TopProductItemDto[]
-
-    @ApiProperty({
-        type: [TopCustomerItemDto],
-    })
-    topCustomers!: TopCustomerItemDto[]
-
-    @ApiProperty({
         type: [LowStockProductItemDto],
     })
     lowStockProducts!: LowStockProductItemDto[]
@@ -61,4 +50,9 @@ export class DashboardOverviewResponseDto {
         type: [RecentActivityItemDto],
     })
     recentActivities!: RecentActivityItemDto[]
+
+    @ApiProperty({
+        type: [RecentOrderItemDto],
+    })
+    recentOrders!: RecentOrderItemDto[]
 }

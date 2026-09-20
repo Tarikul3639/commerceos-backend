@@ -9,10 +9,9 @@ import { GetStockSummaryService } from "./services/get-stock-summary.service"
 import { GetOrderSummaryService } from "./services/get-order-summary.service"
 import { GetCustomerSummaryService } from "./services/get-customer-summary.service"
 import { GetEmployeeSummaryService } from "./services/get-employee-summary.service"
-import { GetTopProductsService } from "./services/get-top-products.service"
-import { GetTopCustomersService } from "./services/get-top-customers.service"
 import { GetLowStockProductsService } from "./services/get-low-stock-products.service"
 import { GetRecentActivitiesService } from "./services/get-recent-activities.service"
+import { GetRecentOrdersService } from "./services/get-recent-orders.service"
 
 @Module({
     controllers: [DashboardController],
@@ -25,10 +24,9 @@ import { GetRecentActivitiesService } from "./services/get-recent-activities.ser
         GetOrderSummaryService,
         GetCustomerSummaryService,
         GetEmployeeSummaryService,
-        GetTopProductsService,
-        GetTopCustomersService,
         GetLowStockProductsService,
         GetRecentActivitiesService,
+        GetRecentOrdersService,
     ],
 
     exports: [

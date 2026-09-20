@@ -9,10 +9,9 @@ import { GetStockSummaryService } from "./get-stock-summary.service"
 import { GetOrderSummaryService } from "./get-order-summary.service"
 import { GetCustomerSummaryService } from "./get-customer-summary.service"
 import { GetEmployeeSummaryService } from "./get-employee-summary.service"
-import { GetTopProductsService } from "./get-top-products.service"
-import { GetTopCustomersService } from "./get-top-customers.service"
 import { GetLowStockProductsService } from "./get-low-stock-products.service"
 import { GetRecentActivitiesService } from "./get-recent-activities.service"
+import { GetRecentOrdersService } from "./get-recent-orders.service"
 
 @Injectable()
 export class GetDashboardOverviewService {
@@ -23,10 +22,9 @@ export class GetDashboardOverviewService {
         private readonly orderSummaryService: GetOrderSummaryService,
         private readonly customerSummaryService: GetCustomerSummaryService,
         private readonly employeeSummaryService: GetEmployeeSummaryService,
-        private readonly topProductsService: GetTopProductsService,
-        private readonly topCustomersService: GetTopCustomersService,
         private readonly lowStockProductsService: GetLowStockProductsService,
         private readonly recentActivitiesService: GetRecentActivitiesService,
+        private readonly recentOrdersService: GetRecentOrdersService,
     ) { }
 
     async execute(
@@ -39,10 +37,9 @@ export class GetDashboardOverviewService {
             orders,
             customers,
             employees,
-            topProducts,
-            topCustomers,
             lowStockProducts,
             recentActivities,
+            recentOrders,
         ] = await Promise.all([
             this.salesSummaryService.execute(query),
             this.purchaseSummaryService.execute(query),
@@ -50,10 +47,9 @@ export class GetDashboardOverviewService {
             this.orderSummaryService.execute(query),
             this.customerSummaryService.execute(query),
             this.employeeSummaryService.execute(query),
-            this.topProductsService.execute(query),
-            this.topCustomersService.execute(query),
             this.lowStockProductsService.execute(query),
             this.recentActivitiesService.execute(query),
+            this.recentOrdersService.execute(),
         ])
 
         return {
@@ -63,10 +59,9 @@ export class GetDashboardOverviewService {
             orders,
             customers,
             employees,
-            topProducts,
-            topCustomers,
             lowStockProducts,
             recentActivities,
+            recentOrders,
         }
     }
 }

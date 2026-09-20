@@ -12,11 +12,15 @@ import { AnalyticsOverviewResponseDto } from "../dto/responses/analytics-overvie
 import { RevenueChartResponseDto } from "../dto/responses/revenue-chart-response.dto"
 import { SalesChartResponseDto } from "../dto/responses/sales-chart-response.dto"
 import { PurchaseChartResponseDto } from "../dto/responses/purchase-chart-response.dto"
+import { TopProductItemDto } from "../dto/responses/top-products-response.dto"
+import { TopCustomerItemDto } from "../dto/responses/top-customers-response.dto"
 
 import { GetAnalyticsOverviewService } from "../services/get-analytics-overview.service"
 import { GetRevenueChartService } from "../services/get-revenue-chart.service"
 import { GetSalesChartService } from "../services/get-sales-chart.service"
 import { GetPurchaseChartService } from "../services/get-purchase-chart.service"
+import { GetTopProductsService } from "../services/get-top-products.service"
+import { GetTopCustomersService } from "../services/get-top-customers.service"
 
 @ApiTags("Analytics")
 @ApiBearerAuth()
@@ -27,6 +31,8 @@ export class AnalyticsController {
         private readonly getRevenueChartService: GetRevenueChartService,
         private readonly getSalesChartService: GetSalesChartService,
         private readonly getPurchaseChartService: GetPurchaseChartService,
+        private readonly getTopProductsService: GetTopProductsService,
+        private readonly getTopCustomersService: GetTopCustomersService,
     ) { }
 
     @Get()
@@ -79,5 +85,32 @@ export class AnalyticsController {
     })
     getPurchaseChart(@Query() query: AnalyticsQueryDto) {
         return this.getPurchaseChartService.execute(query)
+    }
+
+    @Get("top-products")
+    @ApiOperation({
+        summary: "Get top selling products",
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Top selling products",
+        type: [TopProductItemDto],
+        isArray: true,
+    })
+    getTopProducts(@Query() query: AnalyticsQueryDto) {
+        return this.getTopProductsService.execute(query)
+    }
+
+    @Get("top-customers")
+    @ApiOperation({
+        summary: "Get top customers",
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Top customers",
+        type: [TopCustomerItemDto],
+    })
+    getTopCustomers(@Query() query: AnalyticsQueryDto) {
+        return this.getTopCustomersService.execute(query)
     }
 }

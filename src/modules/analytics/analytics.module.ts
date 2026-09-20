@@ -6,6 +6,8 @@ import { GetAnalyticsOverviewService } from "./services/get-analytics-overview.s
 import { GetRevenueChartService } from "./services/get-revenue-chart.service"
 import { GetSalesChartService } from "./services/get-sales-chart.service"
 import { GetPurchaseChartService } from "./services/get-purchase-chart.service"
+import { GetTopProductsService } from "./services/get-top-products.service"
+import { GetTopCustomersService } from "./services/get-top-customers.service"
 
 @Module({
     controllers: [
@@ -17,6 +19,8 @@ import { GetPurchaseChartService } from "./services/get-purchase-chart.service"
         GetRevenueChartService,
         GetSalesChartService,
         GetPurchaseChartService,
+        GetTopProductsService,
+        GetTopCustomersService,
     ],
 
     exports: [
