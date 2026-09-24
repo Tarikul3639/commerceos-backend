@@ -4,9 +4,9 @@ const envValidationSchema = Joi.object({
     NODE_ENV: Joi.string()
         .valid('development', 'production', 'test', 'provision')
         .default('development'),
-    PORT: Joi.number().default(3000),
+    PORT: Joi.number().default(5000),
     API_PREFIX: Joi.string().required(),
-    API_VERSION: Joi.string().required(),
+    API_VERSION: Joi.number().required(),
     APP_VERSION: Joi.string().required(),
     APP_NAME: Joi.string().required(),
     FRONTEND_URL: Joi.string().required(),
@@ -62,6 +62,7 @@ const envValidationSchema = Joi.object({
     // Frontend URL for CORS configuration
     CORS_ORIGIN: Joi.string().required(),
     CORS_METHODS: Joi.string().default('GET,POST,PUT,DELETE,PATCH'),
+    CORS_CREDENTIALS: Joi.boolean().default(true),
     CORS_ALLOWED_HEADERS: Joi.string().default('Content-Type,Authorization'),
     // Cloudinary configuration for image uploads
     CLOUDINARY_CLOUD_NAME: Joi.string().required(),
