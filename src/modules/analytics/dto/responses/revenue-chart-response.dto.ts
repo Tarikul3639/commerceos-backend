@@ -11,10 +11,3 @@ export class RevenueChartItemDto {
     })
     revenue!: string;
 }
-
-export class RevenueChartResponseDto {
-    @ApiProperty({
-        type: [RevenueChartItemDto],
-    })
-    data!: RevenueChartItemDto[];
-}

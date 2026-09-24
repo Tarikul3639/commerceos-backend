@@ -3,7 +3,7 @@ import { Prisma } from '@/lib/prisma/client';
 
 import { PrismaService } from '../../../common/prisma/prisma.service';
 import { AnalyticsQueryDto } from '../dto/requests/analytics-query.dto'
-import { RevenueChartResponseDto } from '../dto/responses/revenue-chart-response.dto';
+import { RevenueChartItemDto } from '../dto/responses/revenue-chart-response.dto';
 import { getAnalyticsDateRange } from '../utils/analytics-date-range.util';
 import { getCreatedAtFilter } from "../utils/analytics-where.util";
 
@@ -11,7 +11,7 @@ import { getCreatedAtFilter } from "../utils/analytics-where.util";
 export class GetRevenueChartService {
     constructor(private readonly prisma: PrismaService) { }
 
-    async execute(query: AnalyticsQueryDto): Promise<RevenueChartResponseDto> {
+    async execute(query: AnalyticsQueryDto): Promise<RevenueChartItemDto[]> {
         /**
          * Get the selected analytics date range.
          */
@@ -84,11 +84,9 @@ export class GetRevenueChartService {
          * Convert the grouped Map into the
          * response format expected by the dashboard.
          */
-        return {
-            data: Array.from(grouped.entries()).map(([date, revenue]) => ({
-                date,
-                revenue: revenue.toString(),
-            })),
-        };
+        return Array.from(grouped.entries()).map(([date, revenue]) => ({
+            date,
+            revenue: revenue.toString(),
+        }))
     }
 }
