@@ -13,12 +13,31 @@ export class GetUserService {
                 id: userId,
                 deletedAt: null,
             },
+            include: {
+                role: {
+                    select: {
+                        name: true,
+                    },
+                },
+            },
         });
 
         if (!user) {
             throw new NotFoundException('User not found');
         }
 
-        return user;
+        return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            avatar: user.avatar,
+            role: user.role.name,
+            status: user.status,
+            isVerified: user.isVerified,
+            lastLoginAt: user.lastLoginAt,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+        };
     }
 }

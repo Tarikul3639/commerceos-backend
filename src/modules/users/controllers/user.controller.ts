@@ -9,11 +9,13 @@ import {
     Patch,
     Post,
     Query,
+    UseGuards,
 } from '@nestjs/common';
 
 import {
     ApiOperation,
     ApiParam,
+    ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
 
@@ -21,17 +23,26 @@ import {
 import { CreateUserDto } from '../dto/requests/create-user.dto';
 import { UpdateUserDto } from '../dto/requests/update-user.dto';
 import { UpdateUserStatusDto } from '../dto/requests/update-user-status.dto';
-import { UpdateUserRoleDto } from '../dto/requests/update-user-role.dto';
 import { UserQueryDto } from '../dto/requests/user-query.dto';
+import { UserListResponseDto } from '../dto/responses/user-list-response.dto';
 
 // Services
 import { CreateUserService } from '../services/create-user.service';
-import { GetUsersService } from '../services/get-users.service';
+import { DeleteUserService } from '../services/delete-user.service';
 import { GetUserService } from '../services/get-user.service';
+import { GetUsersService } from '../services/get-users.service';
+import { RestoreUserService } from '../services/restore-user.service';
 import { UpdateUserService } from '../services/update-user.service';
 import { UpdateUserStatusService } from '../services/update-user-status.service';
-import { UpdateUserRoleService } from '../services/update-user-role.service';
-import { DeleteUserService } from '../services/delete-user.service';
+
+// Guards & Decorators
+import { CurrentUser } from '../../../common/decorators/current-user.decorator';
+import { Roles } from '../../../common/decorators/roles.decorator';
+import { RolesGuard } from '../../../common/guards/roles.guard';
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+
+// Prisma
+import { RoleName } from '../../../lib/prisma/enums';
 
 @ApiTags('Users')
 @Controller('users')
@@ -42,8 +53,8 @@ export class UserController {
         private readonly getUserService: GetUserService,
         private readonly updateUserService: UpdateUserService,
         private readonly updateUserStatusService: UpdateUserStatusService,
-        private readonly updateUserRoleService: UpdateUserRoleService,
         private readonly deleteUserService: DeleteUserService,
+        private readonly restoreUserService: RestoreUserService,
     ) { }
 
     /**
@@ -57,9 +68,10 @@ export class UserController {
     async create(
         @Body() createUserDto: CreateUserDto,
     ) {
-        const user = await this.createUserService.execute(
-            createUserDto,
-        );
+        const user =
+            await this.createUserService.execute(
+                createUserDto,
+            );
 
         return {
             message: 'User created successfully',
@@ -70,15 +82,28 @@ export class UserController {
     /**
      * Get all users
      */
+    @UseGuards(UserJwtAuthGuard, RolesGuard)
+    @Roles(
+        RoleName.SUPER_ADMIN,
+        RoleName.ADMIN,
+        RoleName.MANAGER,
+        RoleName.EMPLOYEE,
+    )
     @Get()
     @HttpCode(HttpStatus.OK)
-    @ApiOperation({
-        summary: 'Get all users',
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'List of users',
+        type: UserListResponseDto,
     })
     async findAll(
         @Query() query: UserQueryDto,
+        @CurrentUser('role') requesterRole: RoleName,
     ) {
-        return this.getUsersService.execute(query);
+        return this.getUsersService.execute(
+            query,
+            requesterRole,
+        );
     }
 
     /**
@@ -96,7 +121,8 @@ export class UserController {
     async findOne(
         @Param('id') userId: string,
     ) {
-        const user = await this.getUserService.execute(userId);
+        const user =
+            await this.getUserService.execute(userId);
 
         return {
             data: user,
@@ -113,13 +139,13 @@ export class UserController {
     })
     async update(
         @Param('id') userId: string,
-
         @Body() updateUserDto: UpdateUserDto,
     ) {
-        const user = await this.updateUserService.execute(
-            userId,
-            updateUserDto,
-        );
+        const user =
+            await this.updateUserService.execute(
+                userId,
+                updateUserDto,
+            );
 
         return {
             message: 'User updated successfully',
@@ -131,19 +157,26 @@ export class UserController {
      * Update user status
      */
     @Patch(':id/status')
+    @UseGuards(UserJwtAuthGuard, RolesGuard)
+    @Roles(RoleName.SUPER_ADMIN)
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: 'Update user status',
     })
+    @ApiParam({
+        name: 'id',
+        description: 'User ID',
+    })
     async updateStatus(
         @Param('id') userId: string,
-
         @Body()
         updateUserStatusDto: UpdateUserStatusDto,
+        @CurrentUser('id') requesterId: string,
     ) {
         const user =
             await this.updateUserStatusService.execute(
                 userId,
+                requesterId,
                 updateUserStatusDto,
             );
 
@@ -154,27 +187,29 @@ export class UserController {
     }
 
     /**
-     * Update user role
+     * Restore deleted user
      */
-    @Patch(':id/role')
+    @Patch(':id/restore')
+    @UseGuards(UserJwtAuthGuard, RolesGuard)
+    @Roles(RoleName.SUPER_ADMIN)
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
-        summary: 'Update user role',
+        summary: 'Restore deleted user',
     })
-    async updateRole(
+    @ApiParam({
+        name: 'id',
+        description: 'User ID',
+    })
+    async restore(
         @Param('id') userId: string,
-
-        @Body()
-        updateUserRoleDto: UpdateUserRoleDto,
     ) {
         const user =
-            await this.updateUserRoleService.execute(
+            await this.restoreUserService.execute(
                 userId,
-                updateUserRoleDto,
             );
 
         return {
-            message: 'User role updated successfully',
+            message: 'User restored successfully',
             data: user,
         };
     }
@@ -187,9 +222,15 @@ export class UserController {
     @ApiOperation({
         summary: 'Delete user',
     })
+    @ApiParam({
+        name: 'id',
+        description: 'User ID',
+    })
     async remove(
         @Param('id') userId: string,
     ): Promise<void> {
-        await this.deleteUserService.execute(userId);
+        await this.deleteUserService.execute(
+            userId,
+        );
     }
 }

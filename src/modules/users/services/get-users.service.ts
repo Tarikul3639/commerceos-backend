@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { Prisma } from '../../../lib/prisma/client';
+import { Prisma, RoleName } from '../../../lib/prisma/client';
 
 import { PrismaService } from '../../../common/prisma/prisma.service';
 
@@ -9,13 +9,9 @@ import { UserResponseDto } from '../dto/responses/user-response.dto';
 
 @Injectable()
 export class GetUsersService {
-    constructor(
-        private readonly prisma: PrismaService,
-    ) { }
+    constructor(private readonly prisma: PrismaService) { }
 
-    async execute(
-        query: UserQueryDto,
-    ) {
+    async execute(query: UserQueryDto, requesterRole: RoleName) {
         const {
             page = 1,
             limit = 10,
@@ -27,8 +23,12 @@ export class GetUsersService {
 
         const skip = (page - 1) * limit;
 
+        const isSuperAdmin = requesterRole === RoleName.SUPER_ADMIN;
+
         const where: Prisma.UserWhereInput = {
-            deletedAt: null,
+            ...(!isSuperAdmin && {
+                deletedAt: null,
+            }),
 
             ...(status && {
                 status,
@@ -62,8 +62,17 @@ export class GetUsersService {
                 where,
                 skip,
                 take: limit,
+
                 orderBy: {
                     [sortBy]: sortOrder,
+                },
+
+                include: {
+                    role: {
+                        select: {
+                            name: true,
+                        },
+                    },
                 },
             }),
 
@@ -74,14 +83,33 @@ export class GetUsersService {
 
         const totalPages = Math.ceil(total / limit);
 
+        const data: UserResponseDto[] = users.map((user) => ({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            avatar: user.avatar,
+            publicId: user.publicId,
+
+            role: user.role.name,
+
+            status: user.status,
+            isVerified: user.isVerified,
+            lastLoginAt: user.lastLoginAt,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+        }));
+
         return {
-            data: users as UserResponseDto[],
+            data,
 
             meta: {
                 total,
                 page,
                 limit,
                 totalPages,
+                hasNextPage: page < totalPages,
+                hasPreviousPage: page > 1,
             },
         };
     }

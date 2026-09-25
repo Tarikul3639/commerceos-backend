@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { PrismaModule } from '../../common/prisma/prisma.module';
 import { AuthModule } from '../auth/auth.module';
+import { MailModule } from '../../common/mail/mail.module';
 
 // Controller
 import { UserController } from './controllers/user.controller';
@@ -12,13 +13,14 @@ import { GetUsersService } from './services/get-users.service';
 import { GetUserService } from './services/get-user.service';
 import { UpdateUserService } from './services/update-user.service';
 import { UpdateUserStatusService } from './services/update-user-status.service';
-import { UpdateUserRoleService } from './services/update-user-role.service';
 import { DeleteUserService } from './services/delete-user.service';
+import { RestoreUserService } from './services/restore-user.service';
 
 @Module({
     imports: [
         PrismaModule,
         AuthModule,
+        MailModule,
     ],
 
     controllers: [
@@ -31,8 +33,8 @@ import { DeleteUserService } from './services/delete-user.service';
         GetUserService,
         UpdateUserService,
         UpdateUserStatusService,
-        UpdateUserRoleService,
         DeleteUserService,
+        RestoreUserService,
     ],
 
     exports: [],

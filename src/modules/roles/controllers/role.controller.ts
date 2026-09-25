@@ -63,11 +63,7 @@ export class RoleController {
         summary: 'Get all roles',
     })
     async findAll() {
-        const roles = await this.getRolesService.execute();
-
-        return {
-            data: roles,
-        };
+        return await this.getRolesService.execute();
     }
 
     /**

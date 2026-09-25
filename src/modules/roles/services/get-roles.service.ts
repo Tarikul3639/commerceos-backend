@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../../../common/prisma/prisma.service';
 import { RoleResponseDto } from '../dto/responses/role-response.dto';
+import { RoleName } from '@/lib/prisma/enums';
 
 @Injectable()
 export class GetRolesService {
@@ -11,6 +12,11 @@ export class GetRolesService {
 
     async execute(): Promise<RoleResponseDto[]> {
         const roles = await this.prisma.role.findMany({
+            where: {
+                name: {
+                    not: RoleName.SUPER_ADMIN
+                }
+            },
             include: {
                 rolePermissions: true,
 

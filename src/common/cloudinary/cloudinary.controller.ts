@@ -7,7 +7,7 @@ import {
     Param,
 } from '@nestjs/common';
 
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 
 import {
     CloudinaryFolder,
@@ -25,8 +25,15 @@ export class CloudinaryController {
 
     @Get('signature/:folder')
     @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Successfully generated Cloudinary upload signature',
+        type: CloudinaryUploadSignatureDto,
+    })
     @ApiOperation({
         summary: 'Generate Cloudinary upload signature',
+        description:
+            'Generates a signed upload signature for the specified folder. The frontend uses this signature to upload files directly to Cloudinary.',
     })
     @ApiParam({
         name: 'folder',

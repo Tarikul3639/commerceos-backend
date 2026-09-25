@@ -1,4 +1,4 @@
-import { VersioningType } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
@@ -9,6 +9,13 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
 
   const configService = app.get(ConfigService);
 
@@ -36,7 +43,7 @@ async function bootstrap() {
     credentials: configService.getOrThrow<boolean>('cors.credentials'),
   });
 
-  const swaggerEnabled = configService.getOrThrow<boolean>("swagger.enabled");
+  const swaggerEnabled = configService.getOrThrow<boolean>('swagger.enabled');
 
   if (swaggerEnabled) {
     const swaggerConfig = new DocumentBuilder()

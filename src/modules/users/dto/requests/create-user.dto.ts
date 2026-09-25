@@ -5,7 +5,6 @@ import {
     IsPhoneNumber,
     IsString,
     IsUrl,
-    Matches,
     MaxLength,
     MinLength,
 } from 'class-validator';
@@ -33,7 +32,7 @@ export class CreateUserDto {
     email!: string;
 
     @IsOptional()
-    @IsPhoneNumber()
+    @IsPhoneNumber("BD")
     @ApiPropertyOptional({
         description: 'The phone number of the user',
         example: '+8801712345678',
@@ -50,22 +49,13 @@ export class CreateUserDto {
     })
     avatar?: string;
 
+    @IsOptional()
     @IsString()
-    @IsNotEmpty()
-    @MinLength(8)
-    @MaxLength(100)
-    @Matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&^#()_\-+=])[A-Za-z\d@$!%*?&^#()_\-+=]+$/,
-        {
-            message:
-                'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
-        },
-    )
-    @ApiProperty({
-        description: 'The password of the user',
-        example: 'Password123!',
+    @ApiPropertyOptional({
+        description: "The public ID of the user's avatar image in Cloudinary",
+        example: 'avatar_public_id',
     })
-    password!: string;
+    publicId?: string;
 
     @IsString()
     @IsNotEmpty()
