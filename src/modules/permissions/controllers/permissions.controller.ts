@@ -23,7 +23,10 @@ import { PermissionsGuard } from '@/common/guards/permissions.guard';
 import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
 
 import { GetPermissionsService } from '../services/get-permissions.service';
+import { GetRolesPermissionsService } from '../services/get-roles-permissions.service';
 import { UpdateRolePermissionsService } from '../services/update-role-permissions.service';
+
+import { RolePermissionsResponseDto } from '../dto/responses/role-permissions.response.dto';
 import { UpdateRolePermissionsDto } from '../dto/requests/update-role-permissions.dto';
 
 @ApiTags('Permissions')
@@ -33,6 +36,7 @@ import { UpdateRolePermissionsDto } from '../dto/requests/update-role-permission
 export class PermissionsController {
     constructor(
         private readonly getPermissionsService: GetPermissionsService,
+        private readonly getRolesPermissionsService: GetRolesPermissionsService,
         private readonly updateRolePermissionsService: UpdateRolePermissionsService,
     ) { }
 
@@ -64,6 +68,23 @@ export class PermissionsController {
         },
     ) {
         return this.getPermissionsService.getMyPermissions(req.user.role);
+    }
+
+    @Get('roles')
+    @Permissions(Permission.PERMISSION_READ)
+    @ApiOperation({
+        summary: 'Get all role permissions',
+        description:
+            'Returns all system roles and the permissions assigned to each role.',
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'All role permissions retrieved successfully.',
+        type: RolePermissionsResponseDto,
+        isArray: true,
+    })
+    async getRolesPermissions() {
+        return this.getRolesPermissionsService.execute()
     }
 
     @Get('roles/:role')
