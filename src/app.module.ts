@@ -21,9 +21,8 @@ import { CloudinaryModule } from './common/cloudinary/cloudinary.module';
 import { MailModule } from './common/mail/mail.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/user.module';
-import { EmployeeModule } from './modules/employees/employee.module';
-import { RoleModule } from './modules/roles/role.module';
 import { CustomerModule } from './modules/customers/customer.module';
+import { PermissionsModule } from './modules/permissions/permissions.module';
 
 import { CategoryModule } from './modules/catalog/categories/category.module';
 import { BrandModule } from './modules/catalog/brands/brand.module';
@@ -84,8 +83,7 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
     
     AuthModule,
     UsersModule,
-    EmployeeModule,
-    RoleModule,
+    PermissionsModule,
 
     CustomerModule,
 

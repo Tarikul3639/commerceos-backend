@@ -10,11 +10,9 @@ import { DashboardQueryDto } from "../dto/requests/dashboard-query.dto"
 
 import { DashboardOverviewResponseDto } from "../dto/responses/dashboard-overview-response.dto"
 import { SalesSummaryResponseDto } from "../dto/responses/sales-summary-response.dto"
-import { PurchaseSummaryResponseDto } from "../dto/responses/purchase-summary-response.dto"
 import { StockSummaryResponseDto } from "../dto/responses/stock-summary-response.dto"
 import { OrderSummaryResponseDto } from "../dto/responses/order-summary-response.dto"
 import { CustomerSummaryResponseDto } from "../dto/responses/customer-summary-response.dto"
-import { EmployeeSummaryResponseDto } from "../dto/responses/employee-summary-response.dto"
 import { LowStockProductItemDto } from "../dto/responses/low-stock-products-response.dto"
 import { RecentActivityItemDto } from "../dto/responses/recent-activities-response.dto"
 import { RecentOrderItemDto } from "../dto/responses/recent-orders-response.dto"
@@ -22,11 +20,9 @@ import { RecentOrdersQueryDto } from "../dto/requests/recent-orders-query.dto"
 
 import { GetDashboardOverviewService } from "../services/get-dashboard-overview.service"
 import { GetSalesSummaryService } from "../services/get-sales-summary.service"
-import { GetPurchaseSummaryService } from "../services/get-purchase-summary.service"
 import { GetStockSummaryService } from "../services/get-stock-summary.service"
 import { GetOrderSummaryService } from "../services/get-order-summary.service"
 import { GetCustomerSummaryService } from "../services/get-customer-summary.service"
-import { GetEmployeeSummaryService } from "../services/get-employee-summary.service"
 import { GetLowStockProductsService } from "../services/get-low-stock-products.service"
 import { GetRecentActivitiesService } from "../services/get-recent-activities.service"
 import { GetRecentOrdersService } from "../services/get-recent-orders.service"
@@ -38,11 +34,9 @@ export class DashboardController {
     constructor(
         private readonly getDashboardOverviewService: GetDashboardOverviewService,
         private readonly getSalesSummaryService: GetSalesSummaryService,
-        private readonly getPurchaseSummaryService: GetPurchaseSummaryService,
         private readonly getStockSummaryService: GetStockSummaryService,
         private readonly getOrderSummaryService: GetOrderSummaryService,
         private readonly getCustomerSummaryService: GetCustomerSummaryService,
-        private readonly getEmployeeSummaryService: GetEmployeeSummaryService,
         private readonly getLowStockProductsService: GetLowStockProductsService,
         private readonly getRecentActivitiesService: GetRecentActivitiesService,
         private readonly getRecentOrdersService: GetRecentOrdersService,
@@ -72,19 +66,6 @@ export class DashboardController {
     })
     getSalesSummary(@Query() query: DashboardQueryDto) {
         return this.getSalesSummaryService.execute(query)
-    }
-
-    @Get("purchase-summary")
-    @ApiOperation({
-        summary: "Get purchase summary",
-    })
-    @ApiResponse({
-        status: 200,
-        description: "Purchase summary data",
-        type: PurchaseSummaryResponseDto,
-    })
-    getPurchaseSummary(@Query() query: DashboardQueryDto) {
-        return this.getPurchaseSummaryService.execute(query)
     }
 
     @Get("stock-summary")
@@ -124,19 +105,6 @@ export class DashboardController {
     })
     getCustomerSummary(@Query() query: DashboardQueryDto) {
         return this.getCustomerSummaryService.execute(query)
-    }
-
-    @Get("employee-summary")
-    @ApiOperation({
-        summary: "Get employee summary",
-    })
-    @ApiResponse({
-        status: 200,
-        description: "Employee summary data",
-        type: EmployeeSummaryResponseDto,
-    })
-    getEmployeeSummary(@Query() query: DashboardQueryDto) {
-        return this.getEmployeeSummaryService.execute(query)
     }
 
     @Get("low-stock-products")

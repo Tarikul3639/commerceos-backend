@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PermissionName, RoleName } from '../../../../../lib/prisma/client';
+import { Permission, Role } from '../../../../../lib/prisma/client';
 
 export class CurrentUserResponseDto {
     @ApiProperty({
@@ -30,21 +30,21 @@ export class CurrentUserResponseDto {
     avatar!: string | null;
 
     @ApiProperty({
-        enum: RoleName,
-        example: RoleName.ADMIN,
+        enum: Role,
+        example: Role.ADMIN,
     })
-    role!: RoleName;
+    role!: Role;
 
     @ApiProperty({
-        enum: PermissionName,
+        enum: Permission,
         isArray: true,
         example: [
-            PermissionName.PRODUCT_READ,
-            PermissionName.PRODUCT_CREATE,
-            PermissionName.ORDER_READ,
+            Permission.PRODUCT_READ,
+            Permission.PRODUCT_CREATE,
+            Permission.ORDER_READ,
         ],
     })
-    permissions!: PermissionName[];
+    permissions!: Permission[];
 
     @ApiProperty({
         example: true,

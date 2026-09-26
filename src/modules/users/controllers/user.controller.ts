@@ -42,7 +42,7 @@ import { RolesGuard } from '../../../common/guards/roles.guard';
 import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
 
 // Prisma
-import { RoleName } from '../../../lib/prisma/enums';
+import { Role } from '../../../lib/prisma/enums';
 
 @ApiTags('Users')
 @Controller('users')
@@ -84,10 +84,10 @@ export class UserController {
      */
     @UseGuards(UserJwtAuthGuard, RolesGuard)
     @Roles(
-        RoleName.SUPER_ADMIN,
-        RoleName.ADMIN,
-        RoleName.MANAGER,
-        RoleName.EMPLOYEE,
+        Role.SUPER_ADMIN,
+        Role.ADMIN,
+        Role.MANAGER,
+        Role.EMPLOYEE,
     )
     @Get()
     @HttpCode(HttpStatus.OK)
@@ -98,7 +98,7 @@ export class UserController {
     })
     async findAll(
         @Query() query: UserQueryDto,
-        @CurrentUser('role') requesterRole: RoleName,
+        @CurrentUser('role') requesterRole: Role,
     ) {
         return this.getUsersService.execute(
             query,
@@ -158,7 +158,7 @@ export class UserController {
      */
     @Patch(':id/status')
     @UseGuards(UserJwtAuthGuard, RolesGuard)
-    @Roles(RoleName.SUPER_ADMIN)
+    @Roles(Role.SUPER_ADMIN)
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: 'Update user status',
@@ -191,7 +191,7 @@ export class UserController {
      */
     @Patch(':id/restore')
     @UseGuards(UserJwtAuthGuard, RolesGuard)
-    @Roles(RoleName.SUPER_ADMIN)
+    @Roles(Role.SUPER_ADMIN)
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: 'Restore deleted user',

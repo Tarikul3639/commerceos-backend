@@ -8,15 +8,19 @@ import { Reflector } from '@nestjs/core';
 
 import { UserJwtPayload } from '../interfaces/user-jwt-payload.interface';
 import { PERMISSIONS_KEY } from '../decorators/permissions.decorator';
-import { PermissionName } from '@/lib/prisma/enums';
+import { Permission, Role } from '@/lib/prisma/enums';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
-    constructor(private readonly reflector: Reflector) { }
+    constructor(
+        private readonly reflector: Reflector,
+        private readonly prisma: PrismaService,
+    ) { }
 
-    canActivate(context: ExecutionContext): boolean {
+    async canActivate(context: ExecutionContext): Promise<boolean> {
         const requiredPermissions = this.reflector.getAllAndOverride<
-            PermissionName[]
+            Permission[]
         >(PERMISSIONS_KEY, [context.getHandler(), context.getClass()]);
 
         // No @()PermissionsGuard → allow authenticated user
@@ -31,8 +35,25 @@ export class PermissionsGuard implements CanActivate {
             throw new ForbiddenException('User not found');
         }
 
+        if (user.role === Role.SUPER_ADMIN) {
+            return true;
+        }
+
+        const rolePermissions = await this.prisma.rolePermission.findMany({
+            where: {
+                role: user.role,
+            },
+            select: {
+                permission: true,
+            },
+        });
+
+        const allowedPermissions = new Set(
+            rolePermissions.map((item) => item.permission),
+        );
+
         const hasAllPermissions = requiredPermissions.every((permission) =>
-            user.permissions.includes(permission),
+            allowedPermissions.has(permission),
         );
 
         if (!hasAllPermissions) {

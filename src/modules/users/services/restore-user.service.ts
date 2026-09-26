@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../../common/prisma/prisma.service';
 import { UserResponseDto } from '../dto/responses/user-response.dto';
-import { RoleName, UserStatus } from '../../../lib/prisma/enums';
+import { Role, UserStatus } from '../../../lib/prisma/enums';
 
 @Injectable()
 export class RestoreUserService {
@@ -14,12 +14,18 @@ export class RestoreUserService {
             where: {
                 id: userId,
             },
-            include: {
-                role: {
-                    select: {
-                        name: true,
-                    },
-                },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                phone: true,
+                avatar: true,
+                role: true,
+                status: true,
+                isVerified: true,
+                lastLoginAt: true,
+                createdAt: true,
+                updatedAt: true,
             },
         })
 
@@ -27,7 +33,7 @@ export class RestoreUserService {
             throw new NotFoundException('User not found')
         }
 
-        if (user.role.name === RoleName.SUPER_ADMIN) {
+        if (user.role === Role.SUPER_ADMIN) {
             throw new BadRequestException(
                 'SUPER_ADMIN user cannot be restored',
             )
@@ -47,13 +53,6 @@ export class RestoreUserService {
                 status: UserStatus.ACTIVE,
                 deletedAt: null,
             },
-            include: {
-                role: {
-                    select: {
-                        name: true,
-                    },
-                },
-            },
         })
 
         return {
@@ -62,7 +61,7 @@ export class RestoreUserService {
             email: restoredUser.email,
             phone: restoredUser.phone,
             avatar: restoredUser.avatar,
-            role: restoredUser.role.name,
+            role: restoredUser.role,
             status: restoredUser.status,
             isVerified: restoredUser.isVerified,
             lastLoginAt: restoredUser.lastLoginAt,

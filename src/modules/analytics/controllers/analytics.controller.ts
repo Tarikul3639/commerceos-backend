@@ -12,11 +12,13 @@ import { RevenueChartItemDto } from "../dto/responses/revenue-chart-response.dto
 import { SalesPurchaseChartItemDto } from "../dto/responses/sales-purchase-chart-response.dto"
 import { TopProductItemDto } from "../dto/responses/top-products-response.dto"
 import { TopCustomerItemDto } from "../dto/responses/top-customers-response.dto"
+import { PurchaseSummaryResponseDto } from "../dto/responses/purchase-summary-response.dto"
 
 import { GetRevenueChartService } from "../services/get-revenue-chart.service"
 import { GetSalesPurchaseChartService } from "../services/get-sales-purchase-chart.service"
 import { GetTopProductsService } from "../services/get-top-products.service"
 import { GetTopCustomersService } from "../services/get-top-customers.service"
+import { GetPurchaseSummaryService } from "../services/get-purchase-summary.service"
 
 @ApiTags("Analytics")
 @ApiBearerAuth()
@@ -27,6 +29,7 @@ export class AnalyticsController {
         private readonly getSalesPurchaseChartService: GetSalesPurchaseChartService,
         private readonly getTopProductsService: GetTopProductsService,
         private readonly getTopCustomersService: GetTopCustomersService,
+        private readonly getPurchaseSummaryService: GetPurchaseSummaryService,
     ) { }
 
     @Get("revenue-chart")
@@ -79,5 +82,18 @@ export class AnalyticsController {
     })
     getTopCustomers(@Query() query: AnalyticsQueryDto) {
         return this.getTopCustomersService.execute(query)
+    }
+
+    @Get("purchase-summary")
+    @ApiOperation({
+        summary: "Get purchase summary",
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Purchase summary data",
+        type: PurchaseSummaryResponseDto,
+    })
+    getPurchaseSummary(@Query() query: AnalyticsQueryDto) {
+        return this.getPurchaseSummaryService.execute(query)
     }
 }

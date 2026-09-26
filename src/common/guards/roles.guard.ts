@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { RoleName } from '../../lib/prisma/client';
+import { Role } from '../../lib/prisma/client';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 import { UserJwtPayload } from '../interfaces/user-jwt-payload.interface';
 
@@ -15,7 +15,7 @@ export class RolesGuard implements CanActivate {
     constructor(private readonly reflector: Reflector) { }
 
     canActivate(context: ExecutionContext): boolean {
-        const requiredRoles = this.reflector.getAllAndOverride<RoleName[]>(
+        const requiredRoles = this.reflector.getAllAndOverride<Role[]>(
             ROLES_KEY,
             [context.getHandler(), context.getClass()],
         );

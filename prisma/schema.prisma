@@ -14,11 +14,41 @@ datasource db {
  * ============================================================
  */
 
-enum RoleName {
+enum Role {
   SUPER_ADMIN
   ADMIN
   MANAGER
   EMPLOYEE
+}
+
+enum Permission {
+  USER_CREATE
+  USER_READ
+  USER_UPDATE
+  USER_DELETE
+
+  PERMISSION_READ
+  PERMISSION_UPDATE
+
+  PRODUCT_CREATE
+  PRODUCT_READ
+  PRODUCT_UPDATE
+  PRODUCT_DELETE
+
+  ORDER_CREATE
+  ORDER_READ
+  ORDER_UPDATE
+  ORDER_DELETE
+
+  PURCHASE_CREATE
+  PURCHASE_READ
+  PURCHASE_UPDATE
+  PURCHASE_DELETE
+
+  STOCK_CREATE
+  STOCK_READ
+  STOCK_UPDATE
+  STOCK_DELETE
 }
 
 enum UserStatus {
@@ -171,44 +201,6 @@ enum CustomerStatus {
   DELETED
 }
 
-enum PermissionName {
-  // USER
-  USER_CREATE
-  USER_READ
-  USER_UPDATE
-  USER_DELETE
-
-  // ROLE
-  ROLE_CREATE
-  ROLE_READ
-  ROLE_UPDATE
-  ROLE_DELETE
-
-  // PRODUCT
-  PRODUCT_CREATE
-  PRODUCT_READ
-  PRODUCT_UPDATE
-  PRODUCT_DELETE
-
-  // ORDER
-  ORDER_CREATE
-  ORDER_READ
-  ORDER_UPDATE
-  ORDER_DELETE
-
-  // PURCHASE
-  PURCHASE_CREATE
-  PURCHASE_READ
-  PURCHASE_UPDATE
-  PURCHASE_DELETE
-
-  // STOCK
-  STOCK_CREATE
-  STOCK_READ
-  STOCK_UPDATE
-  STOCK_DELETE
-}
-
 enum BannerType {
   HERO
   PROMOTION
@@ -250,8 +242,7 @@ model User {
   isVerified  Boolean   @default(false)
   lastLoginAt DateTime?
 
-  roleId String
-  role   Role   @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  role Role @default(EMPLOYEE)
 
   // Stores refresh token records for this user
   refreshTokens           UserRefreshToken[]
@@ -260,8 +251,7 @@ model User {
   // Stores email verification token records for this user
   emailVerificationTokens UserEmailVerificationToken[]
 
-  orders   Order[]
-  employee Employee?
+  orders Order[]
 
   discounts      Discount[]
   stockMovements StockMovement[]
@@ -287,37 +277,21 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([roleId])
   @@index([status])
   @@index([deletedAt])
   @@map("users")
 }
 
-model Role {
-  id          String   @id @default(cuid())
-  name        RoleName @unique
-  description String?
-
-  users           User[]
-  rolePermissions RolePermission[]
+model RolePermission {
+  id         String     @id @default(cuid())
+  role       Role
+  permission Permission
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("roles")
-}
-
-model RolePermission {
-  // The role to which this permission is assigned
-  roleId     String
-  role       Role           @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  // Fixed permission enum
-  permission PermissionName
-
-  createdAt DateTime @default(now())
-
-  // A role cannot have the same permission twice
-  @@id([roleId, permission])
+  @@unique([role, permission])
+  @@index([role])
   @@index([permission])
   @@map("role_permissions")
 }
@@ -382,22 +356,6 @@ model UserEmailVerificationToken {
   @@index([userId])
   @@index([expiresAt])
   @@map("user_email_verification_tokens")
-}
-
-model Employee {
-  id String @id @default(cuid())
-
-  designation String
-  salary      Decimal?
-  joiningDate DateTime
-
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("employees")
 }
 
 /**
@@ -806,11 +764,11 @@ model Supplier {
 model Purchase {
   id String @id @default(cuid())
 
-  invoiceNo String @unique
-  subtotal Decimal
-  discount Decimal @default(0)
-  tax Decimal @default(0)
-  total Decimal
+  invoiceNo String  @unique
+  subtotal  Decimal
+  discount  Decimal @default(0)
+  tax       Decimal @default(0)
+  total     Decimal
 
   status PurchaseStatus @default(PENDING)
 
@@ -1124,14 +1082,14 @@ model OrderItem {
   // The price of the variant at the time the order was placed
   unitPrice Decimal
   // The total price for this order item (unitPrice * quantity)
-  subtotal Decimal
+  subtotal  Decimal
 
   orderId String
-  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   variantId String
   // Product variant included in this order
-  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
 
   returnItems OrderReturnItem[]
 

@@ -2,18 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@/lib/prisma/client';
 
 import { PrismaService } from '../../../common/prisma/prisma.service';
-import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto';
+import { AnalyticsQueryDto } from '../dto/requests/analytics-query.dto';
 import { PurchaseSummaryResponseDto } from '../dto/responses/purchase-summary-response.dto';
-import { getDashboardDateRange } from '../utils/dashboard-date-range.util';
-import { getCreatedAtFilter } from '../utils/dashboard-where.util';
+import { getAnalyticsDateRange } from '../utils/analytics-date-range.util';
+import { getCreatedAtFilter } from '../utils/analytics-where.util';
 
 @Injectable()
 export class GetPurchaseSummaryService {
     constructor(private readonly prisma: PrismaService) { }
 
-    async execute(query: DashboardQueryDto): Promise<PurchaseSummaryResponseDto> {
+    async execute(query: AnalyticsQueryDto): Promise<PurchaseSummaryResponseDto> {
         // Get the selected dashboard date range
-        const { startDate, endDate } = getDashboardDateRange(query);
+        const { startDate, endDate } = getAnalyticsDateRange(query);
 
         // Build Prisma where condition for the selected period
         const where: Prisma.PurchaseWhereInput = {

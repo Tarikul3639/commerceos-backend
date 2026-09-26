@@ -41,18 +41,7 @@ export class LoginService {
                 password: true,
                 status: true,
                 isVerified: true,
-
-                role: {
-                    select: {
-                        name: true,
-
-                        rolePermissions: {
-                            select: {
-                                permission: true,
-                            },
-                        },
-                    },
-                },
+                role: true,
             },
         });
 
@@ -112,21 +101,13 @@ export class LoginService {
         id: string;
         name: string;
         email: string;
-        role: {
-            name: UserJwtPayload['role'];
-            rolePermissions: Array<{
-                permission: UserJwtPayload['permissions'][number];
-            }>;
-        };
+        role: UserJwtPayload['role'];
     }): UserJwtPayload {
         return {
             id: user.id,
             name: user.name,
             email: user.email,
-            role: user.role.name,
-            permissions: user.role.rolePermissions.map(
-                ({ permission }) => permission,
-            ),
+            role: user.role,
         };
     }
 }

@@ -141,7 +141,6 @@ export class RefreshTokenService {
                 email: payload.email,
                 name: payload.name,
                 role: payload.role,
-                permissions: payload.permissions,
             });
 
         await this.save(

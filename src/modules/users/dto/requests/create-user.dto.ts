@@ -1,4 +1,5 @@
 import {
+    IsEnum,
     IsEmail,
     IsNotEmpty,
     IsOptional,
@@ -10,7 +11,13 @@ import {
 } from 'class-validator';
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Role } from '@/lib/prisma/enums';
 
+export const UserRole = [
+    Role.ADMIN,
+    Role.MANAGER,
+    Role.EMPLOYEE,
+] as const;
 export class CreateUserDto {
     @IsString()
     @IsNotEmpty()
@@ -57,11 +64,12 @@ export class CreateUserDto {
     })
     publicId?: string;
 
-    @IsString()
+    @IsEnum(UserRole)
     @IsNotEmpty()
     @ApiProperty({
-        description: 'The role ID assigned to the user',
-        example: 'cmf123456789',
+        description: 'The fixed role assigned to the user',
+        enum: UserRole,
+        example: UserRole[0],
     })
-    roleId!: string;
+    role!: Role;
 }

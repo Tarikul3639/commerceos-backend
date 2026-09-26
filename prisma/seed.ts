@@ -6,8 +6,9 @@ import bcrypt from "bcrypt"
 import { PrismaPg } from "@prisma/adapter-pg"
 
 import {
+    Permission,
     PrismaClient,
-    RoleName,
+    Role,
 } from "../src/lib/prisma/client"
 
 const connectionString = process.env.DATABASE_URL
@@ -28,70 +29,22 @@ async function main() {
     console.log("🌱 Seeding database...")
 
     /**
-     * Seed User Configuration
+     * Seed fixed role permission assignments.
      */
     const email = "tarikulislam3639@gmail.com"
     const password = "Admin@123"
-    const role = RoleName.SUPER_ADMIN
+    const role = Role.SUPER_ADMIN
 
-    /**
-     * Roles
-     */
-    const adminRole = await prisma.role.upsert({
-        where: {
-            name: RoleName.ADMIN,
-        },
-        update: {},
-        create: {
-            name: RoleName.ADMIN,
-            description: "System Administrator",
-        },
+    const permissions: Permission[] = Object.values(Permission) as Permission[]
+
+    await prisma.rolePermission.createMany({
+        data: permissions.map((permission) => ({
+            role: Role.SUPER_ADMIN,
+            permission,
+        })),
+        skipDuplicates: true,
     })
 
-    await prisma.role.upsert({
-        where: {
-            name: RoleName.MANAGER,
-        },
-        update: {},
-        create: {
-            name: RoleName.MANAGER,
-            description: "Store Manager",
-        },
-    })
-
-    await prisma.role.upsert({
-        where: {
-            name: RoleName.EMPLOYEE,
-        },
-        update: {},
-        create: {
-            name: RoleName.EMPLOYEE,
-            description: "Store Employee",
-        },
-    })
-
-    /**
-     * SUPER_ADMIN Role
-     *
-     * Make sure SUPER_ADMIN also exists
-     * because the user role comes from `role` constant.
-     */
-    const superAdminRole = await prisma.role.upsert({
-        where: {
-            name: RoleName.SUPER_ADMIN,
-        },
-        update: {},
-        create: {
-            name: RoleName.SUPER_ADMIN,
-            description: "Super Administrator",
-        },
-    })
-
-    console.log("✅ Roles created")
-
-    /**
-     * Admin User
-     */
     const hashedPassword = await bcrypt.hash(password, 10)
 
     await prisma.user.upsert({
@@ -100,7 +53,7 @@ async function main() {
         },
 
         update: {
-            roleId: superAdminRole.id,
+            role: Role.SUPER_ADMIN,
         },
 
         create: {
@@ -108,7 +61,7 @@ async function main() {
             email,
             password: hashedPassword,
             isVerified: true,
-            roleId: superAdminRole.id,
+            role: Role.SUPER_ADMIN,
         },
     })
 

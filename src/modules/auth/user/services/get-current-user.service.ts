@@ -20,24 +20,22 @@ export class GetCurrentUserService {
                 avatar: true,
                 isVerified: true,
                 lastLoginAt: true,
-
-                role: {
-                    select: {
-                        name: true,
-
-                        rolePermissions: {
-                            select: {
-                                permission: true,
-                            },
-                        },
-                    },
-                },
+                role: true,
             },
         });
 
         if (!user) {
             throw new UnauthorizedException('User not found.');
         }
+
+        const rolePermissions = await this.prisma.rolePermission.findMany({
+            where: {
+                role: user.role,
+            },
+            select: {
+                permission: true,
+            },
+        });
 
         return {
             id: user.id,
@@ -47,10 +45,8 @@ export class GetCurrentUserService {
             avatar: user.avatar,
             isVerified: user.isVerified,
             lastLoginAt: user.lastLoginAt,
-            role: user.role.name,
-            permissions: user.role.rolePermissions.map(
-                (rolePermission) => rolePermission.permission,
-            ),
+            role: user.role,
+            permissions: rolePermissions.map((row) => row.permission),
         };
     }
 }

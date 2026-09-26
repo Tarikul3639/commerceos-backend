@@ -19,7 +19,7 @@ export class CreateUserService {
     ) { }
 
     async execute(createUserDto: CreateUserDto): Promise<UserResponseDto> {
-        const { name, email, phone, avatar, roleId } = createUserDto;
+        const { name, email, phone, avatar, role } = createUserDto;
 
         const existingUser = await this.prisma.user.findUnique({
             where: {
@@ -59,17 +59,9 @@ export class CreateUserService {
                 name,
                 email,
                 password: passwordHash,
-                roleId,
+                role,
                 ...(phone && { phone }),
                 ...(avatar && { avatar }),
-            },
-
-            include: {
-                role: {
-                    select: {
-                        name: true,
-                    },
-                },
             },
         });
 
@@ -89,7 +81,7 @@ export class CreateUserService {
             email: user.email,
             phone: user.phone,
             avatar: user.avatar,
-            role: user.role.name,
+            role: user.role,
             status: user.status,
             isVerified: user.isVerified,
             lastLoginAt: user.lastLoginAt,

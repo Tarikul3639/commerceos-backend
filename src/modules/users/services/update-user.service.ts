@@ -34,13 +34,6 @@ export class UpdateUserService {
                 id: userId,
                 deletedAt: null,
             },
-            include: {
-                role: {
-                    select: {
-                        name: true,
-                    },
-                },
-            },
         });
 
         if (!user) {
@@ -50,11 +43,11 @@ export class UpdateUserService {
         /**
          * Prevent updates to SUPER_ADMIN account.
          */
-        if (user.role.name === 'SUPER_ADMIN') {
+        if (user.role === 'SUPER_ADMIN') {
             throw new ConflictException('SUPER_ADMIN user cannot be updated');
         }
 
-        const { name, email, phone, avatar, publicId, roleId } = updateUserDto;
+        const { name, email, phone, avatar, publicId, role } = updateUserDto;
 
         // ------------------------------------------------------------------------
         // 2. Uniqueness & Related Entity Validation
@@ -93,18 +86,6 @@ export class UpdateUserService {
         /**
          * Check if the target role exists.
          */
-        if (roleId) {
-            const role = await this.prisma.role.findUnique({
-                where: {
-                    id: roleId,
-                },
-            });
-
-            if (!role) {
-                throw new NotFoundException('Role not found');
-            }
-        }
-
         // ------------------------------------------------------------------------
         // 3. Avatar Handling
         // ------------------------------------------------------------------------
@@ -137,14 +118,7 @@ export class UpdateUserService {
                 ...(phone !== undefined && { phone }),
                 ...(avatar !== undefined && { avatar }),
                 ...(publicId !== undefined && { publicId }),
-                ...(roleId !== undefined && { roleId }),
-            },
-            include: {
-                role: {
-                    select: {
-                        name: true,
-                    },
-                },
+                ...(role !== undefined && { role }),
             },
         });
 
@@ -159,7 +133,7 @@ export class UpdateUserService {
             phone: updatedUser.phone,
             avatar: updatedUser.avatar,
             publicId: updatedUser.publicId,
-            role: updatedUser.role.name,
+            role: updatedUser.role,
             status: updatedUser.status,
             isVerified: updatedUser.isVerified,
             lastLoginAt: updatedUser.lastLoginAt,

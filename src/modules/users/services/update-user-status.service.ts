@@ -22,12 +22,18 @@ export class UpdateUserStatusService {
             where: {
                 id: userId,
             },
-            include: {
-                role: {
-                    select: {
-                        name: true,
-                    },
-                },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                phone: true,
+                avatar: true,
+                role: true,
+                status: true,
+                isVerified: true,
+                lastLoginAt: true,
+                createdAt: true,
+                updatedAt: true,
             },
         });
 
@@ -41,7 +47,7 @@ export class UpdateUserStatusService {
         }
 
         // Cannot change SUPER_ADMIN status
-        if (user.role.name === 'SUPER_ADMIN') {
+        if (user.role === 'SUPER_ADMIN') {
             throw new BadRequestException('SUPER_ADMIN status cannot be changed');
         }
 
@@ -53,14 +59,6 @@ export class UpdateUserStatusService {
             data: {
                 status: updateUserStatusDto.status,
             },
-
-            include: {
-                role: {
-                    select: {
-                        name: true,
-                    },
-                },
-            },
         });
 
         return {
@@ -69,7 +67,7 @@ export class UpdateUserStatusService {
             email: updatedUser.email,
             phone: updatedUser.phone,
             avatar: updatedUser.avatar,
-            role: updatedUser.role.name,
+            role: updatedUser.role,
             status: updatedUser.status,
             isVerified: updatedUser.isVerified,
             lastLoginAt: updatedUser.lastLoginAt,

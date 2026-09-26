@@ -18,12 +18,7 @@ export class DeleteUserService {
 
             select: {
                 status: true,
-
-                role: {
-                    select: {
-                        name: true,
-                    },
-                },
+                role: true,
 
                 _count: {
                     select: {
@@ -57,7 +52,7 @@ export class DeleteUserService {
         }
 
         // SUPER_ADMIN cannot be deleted
-        if (user.role.name === 'SUPER_ADMIN') {
+        if (user.role === 'SUPER_ADMIN') {
             throw new ForbiddenException('SUPER_ADMIN user cannot be deleted');
         }
 

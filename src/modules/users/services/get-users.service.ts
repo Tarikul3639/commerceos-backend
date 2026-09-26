@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { Prisma, RoleName } from '../../../lib/prisma/client';
+import { Prisma, Role } from '../../../lib/prisma/client';
 
 import { PrismaService } from '../../../common/prisma/prisma.service';
 
@@ -11,7 +11,7 @@ import { UserResponseDto } from '../dto/responses/user-response.dto';
 export class GetUsersService {
     constructor(private readonly prisma: PrismaService) { }
 
-    async execute(query: UserQueryDto, requesterRole: RoleName) {
+    async execute(query: UserQueryDto, requesterRole: Role) {
         const {
             page = 1,
             limit = 10,
@@ -23,7 +23,7 @@ export class GetUsersService {
 
         const skip = (page - 1) * limit;
 
-        const isSuperAdmin = requesterRole === RoleName.SUPER_ADMIN;
+        const isSuperAdmin = requesterRole === Role.SUPER_ADMIN;
 
         const where: Prisma.UserWhereInput = {
             ...(!isSuperAdmin && {
@@ -66,14 +66,6 @@ export class GetUsersService {
                 orderBy: {
                     [sortBy]: sortOrder,
                 },
-
-                include: {
-                    role: {
-                        select: {
-                            name: true,
-                        },
-                    },
-                },
             }),
 
             this.prisma.user.count({
@@ -91,7 +83,7 @@ export class GetUsersService {
             avatar: user.avatar,
             publicId: user.publicId,
 
-            role: user.role.name,
+            role: user.role,
 
             status: user.status,
             isVerified: user.isVerified,
