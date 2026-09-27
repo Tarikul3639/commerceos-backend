@@ -1,13 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Permission, Role } from '@/lib/prisma/enums'
 
+export const UserRole = [
+    Role.ADMIN,
+    Role.MANAGER,
+    Role.EMPLOYEE,
+] as const
+
+export type UserRole = (typeof UserRole)[number]
+
 export class RolePermissionsResponseDto {
     @ApiProperty({
         description: 'Role whose permissions are being returned.',
-        enum: Role,
-        example: Role.EMPLOYEE,
+        enum: UserRole,
+        example: UserRole[0],
     })
-    role!: Role
+    role!: UserRole
 
     @ApiProperty({
         description: 'Permissions assigned to the role.',

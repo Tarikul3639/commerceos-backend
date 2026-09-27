@@ -1,16 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
-import { Permission, Role } from '@/lib/prisma/enums';
+import { Permission } from '@/lib/prisma/enums';
 import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { RolePermissionsResponseDto } from '../dto/responses/role-permissions.response.dto';
+import {
+    RolePermissionsResponseDto,
+    UserRole,
+} from '../dto/responses/role-permissions.response.dto';
 
 @Injectable()
 export class GetRolesPermissionsService {
     constructor(private readonly prisma: PrismaService) { }
 
     async execute(): Promise<RolePermissionsResponseDto[]> {
-        const roles = Object.values(Role);
+        const roles = Object.values(UserRole);
 
         return Promise.all(
             roles.map(async (role) => {
@@ -24,7 +27,7 @@ export class GetRolesPermissionsService {
         );
     }
 
-    private async getRolePermissions(role: Role): Promise<Permission[]> {
+    private async getRolePermissions(role: UserRole): Promise<Permission[]> {
         const rolePermissions = await this.prisma.rolePermission.findMany({
             where: {
                 role,
