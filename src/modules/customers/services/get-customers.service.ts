@@ -3,17 +3,15 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../common/prisma/prisma.service';
 
 import { CustomerQueryDto } from '../dto/requests/customer-query.dto';
-import { CustomerResponseDto } from '../dto/responses/customer-response.dto';
+import { CustomersPaginatedResponseDto } from '../dto/responses/customer-response.dto';
 
 @Injectable()
 export class GetCustomersService {
-    constructor(
-        private readonly prisma: PrismaService,
-    ) { }
+    constructor(private readonly prisma: PrismaService) { }
 
     async execute(
         query: CustomerQueryDto,
-    ) {
+    ): Promise<CustomersPaginatedResponseDto> {
         const {
             page = 1,
             limit = 10,
@@ -40,14 +38,12 @@ export class GetCustomersService {
                             mode: 'insensitive' as const,
                         },
                     },
-
                     {
                         email: {
                             contains: search,
                             mode: 'insensitive' as const,
                         },
                     },
-
                     {
                         phone: {
                             contains: search,
@@ -58,44 +54,48 @@ export class GetCustomersService {
             }),
         };
 
-        const [customers, total] =
-            await this.prisma.$transaction([
-                this.prisma.customer.findMany({
-                    where,
-                    skip,
-                    take: limit,
+        const [customers, total] = await this.prisma.$transaction([
+            this.prisma.customer.findMany({
+                where,
+                skip,
+                take: limit,
 
-                    orderBy: {
-                        [sortBy]: sortOrder,
-                    },
+                orderBy: {
+                    [sortBy]: sortOrder,
+                },
 
-                    select: {
-                        id: true,
-                        name: true,
-                        email: true,
-                        phone: true,
-                        address: true,
-                        status: true,
-                        isVerified: true,
-                        lastLoginAt: true,
-                        createdAt: true,
-                        updatedAt: true,
-                    },
-                }),
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    phone: true,
+                    avatarUrl: true,
+                    publicId: true,
+                    address: true,
+                    status: true,
+                    isVerified: true,
+                    lastLoginAt: true,
+                    createdAt: true,
+                    updatedAt: true,
+                },
+            }),
 
-                this.prisma.customer.count({
-                    where,
-                }),
-            ]);
+            this.prisma.customer.count({
+                where,
+            }),
+        ]);
+
+        const totalPages = Math.ceil(total / limit);
 
         return {
-            data: customers as CustomerResponseDto[],
-
+            data: customers,
             meta: {
                 total,
                 page,
                 limit,
-                totalPages: Math.ceil(total / limit),
+                totalPages,
+                hasNextPage: page < totalPages,
+                hasPreviousPage: page > 1,
             },
         };
     }

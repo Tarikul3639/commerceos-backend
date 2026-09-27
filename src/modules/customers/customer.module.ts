@@ -9,6 +9,7 @@ import { GetCustomersService } from './services/get-customers.service';
 import { GetCustomerService } from './services/get-customer.service';
 import { UpdateCustomerService } from './services/update-customer.service';
 import { DeleteCustomerService } from './services/delete-customer.service';
+import { RestoreCustomerService } from './services/restore-customer.service';
 
 @Module({
     controllers: [
@@ -21,6 +22,7 @@ import { DeleteCustomerService } from './services/delete-customer.service';
         GetCustomerService,
         UpdateCustomerService,
         DeleteCustomerService,
+        RestoreCustomerService,
     ],
 
     exports: [
@@ -29,6 +31,7 @@ import { DeleteCustomerService } from './services/delete-customer.service';
         GetCustomerService,
         UpdateCustomerService,
         DeleteCustomerService,
+        RestoreCustomerService,
     ],
 })
 export class CustomerModule {}

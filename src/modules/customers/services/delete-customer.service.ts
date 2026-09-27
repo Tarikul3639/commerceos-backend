@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { PrismaService } from '../../../common/prisma/prisma.service';
+import { CloudinaryService } from '../../../common/cloudinary/cloudinary.service';
 
 @Injectable()
 export class DeleteCustomerService {
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly cloudinaryService: CloudinaryService,
+    ) { }
 
     async execute(customerId: string): Promise<void> {
         const customer = await this.prisma.customer.findUnique({
@@ -13,6 +17,7 @@ export class DeleteCustomerService {
             },
 
             select: {
+                publicId: true,
                 _count: {
                     select: {
                         orders: true,
@@ -42,8 +47,12 @@ export class DeleteCustomerService {
         }
 
         // No orders → Hard delete
-        // Cart will be deleted automatically because of onDelete: Cascade
+        // Delete avatar from Cloudinary before deleting the customer.
+        if (customer.publicId) {
+            await this.cloudinaryService.delete(customer.publicId, 'image');
+        }
 
+        // Cart will be deleted automatically because of onDelete: Cascade
         await this.prisma.customer.delete({
             where: {
                 id: customerId,

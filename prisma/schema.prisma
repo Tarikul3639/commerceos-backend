@@ -905,6 +905,11 @@ model Customer {
   password String
   address  String?
 
+  // Optional avatar image for the customer
+  avatarUrl String?
+  // Cloudinary public ID used to delete the image
+  publicId  String? @unique
+
   // Controls the current status of the customer account
   status CustomerStatus @default(ACTIVE)
 

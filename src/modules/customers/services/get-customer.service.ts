@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../../common/prisma/prisma.service';
 
 import { CustomerResponseDto } from '../dto/responses/customer-response.dto';
-
 @Injectable()
 export class GetCustomerService {
     constructor(private readonly prisma: PrismaService) { }
@@ -19,6 +18,8 @@ export class GetCustomerService {
                 name: true,
                 email: true,
                 phone: true,
+                avatarUrl: true,
+                publicId: true,
                 address: true,
                 status: true,
                 isVerified: true,

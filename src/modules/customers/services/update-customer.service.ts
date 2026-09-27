@@ -11,43 +11,51 @@ import { CustomerResponseDto } from '../dto/responses/customer-response.dto';
 
 @Injectable()
 export class UpdateCustomerService {
-    constructor(
-        private readonly prisma: PrismaService,
-    ) { }
+    constructor(private readonly prisma: PrismaService) { }
 
     async execute(
         customerId: string,
         updateCustomerDto: UpdateCustomerDto,
     ): Promise<CustomerResponseDto> {
-        const customer =
-            await this.prisma.customer.findFirst({
-                where: {
-                    id: customerId,
-                    deletedAt: null,
-                },
+        const customer = await this.prisma.customer.findFirst({
+            where: {
+                id: customerId,
+                deletedAt: null,
+            },
 
-                select: {
-                    id: true,
-                    email: true,
-                    phone: true,
-                },
-            });
+            select: {
+                id: true,
+                email: true,
+                phone: true,
+                isVerified: true,
+            },
+        });
 
         if (!customer) {
-            throw new NotFoundException(
-                'Customer not found',
-            );
+            throw new NotFoundException('Customer not found');
         }
 
         const {
             name,
             email,
             phone,
+            avatarUrl,
+            publicId,
             address,
         } = updateCustomerDto;
 
-        // Check email uniqueness
+        // Verified customer email cannot be changed.
+        if (
+            email !== undefined &&
+            email !== customer.email &&
+            customer.isVerified
+        ) {
+            throw new ConflictException(
+                'Cannot update email for verified customers',
+            );
+        }
 
+        // Check email uniqueness.
         if (
             email !== undefined &&
             email !== customer.email
@@ -73,7 +81,7 @@ export class UpdateCustomerService {
             }
         }
 
-        // Check phone uniqueness
+        // Check phone uniqueness.
         if (
             phone !== undefined &&
             phone !== customer.phone
@@ -117,6 +125,14 @@ export class UpdateCustomerService {
                     phone,
                 }),
 
+                ...(avatarUrl !== undefined && {
+                    avatarUrl,
+                }),
+
+                ...(publicId !== undefined && {
+                    publicId,
+                }),
+
                 ...(address !== undefined && {
                     address,
                 }),
@@ -127,6 +143,8 @@ export class UpdateCustomerService {
                 name: true,
                 email: true,
                 phone: true,
+                avatarUrl: true,
+                publicId: true,
                 address: true,
                 status: true,
                 isVerified: true,

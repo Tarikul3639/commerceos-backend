@@ -1,11 +1,8 @@
-import {
-    ConflictException,
-    Injectable,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { PrismaService } from '../../../common/prisma/prisma.service';
-import { hashPassword } from '../../../common/utils/password.util';
+import { generateRandomHashPassword } from '../../../common/utils/password.util';
 import { CreateCustomerDto } from '../dto/requests/create-customer.dto';
 
 @Injectable()
@@ -16,14 +13,11 @@ export class CreateCustomerService {
     ) { }
 
     async execute(createCustomerDto: CreateCustomerDto) {
-        const { name, email, phone, password, address } = createCustomerDto;
+        const { name, email, phone, avatarUrl, publicId, address } = createCustomerDto;
 
         const existingCustomer = await this.prisma.customer.findFirst({
             where: {
-                OR: [
-                    { email },
-                    ...(phone !== undefined ? [{ phone }] : []),
-                ],
+                OR: [{ email }, ...(phone !== undefined ? [{ phone }] : [])],
             },
             select: {
                 id: true,
@@ -42,8 +36,8 @@ export class CreateCustomerService {
             }
         }
 
-        const hashedPassword = await hashPassword(
-            password,
+        const hashedPassword = await generateRandomHashPassword(
+            12,
             this.configService.getOrThrow<number>('bcrypt.saltRounds'),
         );
 
@@ -54,12 +48,16 @@ export class CreateCustomerService {
                 ...(phone !== undefined && { phone }),
                 password: hashedPassword,
                 ...(address !== undefined && { address }),
+                ...(avatarUrl !== undefined && { avatarUrl }),
+                ...(publicId !== undefined && { publicId }),
             },
             select: {
                 id: true,
                 name: true,
                 email: true,
                 phone: true,
+                avatarUrl: true,
+                publicId: true,
                 address: true,
                 status: true,
                 isVerified: true,

@@ -11,25 +11,22 @@ import {
     Query,
 } from '@nestjs/common';
 
-import {
-    ApiOperation,
-    ApiParam,
-    ApiTags,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 // DTOs
-
 import { CreateCustomerDto } from '../dto/requests/create-customer.dto';
 import { UpdateCustomerDto } from '../dto/requests/update-customer.dto';
 import { CustomerQueryDto } from '../dto/requests/customer-query.dto';
 
-// Services
+import { CustomerResponseDto } from '../dto/responses/customer-response.dto';
 
+// Services
 import { CreateCustomerService } from '../services/create-customer.service';
 import { GetCustomersService } from '../services/get-customers.service';
 import { GetCustomerService } from '../services/get-customer.service';
 import { UpdateCustomerService } from '../services/update-customer.service';
 import { DeleteCustomerService } from '../services/delete-customer.service';
+import { RestoreCustomerService } from '../services/restore-customer.service';
 
 @ApiTags('Customers')
 @Controller('customers')
@@ -40,7 +37,8 @@ export class CustomerController {
         private readonly getCustomerService: GetCustomerService,
         private readonly updateCustomerService: UpdateCustomerService,
         private readonly deleteCustomerService: DeleteCustomerService,
-    ) {}
+        private readonly restoreCustomerService: RestoreCustomerService,
+    ) { }
 
     /**
      * Create customer
@@ -50,13 +48,9 @@ export class CustomerController {
     @ApiOperation({
         summary: 'Create a new customer',
     })
-    async create(
-        @Body() createCustomerDto: CreateCustomerDto,
-    ) {
+    async create(@Body() createCustomerDto: CreateCustomerDto) {
         const customer =
-            await this.createCustomerService.execute(
-                createCustomerDto,
-            );
+            await this.createCustomerService.execute(createCustomerDto);
 
         return {
             message: 'Customer created successfully',
@@ -69,12 +63,12 @@ export class CustomerController {
      */
     @Get()
     @HttpCode(HttpStatus.OK)
-    @ApiOperation({
-        summary: 'Get all customers',
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'List of customers',
+        type: [CustomerResponseDto],
     })
-    async findAll(
-        @Query() query: CustomerQueryDto,
-    ) {
+    async findAll(@Query() query: CustomerQueryDto) {
         return this.getCustomersService.execute(query);
     }
 
@@ -83,6 +77,11 @@ export class CustomerController {
      */
     @Get(':id')
     @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Customer details',
+        type: CustomerResponseDto,
+    })
     @ApiOperation({
         summary: 'Get customer by ID',
     })
@@ -90,13 +89,8 @@ export class CustomerController {
         name: 'id',
         description: 'Customer ID',
     })
-    async findOne(
-        @Param('id') customerId: string,
-    ) {
-        const customer =
-            await this.getCustomerService.execute(
-                customerId,
-            );
+    async findOne(@Param('id') customerId: string) {
+        const customer = await this.getCustomerService.execute(customerId);
 
         return {
             data: customer,
@@ -108,6 +102,11 @@ export class CustomerController {
      */
     @Patch(':id')
     @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Updated customer details',
+        type: CustomerResponseDto,
+    })
     @ApiOperation({
         summary: 'Update customer',
     })
@@ -117,19 +116,34 @@ export class CustomerController {
     })
     async update(
         @Param('id') customerId: string,
-
         @Body()
         updateCustomerDto: UpdateCustomerDto,
     ) {
-        const customer =
-            await this.updateCustomerService.execute(
-                customerId,
-                updateCustomerDto,
-            );
+        return this.updateCustomerService.execute(customerId, updateCustomerDto);
+    }
+
+    /**
+     * Restore customer
+     */
+    @Patch(':id/restore')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({
+        summary: 'Restore deleted customer',
+    })
+    @ApiParam({
+        name: 'id',
+        description: 'Customer ID',
+    })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Customer restored successfully',
+        type: CustomerResponseDto,
+    })
+    async restore(@Param('id') customerId: string) {
+        await this.restoreCustomerService.execute(customerId);
 
         return {
-            message: 'Customer updated successfully',
-            data: customer,
+            message: 'Customer restored successfully',
         };
     }
 
@@ -145,11 +159,7 @@ export class CustomerController {
         name: 'id',
         description: 'Customer ID',
     })
-    async remove(
-        @Param('id') customerId: string,
-    ): Promise<void> {
-        await this.deleteCustomerService.execute(
-            customerId,
-        );
+    async remove(@Param('id') customerId: string): Promise<void> {
+        await this.deleteCustomerService.execute(customerId);
     }
 }

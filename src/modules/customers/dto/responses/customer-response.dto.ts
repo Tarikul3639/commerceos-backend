@@ -1,3 +1,4 @@
+import { PaginationMetaDto } from "../../../../common/dto/responses/pagination-meta.dto"
 import { CustomerStatus } from '../../../../lib/prisma/client';
 
 import {
@@ -26,6 +27,18 @@ export class CustomerResponseDto {
         nullable: true,
     })
     phone!: string | null;
+
+    @ApiPropertyOptional({
+        example: 'https://example.com/avatar.jpg',
+        nullable: true,
+    })
+    avatarUrl!: string | null;
+
+    @ApiPropertyOptional({
+        example: 'cus_1234567890',
+        nullable: true,
+    })
+    publicId!: string | null;
 
     @ApiPropertyOptional({
         example: 'Dhaka, Bangladesh',
@@ -59,4 +72,17 @@ export class CustomerResponseDto {
         example: '2026-09-11T10:30:00.000Z',
     })
     updatedAt!: Date;
+}
+
+
+export class CustomersPaginatedResponseDto {
+    @ApiProperty({
+        type: [CustomerResponseDto],
+    })
+    data!: CustomerResponseDto[];
+
+    @ApiProperty({
+        type: () => PaginationMetaDto,
+    })
+    meta!: PaginationMetaDto;
 }

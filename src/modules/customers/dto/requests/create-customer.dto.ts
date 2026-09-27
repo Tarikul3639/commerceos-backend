@@ -4,6 +4,7 @@ import {
     IsOptional,
     IsPhoneNumber,
     IsString,
+    IsUrl,
     MaxLength,
     MinLength,
 } from 'class-validator';
@@ -34,22 +35,29 @@ export class CreateCustomerDto {
     email!: string;
 
     @IsOptional()
-    @IsPhoneNumber()
+    @IsPhoneNumber("BD")
     @ApiPropertyOptional({
         description: 'The phone number of the customer',
         example: '+8801712345678',
     })
     phone?: string;
 
-    @IsString()
-    @IsNotEmpty()
-    @MinLength(8)
-    @MaxLength(100)
-    @ApiProperty({
-        description: 'The password of the customer',
-        example: 'Password123!',
+    @IsOptional()
+    @IsUrl()
+    @ApiPropertyOptional({
+        description: 'The avatar URL of the customer',
+        example: 'https://example.com/avatar.jpg',
     })
-    password!: string;
+    avatarUrl?: string;
+
+    @IsOptional()
+    @IsString()
+    @MaxLength(255)
+    @ApiPropertyOptional({
+        description: 'The public ID of the customer avatar',
+        example: 'cus_1234567890',
+    })
+    publicId?: string;
 
     @IsOptional()
     @IsString()
