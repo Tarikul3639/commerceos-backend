@@ -371,10 +371,6 @@ model Category {
   slug        String  @unique
   description String?
 
-  image    String?
-  // Cloudinary public ID used to delete the image
-  publicId String? @unique
-
   // Controls whether the category can currently be used
   isActive Boolean @default(true)
 

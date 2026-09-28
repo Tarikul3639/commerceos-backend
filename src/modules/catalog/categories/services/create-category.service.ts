@@ -10,7 +10,7 @@ export class CreateCategoryService {
     async execute(
         createCategoryDto: CreateCategoryDto,
     ): Promise<CategoryResponseDto> {
-        const { name, slug, description, image, publicId, isActive } =
+        const { name, slug, description, isActive } =
             createCategoryDto;
 
         const existingCategory = await this.prisma.category.findFirst({
@@ -39,8 +39,6 @@ export class CreateCategoryService {
                 name,
                 slug,
                 ...(description !== undefined && { description }),
-                ...(image !== undefined && { image }),
-                ...(publicId !== undefined && { publicId }),
                 ...(isActive !== undefined && { isActive }),
             },
         });
@@ -50,8 +48,6 @@ export class CreateCategoryService {
             name: newCategory.name,
             slug: newCategory.slug,
             description: newCategory.description ?? null,
-            image: newCategory.image ?? null,
-            publicId: newCategory.publicId ?? null,
             isActive: newCategory.isActive,
             createdAt: newCategory.createdAt,
             updatedAt: newCategory.updatedAt,

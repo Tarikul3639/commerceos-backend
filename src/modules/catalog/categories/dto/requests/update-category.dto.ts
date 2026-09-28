@@ -37,23 +37,6 @@ export class UpdateCategoryDto {
     description?: string;
 
     @IsOptional()
-    @IsUrl()
-    @ApiPropertyOptional({
-        description: 'Cloudinary image URL',
-        example: 'https://res.cloudinary.com/...',
-    })
-    image?: string;
-
-    @IsOptional()
-    @IsString()
-    @MaxLength(255)
-    @ApiPropertyOptional({
-        description: 'Cloudinary public ID',
-        example: 'commerceos/categories/abc123',
-    })
-    publicId?: string;
-
-    @IsOptional()
     @IsBoolean()
     @ApiPropertyOptional({
         example: true,

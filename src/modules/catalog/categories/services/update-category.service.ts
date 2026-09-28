@@ -38,20 +38,9 @@ export class UpdateCategoryService {
             name,
             slug,
             description,
-            image,
-            publicId,
             isActive,
         } = updateCategoryDto;
 
-        // Image URL and Cloudinary public ID must be updated together
-        if (
-            (image !== undefined && publicId === undefined) ||
-            (image === undefined && publicId !== undefined)
-        ) {
-            throw new BadRequestException(
-                'Image and publicId must be provided together',
-            );
-        }
 
         if (name !== undefined && name !== category.name) {
             const existingCategory =
@@ -110,14 +99,6 @@ export class UpdateCategoryService {
                         description,
                     }),
 
-                    ...(image !== undefined && {
-                        image,
-                    }),
-
-                    ...(publicId !== undefined && {
-                        publicId,
-                    }),
-
                     ...(isActive !== undefined && {
                         isActive,
                     }),
@@ -129,8 +110,6 @@ export class UpdateCategoryService {
             name: updatedCategory.name,
             slug: updatedCategory.slug,
             description: updatedCategory.description,
-            image: updatedCategory.image,
-            publicId: updatedCategory.publicId,
             isActive: updatedCategory.isActive,
             createdAt: updatedCategory.createdAt,
             updatedAt: updatedCategory.updatedAt,

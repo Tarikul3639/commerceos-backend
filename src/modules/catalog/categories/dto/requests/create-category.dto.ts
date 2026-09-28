@@ -44,25 +44,6 @@ export class CreateCategoryDto {
     description?: string;
 
     @IsOptional()
-    @IsUrl()
-    @MaxLength(500)
-    @ApiPropertyOptional({
-        description: 'Cloudinary image URL',
-        example:
-            'https://res.cloudinary.com/example/image/upload/categories/electronics.jpg',
-    })
-    image?: string;
-
-    @IsOptional()
-    @IsString()
-    @MaxLength(255)
-    @ApiPropertyOptional({
-        description: 'Cloudinary public ID used to manage and delete the image',
-        example: 'categories/electronics',
-    })
-    publicId?: string;
-
-    @IsOptional()
     @IsBoolean()
     @ApiPropertyOptional({
         description: 'Controls whether the category is active',

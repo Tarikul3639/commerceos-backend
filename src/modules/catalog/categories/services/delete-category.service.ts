@@ -14,7 +14,6 @@ export class DeleteCategoryService {
             where: { id: categoryId, deletedAt: null },
             select: {
                 id: true,
-                publicId: true,
                 _count: { select: { products: true } },
             },
         });
@@ -32,14 +31,6 @@ export class DeleteCategoryService {
                 where: { id: categoryId },
                 data: { deletedAt: new Date() },
             });
-
-            /**
-             * If the category has an associated image,
-             * we can also delete the image from Cloudinary.
-             */
-            if (category.publicId) {
-                await this.cloudinaryService.delete(category.publicId);
-            }
 
             /**
              * After performing a soft delete, we return early to avoid further processing.
