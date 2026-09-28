@@ -18,15 +18,4 @@ export class CreateAttributeValueDto {
         example: 'Red',
     })
     value!: string;
-
-    @IsOptional()
-    @IsInt()
-    @Min(0)
-    @ApiPropertyOptional({
-        description:
-            'Minimum stock quantity before this variant is considered low in stock',
-        example: 5,
-        default: 0,
-    })
-    minimumStock?: number;
 }

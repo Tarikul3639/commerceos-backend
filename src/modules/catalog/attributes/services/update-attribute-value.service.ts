@@ -66,10 +66,6 @@ export class UpdateAttributeValueService {
                 ...(updateAttributeValueDto.value !== undefined && {
                     value: updateAttributeValueDto.value.trim(),
                 }),
-
-                ...(updateAttributeValueDto.minimumStock !== undefined && {
-                    minimumStock: updateAttributeValueDto.minimumStock,
-                }),
             },
         });
     }

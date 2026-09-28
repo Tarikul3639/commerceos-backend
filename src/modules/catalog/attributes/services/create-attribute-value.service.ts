@@ -53,7 +53,6 @@ export class CreateAttributeValueService {
         return this.prisma.attributeValue.create({
             data: {
                 value,
-                minimumStock: createAttributeValueDto.minimumStock ?? 0,
                 attributeId,
             },
         });

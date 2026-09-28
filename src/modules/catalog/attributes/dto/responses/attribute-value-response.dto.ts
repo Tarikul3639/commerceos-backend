@@ -12,11 +12,6 @@ export class AttributeValueResponseDto {
     value!: string;
 
     @ApiProperty({
-        example: 5,
-    })
-    minimumStock!: number;
-
-    @ApiProperty({
         example: 'cmf987654321',
     })
     attributeId!: string;

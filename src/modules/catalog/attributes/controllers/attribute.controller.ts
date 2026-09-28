@@ -47,13 +47,8 @@ export class AttributeController {
         summary: 'Create a new attribute',
     })
     async create(@Body() createAttributeDto: CreateAttributeDto) {
-        const attribute =
-            await this.createAttributeService.execute(createAttributeDto);
+        return await this.createAttributeService.execute(createAttributeDto);
 
-        return {
-            message: 'Attribute created successfully',
-            data: attribute,
-        };
     }
 
     /**
@@ -65,11 +60,7 @@ export class AttributeController {
         summary: 'Get all attributes',
     })
     async findAll() {
-        const attributes = await this.getAttributesService.execute();
-
-        return {
-            data: attributes,
-        };
+        return await this.getAttributesService.execute();
     }
 
     /**
@@ -87,11 +78,7 @@ export class AttributeController {
         description: 'Attribute ID',
     })
     async findOne(@Param('id') attributeId: string) {
-        const attribute = await this.getAttributeService.execute(attributeId);
-
-        return {
-            data: attribute,
-        };
+        return await this.getAttributeService.execute(attributeId);
     }
 
     /**
@@ -114,15 +101,10 @@ export class AttributeController {
 
         @Body() updateAttributeDto: UpdateAttributeDto,
     ) {
-        const attribute = await this.updateAttributeService.execute(
+        return await this.updateAttributeService.execute(
             attributeId,
             updateAttributeDto,
         );
-
-        return {
-            message: 'Attribute updated successfully',
-            data: attribute,
-        };
     }
 
     /**

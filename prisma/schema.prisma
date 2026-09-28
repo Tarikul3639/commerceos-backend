@@ -454,6 +454,27 @@ model Product {
   @@map("products")
 }
 
+model ProductImage {
+  id String @id @default(cuid())
+
+  imageUrl String
+
+  // Cloudinary public ID used to delete the image
+  publicId String @unique
+
+  // Defines the display order of the product image
+  sortOrder Int @default(0)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+  @@map("product_images")
+}
+
 model Attribute {
   id String @id @default(cuid())
 
@@ -473,9 +494,6 @@ model AttributeValue {
 
   // The value of the product attribute
   value String
-
-  // Minimum quantity before this variant is considered low in stock
-  minimumStock Int @default(0)
 
   attributeId String
   attribute   Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
@@ -552,27 +570,6 @@ model VariantAttributeValue {
   @@id([variantId, attributeValueId])
   @@index([attributeValueId])
   @@map("variant_attribute_values")
-}
-
-model ProductImage {
-  id String @id @default(cuid())
-
-  imageUrl String
-
-  // Cloudinary public ID used to delete the image
-  publicId String @unique
-
-  // Defines the display order of the product image
-  sortOrder Int @default(0)
-
-  productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([productId])
-  @@map("product_images")
 }
 
 /**

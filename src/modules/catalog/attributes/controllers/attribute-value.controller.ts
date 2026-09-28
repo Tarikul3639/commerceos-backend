@@ -52,15 +52,10 @@ export class AttributeValueController {
         @Body()
         createAttributeValueDto: CreateAttributeValueDto,
     ) {
-        const attributeValue = await this.createAttributeValueService.execute(
+        return await this.createAttributeValueService.execute(
             attributeId,
             createAttributeValueDto,
         );
-
-        return {
-            message: 'Attribute value created successfully',
-            data: attributeValue,
-        };
     }
 
     /**
@@ -88,15 +83,10 @@ export class AttributeValueController {
         @Body()
         updateAttributeValueDto: UpdateAttributeValueDto,
     ) {
-        const attributeValue = await this.updateAttributeValueService.execute(
+        return await this.updateAttributeValueService.execute(
             valueId,
             updateAttributeValueDto,
         );
-
-        return {
-            message: 'Attribute value updated successfully',
-            data: attributeValue,
-        };
     }
 
     /**
