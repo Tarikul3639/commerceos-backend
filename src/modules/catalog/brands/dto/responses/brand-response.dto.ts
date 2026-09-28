@@ -29,6 +29,12 @@ export class BrandResponseDto {
     image!: string | null;
 
     @ApiProperty({
+        example: '5f8d0d55b54764421b7156c5',
+        nullable: true,
+    })
+    publicId!: string | null;
+
+    @ApiProperty({
         example: true,
     })
     isActive!: boolean;

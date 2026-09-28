@@ -9,8 +9,6 @@ import { PrismaService } from '../../../../common/prisma/prisma.service';
 import { UpdateBrandDto } from '../dto/requests/update-brand.dto';
 import { BrandResponseDto } from '../dto/responses/brand-response.dto';
 
-import { generateSlug } from '../../../../common/utils/slug.util';
-
 @Injectable()
 export class UpdateBrandService {
     constructor(private readonly prisma: PrismaService) { }
@@ -23,7 +21,6 @@ export class UpdateBrandService {
             where: {
                 id: brandId,
             },
-
             select: {
                 id: true,
                 name: true,
@@ -36,19 +33,22 @@ export class UpdateBrandService {
             throw new NotFoundException('Brand not found');
         }
 
-        let slug: string | undefined;
+        const normalizedName =
+            updateBrandDto.name !== undefined
+                ? updateBrandDto.name.trim()
+                : undefined;
 
-        if (
-            updateBrandDto.name !== undefined &&
-            updateBrandDto.name.trim() !== brand.name
-        ) {
-            const normalizedName = updateBrandDto.name.trim();
+        const normalizedSlug =
+            updateBrandDto.slug !== undefined
+                ? updateBrandDto.slug.trim()
+                : undefined;
 
+        // Check duplicate name
+        if (normalizedName !== undefined && normalizedName !== brand.name) {
             const existingBrand = await this.prisma.brand.findUnique({
                 where: {
                     name: normalizedName,
                 },
-
                 select: {
                     id: true,
                 },
@@ -57,14 +57,14 @@ export class UpdateBrandService {
             if (existingBrand && existingBrand.id !== brandId) {
                 throw new ConflictException('Brand name already exists');
             }
+        }
 
-            slug = generateSlug(normalizedName);
-
+        // Check duplicate slug
+        if (normalizedSlug !== undefined && normalizedSlug !== brand.slug) {
             const existingSlug = await this.prisma.brand.findUnique({
                 where: {
-                    slug,
+                    slug: normalizedSlug,
                 },
-
                 select: {
                     id: true,
                 },
@@ -75,26 +75,48 @@ export class UpdateBrandService {
             }
         }
 
+        // Check duplicate publicId
+        if (
+            updateBrandDto.publicId !== undefined &&
+            updateBrandDto.publicId !== null
+        ) {
+            const existingPublicId = await this.prisma.brand.findUnique({
+                where: {
+                    publicId: updateBrandDto.publicId,
+                },
+                select: {
+                    id: true,
+                },
+            });
+
+            if (existingPublicId && existingPublicId.id !== brandId) {
+                throw new ConflictException('Brand public ID already exists');
+            }
+        }
+
         const updatedBrand = await this.prisma.brand.update({
             where: {
                 id: brandId,
             },
-
             data: {
-                ...(updateBrandDto.name !== undefined && {
-                    name: updateBrandDto.name.trim(),
+                ...(normalizedName !== undefined && {
+                    name: normalizedName,
                 }),
 
-                ...(slug !== undefined && {
-                    slug,
+                ...(normalizedSlug !== undefined && {
+                    slug: normalizedSlug,
                 }),
 
                 ...(updateBrandDto.description !== undefined && {
-                    description: updateBrandDto.description?.trim(),
+                    description: updateBrandDto.description.trim(),
                 }),
 
                 ...(updateBrandDto.image !== undefined && {
                     image: updateBrandDto.image,
+                }),
+
+                ...(updateBrandDto.publicId !== undefined && {
+                    publicId: updateBrandDto.publicId,
                 }),
 
                 ...(updateBrandDto.isActive !== undefined && {
@@ -109,6 +131,7 @@ export class UpdateBrandService {
             slug: updatedBrand.slug,
             description: updatedBrand.description,
             image: updatedBrand.image,
+            publicId: updatedBrand.publicId,
             isActive: updatedBrand.isActive,
             createdAt: updatedBrand.createdAt,
             updatedAt: updatedBrand.updatedAt,

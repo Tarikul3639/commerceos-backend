@@ -44,6 +44,7 @@ export class GetBrandsService {
                     slug: true,
                     description: true,
                     image: true,
+                    publicId: true,
                     isActive: true,
                     createdAt: true,
                     updatedAt: true,

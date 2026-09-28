@@ -5,14 +5,13 @@ import { PrismaService } from '../../../../common/prisma/prisma.service';
 import { CreateBrandDto } from '../dto/requests/create-brand.dto';
 import { BrandResponseDto } from '../dto/responses/brand-response.dto';
 
-import { generateSlug } from '../../../../common/utils/slug.util';
-
 @Injectable()
 export class CreateBrandService {
     constructor(private readonly prisma: PrismaService) { }
 
     async execute(createBrandDto: CreateBrandDto): Promise<BrandResponseDto> {
-        const { name, description, image, isActive } = createBrandDto;
+        const { name, slug, description, image, publicId, isActive } =
+            createBrandDto;
 
         const normalizedName = name.trim();
 
@@ -20,7 +19,6 @@ export class CreateBrandService {
             where: {
                 name: normalizedName,
             },
-
             select: {
                 id: true,
             },
@@ -30,35 +28,49 @@ export class CreateBrandService {
             throw new ConflictException('Brand name already exists');
         }
 
-        const slug = generateSlug(normalizedName);
+        if (slug) {
+            const existingSlug = await this.prisma.brand.findUnique({
+                where: {
+                    slug,
+                },
+                select: {
+                    id: true,
+                },
+            });
 
-        const existingSlug = await this.prisma.brand.findUnique({
-            where: {
-                slug,
-            },
+            if (existingSlug) {
+                throw new ConflictException('Brand slug already exists');
+            }
+        }
 
-            select: {
-                id: true,
-            },
-        });
+        if (publicId !== undefined && publicId !== null) {
+            const existingPublicId = await this.prisma.brand.findUnique({
+                where: {
+                    publicId,
+                },
+                select: {
+                    id: true,
+                },
+            });
 
-        if (existingSlug) {
-            throw new ConflictException('Brand slug already exists');
+            if (existingPublicId) {
+                throw new ConflictException('Brand public ID already exists');
+            }
         }
 
         const brand = await this.prisma.brand.create({
             data: {
                 name: normalizedName,
                 slug,
-
                 ...(description !== undefined && {
                     description: description.trim(),
                 }),
-
                 ...(image !== undefined && {
                     image,
                 }),
-
+                ...(publicId !== undefined && {
+                    publicId,
+                }),
                 ...(isActive !== undefined && {
                     isActive,
                 }),
@@ -71,6 +83,7 @@ export class CreateBrandService {
             slug: brand.slug,
             description: brand.description,
             image: brand.image,
+            publicId: brand.publicId,
             isActive: brand.isActive,
             createdAt: brand.createdAt,
             updatedAt: brand.updatedAt,

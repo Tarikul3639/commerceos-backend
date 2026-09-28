@@ -1,10 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common'
 
-import { PrismaService } from '../../../../common/prisma/prisma.service';
+import { PrismaService } from '../../../../common/prisma/prisma.service'
+import { CloudinaryService } from '../../../../common/cloudinary/cloudinary.service'
 
 @Injectable()
 export class DeleteBrandService {
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly cloudinaryService: CloudinaryService,
+    ) { }
 
     async execute(brandId: string): Promise<void> {
         const brand = await this.prisma.brand.findFirst({
@@ -12,45 +19,45 @@ export class DeleteBrandService {
                 id: brandId,
                 deletedAt: null,
             },
-
             select: {
-                id: true,
+                publicId: true,
                 _count: {
                     select: {
                         products: true,
                     },
                 },
             },
-        });
+        })
 
         if (!brand) {
-            throw new NotFoundException('Brand not found');
+            throw new NotFoundException('Brand not found')
         }
 
-        /**
-         * If the brand has associated products, 
-         * perform a soft delete. 
-         */
+        // Soft delete if the brand has associated products.
         if (brand._count.products > 0) {
             await this.prisma.brand.update({
                 where: {
                     id: brandId,
                 },
-
                 data: {
                     deletedAt: new Date(),
                     isActive: false,
                 },
-            });
+            })
 
-            return;
+            return
         }
 
-        // If the brand has no associated products, we will perform a hard delete.
+        // Delete the image from Cloudinary before hard delete.
+        if (brand.publicId) {
+            await this.cloudinaryService.delete(brand.publicId)
+        }
+
+        // Hard delete if the brand has no associated products.
         await this.prisma.brand.delete({
             where: {
                 id: brandId,
             },
-        });
+        })
     }
 }

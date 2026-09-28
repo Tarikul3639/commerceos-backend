@@ -45,12 +45,8 @@ export class BrandController {
         summary: 'Create a new brand',
     })
     async create(@Body() createBrandDto: CreateBrandDto) {
-        const brand = await this.createBrandService.execute(createBrandDto);
+        return await this.createBrandService.execute(createBrandDto);
 
-        return {
-            message: 'Brand created successfully',
-            data: brand,
-        };
     }
 
     /**
@@ -78,11 +74,7 @@ export class BrandController {
         description: 'Brand ID',
     })
     async findOne(@Param('id') brandId: string) {
-        const brand = await this.getBrandService.execute(brandId);
-
-        return {
-            data: brand,
-        };
+        return await this.getBrandService.execute(brandId);
     }
 
     /**
@@ -101,15 +93,10 @@ export class BrandController {
         @Param('id') brandId: string,
         @Body() updateBrandDto: UpdateBrandDto,
     ) {
-        const brand = await this.updateBrandService.execute(
+        return await this.updateBrandService.execute(
             brandId,
             updateBrandDto,
         );
-
-        return {
-            message: 'Brand updated successfully',
-            data: brand,
-        };
     }
 
     /**

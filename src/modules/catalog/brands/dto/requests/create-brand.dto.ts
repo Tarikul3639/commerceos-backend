@@ -5,12 +5,12 @@ import {
     IsUrl,
     MaxLength,
     MinLength,
-} from 'class-validator';
+} from 'class-validator'
 
 import {
     ApiProperty,
     ApiPropertyOptional,
-} from '@nestjs/swagger';
+} from '@nestjs/swagger'
 
 export class CreateBrandDto {
     @IsString()
@@ -21,7 +21,16 @@ export class CreateBrandDto {
         description: 'The name of the brand',
         example: 'Nike',
     })
-    name!: string;
+    name!: string
+
+    @IsString()
+    @IsNotEmpty()
+    @MaxLength(100)
+    @ApiProperty({
+        description: 'The slug for the brand',
+        example: 'nike',
+    })
+    slug!: string
 
     @IsOptional()
     @IsString()
@@ -30,7 +39,7 @@ export class CreateBrandDto {
         description: 'Description of the brand',
         example: 'Nike is a global sportswear brand',
     })
-    description?: string;
+    description?: string
 
     @IsOptional()
     @IsUrl()
@@ -39,7 +48,16 @@ export class CreateBrandDto {
         description: 'Brand image URL',
         example: 'https://example.com/brands/nike.jpg',
     })
-    image?: string;
+    image?: string
+
+    @IsOptional()
+    @IsString()
+    @MaxLength(100)
+    @ApiPropertyOptional({
+        description: 'Public ID of the brand for external references',
+        example: '5f8d0d55b54764421b7156c5',
+    })
+    publicId?: string
 
     @IsOptional()
     @ApiPropertyOptional({
@@ -47,5 +65,5 @@ export class CreateBrandDto {
         example: true,
         default: true,
     })
-    isActive?: boolean;
+    isActive?: boolean
 }
