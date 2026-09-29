@@ -45,12 +45,7 @@ export class ProductController {
         summary: 'Create a new product',
     })
     async create(@Body() dto: CreateProductDto) {
-        const product = await this.createProductService.execute(dto);
-
-        return {
-            message: 'Product created successfully',
-            data: product,
-        };
+        return await this.createProductService.execute(dto);
     }
 
     /**
@@ -62,9 +57,7 @@ export class ProductController {
         summary: 'Get all products',
     })
     async findAll(@Query() query: ProductQueryDto) {
-        const products = await this.getProductsService.execute(query);
-
-        return products;
+        return await this.getProductsService.execute(query);
     }
 
     /**
@@ -80,11 +73,7 @@ export class ProductController {
         description: 'Product ID',
     })
     async findOne(@Param('id') productId: string) {
-        const product = await this.getProductService.execute(productId);
-
-        return {
-            data: product,
-        };
+        return await this.getProductService.execute(productId);
     }
 
     /**
@@ -104,12 +93,7 @@ export class ProductController {
 
         @Body() dto: UpdateProductDto,
     ) {
-        const product = await this.updateProductService.execute(productId, dto);
-
-        return {
-            message: 'Product updated successfully',
-            data: product,
-        };
+        return await this.updateProductService.execute(productId, dto);
     }
 
     /**

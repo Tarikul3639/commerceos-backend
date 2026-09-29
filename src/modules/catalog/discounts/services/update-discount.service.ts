@@ -6,12 +6,13 @@ import {
 
 import { PrismaService } from '../../../../common/prisma/prisma.service';
 import { UpdateDiscountDto } from '../dto/requests/update-discount.dto';
+import { DiscountResponseDto } from '../dto/responses/discount-response.dto';
 
 @Injectable()
 export class UpdateDiscountService {
     constructor(private readonly prisma: PrismaService) { }
 
-    async execute(discountId: string, updateDiscountDto: UpdateDiscountDto) {
+    async execute(discountId: string, updateDiscountDto: UpdateDiscountDto): Promise<DiscountResponseDto> {
         const discount = await this.prisma.discount.findFirst({
             where: {
                 id: discountId,
@@ -51,7 +52,7 @@ export class UpdateDiscountService {
             throw new BadRequestException('Start date must be before end date');
         }
 
-        return this.prisma.discount.update({
+        const updatedDiscount = await this.prisma.discount.update({
             where: {
                 id: discountId,
             },
@@ -91,6 +92,11 @@ export class UpdateDiscountService {
                     isActive: updateDiscountDto.isActive,
                 }),
             },
-        });
+        })
+
+        return {
+            ...updatedDiscount,
+            value: updatedDiscount.value.toString(),
+        }
     }
 }

@@ -9,9 +9,10 @@ import {
     Patch,
     Post,
     Query,
+    UseGuards,
 } from '@nestjs/common';
 
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 // DTOs
 import { CreateDiscountDto } from '../dto/requests/create-discount.dto';
@@ -19,17 +20,25 @@ import { UpdateDiscountDto } from '../dto/requests/update-discount.dto';
 import { DiscountQueryDto } from '../dto/requests/discount-query.dto';
 import { AssignProductDiscountDto } from '../dto/requests/assign-product-discount.dto';
 
+import {
+    DiscountResponseDto,
+    DiscountResponseWithPaginationDto,
+} from '../dto/responses/discount-response.dto';
+import { DiscountProductsResponseDto } from '../dto/responses/discount-products-response.dto';
+
 // Services
 import { CreateDiscountService } from '../services/create-discount.service';
 import { GetDiscountsService } from '../services/get-discounts.service';
 import { GetDiscountService } from '../services/get-discount.service';
+import { GetDiscountProductsService } from '../services/get-discount-products.service';
 import { UpdateDiscountService } from '../services/update-discount.service';
 import { DeleteDiscountService } from '../services/delete-discount.service';
 import { AssignProductDiscountService } from '../services/assign-product-discount.service';
 import { RemoveProductDiscountService } from '../services/remove-product-discount.service';
 
 import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
-// import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { RolesGuard } from '../../../../common/guards/roles.guard';
 
 @ApiTags('Discounts')
 @Controller('discounts')
@@ -38,6 +47,7 @@ export class DiscountController {
         private readonly createDiscountService: CreateDiscountService,
         private readonly getDiscountsService: GetDiscountsService,
         private readonly getDiscountService: GetDiscountService,
+        private readonly getDiscountProductsService: GetDiscountProductsService,
         private readonly updateDiscountService: UpdateDiscountService,
         private readonly deleteDiscountService: DeleteDiscountService,
         private readonly assignProductDiscountService: AssignProductDiscountService,
@@ -48,7 +58,13 @@ export class DiscountController {
      * Create discount
      */
     @Post()
+    @UseGuards(UserJwtAuthGuard, RolesGuard)
     @HttpCode(HttpStatus.CREATED)
+    @ApiResponse({
+        status: HttpStatus.CREATED,
+        description: 'Discount created successfully',
+        type: DiscountResponseDto,
+    })
     @ApiOperation({
         summary: 'Create a new discount',
     })
@@ -56,15 +72,7 @@ export class DiscountController {
         @Body() createDiscountDto: CreateDiscountDto,
         @CurrentUser('id') userId: string,
     ) {
-        const discount = await this.createDiscountService.execute(
-            userId,
-            createDiscountDto,
-        );
-
-        return {
-            message: 'Discount created successfully',
-            data: discount,
-        };
+        return await this.createDiscountService.execute(userId, createDiscountDto);
     }
 
     /**
@@ -72,19 +80,23 @@ export class DiscountController {
      */
     @Get()
     @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'List of discounts',
+        type: DiscountResponseWithPaginationDto,
+    })
     @ApiOperation({
         summary: 'Get all discounts',
     })
     async findAll(@Query() query: DiscountQueryDto) {
-        const result = await this.getDiscountsService.execute(query);
-
-        return result;
+        return await this.getDiscountsService.execute(query);
     }
 
     /**
      * Get discount by ID
      */
     @Get(':id')
+    @UseGuards(UserJwtAuthGuard)
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: 'Get discount by ID',
@@ -94,11 +106,7 @@ export class DiscountController {
         description: 'Discount ID',
     })
     async findOne(@Param('id') discountId: string) {
-        const discount = await this.getDiscountService.execute(discountId);
-
-        return {
-            data: discount,
-        };
+        return await this.getDiscountService.execute(discountId);
     }
 
     /**
@@ -106,8 +114,13 @@ export class DiscountController {
      */
     @Patch(':id')
     @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Discount updated successfully',
+        type: DiscountResponseDto,
+    })
     @ApiOperation({
-        summary: 'Update discount',
+        summary: 'Update discount by ID',
     })
     @ApiParam({
         name: 'id',
@@ -119,15 +132,10 @@ export class DiscountController {
         @Body()
         updateDiscountDto: UpdateDiscountDto,
     ) {
-        const discount = await this.updateDiscountService.execute(
+        return await this.updateDiscountService.execute(
             discountId,
             updateDiscountDto,
         );
-
-        return {
-            message: 'Discount updated successfully',
-            data: discount,
-        };
     }
 
     /**
@@ -148,14 +156,34 @@ export class DiscountController {
         @Body()
         assignProductDiscountDto: AssignProductDiscountDto,
     ) {
-        await this.assignProductDiscountService.execute(
+        return await this.assignProductDiscountService.execute(
             discountId,
             assignProductDiscountDto,
         );
+    }
 
-        return {
-            message: 'Discount assigned to products successfully',
-        };
+    /**
+     * Get products assigned to discount
+     */
+    @Get(':id/products')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'List of products assigned to the discount',
+        type: DiscountProductsResponseDto,
+    })
+    @ApiOperation({
+        summary: 'Get products assigned to a discount',
+    })
+    @ApiParam({
+        name: 'id',
+        description: 'Discount ID',
+    })
+    async findProducts(
+        @Param('id') discountId: string,
+        @Query() query: DiscountQueryDto,
+    ) {
+        return await this.getDiscountProductsService.execute(discountId, query);
     }
 
     /**
@@ -179,11 +207,10 @@ export class DiscountController {
 
         @Param('productId') productId: string,
     ) {
-        await this.removeProductDiscountService.execute(discountId, productId);
-
-        return {
-            message: 'Discount removed from product successfully',
-        };
+        return await this.removeProductDiscountService.execute(
+            discountId,
+            productId,
+        );
     }
 
     /**

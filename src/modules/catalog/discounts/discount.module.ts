@@ -10,6 +10,7 @@ import { UpdateDiscountService } from './services/update-discount.service';
 import { DeleteDiscountService } from './services/delete-discount.service';
 import { AssignProductDiscountService } from './services/assign-product-discount.service';
 import { RemoveProductDiscountService } from './services/remove-product-discount.service';
+import { GetDiscountProductsService } from './services/get-discount-products.service';
 
 @Module({
     controllers: [
@@ -24,6 +25,7 @@ import { RemoveProductDiscountService } from './services/remove-product-discount
         DeleteDiscountService,
         AssignProductDiscountService,
         RemoveProductDiscountService,
+        GetDiscountProductsService,
     ],
 })
 export class DiscountModule { }

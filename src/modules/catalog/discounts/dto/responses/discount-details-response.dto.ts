@@ -1,15 +1,7 @@
-import {
-    DiscountType,
-} from '../../../../../lib/prisma/client';
+import { DiscountType } from '../../../../../lib/prisma/client';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-import {
-    ApiProperty,
-    ApiPropertyOptional,
-} from '@nestjs/swagger';
-
-import { PaginationMetaDto } from '../../../../../common/dto/responses/pagination-meta.dto';
-
-export class DiscountResponseDto {
+export class DiscountDetailsResponseDto {
     @ApiProperty({
         example: 'cmf123456789',
     })
@@ -64,16 +56,4 @@ export class DiscountResponseDto {
 
     @ApiProperty()
     updatedAt!: Date;
-}
-
-export class DiscountResponseWithPaginationDto {
-    @ApiProperty({
-        type: [DiscountResponseDto],
-    })
-    data!: DiscountResponseDto[];
-
-    @ApiProperty({
-        type: PaginationMetaDto,
-    })
-    meta!: PaginationMetaDto;
 }

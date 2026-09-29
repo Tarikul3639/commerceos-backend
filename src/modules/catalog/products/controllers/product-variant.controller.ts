@@ -33,7 +33,7 @@ export class ProductVariantController {
         private readonly updateProductVariantService: UpdateProductVariantService,
 
         private readonly deleteProductVariantService: DeleteProductVariantService,
-    ) {}
+    ) { }
 
     /**
      * Create product variant
@@ -52,16 +52,10 @@ export class ProductVariantController {
 
         @Body() dto: CreateProductVariantDto,
     ) {
-        const variant =
-            await this.createProductVariantService.execute(
+        return await this.createProductVariantService.execute(
                 productId,
                 dto,
             );
-
-        return {
-            message: 'Product variant created successfully',
-            data: variant,
-        };
     }
 
     /**
@@ -87,17 +81,12 @@ export class ProductVariantController {
 
         @Body() dto: UpdateProductVariantDto,
     ) {
-        const variant =
-            await this.updateProductVariantService.execute(
-                productId,
-                variantId,
-                dto,
-            );
 
-        return {
-            message: 'Product variant updated successfully',
-            data: variant,
-        };
+        return await this.updateProductVariantService.execute(
+            productId,
+            variantId,
+            dto,
+        );
     }
 
     /**

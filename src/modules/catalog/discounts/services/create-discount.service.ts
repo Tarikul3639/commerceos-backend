@@ -16,6 +16,10 @@ export class CreateDiscountService {
         const { name, description, type, value, startDate, endDate, isActive } =
             createDiscountDto;
 
+        if (userId === undefined || userId === null) {
+            throw new BadRequestException('Don\'t have permission to create discount');
+        }
+
         if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
             throw new BadRequestException('End date must be after start date');
         }

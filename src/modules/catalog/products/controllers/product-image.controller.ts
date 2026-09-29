@@ -48,12 +48,7 @@ export class ProductImageController {
 
         @Body() dto: AddProductImageDto,
     ) {
-        const image = await this.addProductImageService.execute(productId, dto);
-
-        return {
-            message: 'Product image added successfully',
-            data: image,
-        };
+        return await this.addProductImageService.execute(productId, dto);
     }
 
     /**
@@ -79,16 +74,11 @@ export class ProductImageController {
 
         @Body() dto: UpdateProductImageDto,
     ) {
-        const image = await this.updateProductImageService.execute(
+        return await this.updateProductImageService.execute(
             productId,
             imageId,
             dto,
         );
-
-        return {
-            message: 'Product image updated successfully',
-            data: image,
-        };
     }
 
     /**
