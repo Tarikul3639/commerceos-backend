@@ -1,0 +1,260 @@
+/**
+ * ============================================================
+ * PRODUCT CATALOG
+ * ============================================================
+ */
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+model Category {
+  id String @id @default(cuid())
+
+  name        String  @unique
+  slug        String  @unique
+  description String?
+
+  // Controls whether the category can currently be used
+  isActive Boolean @default(true)
+
+  // Stores the timestamp when the category was soft deleted
+  deletedAt DateTime?
+
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([deletedAt])
+  @@map("categories")
+}
+
+model Brand {
+  id String @id @default(cuid())
+
+  name        String  @unique
+  slug        String  @unique
+  description String?
+
+  image String?
+
+  // Cloudinary public ID used to delete the image
+  publicId String? @unique
+
+  // Controls whether the brand can currently be used
+  isActive Boolean @default(true)
+
+  // Stores the timestamp when the brand was soft deleted
+  deletedAt DateTime?
+
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([deletedAt])
+  @@map("brands")
+}
+
+model Product {
+  id String @id @default(cuid())
+
+  name        String
+  slug        String  @unique
+  description String?
+
+  purchasePrice Decimal
+  sellingPrice  Decimal
+
+  thumbnail String?
+  publicId  String? @unique
+
+  isActive  Boolean   @default(true)
+  deletedAt DateTime?
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  brandId String?
+  brand   Brand?  @relation(fields: [brandId], references: [id])
+
+  images ProductImage[]
+
+  sizeChartId String?
+  sizeChart   SizeChart? @relation(fields: [sizeChartId], references: [id])
+
+  discounts       ProductDiscount[]
+  productVariants ProductVariant[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([categoryId])
+  @@index([brandId])
+  @@index([sizeChartId])
+  @@index([deletedAt])
+  @@map("products")
+}
+
+model ProductImage {
+  id String @id @default(cuid())
+
+  imageUrl String
+  publicId String @unique
+
+  sortOrder Int @default(0)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+  @@map("product_images")
+}
+
+model ProductVariant {
+  id String @id @default(cuid())
+
+  sku     String  @unique
+  barcode String? @unique
+
+  color    String?
+  colorHex String?
+  size     String?
+
+  image    String?
+  publicId String? @unique
+
+  // Controls whether the product is currently published and visible
+  isActive Boolean @default(true)
+
+  // Stores the timestamp when the product was soft deleted
+  deletedAt DateTime?
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  inventories        Inventory[]
+  purchaseItems      PurchaseItem[]
+  stockMovements     StockMovement[]
+  stockTransferItems StockTransferItem[]
+  cartItems          CartItem[]
+  orderItems         OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+  @@index([deletedAt])
+  @@map("product_variants")
+}
+
+model SizeChart {
+  id String @id @default(cuid())
+
+  name String @unique
+
+  items    SizeChartItem[]
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("size_charts")
+}
+
+model SizeChartItem {
+  id String @id @default(cuid())
+
+  size String
+
+  chest    Decimal?
+  length   Decimal?
+  shoulder Decimal?
+  sleeve   Decimal?
+  waist    Decimal?
+  hip      Decimal?
+  inseam   Decimal?
+
+  sizeChartId String
+  sizeChart   SizeChart @relation(fields: [sizeChartId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([sizeChartId, size])
+  @@index([sizeChartId])
+  @@map("size_chart_items")
+}
+
+model ProductDiscount {
+  id String @id @default(cuid())
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  discountId String
+  discount   Discount @relation(fields: [discountId], references: [id], onDelete: Cascade)
+
+  // Indicates whether this discount assignment is currently active
+  isActive Boolean @default(true)
+
+  // Stores the timestamp when this discount assignment was soft deleted
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Prevents the same discount from being assigned to the same product multiple times
+  @@unique([productId, discountId])
+  // Useful for finding active discounts for a product
+  @@index([productId, isActive])
+  @@index([productId])
+  @@index([discountId])
+  @@index([deletedAt])
+  @@map("product_discounts")
+}
+
+model Discount {
+  id String @id @default(cuid())
+
+  name String
+
+  description String?
+
+  // Defines whether the discount is a percentage or fixed amount
+  type DiscountType
+
+  // The discount amount or percentage value
+  value Decimal
+
+  // The date and time when the discount becomes active
+  startDate DateTime?
+
+  // The date and time when the discount expires
+  endDate DateTime?
+
+  // Controls whether the discount can currently be applied
+  isActive Boolean @default(true)
+
+  // Stores the timestamp when the discount was soft deleted
+  deletedAt DateTime?
+
+  createdById String
+
+  // The user who created this discount
+  createdBy User @relation(fields: [createdById], references: [id], onDelete: Restrict)
+
+  products ProductDiscount[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([deletedAt])
+  @@map("discounts")
+}

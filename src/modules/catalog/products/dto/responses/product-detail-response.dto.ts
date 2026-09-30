@@ -51,6 +51,12 @@ export class ProductDetailResponseDto {
     })
     publicId!: string | null;
 
+    @ApiProperty({ example: '100' })
+    purchasePrice!: string;
+
+    @ApiProperty({ example: '150' })
+    sellingPrice!: string;
+
     @ApiProperty({
         example: true,
     })

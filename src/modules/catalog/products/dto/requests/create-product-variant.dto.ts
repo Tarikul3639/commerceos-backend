@@ -1,11 +1,8 @@
 import {
-    IsArray,
     IsBoolean,
     IsNotEmpty,
-    IsNumber,
     IsOptional,
     IsString,
-    Min,
 } from 'class-validator';
 
 import {
@@ -28,19 +25,20 @@ export class CreateProductVariantDto {
     @IsString()
     barcode?: string;
 
-    @ApiProperty({
-        example: 100,
-    })
-    @IsNumber()
-    @Min(0)
-    purchasePrice!: number;
+    @ApiPropertyOptional({ example: 'Red' })
+    @IsOptional()
+    @IsString()
+    color?: string;
 
-    @ApiProperty({
-        example: 150,
-    })
-    @IsNumber()
-    @Min(0)
-    sellingPrice!: number;
+    @ApiPropertyOptional({ example: '#FF0000' })
+    @IsOptional()
+    @IsString()
+    colorHex?: string;
+
+    @ApiPropertyOptional({ example: 'M' })
+    @IsOptional()
+    @IsString()
+    size?: string;
 
     @ApiPropertyOptional({
         example: 'https://example.com/image.jpg',
@@ -64,16 +62,4 @@ export class CreateProductVariantDto {
     @IsBoolean()
     isActive?: boolean;
 
-    @ApiPropertyOptional({
-        example: [
-            'attribute-value-id-1',
-            'attribute-value-id-2',
-        ],
-    })
-    @IsOptional()
-    @IsArray()
-    @IsString({
-        each: true,
-    })
-    attributeValueIds?: string[];
 }

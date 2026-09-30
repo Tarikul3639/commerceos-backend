@@ -21,12 +21,12 @@ export class GetCartService {
                                 id: true,
                                 sku: true,
                                 image: true,
-                                sellingPrice: true,
                                 product: {
                                     select: {
                                         id: true,
                                         name: true,
                                         slug: true,
+                                        sellingPrice: true,
                                     },
                                 },
                             },
@@ -53,12 +53,14 @@ export class GetCartService {
                                 select: {
                                     id: true,
                                     sku: true,
+                                    image: true,
 
                                     product: {
                                         select: {
                                             id: true,
                                             name: true,
                                             slug: true,
+                                            sellingPrice: true,
                                         },
                                     },
                                 },
@@ -89,9 +91,13 @@ export class GetCartService {
                 variant: {
                     id: item.variant.id,
                     sku: item.variant.sku,
-                    price: item.variant.sellingPrice.toString(),
+                    price: item.variant.product.sellingPrice.toString(),
                     imageUrl: item.variant.image,
-                    product: item.variant.product,
+                    product: {
+                        id: item.variant.product.id,
+                        name: item.variant.product.name,
+                        slug: item.variant.product.slug,
+                    },
                 },
                 createdAt: item.createdAt,
                 updatedAt: item.updatedAt,

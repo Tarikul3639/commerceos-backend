@@ -77,122 +77,39 @@ export class UpdateProductVariantService {
             }
         }
 
-        /**
-         * Validate attribute values
-         *
-         * undefined = don't update
-         * [] = remove all
-         */
-        if (dto.attributeValueIds !== undefined) {
-            if (dto.attributeValueIds.length > 0) {
-                const attributeValues = await this.prisma.attributeValue.findMany({
-                    where: {
-                        id: {
-                            in: dto.attributeValueIds,
-                        },
-                    },
+        return this.prisma.productVariant.update({
+            where: {
+                id: variantId,
+            },
 
-                    select: {
-                        id: true,
-                        attributeId: true,
-                    },
-                });
+            data: {
+                ...(dto.sku !== undefined && {
+                    sku: dto.sku,
+                }),
 
-                if (attributeValues.length !== dto.attributeValueIds.length) {
-                    throw new NotFoundException('One or more attribute values not found');
-                }
+                ...(dto.image !== undefined && {
+                    image: dto.image,
+                }),
+
+                ...(dto.publicId !== undefined && {
+                    publicId: dto.publicId,
+                }),
 
                 /**
-                 * Prevent:
-                 *
-                 * Color → Red
-                 * Color → Blue ❌
+                 * null can remove barcode
                  */
-                const attributeIds = attributeValues.map(
-                    (attributeValue) => attributeValue.attributeId,
-                );
+                ...(dto.barcode !== undefined && {
+                    barcode: dto.barcode,
+                }),
 
-                const uniqueAttributeIds = new Set(attributeIds);
+                ...(dto.color !== undefined && { color: dto.color }),
+                ...(dto.colorHex !== undefined && { colorHex: dto.colorHex }),
+                ...(dto.size !== undefined && { size: dto.size }),
 
-                if (attributeIds.length !== uniqueAttributeIds.size) {
-                    throw new ConflictException(
-                        'Only one value can be selected for each attribute',
-                    );
-                }
-            }
-        }
-
-        return this.prisma.$transaction(async (tx) => {
-            /**
-             * Replace attributes
-             */
-            if (dto.attributeValueIds !== undefined) {
-                await tx.variantAttributeValue.deleteMany({
-                    where: {
-                        variantId,
-                    },
-                });
-
-                if (dto.attributeValueIds.length > 0) {
-                    await tx.variantAttributeValue.createMany({
-                        data: dto.attributeValueIds.map((attributeValueId) => ({
-                            variantId,
-                            attributeValueId,
-                        })),
-                    });
-                }
-            }
-
-            return tx.productVariant.update({
-                where: {
-                    id: variantId,
-                },
-
-                data: {
-                    ...(dto.sku !== undefined && {
-                        sku: dto.sku,
-                    }),
-
-                    ...(dto.image !== undefined && {
-                        image: dto.image,
-                    }),
-
-                    ...(dto.publicId !== undefined && {
-                        publicId: dto.publicId,
-                    }),
-
-                    /**
-                     * null can remove barcode
-                     */
-                    ...(dto.barcode !== undefined && {
-                        barcode: dto.barcode,
-                    }),
-
-                    ...(dto.purchasePrice !== undefined && {
-                        purchasePrice: dto.purchasePrice,
-                    }),
-
-                    ...(dto.sellingPrice !== undefined && {
-                        sellingPrice: dto.sellingPrice,
-                    }),
-
-                    ...(dto.isActive !== undefined && {
-                        isActive: dto.isActive,
-                    }),
-                },
-
-                include: {
-                    attributeValues: {
-                        include: {
-                            attributeValue: {
-                                include: {
-                                    attribute: true,
-                                },
-                            },
-                        },
-                    },
-                },
-            });
+                ...(dto.isActive !== undefined && {
+                    isActive: dto.isActive,
+                }),
+            },
         });
     }
 }

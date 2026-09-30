@@ -57,49 +57,6 @@ export class CreateProductVariantService {
             }
         }
 
-        /**
-         * Validate attribute values
-         */
-        if (dto.attributeValueIds && dto.attributeValueIds.length > 0) {
-            const attributeValues = await this.prisma.attributeValue.findMany({
-                where: {
-                    id: {
-                        in: dto.attributeValueIds,
-                    },
-                },
-
-                select: {
-                    id: true,
-                    attributeId: true,
-                },
-            });
-
-            if (attributeValues.length !== dto.attributeValueIds.length) {
-                throw new NotFoundException('One or more attribute values not found');
-            }
-
-            /**
-             * Prevent multiple values
-             * from the same attribute
-             *
-             * Example:
-             *
-             * Color → Red
-             * Color → Blue ❌
-             */
-            const attributeIds = attributeValues.map(
-                (attributeValue) => attributeValue.attributeId,
-            );
-
-            const uniqueAttributeIds = new Set(attributeIds);
-
-            if (attributeIds.length !== uniqueAttributeIds.size) {
-                throw new ConflictException(
-                    'Only one value can be selected for each attribute',
-                );
-            }
-        }
-
         return this.prisma.productVariant.create({
             data: {
                 sku: dto.sku,
@@ -116,40 +73,15 @@ export class CreateProductVariantService {
                     barcode: dto.barcode,
                 }),
 
-                purchasePrice: dto.purchasePrice,
-
-                sellingPrice: dto.sellingPrice,
+                ...(dto.color !== undefined && { color: dto.color }),
+                ...(dto.colorHex !== undefined && { colorHex: dto.colorHex }),
+                ...(dto.size !== undefined && { size: dto.size }),
 
                 ...(dto.isActive !== undefined && {
                     isActive: dto.isActive,
                 }),
 
                 productId,
-
-                ...(dto.attributeValueIds &&
-                    dto.attributeValueIds.length > 0 && {
-                    attributeValues: {
-                        create: dto.attributeValueIds.map((attributeValueId) => ({
-                            attributeValue: {
-                                connect: {
-                                    id: attributeValueId,
-                                },
-                            },
-                        })),
-                    },
-                }),
-            },
-
-            include: {
-                attributeValues: {
-                    include: {
-                        attributeValue: {
-                            include: {
-                                attribute: true,
-                            },
-                        },
-                    },
-                },
             },
         });
     }

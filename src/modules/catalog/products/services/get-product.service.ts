@@ -21,6 +21,8 @@ export class GetProductService {
                 description: true,
                 thumbnail: true,
                 publicId: true,
+                purchasePrice: true,
+                sellingPrice: true,
                 isActive: true,
                 createdAt: true,
                 updatedAt: true,
@@ -65,31 +67,14 @@ export class GetProductService {
                         id: true,
                         sku: true,
                         barcode: true,
-                        purchasePrice: true,
-                        sellingPrice: true,
+                        color: true,
+                        colorHex: true,
+                        size: true,
                         image: true,
                         publicId: true,
                         isActive: true,
                         createdAt: true,
                         updatedAt: true,
-
-                        attributeValues: {
-                            select: {
-                                attributeValue: {
-                                    select: {
-                                        id: true,
-                                        value: true,
-
-                                        attribute: {
-                                            select: {
-                                                id: true,
-                                                name: true,
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
                     },
 
                     orderBy: {
@@ -110,6 +95,8 @@ export class GetProductService {
             description: product.description,
             thumbnail: product.thumbnail,
             publicId: product.publicId,
+            purchasePrice: product.purchasePrice.toString(),
+            sellingPrice: product.sellingPrice.toString(),
             isActive: product.isActive,
 
             category: product.category,
@@ -121,21 +108,13 @@ export class GetProductService {
             variants: product.productVariants.map((variant) => ({
                 id: variant.id,
                 sku: variant.sku,
-                barcode: variant.barcode ,
-
-                purchasePrice: variant.purchasePrice.toString(),
-                sellingPrice: variant.sellingPrice.toString(),
-
+                barcode: variant.barcode,
+                color: variant.color,
+                colorHex: variant.colorHex,
+                size: variant.size,
                 image: variant.image,
                 publicId: variant.publicId,
                 isActive: variant.isActive,
-
-                attributes: variant.attributeValues.map(({ attributeValue }) => ({
-                    attributeId: attributeValue.attribute.id,
-                    attributeName: attributeValue.attribute.name,
-                    attributeValueId: attributeValue.id,
-                    attributeValue: attributeValue.value,
-                })),
 
                 createdAt: variant.createdAt,
                 updatedAt: variant.updatedAt,

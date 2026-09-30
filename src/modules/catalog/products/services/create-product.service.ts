@@ -25,6 +25,8 @@ export class CreateProductService {
             thumbnail,
             publicId,
             isActive,
+            purchasePrice,
+            sellingPrice,
         } = createProductDto;
 
         /**
@@ -105,6 +107,8 @@ export class CreateProductService {
             data: {
                 name,
                 slug,
+                purchasePrice,
+                sellingPrice,
 
                 ...(description !== undefined && {
                     description,

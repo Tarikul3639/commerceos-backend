@@ -2,13 +2,25 @@ import {
     IsBoolean,
     IsNotEmpty,
     IsOptional,
+    IsNumber,
     IsString,
     MaxLength,
+    Min,
 } from 'class-validator';
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateProductDto {
+    @ApiProperty({ example: 100 })
+    @IsNumber()
+    @Min(0)
+    purchasePrice!: number;
+
+    @ApiProperty({ example: 150 })
+    @IsNumber()
+    @Min(0)
+    sellingPrice!: number;
+
     @ApiProperty({
         example: 'Nike Air Max 270',
     })

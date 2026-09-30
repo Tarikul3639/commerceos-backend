@@ -1,26 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
-
-export class VariantAttributeResponseDto {
-    @ApiProperty({
-        example: 'cmf123attributeid',
-    })
-    attributeId!: string;
-
-    @ApiProperty({
-        example: 'Color',
-    })
-    attributeName!: string;
-
-    @ApiProperty({
-        example: 'cmf123attributevalueid',
-    })
-    attributeValueId!: string;
-
-    @ApiProperty({
-        example: 'Red',
-    })
-    attributeValue!: string;
-}
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class ProductVariantResponseDto {
     @ApiProperty({
@@ -39,15 +17,14 @@ export class ProductVariantResponseDto {
     })
     barcode!: string | null;
 
-    @ApiProperty({
-        example: '500',
-    })
-    purchasePrice!: string;
+    @ApiPropertyOptional({ example: 'Red', nullable: true })
+    color!: string | null;
 
-    @ApiProperty({
-        example: '750',
-    })
-    sellingPrice!: string;
+    @ApiPropertyOptional({ example: '#FF0000', nullable: true })
+    colorHex!: string | null;
+
+    @ApiPropertyOptional({ example: 'M', nullable: true })
+    size!: string | null;
 
     @ApiProperty({
         example:
@@ -66,11 +43,6 @@ export class ProductVariantResponseDto {
         example: true,
     })
     isActive!: boolean;
-
-    @ApiProperty({
-        type: [VariantAttributeResponseDto],
-    })
-    attributes!: VariantAttributeResponseDto[];
 
     @ApiProperty()
     createdAt!: Date;

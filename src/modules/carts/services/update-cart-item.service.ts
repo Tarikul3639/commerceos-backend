@@ -51,13 +51,12 @@ export class UpdateCartItemService {
                                 id: true,
                                 sku: true,
                                 image: true,
-                                sellingPrice: true,
-
                                 product: {
                                     select: {
                                         id: true,
                                         name: true,
                                         slug: true,
+                                        sellingPrice: true,
                                     },
                                 },
                             },
@@ -82,9 +81,13 @@ export class UpdateCartItemService {
                 variant: {
                     id: item.variant.id,
                     sku: item.variant.sku,
-                    price: item.variant.sellingPrice.toString(),
+                    price: item.variant.product.sellingPrice.toString(),
                     imageUrl: item.variant.image,
-                    product: item.variant.product,
+                    product: {
+                        id: item.variant.product.id,
+                        name: item.variant.product.name,
+                        slug: item.variant.product.slug,
+                    },
                 },
                 createdAt: item.createdAt,
                 updatedAt: item.updatedAt,

@@ -1,0 +1,262 @@
+/**
+ * ============================================================
+ * SYSTEM & AUDIT
+ * ============================================================
+ */
+
+enum ActivityType {
+  CREATE
+  UPDATE
+  DELETE
+
+  LOGIN
+  LOGOUT
+  PASSWORD_CHANGE
+
+  STATUS_CHANGE
+
+  APPROVE
+  REJECT
+  COMPLETE
+  CANCEL
+
+  OTHER
+}
+
+enum ActivityModule {
+  AUTH
+  USER
+  ROLE
+  PERMISSION
+
+  PRODUCT
+  CATEGORY
+  BRAND
+  SUPPLIER
+  WAREHOUSE
+  INVENTORY
+  PURCHASE
+  STOCK_TRANSFER
+  STOCK_MOVEMENT
+  DISCOUNT
+
+  CUSTOMER
+  CART
+  ORDER
+  PAYMENT
+  ORDER_RETURN
+  PURCHASE_RETURN
+
+  EMPLOYEE
+  SETTINGS
+  NOTIFICATION
+
+  OTHER
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+}
+
+enum EmailStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+enum BannerType {
+  HERO
+  PROMOTION
+  OFFER
+  PRODUCT
+  CATEGORY
+  CUSTOM
+}
+
+enum BannerPosition {
+  HOME_TOP
+  HOME_MIDDLE
+  HOME_BOTTOM
+}
+
+model Settings {
+  id String @id @default(cuid())
+
+  companyName String
+  companyEmail String
+  companyPhone String
+  companyAddress String
+
+  logo String?
+  favicon String?
+
+  currency String @default("BDT")
+  timezone String @default("Asia/Dhaka")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+}
+
+model ActivityLog {
+  id String @id @default(cuid())
+
+  type ActivityType
+  module ActivityModule
+
+  action String
+
+  description String?
+
+  // Which entity the activity has occurred on, its type and id
+  entityType String?
+  entityId String?
+
+  // Old value before the change
+  oldValue Json?
+
+  // New value after the change
+  newValue Json?
+
+  // Metadata about the activity
+  ipAddress String?
+  userAgent String?
+
+  userId String?
+
+  // The user who performed the activity
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([module])
+  @@index([type])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+
+  @@map("activity_logs")
+}
+
+model Notification {
+  id String @id @default(cuid())
+
+  title String
+  message String
+
+  type NotificationType @default(INFO)
+
+  // Indicates whether the notification has been read
+  isRead Boolean @default(false)
+
+  // Optional URL or frontend path related to this notification
+  link String?
+
+  // The related entity type
+  entityType String?
+
+  // The related entity ID
+  entityId String?
+
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+
+  @@map("notifications")
+}
+
+model EmailLog {
+  id String @id @default(cuid())
+
+  // Email address of the recipient
+  to String
+
+  // Subject of the email
+  subject String
+
+  // Email content
+  body String
+
+  status EmailStatus @default(PENDING)
+
+  // Error message if sending the email fails
+  errorMessage String?
+
+  // The timestamp when the email was successfully sent
+  sentAt DateTime?
+
+  // The related entity type
+  entityType String?
+
+  // The related entity ID
+  entityId String?
+
+  // Number of times the email sending was attempted
+  attemptCount Int @default(0)
+
+  // The user who triggered this email
+  triggeredById String?
+
+  triggeredBy User? @relation(fields: [triggeredById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([to])
+  @@index([status])
+  @@index([triggeredById])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+
+  @@map("email_logs")
+}
+
+model Banner {
+  id String @id @default(cuid())
+
+  title String?
+
+  // Banner image URL
+  imageUrl String
+
+  // Optional image for mobile devices
+  mobileImageUrl String?
+
+  type BannerType
+  position BannerPosition
+
+  // Redirect URL when banner is clicked
+  link String?
+
+  buttonText String?
+
+  // Controls display order
+  sortOrder Int @default(0)
+
+  isActive Boolean @default(true)
+
+  // Banner visibility period
+  startAt DateTime?
+  endAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type])
+  @@index([position])
+  @@index([isActive])
+
+  @@map("banners")
+}

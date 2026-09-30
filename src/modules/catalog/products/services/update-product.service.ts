@@ -132,6 +132,14 @@ export class UpdateProductService {
                     description: updateProductDto.description,
                 }),
 
+                ...(updateProductDto.purchasePrice !== undefined && {
+                    purchasePrice: updateProductDto.purchasePrice,
+                }),
+
+                ...(updateProductDto.sellingPrice !== undefined && {
+                    sellingPrice: updateProductDto.sellingPrice,
+                }),
+
                 ...(updateProductDto.categoryId !== undefined && {
                     categoryId: updateProductDto.categoryId,
                 }),

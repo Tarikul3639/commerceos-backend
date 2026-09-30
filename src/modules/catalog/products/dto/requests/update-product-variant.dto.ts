@@ -1,11 +1,7 @@
 import {
-    IsArray,
     IsBoolean,
-    IsNumber,
     IsOptional,
     IsString,
-    IsNotEmpty,
-    Min,
 } from 'class-validator';
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
@@ -26,21 +22,20 @@ export class UpdateProductVariantDto {
     @IsString()
     barcode?: string | null;
 
-    @ApiPropertyOptional({
-        example: 550,
-    })
+    @ApiPropertyOptional({ example: 'Red' })
     @IsOptional()
-    @IsNumber()
-    @Min(0)
-    purchasePrice?: number;
+    @IsString()
+    color?: string | null;
 
-    @ApiPropertyOptional({
-        example: 800,
-    })
+    @ApiPropertyOptional({ example: '#FF0000' })
     @IsOptional()
-    @IsNumber()
-    @Min(0)
-    sellingPrice?: number;
+    @IsString()
+    colorHex?: string | null;
+
+    @ApiPropertyOptional({ example: 'M' })
+    @IsOptional()
+    @IsString()
+    size?: string | null;
 
     @ApiPropertyOptional({
         example:
@@ -66,20 +61,4 @@ export class UpdateProductVariantDto {
     @IsBoolean()
     isActive?: boolean;
 
-    @ApiPropertyOptional({
-        example: [
-            'attribute-value-id-red',
-            'attribute-value-id-large',
-        ],
-        type: [String],
-    })
-    @IsOptional()
-    @IsArray()
-    @IsString({
-        each: true,
-    })
-    @IsNotEmpty({
-        each: true,
-    })
-    attributeValueIds?: string[];
 }

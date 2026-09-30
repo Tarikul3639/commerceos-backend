@@ -40,7 +40,11 @@ export class GetStockSummaryService {
                 include: {
                     variant: {
                         select: {
-                            sellingPrice: true,
+                            product: {
+                                select: {
+                                    sellingPrice: true,
+                                },
+                            },
                         },
                     },
                 },
@@ -73,7 +77,7 @@ export class GetStockSummaryService {
              *
              * Stock Value = Quantity × Selling Price
              */
-            totalStockValue += quantity * Number(inventory.variant.sellingPrice);
+            totalStockValue += quantity * Number(inventory.variant.product.sellingPrice);
 
             /**
              * Count products with zero stock

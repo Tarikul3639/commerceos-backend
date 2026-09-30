@@ -1,0 +1,431 @@
+/**
+ * ============================================================
+ * COMMERCE
+ * ============================================================
+ */
+
+enum PaymentMethod {
+  CASH
+  CARD
+  BKASH
+  NAGAD
+  ROCKET
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PurchaseStatus {
+  PENDING
+  RECEIVED
+  CANCELLED
+}
+
+enum PaymentType {
+  PAYMENT
+  REFUND
+}
+
+enum OrderReturnStatus {
+  PENDING
+  APPROVED
+  PARTIALLY_PAID
+  REJECTED
+  COMPLETED
+}
+
+enum PurchaseReturnStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+model Supplier {
+  id String @id @default(cuid())
+
+  name String
+
+  email String? @unique
+  phone String? @unique
+
+  address String?
+
+  // The primary person to contact at the supplier
+  contactPerson String?
+
+  // Controls whether the supplier can currently be used
+  isActive Boolean @default(true)
+
+  // Stores the timestamp when the supplier was soft deleted
+  deletedAt DateTime?
+
+  purchases Purchase[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([deletedAt])
+  @@map("suppliers")
+}
+
+model Purchase {
+  id String @id @default(cuid())
+
+  invoiceNo String @unique
+
+  subtotal Decimal
+  discount Decimal @default(0)
+  tax Decimal @default(0)
+  total Decimal
+
+  status PurchaseStatus @default(PENDING)
+
+  supplierId String
+  supplier Supplier @relation(fields: [supplierId], references: [id])
+
+  // Warehouse where the purchased products will be added
+  warehouseId String
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id])
+
+  purchaseItems PurchaseItem[]
+  returns PurchaseReturn[]
+
+  // The user who created this purchase
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([supplierId])
+  @@index([warehouseId])
+  @@index([userId])
+  @@index([status])
+  @@map("purchases")
+}
+
+model PurchaseItem {
+  id String @id @default(cuid())
+
+  quantity Int
+
+  // Purchase price per unit
+  unitPrice Decimal
+
+  subtotal Decimal
+
+  purchaseId String
+  purchase Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  variantId String
+
+  // Product variant included in this purchase
+  variant ProductVariant @relation(fields: [variantId], references: [id])
+
+  returnItems PurchaseReturnItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([purchaseId])
+  @@index([variantId])
+  @@map("purchase_items")
+}
+
+model PurchaseReturn {
+  id String @id @default(cuid())
+
+  returnNo String @unique
+  status PurchaseReturnStatus @default(PENDING)
+
+  // Reason for returning products to the supplier
+  reason String?
+
+  purchaseId String
+  purchase Purchase @relation(fields: [purchaseId], references: [id], onDelete: Restrict)
+
+  items PurchaseReturnItem[]
+
+  // User who processed the purchase return
+  createdById String
+  createdBy User @relation("PurchaseReturnCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  // User who approved or rejected the purchase return
+  approvedById String?
+  approvedBy User? @relation("PurchaseReturnApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
+
+  approvedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([purchaseId])
+  @@index([createdById])
+  @@index([approvedById])
+  @@index([status])
+  @@map("purchase_returns")
+}
+
+model PurchaseReturnItem {
+  id String @id @default(cuid())
+
+  quantity Int
+
+  // Reason for returning this specific item
+  reason String?
+
+  returnId String
+  purchaseReturn PurchaseReturn @relation(fields: [returnId], references: [id], onDelete: Cascade)
+
+  // The original purchase item being returned
+  purchaseItemId String
+  purchaseItem PurchaseItem @relation(fields: [purchaseItemId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([returnId, purchaseItemId])
+  @@index([returnId])
+  @@index([purchaseItemId])
+  @@map("purchase_return_items")
+}
+
+model Cart {
+  id String @id @default(cuid())
+
+  customerId String @unique
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  items CartItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("carts")
+}
+
+model CartItem {
+  id String @id @default(cuid())
+
+  quantity Int
+
+  cartId String
+
+  cart Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)
+
+  variantId String
+
+  // Product variant added to this cart
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Prevents the same product variant from being added multiple times to the same cart
+  @@unique([cartId, variantId])
+
+  @@index([cartId])
+  @@index([variantId])
+
+  @@map("cart_items")
+}
+
+model Order {
+  id String @id @default(cuid())
+
+  invoiceNo String @unique
+
+  // The subtotal amount of the order before any discounts or taxes
+  subtotal Decimal
+
+  // The discount amount applied to the order
+  discount Decimal @default(0)
+
+  // The tax amount applied to the order
+  tax Decimal @default(0)
+
+  // The total amount to be paid for the order
+  total Decimal
+
+  paymentStatus PaymentStatus @default(PENDING)
+  status OrderStatus @default(PENDING)
+
+  customerId String
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  warehouseId String
+
+  // The warehouse from which the order items will be fulfilled
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id])
+
+  orderItems OrderItem[]
+  payments Payment[]
+
+  returns OrderReturn[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([userId])
+  @@index([warehouseId])
+  @@index([status])
+  @@index([paymentStatus])
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+
+  quantity Int
+
+  // The price of the variant at the time the order was placed
+  unitPrice Decimal
+
+  // The total price for this order item (unitPrice * quantity)
+  subtotal Decimal
+
+  orderId String
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  variantId String
+
+  // Product variant included in this order
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+  returnItems OrderReturnItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([variantId])
+
+  @@map("order_items")
+}
+
+model Payment {
+  id String @id @default(cuid())
+
+  amount Decimal
+
+  method PaymentMethod
+  status PaymentStatus @default(PENDING)
+
+  // Defines whether this record is a payment or a refund
+  type PaymentType @default(PAYMENT)
+
+  // Transaction reference from the payment provider
+  transactionId String?
+
+  // Additional information about the payment
+  notes String?
+
+  // The order this payment is associated with
+  orderId String
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  // User who recorded or processed the payment
+  userId String?
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([userId])
+  @@index([status])
+  @@index([method])
+
+  @@map("payments")
+}
+
+model OrderReturn {
+  id String @id @default(cuid())
+
+  returnNo String @unique
+
+  status OrderReturnStatus @default(PENDING)
+
+  // Reason provided for returning the order
+  reason String?
+
+  orderId String
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  items OrderReturnItem[]
+
+  // User who processed the return
+  createdById String
+
+  createdBy User @relation("OrderReturnCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  // User who approved or rejected the return
+  approvedById String?
+
+  approvedBy User? @relation("OrderReturnApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
+
+  approvedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([createdById])
+  @@index([approvedById])
+  @@index([status])
+
+  @@map("order_returns")
+}
+
+model OrderReturnItem {
+  id String @id @default(cuid())
+
+  quantity Int
+
+  // Reason for returning this specific item
+  reason String?
+
+  returnId String
+
+  orderReturn OrderReturn @relation(fields: [returnId], references: [id], onDelete: Cascade)
+
+  // The original order item being returned
+  orderItemId String
+
+  orderItem OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([returnId, orderItemId])
+  @@index([returnId])
+  @@index([orderItemId])
+
+  @@map("order_return_items")
+}
