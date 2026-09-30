@@ -28,6 +28,7 @@ import { CategoryModule } from './modules/catalog/categories/category.module';
 import { BrandModule } from './modules/catalog/brands/brand.module';
 import { ProductModule } from './modules/catalog/products/product.module';
 import { DiscountModule } from './modules/catalog/discounts/discount.module';
+import { SizeChartModule } from './modules/catalog/size-charts/size-chart.module';
 
 import { WarehouseModule } from './modules/inventory/warehouses/warehouse.module';
 import { StockModule } from './modules/inventory/stocks/stock.module';
@@ -90,6 +91,7 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
     BrandModule,
     ProductModule,
     DiscountModule,
+    SizeChartModule,
 
     WarehouseModule,
     StockModule,

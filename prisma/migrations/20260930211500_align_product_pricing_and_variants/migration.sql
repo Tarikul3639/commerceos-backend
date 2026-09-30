@@ -1,8 +1,4 @@
 -- Move pricing ownership from variants to products.
-ALTER TABLE "products"
-ADD COLUMN "purchasePrice" DECIMAL(65,30) NOT NULL DEFAULT 0,
-ADD COLUMN "sellingPrice" DECIMAL(65,30) NOT NULL DEFAULT 0;
-
 ALTER TABLE "product_variants"
 ADD COLUMN "color" TEXT,
 ADD COLUMN "colorHex" TEXT,
