@@ -87,6 +87,12 @@ export class ProductResponseDto {
     })
     variantCount!: number;
 
+    @ApiProperty({
+        example: 42,
+        description: 'Total available stock across all product variants',
+    })
+    stock!: number;
+
     @ApiProperty()
     createdAt!: Date;
 

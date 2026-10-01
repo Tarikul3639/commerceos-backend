@@ -4,8 +4,7 @@ import { Prisma } from '../../../../lib/prisma/client';
 import { PrismaService } from '../../../../common/prisma/prisma.service';
 
 import { ProductQueryDto } from '../dto/requests/product-query.dto';
-import { PaginatedResponse } from '../../../../common/interfaces/paginated-response.interface';
-import { ProductResponseDto } from '../dto/responses/product-response.dto';
+import { ProductListResponseDto } from '../dto/responses/product-list-response.dto'
 
 @Injectable()
 export class GetProductsService {
@@ -13,7 +12,7 @@ export class GetProductsService {
 
     async execute(
         query: ProductQueryDto,
-    ): Promise<PaginatedResponse<ProductResponseDto>> {
+    ): Promise<ProductListResponseDto> {
         const {
             search,
             categoryId,
@@ -84,6 +83,19 @@ export class GetProductsService {
                         },
                     },
 
+                    productVariants: {
+                        where: {
+                            deletedAt: null,
+                        },
+                        select: {
+                            inventories: {
+                                select: {
+                                    quantity: true,
+                                },
+                            },
+                        },
+                    },
+
                     brand: {
                         select: {
                             id: true,
@@ -118,23 +130,35 @@ export class GetProductsService {
         ]);
 
         return {
-            data: products.map((product) => ({
-                id: product.id,
-                name: product.name,
-                slug: product.slug,
-                description: product.description,
-                thumbnail: product.thumbnail,
-                isActive: product.isActive,
+            data: products.map((product) => {
+                const stock = product.productVariants.reduce(
+                    (total, variant) =>
+                        total +
+                        variant.inventories.reduce(
+                            (sum, inventory) => sum + inventory.quantity,
+                            0,
+                        ),
+                    0,
+                )
 
-                category: product.category,
+                return {
+                    id: product.id,
+                    name: product.name,
+                    slug: product.slug,
+                    description: product.description,
+                    thumbnail: product.thumbnail,
+                    isActive: product.isActive,
 
-                brand: product.brand,
+                    category: product.category,
+                    brand: product.brand,
 
-                variantCount: product._count.productVariants,
+                    variantCount: product._count.productVariants,
+                    stock,
 
-                createdAt: product.createdAt,
-                updatedAt: product.updatedAt,
-            })),
+                    createdAt: product.createdAt,
+                    updatedAt: product.updatedAt,
+                }
+            }),
 
             meta: {
                 total,

@@ -62,15 +62,10 @@ model Supplier {
   email String? @unique
   phone String? @unique
 
-  address String?
-
-  // The primary person to contact at the supplier
+  address       String?
   contactPerson String?
 
-  // Controls whether the supplier can currently be used
-  isActive Boolean @default(true)
-
-  // Stores the timestamp when the supplier was soft deleted
+  isActive  Boolean   @default(true)
   deletedAt DateTime?
 
   purchases Purchase[]
@@ -89,30 +84,24 @@ model Purchase {
 
   subtotal Decimal
   discount Decimal @default(0)
-  tax Decimal @default(0)
-  total Decimal
+  tax      Decimal @default(0)
+  total    Decimal
 
   status PurchaseStatus @default(PENDING)
 
   supplierId String
-  supplier Supplier @relation(fields: [supplierId], references: [id])
-
-  // Warehouse where the purchased products will be added
-  warehouseId String
-  warehouse Warehouse @relation(fields: [warehouseId], references: [id])
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
 
   purchaseItems PurchaseItem[]
-  returns PurchaseReturn[]
+  returns       PurchaseReturn[]
 
-  // The user who created this purchase
   userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([supplierId])
-  @@index([warehouseId])
   @@index([userId])
   @@index([status])
   @@map("purchases")
@@ -121,20 +110,15 @@ model Purchase {
 model PurchaseItem {
   id String @id @default(cuid())
 
-  quantity Int
-
-  // Purchase price per unit
+  quantity  Int
   unitPrice Decimal
-
-  subtotal Decimal
+  subtotal  Decimal
 
   purchaseId String
-  purchase Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  purchase   Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
 
-  variantId String
-
-  // Product variant included in this purchase
-  variant ProductVariant @relation(fields: [variantId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
 
   returnItems PurchaseReturnItem[]
 
@@ -142,31 +126,28 @@ model PurchaseItem {
   updatedAt DateTime @updatedAt
 
   @@index([purchaseId])
-  @@index([variantId])
+  @@index([productId])
   @@map("purchase_items")
 }
 
 model PurchaseReturn {
   id String @id @default(cuid())
 
-  returnNo String @unique
-  status PurchaseReturnStatus @default(PENDING)
+  returnNo String               @unique
+  status   PurchaseReturnStatus @default(PENDING)
 
-  // Reason for returning products to the supplier
   reason String?
 
   purchaseId String
-  purchase Purchase @relation(fields: [purchaseId], references: [id], onDelete: Restrict)
+  purchase   Purchase @relation(fields: [purchaseId], references: [id], onDelete: Restrict)
 
   items PurchaseReturnItem[]
 
-  // User who processed the purchase return
   createdById String
-  createdBy User @relation("PurchaseReturnCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  createdBy   User   @relation("PurchaseReturnCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
 
-  // User who approved or rejected the purchase return
   approvedById String?
-  approvedBy User? @relation("PurchaseReturnApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
+  approvedBy   User?   @relation("PurchaseReturnApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
 
   approvedAt DateTime?
 
@@ -184,16 +165,13 @@ model PurchaseReturnItem {
   id String @id @default(cuid())
 
   quantity Int
+  reason   String?
 
-  // Reason for returning this specific item
-  reason String?
-
-  returnId String
+  returnId       String
   purchaseReturn PurchaseReturn @relation(fields: [returnId], references: [id], onDelete: Cascade)
 
-  // The original purchase item being returned
   purchaseItemId String
-  purchaseItem PurchaseItem @relation(fields: [purchaseItemId], references: [id], onDelete: Restrict)
+  purchaseItem   PurchaseItem @relation(fields: [purchaseItemId], references: [id], onDelete: Restrict)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -207,9 +185,8 @@ model PurchaseReturnItem {
 model Cart {
   id String @id @default(cuid())
 
-  customerId String @unique
-
-  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId String   @unique
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
   items CartItem[]
 
@@ -225,23 +202,17 @@ model CartItem {
   quantity Int
 
   cartId String
+  cart   Cart   @relation(fields: [cartId], references: [id], onDelete: Cascade)
 
-  cart Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)
-
-  variantId String
-
-  // Product variant added to this cart
-  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Prevents the same product variant from being added multiple times to the same cart
-  @@unique([cartId, variantId])
-
+  @@unique([cartId, productId])
   @@index([cartId])
-  @@index([variantId])
-
+  @@index([productId])
   @@map("cart_items")
 }
 
@@ -250,70 +221,46 @@ model Order {
 
   invoiceNo String @unique
 
-  // The subtotal amount of the order before any discounts or taxes
   subtotal Decimal
-
-  // The discount amount applied to the order
   discount Decimal @default(0)
-
-  // The tax amount applied to the order
-  tax Decimal @default(0)
-
-  // The total amount to be paid for the order
-  total Decimal
+  tax      Decimal @default(0)
+  total    Decimal
 
   paymentStatus PaymentStatus @default(PENDING)
-  status OrderStatus @default(PENDING)
+  status        OrderStatus   @default(PENDING)
 
   customerId String
-
-  customer Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
 
   userId String
-
-  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
-
-  warehouseId String
-
-  // The warehouse from which the order items will be fulfilled
-  warehouse Warehouse @relation(fields: [warehouseId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   orderItems OrderItem[]
-  payments Payment[]
-
-  returns OrderReturn[]
+  payments   Payment[]
+  returns    OrderReturn[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([customerId])
   @@index([userId])
-  @@index([warehouseId])
   @@index([status])
   @@index([paymentStatus])
-
   @@map("orders")
 }
 
 model OrderItem {
   id String @id @default(cuid())
 
-  quantity Int
-
-  // The price of the variant at the time the order was placed
+  quantity  Int
   unitPrice Decimal
-
-  // The total price for this order item (unitPrice * quantity)
-  subtotal Decimal
+  subtotal  Decimal
 
   orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  variantId String
-
-  // Product variant included in this order
-  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
 
   returnItems OrderReturnItem[]
 
@@ -321,8 +268,7 @@ model OrderItem {
   updatedAt DateTime @updatedAt
 
   @@index([orderId])
-  @@index([variantId])
-
+  @@index([productId])
   @@map("order_items")
 }
 
@@ -333,25 +279,16 @@ model Payment {
 
   method PaymentMethod
   status PaymentStatus @default(PENDING)
+  type   PaymentType   @default(PAYMENT)
 
-  // Defines whether this record is a payment or a refund
-  type PaymentType @default(PAYMENT)
-
-  // Transaction reference from the payment provider
   transactionId String?
+  notes         String?
 
-  // Additional information about the payment
-  notes String?
-
-  // The order this payment is associated with
   orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Restrict)
 
-  order Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
-
-  // User who recorded or processed the payment
   userId String?
-
-  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -360,35 +297,27 @@ model Payment {
   @@index([userId])
   @@index([status])
   @@index([method])
-
   @@map("payments")
 }
 
 model OrderReturn {
   id String @id @default(cuid())
 
-  returnNo String @unique
+  returnNo String            @unique
+  status   OrderReturnStatus @default(PENDING)
 
-  status OrderReturnStatus @default(PENDING)
-
-  // Reason provided for returning the order
   reason String?
 
   orderId String
-
-  order Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Restrict)
 
   items OrderReturnItem[]
 
-  // User who processed the return
   createdById String
+  createdBy   User   @relation("OrderReturnCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
 
-  createdBy User @relation("OrderReturnCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
-
-  // User who approved or rejected the return
   approvedById String?
-
-  approvedBy User? @relation("OrderReturnApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
+  approvedBy   User?   @relation("OrderReturnApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
 
   approvedAt DateTime?
 
@@ -399,7 +328,6 @@ model OrderReturn {
   @@index([createdById])
   @@index([approvedById])
   @@index([status])
-
   @@map("order_returns")
 }
 
@@ -407,18 +335,13 @@ model OrderReturnItem {
   id String @id @default(cuid())
 
   quantity Int
+  reason   String?
 
-  // Reason for returning this specific item
-  reason String?
-
-  returnId String
-
+  returnId    String
   orderReturn OrderReturn @relation(fields: [returnId], references: [id], onDelete: Cascade)
 
-  // The original order item being returned
   orderItemId String
-
-  orderItem OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Restrict)
+  orderItem   OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Restrict)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -426,6 +349,5 @@ model OrderReturnItem {
   @@unique([returnId, orderItemId])
   @@index([returnId])
   @@index([orderItemId])
-
   @@map("order_return_items")
 }

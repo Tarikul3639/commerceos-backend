@@ -29,9 +29,7 @@ import { DeleteProductVariantService } from '../services/delete-product-variant.
 export class ProductVariantController {
     constructor(
         private readonly createProductVariantService: CreateProductVariantService,
-
         private readonly updateProductVariantService: UpdateProductVariantService,
-
         private readonly deleteProductVariantService: DeleteProductVariantService,
     ) { }
 

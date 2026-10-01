@@ -3,12 +3,12 @@ import {
     IsNotEmpty,
     IsOptional,
     IsString,
-} from 'class-validator';
+} from 'class-validator'
 
 import {
     ApiProperty,
     ApiPropertyOptional,
-} from '@nestjs/swagger';
+} from '@nestjs/swagger'
 
 export class CreateProductVariantDto {
     @ApiProperty({
@@ -16,43 +16,49 @@ export class CreateProductVariantDto {
     })
     @IsString()
     @IsNotEmpty()
-    sku!: string;
+    sku!: string
 
     @ApiPropertyOptional({
         example: '1234567890123',
     })
     @IsOptional()
     @IsString()
-    barcode?: string;
+    barcode?: string
 
-    @ApiPropertyOptional({ example: 'Red' })
+    @ApiPropertyOptional({
+        example: 'Red',
+    })
     @IsOptional()
     @IsString()
-    color?: string;
+    color?: string
 
-    @ApiPropertyOptional({ example: '#FF0000' })
+    @ApiPropertyOptional({
+        example: '#FF0000',
+    })
     @IsOptional()
     @IsString()
-    colorHex?: string;
+    colorHex?: string
 
-    @ApiPropertyOptional({ example: 'M' })
+    @ApiPropertyOptional({
+        example: 'M',
+    })
     @IsOptional()
     @IsString()
-    size?: string;
+    size?: string
 
     @ApiPropertyOptional({
         example: 'https://example.com/image.jpg',
     })
     @IsOptional()
     @IsString()
-    image?: string;
+    image?: string
 
     @ApiPropertyOptional({
         example: 'products/variants/nike-air-max-red',
     })
     @IsOptional()
     @IsString()
-    publicId?: string;
+    publicId?: string
 
     @ApiPropertyOptional({
         example: true,
@@ -60,6 +66,5 @@ export class CreateProductVariantDto {
     })
     @IsOptional()
     @IsBoolean()
-    isActive?: boolean;
-
+    isActive?: boolean
 }

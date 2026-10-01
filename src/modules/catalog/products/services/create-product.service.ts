@@ -6,22 +6,19 @@ import {
 
 import { PrismaService } from '../../../../common/prisma/prisma.service';
 import { CreateProductDto } from '../dto/requests/create-product.dto';
-import { generateSlug } from '../../../../common/utils/slug.util';
 
 @Injectable()
 export class CreateProductService {
-    constructor(
-        private readonly prisma: PrismaService,
-    ) {}
+    constructor(private readonly prisma: PrismaService) { }
 
-    async execute(
-        createProductDto: CreateProductDto,
-    ) {
+    async execute(createProductDto: CreateProductDto) {
         const {
             name,
+            slug,
             description,
             categoryId,
             brandId,
+            sizeChartId,
             thumbnail,
             publicId,
             isActive,
@@ -30,73 +27,74 @@ export class CreateProductService {
         } = createProductDto;
 
         /**
-         * Generate product slug
-         */
-        const slug = generateSlug(name);
-
-        /**
          * Check whether the slug already exists
          */
-        const existingProduct =
-            await this.prisma.product.findUnique({
-                where: {
-                    slug,
-                },
-
-                select: {
-                    id: true,
-                },
-            });
+        const existingProduct = await this.prisma.product.findUnique({
+            where: {
+                slug,
+            },
+            select: {
+                id: true,
+            },
+        });
 
         if (existingProduct) {
-            throw new ConflictException(
-                'A product with this name already exists',
-            );
+            throw new ConflictException('A product with this slug already exists');
         }
 
         /**
          * Check category
          */
-        const category =
-            await this.prisma.category.findFirst({
-                where: {
-                    id: categoryId,
-                    deletedAt: null,
-                    isActive: true,
-                },
-
-                select: {
-                    id: true,
-                },
-            });
+        const category = await this.prisma.category.findFirst({
+            where: {
+                id: categoryId,
+                deletedAt: null,
+                isActive: true,
+            },
+            select: {
+                id: true,
+            },
+        });
 
         if (!category) {
-            throw new NotFoundException(
-                'Category not found or inactive',
-            );
+            throw new NotFoundException('Category not found or inactive');
         }
 
         /**
          * Check brand if provided
          */
         if (brandId) {
-            const brand =
-                await this.prisma.brand.findFirst({
-                    where: {
-                        id: brandId,
-                        deletedAt: null,
-                        isActive: true,
-                    },
-
-                    select: {
-                        id: true,
-                    },
-                });
+            const brand = await this.prisma.brand.findFirst({
+                where: {
+                    id: brandId,
+                    deletedAt: null,
+                    isActive: true,
+                },
+                select: {
+                    id: true,
+                },
+            });
 
             if (!brand) {
-                throw new NotFoundException(
-                    'Brand not found or inactive',
-                );
+                throw new NotFoundException('Brand not found or inactive');
+            }
+        }
+
+        /**
+         * Check size chart if provided
+         */
+        if (sizeChartId) {
+            const sizeChart = await this.prisma.sizeChart.findUnique({
+                where: {
+                    id: sizeChartId,
+                },
+                select: {
+                    id: true,
+                },
+            });
+
+            if (!sizeChart) {
+                throw new NotFoundException('Size chart not found');
             }
         }
 
@@ -120,6 +118,10 @@ export class CreateProductService {
                     brandId,
                 }),
 
+                ...(sizeChartId !== undefined && {
+                    sizeChartId,
+                }),
+
                 ...(thumbnail !== undefined && {
                     thumbnail,
                 }),
@@ -138,7 +140,10 @@ export class CreateProductService {
                 name: true,
                 slug: true,
                 description: true,
+                purchasePrice: true,
+                sellingPrice: true,
                 thumbnail: true,
+                publicId: true,
                 isActive: true,
 
                 category: {
@@ -154,6 +159,13 @@ export class CreateProductService {
                         id: true,
                         name: true,
                         slug: true,
+                    },
+                },
+
+                sizeChart: {
+                    select: {
+                        id: true,
+                        name: true,
                     },
                 },
 

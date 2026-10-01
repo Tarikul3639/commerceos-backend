@@ -79,19 +79,16 @@ model User {
   // Stores email verification token records for this user
   emailVerificationTokens UserEmailVerificationToken[]
 
-  orders Order[]
-
-  discounts      Discount[]
-  stockMovements StockMovement[]
-  stockTransfers StockTransfer[]
+  orders    Order[]
+  discounts Discount[]
 
   purchases Purchase[]
   payments  Payment[]
 
-  createdOrderReturns OrderReturn[] @relation("OrderReturnCreatedBy")
+  createdOrderReturns  OrderReturn[] @relation("OrderReturnCreatedBy")
   approvedOrderReturns OrderReturn[] @relation("OrderReturnApprovedBy")
 
-  createdPurchaseReturns PurchaseReturn[] @relation("PurchaseReturnCreatedBy")
+  createdPurchaseReturns  PurchaseReturn[] @relation("PurchaseReturnCreatedBy")
   approvedPurchaseReturns PurchaseReturn[] @relation("PurchaseReturnApprovedBy")
 
   // Activity Logs
@@ -132,15 +129,15 @@ model UserRefreshToken {
   // Hashed Refresh Token
   tokenHash String @unique
 
-  expiresAt DateTime
-  revokedAt DateTime?
+  expiresAt  DateTime
+  revokedAt  DateTime?
   lastUsedAt DateTime?
 
   userAgent String?
   ipAddress String?
 
   userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -158,10 +155,10 @@ model UserPasswordResetToken {
   tokenHash String @unique
 
   expiresAt DateTime
-  usedAt DateTime?
+  usedAt    DateTime?
 
   userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
@@ -176,11 +173,11 @@ model UserEmailVerificationToken {
   // Hashed Verification Token
   tokenHash String @unique
 
-  expiresAt DateTime
+  expiresAt  DateTime
   verifiedAt DateTime?
 
   userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
