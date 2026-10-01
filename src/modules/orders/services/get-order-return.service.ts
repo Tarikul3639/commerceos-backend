@@ -33,19 +33,12 @@ export class GetOrderReturnService {
                     include: {
                         orderItem: {
                             include: {
-                                variant: {
+                                product: {
                                     select: {
                                         id: true,
-
                                         sku: true,
-
-                                        product: {
-                                            select: {
-                                                id: true,
-                                                name: true,
-                                                slug: true,
-                                            },
-                                        },
+                                        name: true,
+                                        slug: true,
                                     },
                                 },
                             },

@@ -20,8 +20,12 @@ export class DiscountProductResponseDto {
     slug!: string;
 
     @ApiPropertyOptional({
-        example: 'https://example.com/iphone-15.jpg',
+        example: [
+            'https://example.com/iphone-15-1.jpg',
+            'https://example.com/iphone-15-2.jpg',
+        ],
         nullable: true,
+        type: [String],
     })
-    thumbnail!: string | null;
+    images!: string[] | null;
 }

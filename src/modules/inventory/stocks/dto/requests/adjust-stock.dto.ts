@@ -13,20 +13,12 @@ import {
 
 export class AdjustStockDto {
     @ApiProperty({
-        example: 'cmf123variantid',
-        description: 'Product variant ID',
+        example: 'cmf123productid',
+        description: 'Product ID',
     })
     @IsString()
     @IsNotEmpty()
-    variantId!: string;
-
-    @ApiProperty({
-        example: 'cmf123warehouseid',
-        description: 'Warehouse ID',
-    })
-    @IsString()
-    @IsNotEmpty()
-    warehouseId!: string;
+    productId!: string;
 
     @ApiProperty({
         example: 10,

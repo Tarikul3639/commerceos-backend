@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 
-// Other Modules
-import { StockMovementModule } from '../inventory/stock-movements/stock-movement.module';
 
 import { PurchaseController } from './controllers/purchase.controller';
 import { PurchaseReturnController } from './controllers/purchase-return.controller';
@@ -20,9 +18,7 @@ import { GetPurchaseReturnService } from './services/get-purchase-return.service
 import { GetPurchaseReturnsService } from './services/get-purchase-returns.service';
 
 @Module({
-    imports: [
-        StockMovementModule,
-    ],
+    imports: [],
 
     controllers: [
         PurchaseController,

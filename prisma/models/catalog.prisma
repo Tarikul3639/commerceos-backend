@@ -66,6 +66,9 @@ model Product {
 
   stock Int @default(0)
 
+  /**
+   * Example: [{"name": "Red", "hex": "#FF0000"}]
+   */
   colors Json?
   sizes  String[]
 

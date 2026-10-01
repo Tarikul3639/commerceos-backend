@@ -1,41 +1,40 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
+/*
+ * DTO: StockResponseDto
+ */
 
 export class StockResponseDto {
-    @ApiProperty()
-    id!: string;
+  /*
+   * Identifiers & References
+   */
 
-    @ApiProperty()
-    quantity!: number;
+  @ApiProperty()
+  id!: string;
 
-    @ApiProperty()
-    reservedQuantity!: number;
+  @ApiProperty()
+  productId!: string;
 
-    @ApiProperty({
-        description: 'Available quantity after reserved stock',
-    })
-    availableQuantity!: number;
+  /*
+   * Stock Details
+   */
 
-    @ApiProperty()
-    variantId!: string;
+  @ApiProperty()
+  quantity!: number;
 
-    @ApiProperty()
-    sku!: string;
+  @ApiProperty()
+  sku!: string;
 
-    @ApiProperty()
-    productId!: string;
+  /*
+   * Product Info & Metadata
+   */
 
-    @ApiProperty()
-    productName!: string;
+  @ApiProperty()
+  productName!: string;
 
-    @ApiProperty()
-    warehouseId!: string;
+  @ApiPropertyOptional({ nullable: true })
+  productImage!: string | null;
 
-    @ApiProperty()
-    warehouseName!: string;
-
-    @ApiProperty()
-    createdAt!: Date;
-
-    @ApiProperty()
-    updatedAt!: Date;
+  @ApiProperty()
+  updatedAt!: Date;
 }

@@ -1,156 +1,76 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@/lib/prisma/client';
-
 import { PrismaService } from '../../../common/prisma/prisma.service';
 import { AnalyticsQueryDto } from '../dto/requests/analytics-query.dto';
 import { TopProductItemDto } from '../dto/responses/top-products-response.dto';
 import { getAnalyticsDateRange } from '../utils/analytics-date-range.util';
 import { getCreatedAtFilter } from '../utils/analytics-where.util';
 
+/*
+ * SERVICE: GetTopProductsService
+ */
+
 @Injectable()
 export class GetTopProductsService {
     constructor(private readonly prisma: PrismaService) { }
 
     async execute(query: AnalyticsQueryDto): Promise<TopProductItemDto[]> {
-        /**
-         * Get the selected dashboard date range.
+        /*
+         * Calculate date range filter
          */
         const { startDate, endDate } = getAnalyticsDateRange(query);
-
-        /**
-         * Build the order filter using
-         * the selected date range.
-         */
         const orderWhere: Prisma.OrderWhereInput = {
             createdAt: getCreatedAtFilter(startDate, endDate),
         };
 
-        /**
-         * Get order items from orders created
-         * within the selected period.
-         *
-         * Only the fields required for calculating
-         * top products are selected.
+        /*
+         * Fetch order items with product details
          */
         const items = await this.prisma.orderItem.findMany({
-            where: {
-                order: orderWhere,
-            },
+            where: { order: orderWhere },
             select: {
                 quantity: true,
                 subtotal: true,
-                variantId: true,
-                variant: {
+                product: {
                     select: {
-                        sku: true,
-                        image: true,
-                        product: {
-                            select: {
-                                id: true,
-                                name: true,
-                            },
+                        id: true,
+                        name: true,
+                        images: {
+                            orderBy: { sortOrder: 'asc' },
+                            take: 1,
                         },
                     },
                 },
             },
         });
 
-        /**
-         * Group order items by variant.
-         *
-         * Map structure:
-         *
-         * variantId -> product information + sales data
-         *
-         * Each variant keeps:
-         * - Product ID
-         * - Product name
-         * - Variant ID
-         * - SKU
-         * - Total quantity sold
-         * - Total revenue
+        /*
+         * Aggregate quantity and revenue by product
          */
-        const grouped = new Map<
-            string,
-            {
-                productId: string;
-                productName: string;
-                productImage: string | null;
-                variantId: string;
-                sku: string;
-                totalSold: number;
-                totalRevenue: number;
-            }
-        >();
+        const grouped = new Map<string, TopProductItemDto>();
 
-        /**
-         * Process each order item and aggregate
-         * its quantity and revenue by variant.
-         */
         for (const item of items) {
-            /**
-             * Use variantId as the grouping key.
-             *
-             * This means each variant is treated
-             * as a separate top-selling item.
-             */
-            const key = item.variantId;
-
-            /**
-             * Get existing aggregated data for the variant,
-             * or create a new entry if it does not exist.
-             */
-            const current = grouped.get(key) ?? {
-                productId: item.variant.product.id,
-                productName: item.variant.product.name,
-                productImage: item.variant.image,
-                variantId: item.variantId,
-                sku: item.variant.sku,
+            const current = grouped.get(item.product.id) ?? {
+                productId: item.product.id,
+                productName: item.product.name,
+                productImage: item.product.images[0]?.imageUrl ?? null,
                 totalSold: 0,
-                totalRevenue: 0,
+                totalRevenue: '0',
             };
 
-            /**
-             * Add the sold quantity to the
-             * variant's total sold quantity.
-             */
             current.totalSold += item.quantity;
+            current.totalRevenue = (
+                Number(current.totalRevenue) + Number(item.subtotal)
+            ).toString();
 
-            /**
-             * Add the item subtotal to the
-             * variant's total revenue.
-             */
-            current.totalRevenue += Number(item.subtotal);
-
-            /**
-             * Save the updated aggregated data
-             * for the current variant.
-             */
-            grouped.set(key, current);
+            grouped.set(item.product.id, current);
         }
 
-        /**
-         * Convert the Map into an array,
-         * sort variants by total quantity sold
-         * in descending order, and keep only
-         * the top 10 variants.
+        /*
+         * Sort by total items sold and return top 10
          */
-        const data = Array.from(grouped.values())
+        return [...grouped.values()]
             .sort((a, b) => b.totalSold - a.totalSold)
-            .slice(0, 10)
-            .map((item) => ({
-                ...item,
-
-                /**
-                 * Convert the numeric revenue value
-                 * into a string for the response DTO.
-                 */
-                totalRevenue: item.totalRevenue.toString(),
-            }));
-
-        /**
-         * Return the top products response.
-         */
-        return data;
+            .slice(0, 10);
     }
 }

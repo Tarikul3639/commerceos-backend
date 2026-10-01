@@ -81,13 +81,13 @@ export class StockController {
     })
     @ApiParam({
         name: 'id',
-        description: 'Inventory ID',
+        description: 'Product ID',
     })
     async findOne(
         @Param('id')
-        inventoryId: string,
+        productId: string,
     ) {
-        const stock = await this.getStockService.execute(inventoryId);
+        const stock = await this.getStockService.execute(productId);
 
         return {
             data: stock,

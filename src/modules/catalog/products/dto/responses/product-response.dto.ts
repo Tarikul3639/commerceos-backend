@@ -59,12 +59,21 @@ export class ProductResponseDto {
     })
     description!: string | null;
 
-    @ApiPropertyOptional({
-        example:
-            'https://res.cloudinary.com/demo/image/upload/product.jpg',
-        nullable: true,
-    })
-    thumbnail!: string | null;
+    @ApiProperty() sku!: string;
+
+    @ApiPropertyOptional({ nullable: true }) barcode!: string | null;
+
+    @ApiProperty() purchasePrice!: string;
+
+    @ApiProperty() sellingPrice!: string;
+
+    @ApiProperty() stock!: number;
+
+    @ApiProperty({ type: [String] }) sizes!: string[];
+
+    @ApiPropertyOptional({ nullable: true }) colors!: unknown;
+
+    @ApiPropertyOptional({ nullable: true }) image!: string | null;
 
     @ApiProperty({
         example: true,
@@ -82,16 +91,7 @@ export class ProductResponseDto {
     })
     brand!: ProductBrandResponseDto | null;
 
-    @ApiProperty({
-        example: 5,
-    })
-    variantCount!: number;
-
-    @ApiProperty({
-        example: 42,
-        description: 'Total available stock across all product variants',
-    })
-    stock!: number;
+    @ApiPropertyOptional({ type: [Object] }) images?: unknown[];
 
     @ApiProperty()
     createdAt!: Date;

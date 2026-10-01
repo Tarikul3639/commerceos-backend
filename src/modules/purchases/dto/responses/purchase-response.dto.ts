@@ -7,22 +7,19 @@ export class PurchaseItemResponseDto {
     @ApiProperty()
     quantity!: number;
 
-    @ApiProperty({
-        example: '500.00',
-    })
+    @ApiProperty()
     unitPrice!: string;
 
-    @ApiProperty({
-        example: '5000.00',
-    })
+    @ApiProperty()
     subtotal!: string;
 
     @ApiProperty()
-    variantId!: string;
+    productId!: string;
 
     @ApiProperty()
-    variant!: {
+    product!: {
         id: string;
+        name: string;
         sku: string;
     };
 
@@ -34,14 +31,6 @@ export class PurchaseItemResponseDto {
 }
 
 export class SupplierResponseDto {
-    @ApiProperty()
-    id!: string;
-
-    @ApiProperty()
-    name!: string;
-}
-
-export class WarehouseResponseDto {
     @ApiProperty()
     id!: string;
 
@@ -64,48 +53,31 @@ export class PurchaseResponseDto {
     @ApiProperty()
     id!: string;
 
-    @ApiProperty({
-        example: 'PUR-20260913-0001',
-    })
+    @ApiProperty()
     invoiceNo!: string;
 
-    @ApiProperty({
-        example: '5000.00',
-    })
+    @ApiProperty()
     subtotal!: string;
 
-    @ApiProperty({
-        example: '100.00',
-    })
+    @ApiProperty()
     discount!: string;
 
-    @ApiProperty({
-        example: '50.00',
-    })
+    @ApiProperty()
     tax!: string;
 
-    @ApiProperty({
-        example: '4950.00',
-    })
+    @ApiProperty()
     total!: string;
 
-    @ApiProperty({
-        example: 'PENDING',
-    })
+    @ApiProperty()
     status!: string;
 
     @ApiProperty()
     supplier!: SupplierResponseDto;
 
     @ApiProperty()
-    warehouse!: WarehouseResponseDto;
-
-    @ApiProperty()
     user!: PurchaseUserResponseDto;
 
-    @ApiProperty({
-        type: [PurchaseItemResponseDto],
-    })
+    @ApiProperty({ type: [PurchaseItemResponseDto] })
     items!: PurchaseItemResponseDto[];
 
     @ApiProperty()

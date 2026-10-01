@@ -2,11 +2,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class LowStockProductItemDto {
     @ApiProperty({
-        example: 'clx123variant',
-    })
-    variantId!: string;
-
-    @ApiProperty({
         example: 'SKU-001',
     })
     sku!: string;

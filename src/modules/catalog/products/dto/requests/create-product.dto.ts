@@ -1,99 +1,88 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+    IsArray,
     IsBoolean,
+    IsInt,
     IsNotEmpty,
     IsNumber,
     IsOptional,
     IsString,
     MaxLength,
     Min,
-} from 'class-validator'
-
-import {
-    ApiProperty,
-    ApiPropertyOptional,
-} from '@nestjs/swagger'
+} from 'class-validator';
 
 export class CreateProductDto {
-    @ApiProperty({
-        example: 'Nike Air Max 270',
-    })
+    @ApiProperty({ example: 'Nike Air Max 270' })
     @IsString()
     @IsNotEmpty()
     @MaxLength(255)
-    name!: string
+    name!: string;
 
-    @ApiProperty({
-        example: 'nike-air-max-270',
-    })
+    @ApiProperty({ example: 'nike-air-max-270' })
     @IsString()
     @IsNotEmpty()
     @MaxLength(255)
-    slug!: string
+    slug!: string;
 
-    @ApiPropertyOptional({
-        example: 'Comfortable and stylish running shoes',
-    })
-    @IsOptional()
-    @IsString()
-    description?: string
-
-    @ApiProperty({
-        example: 100,
-        description: 'Product purchase price',
-    })
-    @IsNumber()
-    @Min(0)
-    purchasePrice!: number
-
-    @ApiProperty({
-        example: 150,
-        description: 'Product selling price',
-    })
-    @IsNumber()
-    @Min(0)
-    sellingPrice!: number
-
-    @ApiProperty({
-        example: 'cmf123categoryid',
-    })
+    @ApiProperty({ example: 'nike-air-max-270-black' })
     @IsString()
     @IsNotEmpty()
-    categoryId!: string
+    @MaxLength(255)
+    sku!: string;
 
-    @ApiPropertyOptional({
-        example: 'cmf123brandid',
-    })
+    @ApiPropertyOptional({ example: '012345678905' })
     @IsOptional()
     @IsString()
-    brandId?: string
+    barcode?: string;
 
-    @ApiPropertyOptional({
-        example: 'cmf123sizechartid',
-    })
+    @ApiPropertyOptional({ example: 'Comfortable running shoes' })
     @IsOptional()
     @IsString()
-    sizeChartId?: string
+    description?: string;
 
-    @ApiPropertyOptional({
-        example: 'https://res.cloudinary.com/demo/image/upload/product.jpg',
-    })
+    @ApiProperty({ example: 100 })
+    @IsNumber()
+    @Min(0)
+    purchasePrice!: number;
+
+    @ApiProperty({ example: 150 })
+    @IsNumber()
+    @Min(0)
+    sellingPrice!: number;
+
+    @ApiPropertyOptional({ example: 10, minimum: 0, default: 0 })
+    @IsOptional()
+    @IsInt()
+    @Min(0)
+    stock?: number;
+
+    @ApiPropertyOptional({ type: [String], example: ['S', 'M', 'L'] })
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    sizes?: string[];
+
+    @ApiPropertyOptional({ example: [{ name: 'Red', hex: '#FF0000' }] })
+    @IsOptional()
+    colors?: unknown;
+
+    @ApiProperty({ example: 'cmf123categoryid' })
+    @IsString()
+    @IsNotEmpty()
+    categoryId!: string;
+
+    @ApiPropertyOptional({ example: 'cmf123brandid' })
     @IsOptional()
     @IsString()
-    thumbnail?: string
+    brandId?: string;
 
-    @ApiPropertyOptional({
-        example: 'products/nike-air-max-270',
-        description: 'Cloudinary public ID',
-    })
+    @ApiPropertyOptional({ example: 'products/nike-air-max-270' })
     @IsOptional()
     @IsString()
-    publicId?: string
+    publicId?: string;
 
-    @ApiPropertyOptional({
-        example: true,
-        default: true,
-    })
+    @ApiPropertyOptional({ default: true })
     @IsOptional()
     @IsBoolean()
-    isActive?: boolean
+    isActive?: boolean;
 }

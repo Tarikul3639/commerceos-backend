@@ -28,8 +28,6 @@ export class DeleteUserService {
 
                         orders: true,
                         discounts: true,
-                        stockMovements: true,
-                        stockTransfers: true,
                         purchases: true,
                         payments: true,
 

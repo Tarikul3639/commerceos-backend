@@ -7,11 +7,6 @@ export class StockSummaryResponseDto {
     totalProducts!: number;
 
     @ApiProperty({
-        example: 3840,
-    })
-    totalVariants!: number;
-
-    @ApiProperty({
         example: 45820,
     })
     totalStockQuantity!: number;

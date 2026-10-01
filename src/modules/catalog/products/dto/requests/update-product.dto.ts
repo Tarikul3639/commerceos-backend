@@ -1,80 +1,108 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
+    IsArray,
     IsBoolean,
+    IsInt,
     IsNumber,
     IsOptional,
     IsString,
     MaxLength,
     Min,
 } from 'class-validator';
-import { ApiPropertyOptional } from '@nestjs/swagger';
+
+/*
+ * DTO: UpdateProductDto
+ */
 
 export class UpdateProductDto {
-    @ApiPropertyOptional({
-        example: 100,
-    })
-    @IsOptional()
-    @IsNumber()
-    @Min(0)
-    purchasePrice?: number;
+    /*
+     * Basic Info
+     */
 
-    @ApiPropertyOptional({
-        example: 150,
-    })
-    @IsOptional()
-    @IsNumber()
-    @Min(0)
-    sellingPrice?: number;
-
-    @ApiPropertyOptional({
-        example: 'Nike Air Max 270 Updated',
-    })
+    @ApiPropertyOptional()
     @IsOptional()
     @IsString()
     @MaxLength(255)
     name?: string;
 
-    @ApiPropertyOptional({
-        example: 'Updated product description',
-        nullable: true,
-    })
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsString()
+    @MaxLength(255)
+    slug?: string;
+
+    @ApiPropertyOptional({ nullable: true })
     @IsOptional()
     @IsString()
     description?: string | null;
 
-    @ApiPropertyOptional({
-        example: 'cmf123categoryid',
-    })
+    /*
+     * Identifiers & Pricing
+     */
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsString()
+    @MaxLength(255)
+    sku?: string;
+
+    @ApiPropertyOptional({ nullable: true })
+    @IsOptional()
+    @IsString()
+    barcode?: string | null;
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsNumber()
+    @Min(0)
+    purchasePrice?: number;
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsNumber()
+    @Min(0)
+    sellingPrice?: number;
+
+    /*
+     * Stock & Attributes
+     */
+
+    @ApiPropertyOptional({ minimum: 0 })
+    @IsOptional()
+    @IsInt()
+    @Min(0)
+    stock?: number;
+
+    @ApiPropertyOptional({ type: [String] })
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    sizes?: string[];
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    colors?: unknown;
+
+    /*
+     * Relations & Flags
+     */
+
+    @ApiPropertyOptional()
     @IsOptional()
     @IsString()
     categoryId?: string;
 
-    @ApiPropertyOptional({
-        example: 'cmf123brandid',
-        nullable: true,
-    })
+    @ApiPropertyOptional({ nullable: true })
     @IsOptional()
     @IsString()
     brandId?: string | null;
 
-    @ApiPropertyOptional({
-        example: 'https://res.cloudinary.com/demo/image/upload/product.jpg',
-        nullable: true,
-    })
-    @IsOptional()
-    @IsString()
-    thumbnail?: string | null;
-
-    @ApiPropertyOptional({
-        example: 'products/nike-air-max-270',
-        nullable: true,
-    })
+    @ApiPropertyOptional({ nullable: true })
     @IsOptional()
     @IsString()
     publicId?: string | null;
 
-    @ApiPropertyOptional({
-        example: true,
-    })
+    @ApiPropertyOptional()
     @IsOptional()
     @IsBoolean()
     isActive?: boolean;

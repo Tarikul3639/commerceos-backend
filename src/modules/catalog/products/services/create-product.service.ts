@@ -3,76 +3,54 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-
+import { Prisma } from '@/lib/prisma/client';
 import { PrismaService } from '../../../../common/prisma/prisma.service';
 import { CreateProductDto } from '../dto/requests/create-product.dto';
+
+/*
+ * SERVICE: CreateProductService
+ */
 
 @Injectable()
 export class CreateProductService {
     constructor(private readonly prisma: PrismaService) { }
 
-    async execute(createProductDto: CreateProductDto) {
-        const {
-            name,
-            slug,
-            description,
-            categoryId,
-            brandId,
-            sizeChartId,
-            thumbnail,
-            publicId,
-            isActive,
-            purchasePrice,
-            sellingPrice,
-        } = createProductDto;
-
-        /**
-         * Check whether the slug already exists
+    async execute(dto: CreateProductDto) {
+        /*
+         * Check for existing slug or SKU uniqueness
          */
-        const existingProduct = await this.prisma.product.findUnique({
-            where: {
-                slug,
-            },
-            select: {
-                id: true,
-            },
+        const existing = await this.prisma.product.findFirst({
+            where: { OR: [{ slug: dto.slug }, { sku: dto.sku }] },
+            select: { slug: true, sku: true },
         });
 
-        if (existingProduct) {
-            throw new ConflictException('A product with this slug already exists');
+        if (existing) {
+            throw new ConflictException(
+                existing.sku === dto.sku
+                    ? 'A product with this SKU already exists'
+                    : 'A product with this slug already exists',
+            );
         }
 
-        /**
-         * Check category
+        /*
+         * Validate target category existence and active status
          */
         const category = await this.prisma.category.findFirst({
-            where: {
-                id: categoryId,
-                deletedAt: null,
-                isActive: true,
-            },
-            select: {
-                id: true,
-            },
+            where: { id: dto.categoryId, deletedAt: null, isActive: true },
+            select: { id: true },
         });
 
         if (!category) {
             throw new NotFoundException('Category not found or inactive');
         }
 
-        /**
-         * Check brand if provided
+        /*
+         * Validate brand existence if provided
          */
-        if (brandId) {
+        if (dto.brandId) {
             const brand = await this.prisma.brand.findFirst({
-                where: {
-                    id: brandId,
-                    deletedAt: null,
-                    isActive: true,
-                },
-                select: {
-                    id: true,
-                },
+                where: { id: dto.brandId, deletedAt: null, isActive: true },
+                select: { id: true },
             });
 
             if (!brand) {
@@ -80,97 +58,34 @@ export class CreateProductService {
             }
         }
 
-        /**
-         * Check size chart if provided
-         */
-        if (sizeChartId) {
-            const sizeChart = await this.prisma.sizeChart.findUnique({
-                where: {
-                    id: sizeChartId,
-                },
-                select: {
-                    id: true,
-                },
-            });
-
-            if (!sizeChart) {
-                throw new NotFoundException('Size chart not found');
-            }
-        }
-
-        /**
-         * Create product
+        /*
+         * Create new product record
          */
         return this.prisma.product.create({
             data: {
-                name,
-                slug,
-                purchasePrice,
-                sellingPrice,
-
-                ...(description !== undefined && {
-                    description,
+                name: dto.name,
+                slug: dto.slug,
+                sku: dto.sku,
+                ...(dto.barcode !== undefined && { barcode: dto.barcode }),
+                ...(dto.description !== undefined && { description: dto.description }),
+                purchasePrice: dto.purchasePrice,
+                sellingPrice: dto.sellingPrice,
+                stock: dto.stock ?? 0,
+                sizes: dto.sizes ?? [],
+                ...(dto.colors !== undefined && {
+                    colors: dto.colors as Prisma.InputJsonValue,
                 }),
-
-                categoryId,
-
-                ...(brandId !== undefined && {
-                    brandId,
-                }),
-
-                ...(sizeChartId !== undefined && {
-                    sizeChartId,
-                }),
-
-                ...(thumbnail !== undefined && {
-                    thumbnail,
-                }),
-
-                ...(publicId !== undefined && {
-                    publicId,
-                }),
-
-                ...(isActive !== undefined && {
-                    isActive,
-                }),
+                categoryId: dto.categoryId,
+                ...(dto.brandId !== undefined && { brandId: dto.brandId }),
+                ...(dto.publicId !== undefined && { publicId: dto.publicId }),
+                ...(dto.isActive !== undefined && { isActive: dto.isActive }),
             },
-
-            select: {
-                id: true,
-                name: true,
-                slug: true,
-                description: true,
-                purchasePrice: true,
-                sellingPrice: true,
-                thumbnail: true,
-                publicId: true,
-                isActive: true,
-
-                category: {
-                    select: {
-                        id: true,
-                        name: true,
-                        slug: true,
-                    },
-                },
-
+            include: {
+                category: { select: { id: true, name: true, slug: true } },
                 brand: {
-                    select: {
-                        id: true,
-                        name: true,
-                        slug: true,
-                    },
+                    select: { id: true, name: true, slug: true, website: true },
                 },
-
-                sizeChart: {
-                    select: {
-                        id: true,
-                        name: true,
-                    },
-                },
-
-                createdAt: true,
-                updatedAt: true,
+                images: { orderBy: { sortOrder: 'asc' } },
             },
         });
     }

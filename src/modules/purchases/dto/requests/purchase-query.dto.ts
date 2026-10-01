@@ -37,13 +37,6 @@ export class PurchaseQueryDto {
     supplierId?: string;
 
     @ApiPropertyOptional({
-        example: 'cmf123warehouseid',
-    })
-    @IsOptional()
-    @IsString()
-    warehouseId?: string;
-
-    @ApiPropertyOptional({
         example: 1,
         default: 1,
         minimum: 1,

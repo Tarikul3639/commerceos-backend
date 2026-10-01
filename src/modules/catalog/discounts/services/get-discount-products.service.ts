@@ -55,7 +55,11 @@ export class GetDiscountProductsService {
                             id: true,
                             name: true,
                             slug: true,
-                            thumbnail: true,
+                            images: {
+                                select: { imageUrl: true, sortOrder: true },
+                                orderBy: { sortOrder: 'asc' },
+                                take: 1,
+                            },
                         },
                     },
                 },
@@ -67,7 +71,12 @@ export class GetDiscountProductsService {
         ]);
 
         const data: DiscountProductResponseDto[] = productDiscounts.map(
-            ({ product }) => product,
+            ({ product }) => ({
+                id: product.id,
+                name: product.name,
+                slug: product.slug,
+                images: product.images.map(({ imageUrl }) => imageUrl),
+            }),
         );
 
         const totalPages = Math.ceil(total / limit);

@@ -59,13 +59,6 @@ export class OrderQueryDto {
     customerId?: string;
 
     @ApiPropertyOptional({
-        example: 'cmabc123warehouse',
-    })
-    @IsOptional()
-    @IsString()
-    warehouseId?: string;
-
-    @ApiPropertyOptional({
         example: 'cmabc123user',
     })
     @IsOptional()

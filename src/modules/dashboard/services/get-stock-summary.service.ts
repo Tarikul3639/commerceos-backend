@@ -1,111 +1,49 @@
 import { Injectable } from '@nestjs/common';
-
 import { PrismaService } from '../../../common/prisma/prisma.service';
 import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto';
 import { StockSummaryResponseDto } from '../dto/responses/stock-summary-response.dto';
+
+/*
+ * SERVICE: GetStockSummaryService
+ */
 
 @Injectable()
 export class GetStockSummaryService {
     constructor(private readonly prisma: PrismaService) { }
 
     async execute(_query: DashboardQueryDto): Promise<StockSummaryResponseDto> {
-        /**
-         * Get product, variant, and inventory statistics
-         * in parallel.
+        /*
+         * Fetch active product inventory details
          */
-        const [totalProducts, totalVariants, inventories] = await Promise.all([
-            /**
-             * Count all products.
-             */
-            this.prisma.product.count(),
+        const products = await this.prisma.product.findMany({
+            where: { deletedAt: null },
+            select: { stock: true, purchasePrice: true },
+        });
 
-            /**
-             * Count all active and non-deleted variants.
-             */
-            this.prisma.productVariant.count({
-                where: {
-                    isActive: true,
-                    deletedAt: null,
-                },
-            }),
-
-            /**
-             * Get all inventory records with the
-             * selling price of each variant.
-             *
-             * Selling price is required to calculate
-             * the total stock value.
-             */
-            this.prisma.inventory.findMany({
-                include: {
-                    variant: {
-                        select: {
-                            product: {
-                                select: {
-                                    sellingPrice: true,
-                                },
-                            },
-                        },
-                    },
-                },
-            }),
-        ]);
-
-        /**
-         * Initialize stock summary values.
+        /*
+         * Aggregate total stock metrics and valuation
          */
-        let totalStockQuantity = 0;
-        let totalStockValue = 0;
-        let lowStockCount = 0;
-        let outOfStockCount = 0;
+        const totalStockQuantity = products.reduce(
+            (sum, product) => sum + product.stock,
+            0,
+        );
+        const totalStockValue = products.reduce(
+            (sum, product) => sum + product.stock * Number(product.purchasePrice),
+            0,
+        );
 
-        /**
-         * Calculate stock quantity, stock value,
-         * low-stock products, and out-of-stock products.
-         */
-        for (const inventory of inventories) {
-            const quantity = inventory.quantity;
-
-            /**
-             * Add the current inventory quantity
-             * to the total stock quantity.
-             */
-            totalStockQuantity += quantity;
-
-            /**
-             * Calculate the stock value using:
-             *
-             * Stock Value = Quantity × Selling Price
-             */
-            totalStockValue += quantity * Number(inventory.variant.product.sellingPrice);
-
-            /**
-             * Count products with zero stock
-             * as out of stock.
-             */
-            if (quantity === 0) {
-                outOfStockCount++;
-            }
-
-            /**
-             * Count products with stock between
-             * 1 and 5 as low stock.
-             */
-            else if (quantity <= 5) {
-                lowStockCount++;
-            }
-        }
-
-        /**
-         * Return the stock dashboard summary.
+        /*
+         * Build and return stock summary payload
          */
         return {
-            totalProducts,
-            totalVariants,
+            totalProducts: products.length,
             totalStockQuantity,
             totalStockValue: totalStockValue.toString(),
-            lowStockCount,
-            outOfStockCount,
+            lowStockCount: products.filter(
+                (product) => product.stock > 0 && product.stock <= 5,
+            ).length,
+            outOfStockCount: products.filter((product) => product.stock === 0)
+                .length,
         };
     }
 }

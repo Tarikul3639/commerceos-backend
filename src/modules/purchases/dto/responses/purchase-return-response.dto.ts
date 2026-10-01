@@ -17,11 +17,8 @@ export class PurchaseReturnItemResponseDto {
         id: string;
         quantity: number;
         unitPrice: string;
-
-        variant: {
-            id: string;
-            sku: string;
-        };
+        productId: string;
+        product: { id: string; name: string; sku: string };
     };
 
     @ApiProperty()

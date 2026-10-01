@@ -23,16 +23,7 @@ export class OrderReturnItemResponseDto {
 
         quantity: number;
 
-        variant: {
-            id: string;
-            sku: string;
-
-            product: {
-                id: string;
-                name: string;
-                slug: string;
-            };
-        };
+        product: { id: string; name: string; slug: string; sku: string };
     };
 
     @ApiProperty()

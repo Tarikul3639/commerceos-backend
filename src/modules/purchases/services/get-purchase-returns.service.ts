@@ -53,11 +53,12 @@ export class GetPurchaseReturnsService {
                                     quantity: true,
                                     unitPrice: true,
                                     subtotal: true,
-                                    variantId: true,
-                                    variant: {
+                                    productId: true,
+                                    product: {
                                         select: {
                                             id: true,
                                             sku: true,
+                                            name: true,
                                         },
                                     },
                                 },
@@ -100,8 +101,8 @@ export class GetPurchaseReturnsService {
                         quantity: item.purchaseItem.quantity,
                         unitPrice: item.purchaseItem.unitPrice.toString(),
                         subtotal: item.purchaseItem.subtotal.toString(),
-                        variantId: item.purchaseItem.variantId,
-                        variant: item.purchaseItem.variant,
+                        productId: item.purchaseItem.productId,
+                        product: item.purchaseItem.product,
                     },
                     createdAt: item.createdAt,
                     updatedAt: item.updatedAt,

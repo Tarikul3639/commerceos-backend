@@ -1,144 +1,48 @@
-import {
-    BadRequestException,
-    Injectable,
-    NotFoundException,
-} from '@nestjs/common';
-
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../../common/prisma/prisma.service';
-
 import { AddCartItemDto } from '../dto/requests/add-cart-item.dto';
 import { CartResponseDto } from '../dto/responses/cart-response.dto';
 
 @Injectable()
 export class AddCartItemService {
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(private readonly prisma: PrismaService) {}
 
-    async execute(
-        customerId: string,
-        addCartItemDto: AddCartItemDto,
-    ): Promise<CartResponseDto> {
-        const { variantId, quantity } = addCartItemDto;
-
-        const customer = await this.prisma.customer.findUnique({
-            where: {
-                id: customerId,
-            },
+    async execute(customerId: string, dto: AddCartItemDto): Promise<CartResponseDto> {
+        const product = await this.prisma.product.findFirst({
+            where: { id: dto.productId, deletedAt: null, isActive: true },
+            select: { id: true },
         });
-
-        if (!customer) {
-            throw new NotFoundException('Customer not found');
-        }
-
-        const variant = await this.prisma.productVariant.findFirst({
-            where: {
-                id: variantId,
-
-                deletedAt: null,
-            },
-        });
-
-        if (!variant) {
-            throw new NotFoundException('Product variant not found');
-        }
+        if (!product) throw new NotFoundException('Product not found or inactive');
 
         const cart = await this.prisma.cart.upsert({
-            where: {
-                customerId,
-            },
-
+            where: { customerId },
             update: {},
-
-            create: {
-                customerId,
-            },
+            create: { customerId },
         });
-
-        const existingCartItem = await this.prisma.cartItem.findUnique({
-            where: {
-                cartId_variantId: {
-                    cartId: cart.id,
-                    variantId,
-                },
-            },
+        await this.prisma.cartItem.upsert({
+            where: { cartId_productId: { cartId: cart.id, productId: dto.productId } },
+            update: { quantity: { increment: dto.quantity } },
+            create: { cartId: cart.id, productId: dto.productId, quantity: dto.quantity },
         });
-
-        if (existingCartItem) {
-            await this.prisma.cartItem.update({
-                where: {
-                    id: existingCartItem.id,
-                },
-
-                data: {
-                    quantity: {
-                        increment: quantity,
-                    },
-                },
-            });
-        } else {
-            await this.prisma.cartItem.create({
-                data: {
-                    cartId: cart.id,
-                    variantId,
-                    quantity,
-                },
-            });
-        }
-
         const updatedCart = await this.prisma.cart.findUnique({
-            where: {
-                id: cart.id,
-            },
-
-            include: {
-                items: {
-                    include: {
-                        variant: {
-                            select: {
-                                id: true,
-                                sku: true,
-                                image: true,
-                                product: {
-                                    select: {
-                                        id: true,
-                                        name: true,
-                                        slug: true,
-                                        sellingPrice: true,
-                                    },
-                                },
-                            },
-                        },
-                    },
-                },
-            },
+            where: { id: cart.id },
+            include: { items: { include: { product: { include: { images: { orderBy: { sortOrder: 'asc' }, take: 1 } } } } } },
         });
-
-        if (!updatedCart) {
-            throw new BadRequestException('Failed to retrieve cart');
-        }
-
+        if (!updatedCart) throw new BadRequestException('Failed to retrieve cart');
         return {
             id: updatedCart.id,
             customerId: updatedCart.customerId,
-
-            items: updatedCart.items.map((item) => ({
-                id: item.id,
-                quantity: item.quantity,
-                variantId: item.variantId,
-                variant: {
-                    id: item.variant.id,
-                    sku: item.variant.sku,
-                    price: item.variant.product.sellingPrice.toString(),
-                    imageUrl: item.variant.image,
-                    product: {
-                        id: item.variant.product.id,
-                        name: item.variant.product.name,
-                        slug: item.variant.product.slug,
-                    },
+            items: updatedCart.items.map(({ product: itemProduct, ...item }) => ({
+                ...item,
+                product: {
+                    id: itemProduct.id,
+                    name: itemProduct.name,
+                    slug: itemProduct.slug,
+                    sku: itemProduct.sku,
+                    price: itemProduct.sellingPrice.toString(),
+                    imageUrl: itemProduct.images[0]?.imageUrl ?? null,
                 },
-                createdAt: item.createdAt,
-                updatedAt: item.updatedAt,
             })),
-
             createdAt: updatedCart.createdAt,
             updatedAt: updatedCart.updatedAt,
         };

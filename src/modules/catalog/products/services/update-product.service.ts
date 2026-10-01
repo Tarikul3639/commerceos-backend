@@ -3,11 +3,10 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
+import { Prisma } from '@/lib/prisma/client';
 
 import { PrismaService } from '../../../../common/prisma/prisma.service';
-
 import { UpdateProductDto } from '../dto/requests/update-product.dto';
-
 import { generateSlug } from '../../../../common/utils/slug.util';
 
 @Injectable()
@@ -128,6 +127,10 @@ export class UpdateProductService {
                     slug,
                 }),
 
+                ...(updateProductDto.slug !== undefined && {
+                    slug: updateProductDto.slug,
+                }),
+
                 ...(updateProductDto.description !== undefined && {
                     description: updateProductDto.description,
                 }),
@@ -140,16 +143,24 @@ export class UpdateProductService {
                     sellingPrice: updateProductDto.sellingPrice,
                 }),
 
+                ...(updateProductDto.sku !== undefined && { sku: updateProductDto.sku }),
+
+                ...(updateProductDto.barcode !== undefined && { barcode: updateProductDto.barcode }),
+
+                ...(updateProductDto.stock !== undefined && { stock: updateProductDto.stock }),
+
+                ...(updateProductDto.sizes !== undefined && { sizes: updateProductDto.sizes }),
+
+                ...(updateProductDto.colors !== undefined && {
+                    colors: updateProductDto.colors as Prisma.InputJsonValue,
+                }),
+
                 ...(updateProductDto.categoryId !== undefined && {
                     categoryId: updateProductDto.categoryId,
                 }),
 
                 ...(updateProductDto.brandId !== undefined && {
                     brandId: updateProductDto.brandId,
-                }),
-
-                ...(updateProductDto.thumbnail !== undefined && {
-                    thumbnail: updateProductDto.thumbnail,
                 }),
 
                 ...(updateProductDto.publicId !== undefined && {
@@ -161,33 +172,10 @@ export class UpdateProductService {
                 }),
             },
 
-            select: {
-                id: true,
-                name: true,
-                slug: true,
-                description: true,
-                thumbnail: true,
-                publicId: true,
-                isActive: true,
-
-                category: {
-                    select: {
-                        id: true,
-                        name: true,
-                        slug: true,
-                    },
-                },
-
-                brand: {
-                    select: {
-                        id: true,
-                        name: true,
-                        slug: true,
-                    },
-                },
-
-                createdAt: true,
-                updatedAt: true,
+            include: {
+                category: { select: { id: true, name: true, slug: true } },
+                brand: { select: { id: true, name: true, slug: true, website: true } },
+                images: { orderBy: { sortOrder: 'asc' } },
             },
         });
     }

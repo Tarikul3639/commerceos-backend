@@ -7,71 +7,67 @@ import {
     Min,
     ValidateNested,
 } from 'class-validator';
-
 import { Type } from 'class-transformer';
-
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
+/*
+ * DTO: UpdatePurchaseItemDto
+ */
+
 export class UpdatePurchaseItemDto {
-    @ApiPropertyOptional({
-        example: 'cmf123variantid',
-    })
+    /*
+     * Item Details
+     */
+
+    @ApiPropertyOptional()
     @IsOptional()
     @IsString()
-    variantId?: string;
+    productId?: string;
 
-    @ApiPropertyOptional({
-        example: 10,
-        minimum: 1,
-    })
+    @ApiPropertyOptional({ minimum: 1 })
     @IsOptional()
     @Type(() => Number)
     @IsInt()
     @Min(1)
     quantity?: number;
 
-    @ApiPropertyOptional({
-        example: '500.00',
-    })
+    @ApiPropertyOptional()
     @IsOptional()
     @IsNumberString()
     unitPrice?: string;
 }
 
+/*
+ * DTO: UpdatePurchaseDto
+ */
+
 export class UpdatePurchaseDto {
-    @ApiPropertyOptional({
-        example: 'cmf123supplierid',
-    })
+    /*
+     * Supplier & Line Items
+     */
+
+    @ApiPropertyOptional()
     @IsOptional()
     @IsString()
     supplierId?: string;
 
-    @ApiPropertyOptional({
-        example: 'cmf123warehouseid',
-    })
-    @IsOptional()
-    @IsString()
-    warehouseId?: string;
-
-    @ApiPropertyOptional({
-        type: [UpdatePurchaseItemDto],
-    })
+    @ApiPropertyOptional({ type: [UpdatePurchaseItemDto] })
     @IsOptional()
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => UpdatePurchaseItemDto)
     items?: UpdatePurchaseItemDto[];
 
-    @ApiPropertyOptional({
-        example: '100.00',
-    })
+    /*
+     * Financial Adjustments
+     */
+
+    @ApiPropertyOptional()
     @IsOptional()
     @IsNumberString()
     discount?: string;
 
-    @ApiPropertyOptional({
-        example: '50.00',
-    })
+    @ApiPropertyOptional()
     @IsOptional()
     @IsNumberString()
     tax?: string;

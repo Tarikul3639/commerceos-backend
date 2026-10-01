@@ -1,18 +1,21 @@
 import { Injectable } from '@nestjs/common';
-
 import { Prisma } from '../../../../lib/prisma/client';
 import { PrismaService } from '../../../../common/prisma/prisma.service';
-
 import { ProductQueryDto } from '../dto/requests/product-query.dto';
-import { ProductListResponseDto } from '../dto/responses/product-list-response.dto'
+import { ProductListResponseDto } from '../dto/responses/product-list-response.dto';
+
+/*
+ * SERVICE: GetProductsService
+ */
 
 @Injectable()
 export class GetProductsService {
     constructor(private readonly prisma: PrismaService) { }
 
-    async execute(
-        query: ProductQueryDto,
-    ): Promise<ProductListResponseDto> {
+    async execute(query: ProductQueryDto): Promise<ProductListResponseDto> {
+        /*
+         * Parse and sanitize pagination parameters
+         */
         const {
             search,
             categoryId,
@@ -21,145 +24,61 @@ export class GetProductsService {
             page = '1',
             limit = '10',
         } = query;
-
-        // Minimum page 1
         const currentPage = Math.max(Number(page), 1);
-        // Minimum limit 1 and Maximum 100
         const pageSize = Math.min(Math.max(Number(limit), 1), 100);
 
-        // Filter & Query
+        /*
+         * Build database query filters
+         */
         const where: Prisma.ProductWhereInput = {
             deletedAt: null,
-
             ...(search && {
                 OR: [
-                    {
-                        name: {
-                            contains: search.trim(),
-                            mode: 'insensitive'
-                        }
-                    },
-                    {
-                        slug: {
-                            contains: search.trim(),
-                            mode: 'insensitive'
-                        }
-                    },
-                ]
+                    { name: { contains: search.trim(), mode: 'insensitive' } },
+                    { slug: { contains: search.trim(), mode: 'insensitive' } },
+                    { sku: { contains: search.trim(), mode: 'insensitive' } },
+                ],
             }),
-
-            ...(categoryId && {
-                categoryId,
-            }),
-
-            ...(brandId && {
-                brandId,
-            }),
-
-            ...(isActive !== undefined && {
-                isActive: isActive === 'true',
-            }),
+            ...(categoryId && { categoryId }),
+            ...(brandId && { brandId }),
+            ...(isActive !== undefined && { isActive: isActive === 'true' }),
         };
 
+        /*
+         * Fetch paginated products and total record count concurrently
+         */
         const [products, total] = await this.prisma.$transaction([
             this.prisma.product.findMany({
                 where,
-
-                select: {
-                    id: true,
-                    name: true,
-                    slug: true,
-                    description: true,
-                    thumbnail: true,
-                    isActive: true,
-                    createdAt: true,
-                    updatedAt: true,
-
-                    category: {
-                        select: {
-                            id: true,
-                            name: true,
-                            slug: true,
-                        },
-                    },
-
-                    productVariants: {
-                        where: {
-                            deletedAt: null,
-                        },
-                        select: {
-                            inventories: {
-                                select: {
-                                    quantity: true,
-                                },
-                            },
-                        },
-                    },
-
+                include: {
+                    category: { select: { id: true, name: true, slug: true } },
                     brand: {
-                        select: {
-                            id: true,
-                            name: true,
-                            slug: true,
-                        },
+                        select: { id: true, name: true, slug: true, website: true },
                     },
-
-                    _count: {
-                        select: {
-                            productVariants: {
-                                where: {
-                                    deletedAt: null,
-                                },
-                            },
-                        },
-                    },
+                    images: { orderBy: { sortOrder: 'asc' }, take: 1 },
                 },
-
-                orderBy: {
-                    createdAt: 'desc',
-                },
-
+                orderBy: { createdAt: 'desc' },
                 skip: (currentPage - 1) * pageSize,
-
                 take: pageSize,
             }),
-
-            this.prisma.product.count({
-                where,
-            }),
+            this.prisma.product.count({ where }),
         ]);
 
+        /*
+         * Format response data and pagination metadata
+         */
         return {
-            data: products.map((product) => {
-                const stock = product.productVariants.reduce(
-                    (total, variant) =>
-                        total +
-                        variant.inventories.reduce(
-                            (sum, inventory) => sum + inventory.quantity,
-                            0,
-                        ),
-                    0,
-                )
-
-                return {
-                    id: product.id,
-                    name: product.name,
-                    slug: product.slug,
-                    description: product.description,
-                    thumbnail: product.thumbnail,
-                    isActive: product.isActive,
-
-                    category: product.category,
-                    brand: product.brand,
-
-                    variantCount: product._count.productVariants,
-                    stock,
-
-                    createdAt: product.createdAt,
-                    updatedAt: product.updatedAt,
-                }
-            }),
-
+            data: products.map(
+                ({ colors, sizes, purchasePrice, sellingPrice, ...product }) => ({
+                    ...product,
+                    purchasePrice: purchasePrice.toString(),
+                    sellingPrice: sellingPrice.toString(),
+                    image: product.images[0]?.imageUrl ?? null,
+                    colors,
+                    sizes,
+                    stock: product.stock,
+                }),
+            ),
             meta: {
                 total,
                 page: currentPage,
@@ -168,6 +87,6 @@ export class GetProductsService {
                 hasNextPage: currentPage * pageSize < total,
                 hasPreviousPage: currentPage > 1,
             },
-        };
+        } as ProductListResponseDto;
     }
 }

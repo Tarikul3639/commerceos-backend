@@ -13,9 +13,6 @@ export class TopProductItemDto {
     productImage?: string | null;
 
     @ApiPropertyOptional()
-    variantId?: string;
-
-    @ApiPropertyOptional()
     sku?: string;
 
     @ApiProperty({

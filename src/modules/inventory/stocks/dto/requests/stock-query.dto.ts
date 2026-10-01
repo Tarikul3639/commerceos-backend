@@ -10,22 +10,6 @@ import {
 
 export class StockQueryDto {
     @ApiPropertyOptional({
-        example: 'cmf123warehouseid',
-        description: 'Filter by warehouse',
-    })
-    @IsOptional()
-    @IsString()
-    warehouseId?: string;
-
-    @ApiPropertyOptional({
-        example: 'cmf123variantid',
-        description: 'Filter by product variant',
-    })
-    @IsOptional()
-    @IsString()
-    variantId?: string;
-
-    @ApiPropertyOptional({
         example: 'Nike',
         description: 'Search by product name or SKU',
     })

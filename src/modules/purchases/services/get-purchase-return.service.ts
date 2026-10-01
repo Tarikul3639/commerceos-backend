@@ -25,10 +25,11 @@ export class GetPurchaseReturnService {
                     include: {
                         purchaseItem: {
                             include: {
-                                variant: {
+                                product: {
                                     select: {
                                         id: true,
                                         sku: true,
+                                        name: true,
                                     },
                                 },
                             },
@@ -74,7 +75,8 @@ export class GetPurchaseReturnService {
                     id: item.purchaseItem.id,
                     quantity: item.purchaseItem.quantity,
                     unitPrice: item.purchaseItem.unitPrice.toString(),
-                    variant: item.purchaseItem.variant,
+                    productId: item.purchaseItem.productId,
+                    product: item.purchaseItem.product,
                 },
 
                 createdAt: item.createdAt,
