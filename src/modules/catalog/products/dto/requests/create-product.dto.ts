@@ -9,7 +9,11 @@ import {
     IsString,
     MaxLength,
     Min,
+    ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+
+import { AddProductImageDto } from './add-product-image.dto';
 
 export class CreateProductDto {
     @ApiProperty({ example: 'Nike Air Max 270' })
@@ -56,32 +60,54 @@ export class CreateProductDto {
     @Min(0)
     stock?: number;
 
-    @ApiPropertyOptional({ type: [String], example: ['S', 'M', 'L'] })
+    @ApiPropertyOptional({
+        type: [String],
+        example: ['S', 'M', 'L'],
+    })
     @IsOptional()
     @IsArray()
     @IsString({ each: true })
     sizes?: string[];
 
-    @ApiPropertyOptional({ example: [{ name: 'Red', hex: '#FF0000' }] })
+    @ApiPropertyOptional({
+        example: [{ name: 'Red', hex: '#FF0000' }],
+    })
     @IsOptional()
     colors?: unknown;
 
-    @ApiProperty({ example: 'cmf123categoryid' })
+    @ApiProperty({
+        example: 'cmf123categoryid',
+    })
     @IsString()
     @IsNotEmpty()
     categoryId!: string;
 
-    @ApiPropertyOptional({ example: 'cmf123brandid' })
+    @ApiPropertyOptional({
+        example: 'cmf123brandid',
+    })
     @IsOptional()
     @IsString()
     brandId?: string;
 
-    @ApiPropertyOptional({ example: 'products/nike-air-max-270' })
+    @ApiPropertyOptional({
+        example: 'products/nike-air-max-270',
+    })
     @IsOptional()
     @IsString()
     publicId?: string;
 
-    @ApiPropertyOptional({ default: true })
+    @ApiPropertyOptional({
+        type: [AddProductImageDto],
+    })
+    @IsOptional()
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => AddProductImageDto)
+    images?: AddProductImageDto[];
+
+    @ApiPropertyOptional({
+        default: true,
+    })
     @IsOptional()
     @IsBoolean()
     isActive?: boolean;

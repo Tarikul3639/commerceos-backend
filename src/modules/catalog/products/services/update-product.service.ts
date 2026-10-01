@@ -6,8 +6,9 @@ import {
 import { Prisma } from '@/lib/prisma/client';
 
 import { PrismaService } from '../../../../common/prisma/prisma.service';
-import { UpdateProductDto } from '../dto/requests/update-product.dto';
 import { generateSlug } from '../../../../common/utils/slug.util';
+
+import { UpdateProductDto } from '../dto/requests/update-product.dto';
 
 @Injectable()
 export class UpdateProductService {
@@ -19,7 +20,6 @@ export class UpdateProductService {
                 id: productId,
                 deletedAt: null,
             },
-
             select: {
                 id: true,
                 name: true,
@@ -33,9 +33,6 @@ export class UpdateProductService {
             throw new NotFoundException('Product not found');
         }
 
-        /**
-         * Generate new slug if name changes
-         */
         let slug: string | undefined;
 
         if (
@@ -51,7 +48,6 @@ export class UpdateProductService {
                         not: productId,
                     },
                 },
-
                 select: {
                     id: true,
                 },
@@ -62,9 +58,6 @@ export class UpdateProductService {
             }
         }
 
-        /**
-         * Validate category
-         */
         if (
             updateProductDto.categoryId !== undefined &&
             updateProductDto.categoryId !== product.categoryId
@@ -75,7 +68,6 @@ export class UpdateProductService {
                     deletedAt: null,
                     isActive: true,
                 },
-
                 select: {
                     id: true,
                 },
@@ -86,9 +78,6 @@ export class UpdateProductService {
             }
         }
 
-        /**
-         * Validate brand
-         */
         if (
             updateProductDto.brandId !== undefined &&
             updateProductDto.brandId !== null
@@ -99,7 +88,6 @@ export class UpdateProductService {
                     deletedAt: null,
                     isActive: true,
                 },
-
                 select: {
                     id: true,
                 },
@@ -110,14 +98,56 @@ export class UpdateProductService {
             }
         }
 
-        /**
-         * Update product
-         */
-        return this.prisma.product.update({
+        if (updateProductDto.images?.length) {
+            const imageIds = updateProductDto.images.map((image) => image.id);
+
+            const existingImages = await this.prisma.productImage.findMany({
+                where: {
+                    id: {
+                        in: imageIds,
+                    },
+                    productId,
+                },
+                select: {
+                    id: true,
+                },
+            });
+
+            if (existingImages.length !== imageIds.length) {
+                throw new NotFoundException('One or more product images not found');
+            }
+
+            const publicIds = updateProductDto.images
+                .map((image) => image.publicId)
+                .filter((publicId): publicId is string => publicId !== undefined);
+
+            if (new Set(publicIds).size !== publicIds.length) {
+                throw new ConflictException('Duplicate image public ID');
+            }
+
+            const existingPublicIds = await this.prisma.productImage.findMany({
+                where: {
+                    publicId: {
+                        in: publicIds,
+                    },
+                    id: {
+                        notIn: imageIds,
+                    },
+                },
+                select: {
+                    id: true,
+                },
+            });
+
+            if (existingPublicIds.length > 0) {
+                throw new ConflictException('Image public ID already exists');
+            }
+        }
+
+        const updatedProduct = await this.prisma.product.update({
             where: {
                 id: productId,
             },
-
             data: {
                 ...(updateProductDto.name !== undefined && {
                     name: updateProductDto.name,
@@ -143,13 +173,21 @@ export class UpdateProductService {
                     sellingPrice: updateProductDto.sellingPrice,
                 }),
 
-                ...(updateProductDto.sku !== undefined && { sku: updateProductDto.sku }),
+                ...(updateProductDto.sku !== undefined && {
+                    sku: updateProductDto.sku,
+                }),
 
-                ...(updateProductDto.barcode !== undefined && { barcode: updateProductDto.barcode }),
+                ...(updateProductDto.barcode !== undefined && {
+                    barcode: updateProductDto.barcode,
+                }),
 
-                ...(updateProductDto.stock !== undefined && { stock: updateProductDto.stock }),
+                ...(updateProductDto.stock !== undefined && {
+                    stock: updateProductDto.stock,
+                }),
 
-                ...(updateProductDto.sizes !== undefined && { sizes: updateProductDto.sizes }),
+                ...(updateProductDto.sizes !== undefined && {
+                    sizes: updateProductDto.sizes,
+                }),
 
                 ...(updateProductDto.colors !== undefined && {
                     colors: updateProductDto.colors as Prisma.InputJsonValue,
@@ -170,13 +208,56 @@ export class UpdateProductService {
                 ...(updateProductDto.isActive !== undefined && {
                     isActive: updateProductDto.isActive,
                 }),
-            },
 
+                ...(updateProductDto.images?.length && {
+                    images: {
+                        update: updateProductDto.images.map((image) => ({
+                            where: {
+                                id: image.id,
+                            },
+                            data: {
+                                ...(image.imageUrl !== undefined && {
+                                    imageUrl: image.imageUrl,
+                                }),
+                                ...(image.publicId !== undefined && {
+                                    publicId: image.publicId,
+                                }),
+                                ...(image.sortOrder !== undefined && {
+                                    sortOrder: image.sortOrder,
+                                }),
+                            },
+                        })),
+                    },
+                }),
+            },
             include: {
-                category: { select: { id: true, name: true, slug: true } },
-                brand: { select: { id: true, name: true, slug: true, website: true } },
-                images: { orderBy: { sortOrder: 'asc' } },
+                category: {
+                    select: {
+                        id: true,
+                        name: true,
+                        slug: true,
+                    },
+                },
+                brand: {
+                    select: {
+                        id: true,
+                        name: true,
+                        slug: true,
+                        website: true,
+                    },
+                },
+                images: {
+                    orderBy: {
+                        sortOrder: 'asc',
+                    },
+                },
             },
         });
+
+        return {
+            ...updatedProduct,
+            purchasePrice: updatedProduct.purchasePrice.toString(),
+            sellingPrice: updatedProduct.sellingPrice.toString(),
+        };
     }
 }

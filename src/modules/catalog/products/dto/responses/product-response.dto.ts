@@ -3,6 +3,8 @@ import {
     ApiPropertyOptional,
 } from '@nestjs/swagger';
 
+import { ProductImageResponseDto } from './product-image-response.dto';
+
 export class ProductCategoryResponseDto {
     @ApiProperty({
         example: 'cmf123456789',
@@ -59,21 +61,39 @@ export class ProductResponseDto {
     })
     description!: string | null;
 
-    @ApiProperty() sku!: string;
+    @ApiProperty()
+    sku!: string;
 
-    @ApiPropertyOptional({ nullable: true }) barcode!: string | null;
+    @ApiPropertyOptional({
+        nullable: true,
+    })
+    barcode!: string | null;
 
-    @ApiProperty() purchasePrice!: string;
+    @ApiProperty()
+    purchasePrice!: string;
 
-    @ApiProperty() sellingPrice!: string;
+    @ApiProperty()
+    sellingPrice!: string;
 
-    @ApiProperty() stock!: number;
+    @ApiProperty()
+    stock!: number;
 
-    @ApiProperty({ type: [String] }) sizes!: string[];
+    @ApiProperty({
+        type: [String],
+    })
+    sizes!: string[];
 
-    @ApiPropertyOptional({ nullable: true }) colors!: unknown;
+    @ApiPropertyOptional({
+        nullable: true,
+    })
+    colors!: unknown;
 
-    @ApiPropertyOptional({ nullable: true }) image!: string | null;
+    // Product list response: returns only image URLs for lightweight list rendering.
+    @ApiPropertyOptional({
+        type: [String],
+        nullable: true,
+    })
+    image?: string[] | null;
 
     @ApiProperty({
         example: true,
@@ -91,7 +111,11 @@ export class ProductResponseDto {
     })
     brand!: ProductBrandResponseDto | null;
 
-    @ApiPropertyOptional({ type: [Object] }) images?: unknown[];
+    // Product details response: returns complete image information for the details page.
+    @ApiPropertyOptional({
+        type: [ProductImageResponseDto],
+    })
+    images?: ProductImageResponseDto[];
 
     @ApiProperty()
     createdAt!: Date;

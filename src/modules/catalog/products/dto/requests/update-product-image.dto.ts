@@ -4,11 +4,16 @@ import {
     IsString,
     Min,
 } from 'class-validator';
-
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateProductImageDto {
-    @ApiPropertyOptional({
+    @ApiProperty({
+        example: 'cmf123456789',
+    })
+    @IsString()
+    id!: string;
+
+    @ApiProperty({
         example:
             'https://res.cloudinary.com/demo/image/upload/updated-image.jpg',
     })
@@ -16,14 +21,14 @@ export class UpdateProductImageDto {
     @IsString()
     imageUrl?: string;
 
-    @ApiPropertyOptional({
+    @ApiProperty({
         example: 'products/updated-product-image',
     })
     @IsOptional()
     @IsString()
     publicId?: string;
 
-    @ApiPropertyOptional({
+    @ApiProperty({
         example: 1,
     })
     @IsOptional()

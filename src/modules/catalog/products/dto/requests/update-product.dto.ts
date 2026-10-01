@@ -8,17 +8,13 @@ import {
     IsString,
     MaxLength,
     Min,
+    ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
-/*
- * DTO: UpdateProductDto
- */
+import { UpdateProductImageDto } from './update-product-image.dto';
 
 export class UpdateProductDto {
-    /*
-     * Basic Info
-     */
-
     @ApiPropertyOptional()
     @IsOptional()
     @IsString()
@@ -35,10 +31,6 @@ export class UpdateProductDto {
     @IsOptional()
     @IsString()
     description?: string | null;
-
-    /*
-     * Identifiers & Pricing
-     */
 
     @ApiPropertyOptional()
     @IsOptional()
@@ -63,29 +55,25 @@ export class UpdateProductDto {
     @Min(0)
     sellingPrice?: number;
 
-    /*
-     * Stock & Attributes
-     */
-
     @ApiPropertyOptional({ minimum: 0 })
     @IsOptional()
     @IsInt()
     @Min(0)
     stock?: number;
 
-    @ApiPropertyOptional({ type: [String] })
+    @ApiPropertyOptional({
+        type: [String],
+    })
     @IsOptional()
     @IsArray()
     @IsString({ each: true })
     sizes?: string[];
 
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({
+        example: [{ name: 'Red', hex: '#FF0000' }],
+    })
     @IsOptional()
     colors?: unknown;
-
-    /*
-     * Relations & Flags
-     */
 
     @ApiPropertyOptional()
     @IsOptional()
@@ -101,6 +89,15 @@ export class UpdateProductDto {
     @IsOptional()
     @IsString()
     publicId?: string | null;
+
+    @ApiPropertyOptional({
+        type: [UpdateProductImageDto],
+    })
+    @IsOptional()
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => UpdateProductImageDto)
+    images?: UpdateProductImageDto[];
 
     @ApiPropertyOptional()
     @IsOptional()
