@@ -13,6 +13,7 @@ import {
 import { Type } from 'class-transformer';
 
 import { UpdateProductImageDto } from './update-product-image.dto';
+import { ProductColorDto } from './create-product.dto';
 
 export class UpdateProductDto {
     @ApiPropertyOptional()
@@ -70,10 +71,17 @@ export class UpdateProductDto {
     sizes?: string[];
 
     @ApiPropertyOptional({
-        example: [{ name: 'Red', hex: '#FF0000' }],
+        type: [ProductColorDto],
+        example: [
+            { name: 'Red', hex: '#FF0000' },
+            { name: 'Black', hex: '#000000' },
+        ],
     })
     @IsOptional()
-    colors?: unknown;
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => ProductColorDto)
+    colors?: ProductColorDto[];
 
     @ApiPropertyOptional()
     @IsOptional()
@@ -85,11 +93,6 @@ export class UpdateProductDto {
     @IsString()
     brandId?: string | null;
 
-    @ApiPropertyOptional({ nullable: true })
-    @IsOptional()
-    @IsString()
-    publicId?: string | null;
-
     @ApiPropertyOptional({
         type: [UpdateProductImageDto],
     })
@@ -98,6 +101,15 @@ export class UpdateProductDto {
     @ValidateNested({ each: true })
     @Type(() => UpdateProductImageDto)
     images?: UpdateProductImageDto[];
+
+    @ApiPropertyOptional({
+        type: [String],
+        description: 'IDs of existing product images to remove',
+    })
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    imageIdsToDelete?: string[];
 
     @ApiPropertyOptional()
     @IsOptional()

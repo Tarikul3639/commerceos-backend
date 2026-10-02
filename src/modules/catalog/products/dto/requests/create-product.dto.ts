@@ -15,6 +15,18 @@ import { Type } from 'class-transformer';
 
 import { AddProductImageDto } from './add-product-image.dto';
 
+export class ProductColorDto {
+    @ApiProperty({ example: 'Red' })
+    @IsString()
+    @IsNotEmpty()
+    name!: string;
+
+    @ApiProperty({ example: '#FF0000' })
+    @IsString()
+    @IsNotEmpty()
+    hex!: string;
+}
+
 export class CreateProductDto {
     @ApiProperty({ example: 'Nike Air Max 270' })
     @IsString()
@@ -70,10 +82,17 @@ export class CreateProductDto {
     sizes?: string[];
 
     @ApiPropertyOptional({
-        example: [{ name: 'Red', hex: '#FF0000' }],
+        type: [ProductColorDto],
+        example: [
+            { name: 'Red', hex: '#FF0000' },
+            { name: 'Black', hex: '#000000' },
+        ],
     })
     @IsOptional()
-    colors?: unknown;
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => ProductColorDto)
+    colors?: ProductColorDto[];
 
     @ApiProperty({
         example: 'cmf123categoryid',
@@ -88,13 +107,6 @@ export class CreateProductDto {
     @IsOptional()
     @IsString()
     brandId?: string;
-
-    @ApiPropertyOptional({
-        example: 'products/nike-air-max-270',
-    })
-    @IsOptional()
-    @IsString()
-    publicId?: string;
 
     @ApiPropertyOptional({
         type: [AddProductImageDto],

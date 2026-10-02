@@ -72,8 +72,6 @@ model Product {
   colors Json?
   sizes  String[]
 
-  publicId String? @unique
-
   isActive  Boolean   @default(true)
   deletedAt DateTime?
 

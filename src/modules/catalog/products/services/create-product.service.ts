@@ -85,17 +85,13 @@ export class CreateProductService {
                 sizes: dto.sizes ?? [],
 
                 ...(dto.colors !== undefined && {
-                    colors: dto.colors as Prisma.InputJsonValue,
+                    colors: dto.colors as unknown as Prisma.InputJsonValue,
                 }),
 
                 categoryId: dto.categoryId,
 
                 ...(dto.brandId !== undefined && {
                     brandId: dto.brandId,
-                }),
-
-                ...(dto.publicId !== undefined && {
-                    publicId: dto.publicId,
                 }),
 
                 ...(dto.isActive !== undefined && {

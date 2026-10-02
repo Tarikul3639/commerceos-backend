@@ -37,9 +37,6 @@ export class ProductDetailResponseDto {
     @ApiPropertyOptional({ nullable: true })
     colors!: unknown;
 
-    @ApiPropertyOptional({ nullable: true })
-    publicId!: string | null;
-
     @ApiProperty()
     isActive!: boolean;
 

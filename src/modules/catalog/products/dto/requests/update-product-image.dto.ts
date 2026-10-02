@@ -1,36 +1,33 @@
 import {
+    IsNotEmpty,
     IsInt,
     IsOptional,
     IsString,
     Min,
+    ValidateIf,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateProductImageDto {
-    @ApiProperty({
-        example: 'cmf123456789',
-    })
+    @ApiPropertyOptional({ example: 'cmf123456789' })
+    @ValidateIf((image: UpdateProductImageDto) => image.id !== undefined)
     @IsString()
-    id!: string;
+    @IsNotEmpty()
+    id?: string;
 
-    @ApiProperty({
-        example:
-            'https://res.cloudinary.com/demo/image/upload/updated-image.jpg',
-    })
-    @IsOptional()
+    @ApiPropertyOptional({ example: 'https://res.cloudinary.com/demo/image/upload/updated-image.jpg' })
+    @ValidateIf((image: UpdateProductImageDto) => image.id === undefined)
     @IsString()
+    @IsNotEmpty()
     imageUrl?: string;
 
-    @ApiProperty({
-        example: 'products/updated-product-image',
-    })
-    @IsOptional()
+    @ApiPropertyOptional({ example: 'products/updated-product-image' })
+    @ValidateIf((image: UpdateProductImageDto) => image.id === undefined)
     @IsString()
+    @IsNotEmpty()
     publicId?: string;
 
-    @ApiProperty({
-        example: 1,
-    })
+    @ApiPropertyOptional({ example: 1 })
     @IsOptional()
     @IsInt()
     @Min(0)

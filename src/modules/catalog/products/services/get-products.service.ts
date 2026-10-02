@@ -31,7 +31,6 @@ export class GetProductsService {
          * Build database query filters
          */
         const where: Prisma.ProductWhereInput = {
-            deletedAt: null,
             ...(search && {
                 OR: [
                     { name: { contains: search.trim(), mode: 'insensitive' } },
@@ -69,11 +68,18 @@ export class GetProductsService {
          */
         return {
             data: products.map(
-                ({ colors, sizes, purchasePrice, sellingPrice, ...product }) => ({
+                ({
+                    colors,
+                    sizes,
+                    purchasePrice,
+                    sellingPrice,
+                    images,
+                    ...product
+                }) => ({
                     ...product,
                     purchasePrice: purchasePrice.toString(),
                     sellingPrice: sellingPrice.toString(),
-                    image: product.images[0]?.imageUrl ?? null,
+                    image: images[0]?.imageUrl ?? null,
                     colors,
                     sizes,
                     stock: product.stock,

@@ -93,12 +93,17 @@ export class ProductResponseDto {
         type: [String],
         nullable: true,
     })
-    image?: string[] | null;
+    image?: string | null;
 
     @ApiProperty({
         example: true,
     })
     isActive!: boolean;
+
+    @ApiPropertyOptional({
+        nullable: true,
+    })
+    deletedAt!: Date | null;
 
     @ApiProperty({
         type: ProductCategoryResponseDto,
