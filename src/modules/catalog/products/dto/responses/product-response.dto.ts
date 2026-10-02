@@ -4,6 +4,7 @@ import {
 } from '@nestjs/swagger';
 
 import { ProductImageResponseDto } from './product-image-response.dto';
+import { ProductColorResponseDto } from './product-color-response.dto';
 
 export class ProductCategoryResponseDto {
     @ApiProperty({
@@ -37,6 +38,12 @@ export class ProductBrandResponseDto {
         example: 'nike',
     })
     slug!: string;
+
+    @ApiPropertyOptional({
+        example: 'https://www.nike.com',
+        nullable: true,
+    })
+    website!: string | null;
 }
 
 export class ProductResponseDto {
@@ -50,16 +57,14 @@ export class ProductResponseDto {
     })
     name!: string;
 
-    @ApiProperty({
-        example: 'nike-air-max-270',
-    })
-    slug!: string;
-
     @ApiPropertyOptional({
         example: 'Comfortable running shoes',
         nullable: true,
     })
     description!: string | null;
+
+    @ApiPropertyOptional({ nullable: true })
+    subDescription!: string | null;
 
     @ApiProperty()
     sku!: string;
@@ -84,9 +89,10 @@ export class ProductResponseDto {
     sizes!: string[];
 
     @ApiPropertyOptional({
+        type: [ProductColorResponseDto],
         nullable: true,
     })
-    colors!: unknown;
+    colors!: ProductColorResponseDto[] | null;
 
     // Product list response: returns only image URLs for lightweight list rendering.
     @ApiPropertyOptional({

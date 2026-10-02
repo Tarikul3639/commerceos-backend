@@ -78,7 +78,6 @@ export class GetOrderReturnsService {
                                             id: true,
                                             sku: true,
                                             name: true,
-                                            slug: true,
                                         },
                                     },
                                 },

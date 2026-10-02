@@ -3,7 +3,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 export class CartProductResponseDto {
     @ApiProperty() id!: string;
     @ApiProperty() name!: string;
-    @ApiProperty() slug!: string;
     @ApiProperty() sku!: string;
     @ApiProperty() price!: string;
     @ApiPropertyOptional({ nullable: true }) imageUrl!: string | null;

@@ -14,11 +14,6 @@ export class DiscountProductResponseDto {
     })
     name!: string;
 
-    @ApiProperty({
-        example: 'iphone-15',
-    })
-    slug!: string;
-
     @ApiPropertyOptional({
         example: [
             'https://example.com/iphone-15-1.jpg',

@@ -123,7 +123,6 @@ export class CreateOrderReturnService {
                                             id: true,
                                             sku: true,
                                             name: true,
-                                            slug: true,
                                         },
                                     },
                                 },

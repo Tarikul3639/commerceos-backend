@@ -21,7 +21,6 @@ export class GetCartService {
                 product: {
                     id: product.id,
                     name: product.name,
-                    slug: product.slug,
                     sku: product.sku,
                     price: product.sellingPrice.toString(),
                     imageUrl: product.images[0]?.imageUrl ?? null,

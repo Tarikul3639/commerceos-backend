@@ -26,7 +26,7 @@ export class GetOrderService {
                 orderItems: {
                     include: {
                         product: {
-                            select: { id: true, name: true, slug: true, sku: true },
+                            select: { id: true, name: true, sku: true },
                         },
                     },
                 },

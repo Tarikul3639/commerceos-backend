@@ -22,16 +22,15 @@ export class UpdateProductDto {
     @MaxLength(255)
     name?: string;
 
-    @ApiPropertyOptional()
-    @IsOptional()
-    @IsString()
-    @MaxLength(255)
-    slug?: string;
-
     @ApiPropertyOptional({ nullable: true })
     @IsOptional()
     @IsString()
     description?: string | null;
+
+    @ApiPropertyOptional({ nullable: true })
+    @IsOptional()
+    @IsString()
+    subDescription?: string | null;
 
     @ApiPropertyOptional()
     @IsOptional()

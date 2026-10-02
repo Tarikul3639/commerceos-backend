@@ -7,7 +7,6 @@ import {
 import { Prisma } from '@/lib/prisma/client';
 
 import { PrismaService } from '../../../../common/prisma/prisma.service';
-import { generateSlug } from '../../../../common/utils/slug.util';
 
 import { UpdateProductDto } from '../dto/requests/update-product.dto';
 
@@ -24,7 +23,6 @@ export class UpdateProductService {
             select: {
                 id: true,
                 name: true,
-                slug: true,
                 categoryId: true,
                 brandId: true,
             },
@@ -32,31 +30,6 @@ export class UpdateProductService {
 
         if (!product) {
             throw new NotFoundException('Product not found');
-        }
-
-        let slug: string | undefined;
-
-        if (
-            updateProductDto.name !== undefined &&
-            updateProductDto.name !== product.name
-        ) {
-            slug = generateSlug(updateProductDto.name);
-
-            const existingProduct = await this.prisma.product.findFirst({
-                where: {
-                    slug,
-                    id: {
-                        not: productId,
-                    },
-                },
-                select: {
-                    id: true,
-                },
-            });
-
-            if (existingProduct) {
-                throw new ConflictException('A product with this name already exists');
-            }
         }
 
         if (
@@ -185,16 +158,12 @@ export class UpdateProductService {
                     name: updateProductDto.name,
                 }),
 
-                ...(slug !== undefined && {
-                    slug,
-                }),
-
-                ...(updateProductDto.slug !== undefined && {
-                    slug: updateProductDto.slug,
-                }),
-
                 ...(updateProductDto.description !== undefined && {
                     description: updateProductDto.description,
+                }),
+
+                ...(updateProductDto.subDescription !== undefined && {
+                    subDescription: updateProductDto.subDescription,
                 }),
 
                 ...(updateProductDto.purchasePrice !== undefined && {

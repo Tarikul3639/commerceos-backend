@@ -15,22 +15,13 @@ export class CreateProductService {
     constructor(private readonly prisma: PrismaService) { }
 
     async execute(dto: CreateProductDto): Promise<ProductResponseDto> {
-        const existing = await this.prisma.product.findFirst({
-            where: {
-                OR: [{ slug: dto.slug }, { sku: dto.sku }],
-            },
-            select: {
-                slug: true,
-                sku: true,
-            },
+        const existing = await this.prisma.product.findUnique({
+            where: { sku: dto.sku },
+            select: { sku: true },
         });
 
         if (existing) {
-            throw new ConflictException(
-                existing.sku === dto.sku
-                    ? 'A product with this SKU already exists'
-                    : 'A product with this slug already exists',
-            );
+            throw new ConflictException('A product with this SKU already exists');
         }
 
         const category = await this.prisma.category.findFirst({
@@ -68,7 +59,6 @@ export class CreateProductService {
         const product = await this.prisma.product.create({
             data: {
                 name: dto.name,
-                slug: dto.slug,
                 sku: dto.sku,
 
                 ...(dto.barcode !== undefined && {
@@ -77,6 +67,10 @@ export class CreateProductService {
 
                 ...(dto.description !== undefined && {
                     description: dto.description,
+                }),
+
+                ...(dto.subDescription !== undefined && {
+                    subDescription: dto.subDescription,
                 }),
 
                 purchasePrice: dto.purchasePrice,
@@ -134,6 +128,7 @@ export class CreateProductService {
 
         return {
             ...product,
+            colors: product.colors as unknown as ProductResponseDto['colors'],
             purchasePrice: product.purchasePrice.toString(),
             sellingPrice: product.sellingPrice.toString(),
         };

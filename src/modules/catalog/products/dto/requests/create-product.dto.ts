@@ -34,12 +34,6 @@ export class CreateProductDto {
     @MaxLength(255)
     name!: string;
 
-    @ApiProperty({ example: 'nike-air-max-270' })
-    @IsString()
-    @IsNotEmpty()
-    @MaxLength(255)
-    slug!: string;
-
     @ApiProperty({ example: 'nike-air-max-270-black' })
     @IsString()
     @IsNotEmpty()
@@ -55,6 +49,11 @@ export class CreateProductDto {
     @IsOptional()
     @IsString()
     description?: string;
+
+    @ApiPropertyOptional({ example: 'Lightweight running shoes for everyday comfort' })
+    @IsOptional()
+    @IsString()
+    subDescription?: string;
 
     @ApiProperty({ example: 100 })
     @IsNumber()

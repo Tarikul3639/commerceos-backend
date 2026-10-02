@@ -2,6 +2,10 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { ProductBrandResponseDto, ProductCategoryResponseDto } from './product-response.dto';
 import { ProductImageResponseDto } from './product-image-response.dto';
+import { ProductDiscountResponseDto } from './product-discount-response.dto';
+import { ProductColorResponseDto } from './product-color-response.dto';
+import { ProductReviewResponseDto } from './product-review-response.dto';
+import { ProductRatingResponseDto } from './product-rating-response.dto';
 
 export class ProductDetailResponseDto {
     @ApiProperty()
@@ -11,9 +15,6 @@ export class ProductDetailResponseDto {
     name!: string;
 
     @ApiProperty()
-    slug!: string;
-
-    @ApiProperty()
     sku!: string;
 
     @ApiPropertyOptional({ nullable: true })
@@ -21,6 +22,9 @@ export class ProductDetailResponseDto {
 
     @ApiPropertyOptional({ nullable: true })
     description!: string | null;
+
+    @ApiPropertyOptional({ nullable: true })
+    subDescription!: string | null;
 
     @ApiProperty()
     purchasePrice!: string;
@@ -34,11 +38,20 @@ export class ProductDetailResponseDto {
     @ApiProperty({ type: [String] })
     sizes!: string[];
 
-    @ApiPropertyOptional({ nullable: true })
-    colors!: unknown;
+    @ApiPropertyOptional({
+        type: [ProductColorResponseDto],
+        nullable: true,
+    })
+    colors!: ProductColorResponseDto[] | null;
+
+    @ApiProperty({ type: ProductRatingResponseDto })
+    rating!: ProductRatingResponseDto;
 
     @ApiProperty()
     isActive!: boolean;
+
+    @ApiPropertyOptional({ nullable: true })
+    deletedAt!: Date | null;
 
     @ApiProperty({ type: ProductCategoryResponseDto })
     category!: ProductCategoryResponseDto;
@@ -52,8 +65,11 @@ export class ProductDetailResponseDto {
     @ApiProperty({ type: [ProductImageResponseDto] })
     images!: ProductImageResponseDto[];
 
-    @ApiProperty({ type: [Object] })
-    discounts!: unknown[];
+    @ApiProperty({ type: [ProductDiscountResponseDto] })
+    discounts!: ProductDiscountResponseDto[]
+
+    @ApiProperty({ type: [ProductReviewResponseDto] })
+    reviews!: ProductReviewResponseDto[];
 
     @ApiProperty()
     createdAt!: Date;

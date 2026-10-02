@@ -18,7 +18,7 @@ export class CreateOrderService {
         return this.prisma.$transaction(async (tx) => {
             const products = await tx.product.findMany({
                 where: { id: { in: productIds }, deletedAt: null, isActive: true },
-                select: { id: true, name: true, slug: true, sku: true, stock: true },
+                select: { id: true, name: true, sku: true, stock: true },
             });
             if (products.length !== productIds.length) throw new BadRequestException('One or more products not found or inactive');
 
@@ -49,7 +49,7 @@ export class CreateOrderService {
                 include: {
                     customer: { select: { id: true, name: true } },
                     user: { select: { id: true, name: true, email: true } },
-                    orderItems: { include: { product: { select: { id: true, name: true, slug: true, sku: true } } } },
+                    orderItems: { include: { product: { select: { id: true, name: true, sku: true } } } },
                 },
             });
             return {

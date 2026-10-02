@@ -37,7 +37,6 @@ export class AddCartItemService {
                 product: {
                     id: itemProduct.id,
                     name: itemProduct.name,
-                    slug: itemProduct.slug,
                     sku: itemProduct.sku,
                     price: itemProduct.sellingPrice.toString(),
                     imageUrl: itemProduct.images[0]?.imageUrl ?? null,

@@ -34,7 +34,6 @@ export class GetProductsService {
             ...(search && {
                 OR: [
                     { name: { contains: search.trim(), mode: 'insensitive' } },
-                    { slug: { contains: search.trim(), mode: 'insensitive' } },
                     { sku: { contains: search.trim(), mode: 'insensitive' } },
                 ],
             }),

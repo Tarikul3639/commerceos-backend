@@ -54,9 +54,9 @@ model Brand {
 model Product {
   id String @id @default(cuid())
 
-  name        String
-  slug        String  @unique
-  description String?
+  name           String
+  subDescription String?
+  description    String?
 
   sku     String  @unique
   barcode String? @unique
@@ -81,8 +81,8 @@ model Product {
   brandId String?
   brand   Brand?  @relation(fields: [brandId], references: [id])
 
-  images ProductImage[]
-
+  images    ProductImage[]
+  reviews   ProductReview[]
   discounts ProductDiscount[]
 
   purchaseItems PurchaseItem[]
@@ -114,6 +114,31 @@ model ProductImage {
 
   @@index([productId])
   @@map("product_images")
+}
+
+model ProductReview {
+  id String @id @default(cuid())
+
+  rating  Int
+  comment String?
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  isActive  Boolean   @default(true)
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, customerId])
+  @@index([productId, isActive])
+  @@index([customerId])
+  @@index([deletedAt])
+  @@map("product_reviews")
 }
 
 model Discount {

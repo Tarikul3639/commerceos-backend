@@ -51,7 +51,7 @@ export class GetOrdersService {
                     user: { select: { id: true, name: true, email: true } },
                     orderItems: {
                         include: {
-                            product: { select: { id: true, name: true, slug: true, sku: true } },
+                            product: { select: { id: true, name: true, sku: true } },
                         },
                     },
                 },

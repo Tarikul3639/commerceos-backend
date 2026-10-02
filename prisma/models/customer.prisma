@@ -5,116 +5,117 @@
  */
 
 enum CustomerStatus {
-    ACTIVE
-    INACTIVE
-    SUSPENDED
-    DELETED
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  DELETED
 }
 
 model Customer {
-    id String @id @default(cuid())
+  id String @id @default(cuid())
 
-    name     String
-    email    String  @unique
-    phone    String? @unique
-    password String
-    address  String?
+  name     String
+  email    String  @unique
+  phone    String? @unique
+  password String
+  address  String?
 
-    // Optional avatar image for the customer
-    avatarUrl String?
+  // Optional avatar image for the customer
+  avatarUrl String?
 
-    // Cloudinary public ID used to delete the image
-    publicId String? @unique
+  // Cloudinary public ID used to delete the image
+  publicId String? @unique
 
-    // Controls the current status of the customer account
-    status CustomerStatus @default(ACTIVE)
+  // Controls the current status of the customer account
+  status CustomerStatus @default(ACTIVE)
 
-    // Indicates whether the customer's email has been verified
-    isVerified Boolean @default(false)
+  // Indicates whether the customer's email has been verified
+  isVerified Boolean @default(false)
 
-    // Stores the timestamp of the customer's last successful login
-    lastLoginAt DateTime?
+  // Stores the timestamp of the customer's last successful login
+  lastLoginAt DateTime?
 
-    // Stores the timestamp when the customer was soft deleted
-    deletedAt DateTime?
+  // Stores the timestamp when the customer was soft deleted
+  deletedAt DateTime?
 
-    refreshTokens           CustomerRefreshToken[]
-    passwordResetTokens     CustomerPasswordResetToken[]
-    emailVerificationTokens CustomerEmailVerificationToken[]
+  refreshTokens           CustomerRefreshToken[]
+  passwordResetTokens     CustomerPasswordResetToken[]
+  emailVerificationTokens CustomerEmailVerificationToken[]
 
-    orders Order[]
-    cart   Cart?
+  orders         Order[]
+  cart           Cart?
+  productReviews ProductReview[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([status])
-    @@index([deletedAt])
-    @@map("customers")
+  @@index([status])
+  @@index([deletedAt])
+  @@map("customers")
 }
 
 model CustomerRefreshToken {
-    id String @id @default(cuid())
+  id String @id @default(cuid())
 
-    tokenHash String
+  tokenHash String
 
-    expiresAt  DateTime
-    revokedAt  DateTime?
-    lastUsedAt DateTime?
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  lastUsedAt DateTime?
 
-    userAgent String?
-    ipAddress String?
+  userAgent String?
+  ipAddress String?
 
-    customerId String
+  customerId String
 
-    customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([customerId])
-    @@index([expiresAt])
-    @@map("customer_refresh_tokens")
+  @@index([customerId])
+  @@index([expiresAt])
+  @@map("customer_refresh_tokens")
 }
 
 model CustomerEmailVerificationToken {
-    id String @id @default(cuid())
+  id String @id @default(cuid())
 
-    tokenHash String @unique
+  tokenHash String @unique
 
-    expiresAt  DateTime
-    verifiedAt DateTime?
+  expiresAt  DateTime
+  verifiedAt DateTime?
 
-    customerId String
+  customerId String
 
-    customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-    createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
 
-    @@index([customerId])
-    @@index([expiresAt])
-    @@map("customer_email_verification_tokens")
+  @@index([customerId])
+  @@index([expiresAt])
+  @@map("customer_email_verification_tokens")
 }
 
 model CustomerPasswordResetToken {
-    id String @id @default(cuid())
+  id String @id @default(cuid())
 
-    // Stores the hashed password reset token
-    tokenHash String @unique
+  // Stores the hashed password reset token
+  tokenHash String @unique
 
-    // Defines when the password reset token expires
-    expiresAt DateTime
+  // Defines when the password reset token expires
+  expiresAt DateTime
 
-    // Stores when the token was successfully used
-    usedAt DateTime?
+  // Stores when the token was successfully used
+  usedAt DateTime?
 
-    customerId String
+  customerId String
 
-    customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-    createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
 
-    @@index([customerId])
-    @@index([expiresAt])
-    @@map("customer_password_reset_tokens")
+  @@index([customerId])
+  @@index([expiresAt])
+  @@map("customer_password_reset_tokens")
 }

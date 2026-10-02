@@ -6,7 +6,7 @@ export class OrderItemResponseDto {
     @ApiProperty() unitPrice!: string;
     @ApiProperty() subtotal!: string;
     @ApiProperty() productId!: string;
-    @ApiProperty() product!: { id: string; name: string; slug: string; sku: string };
+    @ApiProperty() product!: { id: string; name: string; sku: string };
     @ApiProperty() createdAt!: Date;
     @ApiProperty() updatedAt!: Date;
 }

@@ -54,7 +54,6 @@ export class GetDiscountProductsService {
                         select: {
                             id: true,
                             name: true,
-                            slug: true,
                             images: {
                                 select: { imageUrl: true, sortOrder: true },
                                 orderBy: { sortOrder: 'asc' },
@@ -74,7 +73,6 @@ export class GetDiscountProductsService {
             ({ product }) => ({
                 id: product.id,
                 name: product.name,
-                slug: product.slug,
                 images: product.images.map(({ imageUrl }) => imageUrl),
             }),
         );

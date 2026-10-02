@@ -85,12 +85,12 @@ enum BannerPosition {
 model Settings {
   id String @id @default(cuid())
 
-  companyName String
-  companyEmail String
-  companyPhone String
+  companyName    String
+  companyEmail   String
+  companyPhone   String
   companyAddress String
 
-  logo String?
+  logo    String?
   favicon String?
 
   currency String @default("BDT")
@@ -105,7 +105,7 @@ model Settings {
 model ActivityLog {
   id String @id @default(cuid())
 
-  type ActivityType
+  type   ActivityType
   module ActivityModule
 
   action String
@@ -114,7 +114,7 @@ model ActivityLog {
 
   // Which entity the activity has occurred on, its type and id
   entityType String?
-  entityId String?
+  entityId   String?
 
   // Old value before the change
   oldValue Json?
@@ -138,14 +138,13 @@ model ActivityLog {
   @@index([type])
   @@index([entityType, entityId])
   @@index([createdAt])
-
   @@map("activity_logs")
 }
 
 model Notification {
   id String @id @default(cuid())
 
-  title String
+  title   String
   message String
 
   type NotificationType @default(INFO)
@@ -173,7 +172,6 @@ model Notification {
   @@index([isRead])
   @@index([entityType, entityId])
   @@index([createdAt])
-
   @@map("notifications")
 }
 
@@ -219,7 +217,6 @@ model EmailLog {
   @@index([triggeredById])
   @@index([entityType, entityId])
   @@index([createdAt])
-
   @@map("email_logs")
 }
 
@@ -234,7 +231,7 @@ model Banner {
   // Optional image for mobile devices
   mobileImageUrl String?
 
-  type BannerType
+  type     BannerType
   position BannerPosition
 
   // Redirect URL when banner is clicked
@@ -249,7 +246,7 @@ model Banner {
 
   // Banner visibility period
   startAt DateTime?
-  endAt DateTime?
+  endAt   DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -257,6 +254,5 @@ model Banner {
   @@index([type])
   @@index([position])
   @@index([isActive])
-
   @@map("banners")
 }
