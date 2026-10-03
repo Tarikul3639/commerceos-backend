@@ -1,7 +1,7 @@
 import {
-    BadRequestException,
-    Injectable,
-    NotFoundException,
+  BadRequestException,
+  Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 
 import { OrderStatus } from '@/lib/prisma/client';
@@ -11,49 +11,49 @@ import { CancelOrderDto } from '../dto/requests/cancel-order.dto';
 
 @Injectable()
 export class CancelOrderService {
-    constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-    async execute(orderId: string, cancelOrderDto: CancelOrderDto) {
-        return this.prisma.$transaction(async (tx) => {
-            const order = await tx.order.findUnique({
-                where: { id: orderId },
-                include: {
-                    orderItems: {
-                        select: { productId: true, quantity: true },
-                    },
-                },
-            });
+  async execute(orderId: string, cancelOrderDto: CancelOrderDto) {
+    return this.prisma.$transaction(async (tx) => {
+      const order = await tx.order.findUnique({
+        where: { id: orderId },
+        include: {
+          orderItems: {
+            select: { productId: true, quantity: true },
+          },
+        },
+      });
 
-            if (!order) {
-                throw new NotFoundException('Order not found');
-            }
+      if (!order) {
+        throw new NotFoundException('Order not found');
+      }
 
-            if (order.status === OrderStatus.CANCELLED) {
-                throw new BadRequestException('Order is already cancelled');
-            }
+      if (order.status === OrderStatus.CANCELLED) {
+        throw new BadRequestException('Order is already cancelled');
+      }
 
-            const cancelled = await tx.order.updateMany({
-                where: { id: orderId, status: order.status },
-                data: {
-                    status: OrderStatus.CANCELLED,
-                    ...(cancelOrderDto.reason !== undefined && {
-                        cancellationReason: cancelOrderDto.reason,
-                    }),
-                },
-            });
+      const cancelled = await tx.order.updateMany({
+        where: { id: orderId, status: order.status },
+        data: {
+          status: OrderStatus.CANCELLED,
+          ...(cancelOrderDto.reason !== undefined && {
+            cancellationReason: cancelOrderDto.reason,
+          }),
+        },
+      });
 
-            if (!cancelled.count) {
-                throw new BadRequestException('Order status changed while cancelling');
-            }
+      if (!cancelled.count) {
+        throw new BadRequestException('Order status changed while cancelling');
+      }
 
-            for (const item of order.orderItems) {
-                await tx.product.update({
-                    where: { id: item.productId },
-                    data: { stock: { increment: item.quantity } },
-                });
-            }
-
-            return tx.order.findUniqueOrThrow({ where: { id: orderId } });
+      for (const item of order.orderItems) {
+        await tx.product.update({
+          where: { id: item.productId },
+          data: { stock: { increment: item.quantity } },
         });
-    }
+      }
+
+      return tx.order.findUniqueOrThrow({ where: { id: orderId } });
+    });
+  }
 }

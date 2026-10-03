@@ -1,4 +1,4 @@
 export interface CurrentCustomerPayload {
-    id: string;
-    email: string;
+  id: string;
+  email: string;
 }

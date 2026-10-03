@@ -5,13 +5,11 @@ import { CustomerRefreshTokenService } from './refresh-token.service';
 
 @Injectable()
 export class CustomerLogoutAllService {
-    constructor(
-        private readonly refreshTokenService: CustomerRefreshTokenService,
-    ) {}
+  constructor(
+    private readonly refreshTokenService: CustomerRefreshTokenService,
+  ) {}
 
-    async execute(customerId: string): Promise<void> {
-        await this.refreshTokenService.revokeAll(
-            customerId,
-        );
-    }
+  async execute(customerId: string): Promise<void> {
+    await this.refreshTokenService.revokeAll(customerId);
+  }
 }

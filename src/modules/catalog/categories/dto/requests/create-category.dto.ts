@@ -1,54 +1,51 @@
 import {
-    IsBoolean,
-    IsNotEmpty,
-    IsOptional,
-    IsString,
-    IsUrl,
-    MaxLength,
-    MinLength,
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+  MaxLength,
+  MinLength,
 } from 'class-validator';
 
-import {
-    ApiProperty,
-    ApiPropertyOptional,
-} from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateCategoryDto {
-    @IsString()
-    @IsNotEmpty()
-    @MinLength(2)
-    @MaxLength(100)
-    @ApiProperty({
-        description: 'The name of the category',
-        example: 'Electronics',
-    })
-    name!: string;
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(2)
+  @MaxLength(100)
+  @ApiProperty({
+    description: 'The name of the category',
+    example: 'Electronics',
+  })
+  name!: string;
 
-    @IsString()
-    @IsNotEmpty()
-    @MinLength(2)
-    @MaxLength(150)
-    @ApiProperty({
-        description: 'The unique URL-friendly slug of the category',
-        example: 'electronics',
-    })
-    slug!: string;
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(2)
+  @MaxLength(150)
+  @ApiProperty({
+    description: 'The unique URL-friendly slug of the category',
+    example: 'electronics',
+  })
+  slug!: string;
 
-    @IsOptional()
-    @IsString()
-    @MaxLength(1000)
-    @ApiPropertyOptional({
-        description: 'The description of the category',
-        example: 'Electronic devices and accessories',
-    })
-    description?: string;
+  @IsOptional()
+  @IsString()
+  @MaxLength(1000)
+  @ApiPropertyOptional({
+    description: 'The description of the category',
+    example: 'Electronic devices and accessories',
+  })
+  description?: string;
 
-    @IsOptional()
-    @IsBoolean()
-    @ApiPropertyOptional({
-        description: 'Controls whether the category is active',
-        example: true,
-        default: true,
-    })
-    isActive?: boolean;
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({
+    description: 'Controls whether the category is active',
+    example: true,
+    default: true,
+  })
+  isActive?: boolean;
 }

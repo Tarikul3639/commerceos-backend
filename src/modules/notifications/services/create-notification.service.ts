@@ -5,37 +5,37 @@ import { NotificationType } from '@/lib/prisma/client';
 
 @Injectable()
 export class CreateNotificationService {
-    constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-    async execute(data: {
-        userId: string;
-        title: string;
-        message: string;
-        type?: NotificationType;
-        link?: string;
-        entityType?: string;
-        entityId?: string;
-    }): Promise<NotificationResponseDto> {
-        const notification = await this.prisma.notification.create({
-            data: {
-                userId: data.userId,
-                title: data.title,
-                message: data.message,
-                ...(data.type !== undefined && {
-                    type: data.type,
-                }),
-                ...(data.link !== undefined && {
-                    link: data.link,
-                }),
-                ...(data.entityType !== undefined && {
-                    entityType: data.entityType,
-                }),
-                ...(data.entityId !== undefined && {
-                    entityId: data.entityId,
-                }),
-            },
-        });
+  async execute(data: {
+    userId: string;
+    title: string;
+    message: string;
+    type?: NotificationType;
+    link?: string;
+    entityType?: string;
+    entityId?: string;
+  }): Promise<NotificationResponseDto> {
+    const notification = await this.prisma.notification.create({
+      data: {
+        userId: data.userId,
+        title: data.title,
+        message: data.message,
+        ...(data.type !== undefined && {
+          type: data.type,
+        }),
+        ...(data.link !== undefined && {
+          link: data.link,
+        }),
+        ...(data.entityType !== undefined && {
+          entityType: data.entityType,
+        }),
+        ...(data.entityId !== undefined && {
+          entityId: data.entityId,
+        }),
+      },
+    });
 
-        return notification;
-    }
+    return notification;
+  }
 }

@@ -10,22 +10,22 @@ import { MarkAllNotificationsReadService } from './services/mark-all-notificatio
 import { MarkNotificationReadService } from './services/mark-notification-read.service';
 
 @Module({
-    controllers: [NotificationController],
-    providers: [
-        CreateNotificationService,
-        DeleteNotificationService,
-        GetNotificationService,
-        GetNotificationsService,
-        MarkAllNotificationsReadService,
-        MarkNotificationReadService,
-    ],
-    exports: [
-        CreateNotificationService,
-        DeleteNotificationService,
-        GetNotificationService,
-        GetNotificationsService,
-        MarkAllNotificationsReadService,
-        MarkNotificationReadService,
-    ],
+  controllers: [NotificationController],
+  providers: [
+    CreateNotificationService,
+    DeleteNotificationService,
+    GetNotificationService,
+    GetNotificationsService,
+    MarkAllNotificationsReadService,
+    MarkNotificationReadService,
+  ],
+  exports: [
+    CreateNotificationService,
+    DeleteNotificationService,
+    GetNotificationService,
+    GetNotificationsService,
+    MarkAllNotificationsReadService,
+    MarkNotificationReadService,
+  ],
 })
 export class NotificationModule {}

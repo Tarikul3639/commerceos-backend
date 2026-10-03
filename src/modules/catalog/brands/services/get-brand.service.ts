@@ -6,32 +6,32 @@ import { BrandResponseDto } from '../dto/responses/brand-response.dto';
 
 @Injectable()
 export class GetBrandService {
-    constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-    async execute(brandId: string): Promise<BrandResponseDto> {
-        const brand = await this.prisma.brand.findFirst({
-            where: {
-                id: brandId,
-                deletedAt: null,
-            },
+  async execute(brandId: string): Promise<BrandResponseDto> {
+    const brand = await this.prisma.brand.findFirst({
+      where: {
+        id: brandId,
+        deletedAt: null,
+      },
 
-            select: {
-                id: true,
-                name: true,
-                slug: true,
-                description: true,
-                image: true,
-                publicId: true,
-                isActive: true,
-                createdAt: true,
-                updatedAt: true,
-            },
-        });
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        image: true,
+        publicId: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
 
-        if (!brand) {
-            throw new NotFoundException('Brand not found');
-        }
-
-        return brand;
+    if (!brand) {
+      throw new NotFoundException('Brand not found');
     }
+
+    return brand;
+  }
 }

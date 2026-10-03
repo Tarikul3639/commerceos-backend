@@ -1,12 +1,12 @@
 import {
-    Body,
-    Controller,
-    HttpCode,
-    HttpStatus,
-    Post,
-    Req,
-    Res,
-    UseGuards,
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 
 import { ApiTags } from '@nestjs/swagger';
@@ -40,202 +40,203 @@ import { CustomerVerifyEmailService } from '../services/verify-email.service';
 @ApiTags('Customer Authentication')
 @Controller('auth/customer')
 export class CustomerAuthController {
-    constructor(
-        private readonly configService: ConfigService,
+  constructor(
+    private readonly configService: ConfigService,
 
-        private readonly registerService: CustomerRegisterService,
-        private readonly loginService: CustomerLoginService,
+    private readonly registerService: CustomerRegisterService,
+    private readonly loginService: CustomerLoginService,
 
-        private readonly logoutService: CustomerLogoutService,
-        private readonly logoutAllService: CustomerLogoutAllService,
+    private readonly logoutService: CustomerLogoutService,
+    private readonly logoutAllService: CustomerLogoutAllService,
 
-        private readonly changePasswordService: CustomerChangePasswordService,
-        private readonly forgotPasswordService: CustomerForgotPasswordService,
-        private readonly resetPasswordService: CustomerResetPasswordService,
-        private readonly verifyEmailService: CustomerVerifyEmailService,
-    ) { }
+    private readonly changePasswordService: CustomerChangePasswordService,
+    private readonly forgotPasswordService: CustomerForgotPasswordService,
+    private readonly resetPasswordService: CustomerResetPasswordService,
+    private readonly verifyEmailService: CustomerVerifyEmailService,
+  ) {}
 
-    /**
-     * Register customer
-     */
+  /**
+   * Register customer
+   */
 
-    @Post('register')
-    @HttpCode(HttpStatus.CREATED)
-    async register(@Body() registerDto: RegisterDto) {
-        await this.registerService.execute(registerDto);
+  @Post('register')
+  @HttpCode(HttpStatus.CREATED)
+  async register(@Body() registerDto: RegisterDto) {
+    await this.registerService.execute(registerDto);
 
-        return {
-            message: 'Registration successful. Please check your email to verify your account.',
-        };
+    return {
+      message:
+        'Registration successful. Please check your email to verify your account.',
+    };
+  }
+
+  /**
+   * Login customer
+   */
+
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  async login(
+    @Body() loginDto: LoginDto,
+
+    @Req() request: Request,
+
+    @Res({ passthrough: true })
+    response: Response,
+  ) {
+    const result = await this.loginService.execute(
+      loginDto,
+      request.headers['user-agent'],
+      request.ip,
+    );
+
+    CookieUtil.setCustomerAccessToken(
+      response,
+      result.accessToken,
+      this.configService,
+    );
+
+    CookieUtil.setCustomerRefreshToken(
+      response,
+      result.refreshToken,
+      this.configService,
+    );
+
+    return {
+      message: 'Login successful',
+    };
+  }
+
+  /**
+   * Logout customer from current device
+   */
+
+  @UseGuards(CustomerJwtAuthGuard)
+  @Post('logout')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async logout(
+    @CurrentCustomer('id')
+    customerId: string,
+
+    @Req() request: Request,
+
+    @Res({ passthrough: true })
+    response: Response,
+  ): Promise<void> {
+    const refreshToken = request.cookies?.[CUSTOMER_REFRESH_TOKEN_COOKIE];
+
+    if (refreshToken) {
+      await this.logoutService.execute(customerId, refreshToken);
     }
 
-    /**
-     * Login customer
-     */
+    CookieUtil.clearCustomerAuthCookies(response, this.configService);
+  }
 
-    @Post('login')
-    @HttpCode(HttpStatus.OK)
-    async login(
-        @Body() loginDto: LoginDto,
+  /**
+   * Logout customer from all devices
+   */
 
-        @Req() request: Request,
+  @UseGuards(CustomerJwtAuthGuard)
+  @Post('logout-all')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async logoutAll(
+    @CurrentCustomer('id')
+    customerId: string,
 
-        @Res({ passthrough: true })
-        response: Response,
-    ) {
-        const result = await this.loginService.execute(
-            loginDto,
-            request.headers['user-agent'],
-            request.ip,
-        );
+    @Res({ passthrough: true })
+    response: Response,
+  ): Promise<void> {
+    await this.logoutAllService.execute(customerId);
 
-        CookieUtil.setCustomerAccessToken(
-            response,
-            result.accessToken,
-            this.configService,
-        );
+    CookieUtil.clearCustomerAuthCookies(response, this.configService);
+  }
 
-        CookieUtil.setCustomerRefreshToken(
-            response,
-            result.refreshToken,
-            this.configService,
-        );
+  /**
+   * Change customer password
+   */
+  @UseGuards(CustomerJwtAuthGuard)
+  @Post('change-password')
+  @HttpCode(HttpStatus.OK)
+  async changePassword(
+    @CurrentCustomer('id')
+    customerId: string,
 
-        return {
-            message: 'Login successful',
-        };
-    }
+    @Body()
+    dto: ChangePasswordDto,
+  ) {
+    await this.changePasswordService.execute(customerId, dto);
 
-    /**
-     * Logout customer from current device
-     */
+    return {
+      message: 'Password changed successfully',
+    };
+  }
 
-    @UseGuards(CustomerJwtAuthGuard)
-    @Post('logout')
-    @HttpCode(HttpStatus.NO_CONTENT)
-    async logout(
-        @CurrentCustomer('id')
-        customerId: string,
+  /**
+   * Send password reset email
+   */
 
-        @Req() request: Request,
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
+  async forgotPassword(
+    @Body()
+    dto: ForgotPasswordDto,
+  ) {
+    await this.forgotPasswordService.execute(dto);
 
-        @Res({ passthrough: true })
-        response: Response,
-    ): Promise<void> {
-        const refreshToken = request.cookies?.[CUSTOMER_REFRESH_TOKEN_COOKIE];
+    return {
+      message:
+        'If an account exists with this email, a password reset link has been sent.',
+    };
+  }
 
-        if (refreshToken) {
-            await this.logoutService.execute(customerId, refreshToken);
-        }
+  /**
+   * Reset customer password
+   */
 
-        CookieUtil.clearCustomerAuthCookies(response, this.configService);
-    }
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  async resetPassword(
+    @Body()
+    dto: ResetPasswordDto,
+  ) {
+    await this.resetPasswordService.execute(dto);
 
-    /**
-     * Logout customer from all devices
-     */
+    return {
+      message: 'Password reset successfully',
+    };
+  }
 
-    @UseGuards(CustomerJwtAuthGuard)
-    @Post('logout-all')
-    @HttpCode(HttpStatus.NO_CONTENT)
-    async logoutAll(
-        @CurrentCustomer('id')
-        customerId: string,
+  /**
+   * Verify customer email
+   */
 
-        @Res({ passthrough: true })
-        response: Response,
-    ): Promise<void> {
-        await this.logoutAllService.execute(customerId);
+  @Post('verify-email')
+  @HttpCode(HttpStatus.OK)
+  async verifyEmail(
+    @Body()
+    verifyEmailDto: VerifyEmailDto,
+  ) {
+    await this.verifyEmailService.verify(verifyEmailDto.token);
 
-        CookieUtil.clearCustomerAuthCookies(response, this.configService);
-    }
+    return {
+      message: 'Email verified successfully',
+    };
+  }
 
-    /**
-     * Change customer password
-     */
-    @UseGuards(CustomerJwtAuthGuard)
-    @Post('change-password')
-    @HttpCode(HttpStatus.OK)
-    async changePassword(
-        @CurrentCustomer('id')
-        customerId: string,
+  /**
+   * Resend verification email
+   */
+  @UseGuards(CustomerJwtAuthGuard)
+  @Post('resend-verification-email')
+  @HttpCode(HttpStatus.OK)
+  async resendVerificationEmail(
+    @CurrentCustomer('id')
+    customerId: string,
+  ) {
+    await this.verifyEmailService.execute(customerId);
 
-        @Body()
-        dto: ChangePasswordDto,
-    ) {
-        await this.changePasswordService.execute(customerId, dto);
-
-        return {
-            message: 'Password changed successfully',
-        };
-    }
-
-    /**
-     * Send password reset email
-     */
-
-    @Post('forgot-password')
-    @HttpCode(HttpStatus.OK)
-    async forgotPassword(
-        @Body()
-        dto: ForgotPasswordDto,
-    ) {
-        await this.forgotPasswordService.execute(dto);
-
-        return {
-            message:
-                'If an account exists with this email, a password reset link has been sent.',
-        };
-    }
-
-    /**
-     * Reset customer password
-     */
-
-    @Post('reset-password')
-    @HttpCode(HttpStatus.OK)
-    async resetPassword(
-        @Body()
-        dto: ResetPasswordDto,
-    ) {
-        await this.resetPasswordService.execute(dto);
-
-        return {
-            message: 'Password reset successfully',
-        };
-    }
-
-    /**
-     * Verify customer email
-     */
-
-    @Post('verify-email')
-    @HttpCode(HttpStatus.OK)
-    async verifyEmail(
-        @Body()
-        verifyEmailDto: VerifyEmailDto,
-    ) {
-        await this.verifyEmailService.verify(verifyEmailDto.token);
-
-        return {
-            message: 'Email verified successfully',
-        };
-    }
-
-    /**
-     * Resend verification email
-     */
-    @UseGuards(CustomerJwtAuthGuard)
-    @Post('resend-verification-email')
-    @HttpCode(HttpStatus.OK)
-    async resendVerificationEmail(
-        @CurrentCustomer('id')
-        customerId: string,
-    ) {
-        await this.verifyEmailService.execute(customerId);
-
-        return {
-            message: 'Verification email sent successfully',
-        };
-    }
+    return {
+      message: 'Verification email sent successfully',
+    };
+  }
 }

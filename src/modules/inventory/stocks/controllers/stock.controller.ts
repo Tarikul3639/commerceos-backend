@@ -9,13 +9,16 @@ import {
     Query,
 } from '@nestjs/common';
 
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 
 // DTOs
 import { AdjustStockDto } from '../dto/requests/adjust-stock.dto';
 import { StockQueryDto } from '../dto/requests/stock-query.dto';
+import {
+    StockListResponseDto,
+    StockResponseDto,
+} from '../dto/responses/stock-response.dto';
 
 // Services
 import { AdjustStockService } from '../services/adjust-stock.service';
@@ -39,21 +42,16 @@ export class StockController {
     @ApiOperation({
         summary: 'Adjust stock quantity',
     })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Stock adjusted successfully',
+        type: StockResponseDto,
+    })
     async adjust(
-        @Body()
-        adjustStockDto: AdjustStockDto,
-
+        @Body() adjustStockDto: AdjustStockDto,
         @CurrentUser('id') userId: string,
-    ) {
-        const stock = await this.adjustStockService.execute(
-            userId,
-            adjustStockDto,
-        );
-
-        return {
-            message: 'Stock adjusted successfully',
-            data: stock,
-        };
+    ): Promise<StockResponseDto> {
+        return await this.adjustStockService.execute(userId, adjustStockDto);
     }
 
     /**
@@ -64,10 +62,12 @@ export class StockController {
     @ApiOperation({
         summary: 'Get all stocks',
     })
-    async findAll(
-        @Query()
-        query: StockQueryDto,
-    ) {
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'List of stocks',
+        type: StockListResponseDto,
+    })
+    async findAll(@Query() query: StockQueryDto): Promise<StockListResponseDto> {
         return this.getStocksService.execute(query);
     }
 
@@ -82,15 +82,14 @@ export class StockController {
     @ApiParam({
         name: 'id',
         description: 'Product ID',
+        type: String,
     })
-    async findOne(
-        @Param('id')
-        productId: string,
-    ) {
-        const stock = await this.getStockService.execute(productId);
-
-        return {
-            data: stock,
-        };
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Stock details',
+        type: StockResponseDto,
+    })
+    async findOne(@Param('id') productId: string): Promise<StockResponseDto> {
+        return await this.getStockService.execute(productId);
     }
 }

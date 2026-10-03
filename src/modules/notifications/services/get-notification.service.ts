@@ -5,23 +5,23 @@ import { NotificationResponseDto } from '../dto/responses/notification-response.
 
 @Injectable()
 export class GetNotificationService {
-    constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-    async execute(
-        notificationId: string,
-        userId: string,
-    ): Promise<NotificationResponseDto> {
-        const notification = await this.prisma.notification.findFirst({
-            where: {
-                id: notificationId,
-                userId,
-            },
-        });
+  async execute(
+    notificationId: string,
+    userId: string,
+  ): Promise<NotificationResponseDto> {
+    const notification = await this.prisma.notification.findFirst({
+      where: {
+        id: notificationId,
+        userId,
+      },
+    });
 
-        if (!notification) {
-            throw new NotFoundException('Notification not found');
-        }
-
-        return notification;
+    if (!notification) {
+      throw new NotFoundException('Notification not found');
     }
+
+    return notification;
+  }
 }

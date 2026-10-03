@@ -8,14 +8,10 @@ import { GetStockService } from './services/get-stock.service';
 import { GetStocksService } from './services/get-stocks.service';
 
 @Module({
-    controllers: [StockController],
+  controllers: [StockController],
 
-    providers: [
-        AdjustStockService,
-        GetStockService,
-        GetStocksService,
-    ],
+  providers: [AdjustStockService, GetStockService, GetStocksService],
 
-    exports: [],
+  exports: [],
 })
-export class StockModule { }
+export class StockModule {}

@@ -1,117 +1,115 @@
-import {
-    ApiProperty,
-} from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class OrderReturnItemResponseDto {
-    @ApiProperty()
-    id!: string;
+  @ApiProperty()
+  id!: string;
 
-    @ApiProperty()
-    quantity!: number;
+  @ApiProperty()
+  quantity!: number;
 
-    @ApiProperty({
-        nullable: true,
-    })
-    reason!: string | null;
+  @ApiProperty({
+    nullable: true,
+  })
+  reason!: string | null;
 
-    @ApiProperty()
-    orderItemId!: string;
+  @ApiProperty()
+  orderItemId!: string;
 
-    @ApiProperty()
-    orderItem!: {
-        id: string;
+  @ApiProperty()
+  orderItem!: {
+    id: string;
 
-        quantity: number;
+    quantity: number;
 
-        product: { id: string; name: string; sku: string };
-    };
+    product: { id: string; name: string; sku: string };
+  };
 
-    @ApiProperty()
-    createdAt!: Date;
+  @ApiProperty()
+  createdAt!: Date;
 
-    @ApiProperty()
-    updatedAt!: Date;
+  @ApiProperty()
+  updatedAt!: Date;
 }
 
 export class OrderReturnCreatedByResponseDto {
-    @ApiProperty()
-    id!: string;
+  @ApiProperty()
+  id!: string;
 
-    @ApiProperty()
-    name!: string;
+  @ApiProperty()
+  name!: string;
 
-    @ApiProperty()
-    email!: string;
+  @ApiProperty()
+  email!: string;
 }
 
 export class OrderReturnApprovedByResponseDto {
-    @ApiProperty()
-    id!: string;
+  @ApiProperty()
+  id!: string;
 
-    @ApiProperty()
-    name!: string;
+  @ApiProperty()
+  name!: string;
 
-    @ApiProperty()
-    email!: string;
+  @ApiProperty()
+  email!: string;
 }
 
 export class OrderReturnOrderResponseDto {
-    @ApiProperty()
-    id!: string;
+  @ApiProperty()
+  id!: string;
 
-    @ApiProperty()
-    invoiceNo!: string;
+  @ApiProperty()
+  invoiceNo!: string;
 
-    @ApiProperty()
-    customer!: {
-        id: string;
-        name: string;
-    };
+  @ApiProperty()
+  customer!: {
+    id: string;
+    name: string;
+  };
 }
 
 export class OrderReturnResponseDto {
-    @ApiProperty()
-    id!: string;
+  @ApiProperty()
+  id!: string;
 
-    @ApiProperty({
-        example: 'RET-20260914-0001',
-    })
-    returnNo!: string;
+  @ApiProperty({
+    example: 'RET-20260914-0001',
+  })
+  returnNo!: string;
 
-    @ApiProperty({
-        example: 'PENDING',
-    })
-    status!: string;
+  @ApiProperty({
+    example: 'PENDING',
+  })
+  status!: string;
 
-    @ApiProperty({
-        nullable: true,
-    })
-    reason!: string | null;
+  @ApiProperty({
+    nullable: true,
+  })
+  reason!: string | null;
 
-    @ApiProperty()
-    order!: OrderReturnOrderResponseDto;
+  @ApiProperty()
+  order!: OrderReturnOrderResponseDto;
 
-    @ApiProperty({
-        type: [OrderReturnItemResponseDto],
-    })
-    items!: OrderReturnItemResponseDto[];
+  @ApiProperty({
+    type: [OrderReturnItemResponseDto],
+  })
+  items!: OrderReturnItemResponseDto[];
 
-    @ApiProperty()
-    createdBy!: OrderReturnCreatedByResponseDto;
+  @ApiProperty()
+  createdBy!: OrderReturnCreatedByResponseDto;
 
-    @ApiProperty({
-        nullable: true,
-    })
-    approvedBy!: OrderReturnApprovedByResponseDto | null;
+  @ApiProperty({
+    nullable: true,
+  })
+  approvedBy!: OrderReturnApprovedByResponseDto | null;
 
-    @ApiProperty({
-        nullable: true,
-    })
-    approvedAt!: Date | null;
+  @ApiProperty({
+    nullable: true,
+  })
+  approvedAt!: Date | null;
 
-    @ApiProperty()
-    createdAt!: Date;
+  @ApiProperty()
+  createdAt!: Date;
 
-    @ApiProperty()
-    updatedAt!: Date;
+  @ApiProperty()
+  updatedAt!: Date;
 }

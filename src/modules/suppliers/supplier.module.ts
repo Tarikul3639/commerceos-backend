@@ -9,16 +9,14 @@ import { GetSuppliersService } from './services/get-suppliers.service';
 import { UpdateSupplierService } from './services/update-supplier.service';
 
 @Module({
-    controllers: [
-        SupplierController,
-    ],
+  controllers: [SupplierController],
 
-    providers: [
-        CreateSupplierService,
-        GetSupplierService,
-        GetSuppliersService,
-        UpdateSupplierService,
-        DeleteSupplierService,
-    ],
+  providers: [
+    CreateSupplierService,
+    GetSupplierService,
+    GetSuppliersService,
+    UpdateSupplierService,
+    DeleteSupplierService,
+  ],
 })
 export class SupplierModule {}

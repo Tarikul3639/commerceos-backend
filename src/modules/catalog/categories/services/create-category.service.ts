@@ -5,52 +5,51 @@ import { CategoryResponseDto } from '../dto/responses/category-response.dto';
 
 @Injectable()
 export class CreateCategoryService {
-    constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-    async execute(
-        createCategoryDto: CreateCategoryDto,
-    ): Promise<CategoryResponseDto> {
-        const { name, slug, description, isActive } =
-            createCategoryDto;
+  async execute(
+    createCategoryDto: CreateCategoryDto,
+  ): Promise<CategoryResponseDto> {
+    const { name, slug, description, isActive } = createCategoryDto;
 
-        const existingCategory = await this.prisma.category.findFirst({
-            where: {
-                OR: [{ name }, { slug }],
-            },
+    const existingCategory = await this.prisma.category.findFirst({
+      where: {
+        OR: [{ name }, { slug }],
+      },
 
-            select: {
-                id: true,
-                name: true,
-                slug: true,
-            },
-        });
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+      },
+    });
 
-        if (existingCategory) {
-            if (existingCategory.name === name) {
-                throw new ConflictException('Category name already exists');
-            }
-            if (existingCategory.slug === slug) {
-                throw new ConflictException('Category slug already exists');
-            }
-        }
-
-        const newCategory = await this.prisma.category.create({
-            data: {
-                name,
-                slug,
-                ...(description !== undefined && { description }),
-                ...(isActive !== undefined && { isActive }),
-            },
-        });
-
-        return {
-            id: newCategory.id,
-            name: newCategory.name,
-            slug: newCategory.slug,
-            description: newCategory.description ?? null,
-            isActive: newCategory.isActive,
-            createdAt: newCategory.createdAt,
-            updatedAt: newCategory.updatedAt,
-        };
+    if (existingCategory) {
+      if (existingCategory.name === name) {
+        throw new ConflictException('Category name already exists');
+      }
+      if (existingCategory.slug === slug) {
+        throw new ConflictException('Category slug already exists');
+      }
     }
+
+    const newCategory = await this.prisma.category.create({
+      data: {
+        name,
+        slug,
+        ...(description !== undefined && { description }),
+        ...(isActive !== undefined && { isActive }),
+      },
+    });
+
+    return {
+      id: newCategory.id,
+      name: newCategory.name,
+      slug: newCategory.slug,
+      description: newCategory.description ?? null,
+      isActive: newCategory.isActive,
+      createdAt: newCategory.createdAt,
+      updatedAt: newCategory.updatedAt,
+    };
+  }
 }

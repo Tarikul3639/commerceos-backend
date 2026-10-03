@@ -4,11 +4,6 @@
  * ============================================================
  */
 
-enum DiscountType {
-  PERCENTAGE
-  FIXED
-}
-
 model Category {
   id String @id @default(cuid())
 
@@ -81,9 +76,9 @@ model Product {
   brandId String?
   brand   Brand?  @relation(fields: [brandId], references: [id])
 
-  images    ProductImage[]
-  reviews   ProductReview[]
-  discounts ProductDiscount[]
+  images   ProductImage[]
+  reviews  ProductReview[]
+  discount Discount?
 
   purchaseItems PurchaseItem[]
   cartItems     CartItem[]
@@ -144,49 +139,23 @@ model ProductReview {
 model Discount {
   id String @id @default(cuid())
 
-  name        String
-  description String?
-
-  type  DiscountType
+  /**
+   * Discount percentage.
+   * Example: 20 = 20% discount
+   */
   value Decimal
 
   startDate DateTime?
   endDate   DateTime?
 
-  isActive  Boolean   @default(true)
-  deletedAt DateTime?
-
   createdById String
   createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Restrict)
 
-  products ProductDiscount[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([isActive])
-  @@index([deletedAt])
-  @@map("discounts")
-}
-
-model ProductDiscount {
-  id String @id @default(cuid())
-
-  productId String
+  productId String  @unique
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  discountId String
-  discount   Discount @relation(fields: [discountId], references: [id], onDelete: Cascade)
-
-  isActive  Boolean   @default(true)
-  deletedAt DateTime?
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([productId, discountId])
-  @@index([productId, isActive])
-  @@index([discountId])
-  @@index([deletedAt])
-  @@map("product_discounts")
+  @@map("discounts")
 }

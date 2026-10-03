@@ -1,23 +1,19 @@
-import {
-    ActivityModule,
-    ActivityType,
-    Prisma,
-} from '@/lib/prisma/client';
+import { ActivityModule, ActivityType, Prisma } from '@/lib/prisma/client';
 
 export interface CreateActivityLogInput {
-    type: ActivityType;
-    module: ActivityModule;
-    action: string;
+  type: ActivityType;
+  module: ActivityModule;
+  action: string;
 
-    description?: string;
+  description?: string;
 
-    entityType?: string;
-    entityId?: string;
+  entityType?: string;
+  entityId?: string;
 
-    oldValue?: Prisma.InputJsonValue;
-    newValue?: Prisma.InputJsonValue;
+  oldValue?: Prisma.InputJsonValue;
+  newValue?: Prisma.InputJsonValue;
 
-    ipAddress?: string;
-    userAgent?: string;
-    userId?: string;
+  ipAddress?: string;
+  userAgent?: string;
+  userId?: string;
 }

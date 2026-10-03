@@ -9,24 +9,24 @@ import { CUSTOMER_ACCESS_TOKEN_COOKIE } from '../constants/cookie.constants';
 
 @Injectable()
 export class CustomerJwtStrategy extends PassportStrategy(
-    Strategy,
-    'customer-jwt',
+  Strategy,
+  'customer-jwt',
 ) {
-    constructor(private readonly configService: ConfigService) {
-        super({
-            jwtFromRequest: ExtractJwt.fromExtractors([
-                (request: Request) => {
-                    return request?.cookies?.[CUSTOMER_ACCESS_TOKEN_COOKIE] ?? null;
-                },
-            ]),
+  constructor(private readonly configService: ConfigService) {
+    super({
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (request: Request) => {
+          return request?.cookies?.[CUSTOMER_ACCESS_TOKEN_COOKIE] ?? null;
+        },
+      ]),
 
-            secretOrKey: configService.getOrThrow<string>(
-                'auth.customer.accessSecret',
-            ),
-        });
-    }
+      secretOrKey: configService.getOrThrow<string>(
+        'auth.customer.accessSecret',
+      ),
+    });
+  }
 
-    async validate(payload: CustomerJwtPayload) {
-        return payload;
-    }
+  async validate(payload: CustomerJwtPayload) {
+    return payload;
+  }
 }

@@ -1,42 +1,32 @@
-import {
-    Injectable,
-    NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { PrismaService } from '../../../../common/prisma/prisma.service';
 import { CategoryResponseDto } from '../dto/responses/category-response.dto';
 
 @Injectable()
 export class GetCategoryService {
-    constructor(
-        private readonly prisma: PrismaService,
-    ) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-    async execute(
-        categoryId: string,
-    ): Promise<CategoryResponseDto> {
-        const category =
-            await this.prisma.category.findFirst({
-                where: {
-                    id: categoryId,
-                    deletedAt: null,
-                },
-            });
+  async execute(categoryId: string): Promise<CategoryResponseDto> {
+    const category = await this.prisma.category.findFirst({
+      where: {
+        id: categoryId,
+        deletedAt: null,
+      },
+    });
 
-        if (!category) {
-            throw new NotFoundException(
-                'Category not found',
-            );
-        }
-
-        return {
-            id: category.id,
-            name: category.name,
-            slug: category.slug,
-            description: category.description,
-            isActive: category.isActive,
-            createdAt: category.createdAt,
-            updatedAt: category.updatedAt,
-        };
+    if (!category) {
+      throw new NotFoundException('Category not found');
     }
+
+    return {
+      id: category.id,
+      name: category.name,
+      slug: category.slug,
+      description: category.description,
+      isActive: category.isActive,
+      createdAt: category.createdAt,
+      updatedAt: category.updatedAt,
+    };
+  }
 }

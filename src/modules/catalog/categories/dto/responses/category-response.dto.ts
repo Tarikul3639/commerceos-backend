@@ -1,38 +1,35 @@
-import {
-    ApiProperty,
-    ApiPropertyOptional,
-} from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CategoryResponseDto {
-    @ApiProperty({
-        example: 'cmf123456789',
-    })
-    id!: string;
+  @ApiProperty({
+    example: 'cmf123456789',
+  })
+  id!: string;
 
-    @ApiProperty({
-        example: 'Electronics',
-    })
-    name!: string;
+  @ApiProperty({
+    example: 'Electronics',
+  })
+  name!: string;
 
-    @ApiProperty({
-        example: 'electronics',
-    })
-    slug!: string;
+  @ApiProperty({
+    example: 'electronics',
+  })
+  slug!: string;
 
-    @ApiPropertyOptional({
-        example: 'Electronic devices and accessories',
-        nullable: true,
-    })
-    description!: string | null;
+  @ApiPropertyOptional({
+    example: 'Electronic devices and accessories',
+    nullable: true,
+  })
+  description!: string | null;
 
-    @ApiProperty({
-        example: true,
-    })
-    isActive!: boolean;
+  @ApiProperty({
+    example: true,
+  })
+  isActive!: boolean;
 
-    @ApiProperty()
-    createdAt!: Date;
+  @ApiProperty()
+  createdAt!: Date;
 
-    @ApiProperty()
-    updatedAt!: Date;
+  @ApiProperty()
+  updatedAt!: Date;
 }

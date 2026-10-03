@@ -49,77 +49,65 @@ import { CustomerResetPasswordService } from './customer/services/reset-password
 import { CustomerVerifyEmailService } from './customer/services/verify-email.service';
 
 @Module({
-    imports: [
-        MailModule,
-        PrismaModule,
-        PassportModule,
+  imports: [
+    MailModule,
+    PrismaModule,
+    PassportModule,
 
-        JwtModule.registerAsync({
-            inject: [ConfigService],
+    JwtModule.registerAsync({
+      inject: [ConfigService],
 
-            useFactory: (
-                configService: ConfigService,
-            ) => ({
-                secret: configService.getOrThrow<string>(
-                    'auth.user.accessSecret',
-                ),
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.getOrThrow<string>('auth.user.accessSecret'),
 
-                signOptions: {
-                    expiresIn:
-                        configService.getOrThrow<StringValue>(
-                            'auth.user.accessExpiresIn',
-                        ),
-                },
-            }),
-        }),
-    ],
+        signOptions: {
+          expiresIn: configService.getOrThrow<StringValue>(
+            'auth.user.accessExpiresIn',
+          ),
+        },
+      }),
+    }),
+  ],
 
-    controllers: [
-        UserAuthController,
-        CustomerAuthController,
-    ],
+  controllers: [UserAuthController, CustomerAuthController],
 
-    providers: [
-        // Customer Authentication
-        CustomerJwtStrategy,
-        CustomerJwtAuthGuard,
+  providers: [
+    // Customer Authentication
+    CustomerJwtStrategy,
+    CustomerJwtAuthGuard,
 
-        // User Authentication
-        UserJwtStrategy,
-        UserJwtAuthGuard,
+    // User Authentication
+    UserJwtStrategy,
+    UserJwtAuthGuard,
 
-        // User Auth Services
-        TokenService,
-        RefreshTokenService,
+    // User Auth Services
+    TokenService,
+    RefreshTokenService,
 
-        GetCurrentUserService,
-        LoginService,
-        LogoutService,
-        LogoutAllService,
+    GetCurrentUserService,
+    LoginService,
+    LogoutService,
+    LogoutAllService,
 
-        ChangePasswordService,
-        ForgotPasswordService,
-        ResetPasswordService,
-        VerifyEmailService,
+    ChangePasswordService,
+    ForgotPasswordService,
+    ResetPasswordService,
+    VerifyEmailService,
 
-        // Customer Auth Services
-        CustomerRegisterService,
-        CustomerTokenService,
-        CustomerLoginService,
-        CustomerLogoutService,
-        CustomerLogoutAllService,
-        CustomerRefreshTokenService,
+    // Customer Auth Services
+    CustomerRegisterService,
+    CustomerTokenService,
+    CustomerLoginService,
+    CustomerLogoutService,
+    CustomerLogoutAllService,
+    CustomerRefreshTokenService,
 
-        CustomerChangePasswordService,
-        CustomerForgotPasswordService,
-        CustomerResetPasswordService,
-        CustomerVerifyEmailService,
-    ],
+    CustomerChangePasswordService,
+    CustomerForgotPasswordService,
+    CustomerResetPasswordService,
+    CustomerVerifyEmailService,
+  ],
 
-    exports: [
-        JwtModule,
-        VerifyEmailService,
-        GetCurrentUserService,
-    ],
+  exports: [JwtModule, VerifyEmailService, GetCurrentUserService],
 })
-export class AuthModule { }
+export class AuthModule {}

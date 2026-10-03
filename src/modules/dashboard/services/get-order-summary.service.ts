@@ -10,80 +10,80 @@ import { getCreatedAtFilter } from '../utils/dashboard-where.util';
 
 @Injectable()
 export class GetOrderSummaryService {
-    constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-    async execute(query: DashboardQueryDto): Promise<OrderSummaryResponseDto> {
-        // Get dashboard date range
-        const { startDate, endDate } = getDashboardDateRange(query);
+  async execute(query: DashboardQueryDto): Promise<OrderSummaryResponseDto> {
+    // Get dashboard date range
+    const { startDate, endDate } = getDashboardDateRange(query);
 
-        // Build common order where condition
-        const where: Prisma.OrderWhereInput = {
-            createdAt: getCreatedAtFilter(startDate, endDate),
-        };
+    // Build common order where condition
+    const where: Prisma.OrderWhereInput = {
+      createdAt: getCreatedAtFilter(startDate, endDate),
+    };
 
-        // Get order counts by status in parallel
-        const [
-            totalOrders,
-            pendingOrders,
-            processingOrders,
-            shippedOrders,
-            deliveredOrders,
-            cancelledOrders,
-        ] = await Promise.all([
-            // Total orders
-            this.prisma.order.count({
-                where,
-            }),
+    // Get order counts by status in parallel
+    const [
+      totalOrders,
+      pendingOrders,
+      processingOrders,
+      shippedOrders,
+      deliveredOrders,
+      cancelledOrders,
+    ] = await Promise.all([
+      // Total orders
+      this.prisma.order.count({
+        where,
+      }),
 
-            // Pending orders
-            this.prisma.order.count({
-                where: {
-                    ...where,
-                    status: OrderStatus.PENDING,
-                },
-            }),
+      // Pending orders
+      this.prisma.order.count({
+        where: {
+          ...where,
+          status: OrderStatus.PENDING,
+        },
+      }),
 
-            // Processing orders
-            this.prisma.order.count({
-                where: {
-                    ...where,
-                    status: OrderStatus.PROCESSING,
-                },
-            }),
+      // Processing orders
+      this.prisma.order.count({
+        where: {
+          ...where,
+          status: OrderStatus.PROCESSING,
+        },
+      }),
 
-            // Shipped orders
-            this.prisma.order.count({
-                where: {
-                    ...where,
-                    status: OrderStatus.SHIPPED,
-                },
-            }),
+      // Shipped orders
+      this.prisma.order.count({
+        where: {
+          ...where,
+          status: OrderStatus.SHIPPED,
+        },
+      }),
 
-            // Delivered orders
-            this.prisma.order.count({
-                where: {
-                    ...where,
-                    status: OrderStatus.DELIVERED,
-                },
-            }),
+      // Delivered orders
+      this.prisma.order.count({
+        where: {
+          ...where,
+          status: OrderStatus.DELIVERED,
+        },
+      }),
 
-            // Cancelled orders
-            this.prisma.order.count({
-                where: {
-                    ...where,
-                    status: OrderStatus.CANCELLED,
-                },
-            }),
-        ]);
+      // Cancelled orders
+      this.prisma.order.count({
+        where: {
+          ...where,
+          status: OrderStatus.CANCELLED,
+        },
+      }),
+    ]);
 
-        // Return order summary
-        return {
-            totalOrders,
-            pendingOrders,
-            processingOrders,
-            shippedOrders,
-            deliveredOrders,
-            cancelledOrders,
-        };
-    }
+    // Return order summary
+    return {
+      totalOrders,
+      pendingOrders,
+      processingOrders,
+      shippedOrders,
+      deliveredOrders,
+      cancelledOrders,
+    };
+  }
 }

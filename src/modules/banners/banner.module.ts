@@ -10,16 +10,14 @@ import { GetBannersService } from './services/get-banners.service';
 import { UpdateBannerService } from './services/update-banner.service';
 
 @Module({
-    controllers: [
-        BannerController,
-    ],
+  controllers: [BannerController],
 
-    providers: [
-        CreateBannerService,
-        GetBannerService,
-        GetBannersService,
-        UpdateBannerService,
-        DeleteBannerService,
-    ],
+  providers: [
+    CreateBannerService,
+    GetBannerService,
+    GetBannersService,
+    UpdateBannerService,
+    DeleteBannerService,
+  ],
 })
 export class BannerModule {}

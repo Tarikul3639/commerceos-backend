@@ -31,6 +31,7 @@ import { DiscountModule } from './modules/catalog/discounts/discount.module';
 import { StockModule } from './modules/inventory/stocks/stock.module';
 
 import { PurchaseModule } from './modules/purchases/purchase.module';
+import { PurchaseReturnModule } from './modules/purchase-return/purchase-return.module';
 import { SupplierModule } from './modules/suppliers/supplier.module';
 import { OrderModule } from './modules/orders/order.module';
 import { CartModule } from './modules/carts/cart.module';
@@ -72,10 +73,10 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
     MailModule,
     PrismaModule,
     CloudinaryModule,
-    
+
     DashboardModule,
     AnalyticsModule,
-    
+
     AuthModule,
     UsersModule,
     PermissionsModule,
@@ -89,6 +90,7 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
     StockModule,
 
     PurchaseModule,
+    PurchaseReturnModule,
     SupplierModule,
     OrderModule,
     CartModule,
@@ -102,4 +104,4 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

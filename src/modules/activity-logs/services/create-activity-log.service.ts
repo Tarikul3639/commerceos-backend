@@ -5,55 +5,53 @@ import { CreateActivityLogInput } from '../interfaces/activity-log.interface';
 
 @Injectable()
 export class CreateActivityLogService {
-    constructor(
-        private readonly prisma: PrismaService,
-    ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-    async execute(data: CreateActivityLogInput) {
-        return this.prisma.activityLog.create({
-            data: {
-                type: data.type,
-                module: data.module,
-                action: data.action,
+  async execute(data: CreateActivityLogInput) {
+    return this.prisma.activityLog.create({
+      data: {
+        type: data.type,
+        module: data.module,
+        action: data.action,
 
-                ...(data.description !== undefined && {
-                    description: data.description,
-                }),
+        ...(data.description !== undefined && {
+          description: data.description,
+        }),
 
-                ...(data.entityType !== undefined && {
-                    entityType: data.entityType,
-                }),
+        ...(data.entityType !== undefined && {
+          entityType: data.entityType,
+        }),
 
-                ...(data.entityId !== undefined && {
-                    entityId: data.entityId,
-                }),
+        ...(data.entityId !== undefined && {
+          entityId: data.entityId,
+        }),
 
-                ...(data.oldValue !== undefined && {
-                    oldValue: data.oldValue,
-                }),
+        ...(data.oldValue !== undefined && {
+          oldValue: data.oldValue,
+        }),
 
-                ...(data.newValue !== undefined && {
-                    newValue: data.newValue,
-                }),
+        ...(data.newValue !== undefined && {
+          newValue: data.newValue,
+        }),
 
-                ...(data.ipAddress !== undefined && {
-                    ipAddress: data.ipAddress,
-                }),
+        ...(data.ipAddress !== undefined && {
+          ipAddress: data.ipAddress,
+        }),
 
-                ...(data.userAgent !== undefined && {
-                    userAgent: data.userAgent,
-                }),
+        ...(data.userAgent !== undefined && {
+          userAgent: data.userAgent,
+        }),
 
-                ...(data.userId !== undefined && {
-                    user: {
-                        connect: {
-                            id: data.userId,
-                        },
-                    },
-                }),
+        ...(data.userId !== undefined && {
+          user: {
+            connect: {
+              id: data.userId,
             },
-        });
-    }
+          },
+        }),
+      },
+    });
+  }
 }
 
 /**

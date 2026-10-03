@@ -1,79 +1,32 @@
-import {
-    DiscountType,
-} from '../../../../../lib/prisma/client';
-
-import {
-    ApiProperty,
-    ApiPropertyOptional,
-} from '@nestjs/swagger';
-
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { PaginationMetaDto } from '../../../../../common/dto/responses/pagination-meta.dto';
 
+export class DiscountProductDto {
+  @ApiProperty() id!: string;
+  @ApiProperty() name!: string;
+  @ApiProperty() sku!: string;
+  @ApiPropertyOptional({ nullable: true }) image!: string | null;
+}
+
+export class DiscountCreatorDto {
+  @ApiProperty() id!: string;
+  @ApiProperty() name!: string;
+}
+
 export class DiscountResponseDto {
-    @ApiProperty({
-        example: 'cmf123456789',
-    })
-    id!: string;
-
-    @ApiProperty({
-        example: 'Eid Sale',
-    })
-    name!: string;
-
-    @ApiPropertyOptional({
-        example: 'Special Eid discount campaign',
-        nullable: true,
-    })
-    description!: string | null;
-
-    @ApiProperty({
-        enum: DiscountType,
-        example: DiscountType.PERCENTAGE,
-    })
-    type!: DiscountType;
-
-    @ApiProperty({
-        example: '10',
-    })
-    value!: string;
-
-    @ApiPropertyOptional({
-        example: '2026-09-15T00:00:00.000Z',
-        nullable: true,
-    })
-    startDate!: Date | null;
-
-    @ApiPropertyOptional({
-        example: '2026-09-30T23:59:59.000Z',
-        nullable: true,
-    })
-    endDate!: Date | null;
-
-    @ApiProperty({
-        example: true,
-    })
-    isActive!: boolean;
-
-    @ApiProperty({
-        example: 'cmfuser123',
-    })
-    createdById!: string;
-
-    @ApiProperty()
-    createdAt!: Date;
-
-    @ApiProperty()
-    updatedAt!: Date;
+  @ApiProperty() id!: string;
+  @ApiProperty({ example: '20' }) value!: string;
+  @ApiPropertyOptional({ nullable: true }) startDate!: Date | null;
+  @ApiPropertyOptional({ nullable: true }) endDate!: Date | null;
+  @ApiProperty() productId!: string;
+  @ApiProperty({ type: DiscountProductDto }) product!: DiscountProductDto;
+  @ApiProperty() createdById!: string;
+  @ApiProperty({ type: DiscountCreatorDto }) createdBy!: DiscountCreatorDto;
+  @ApiProperty() createdAt!: Date;
+  @ApiProperty() updatedAt!: Date;
 }
 
 export class DiscountResponseWithPaginationDto {
-    @ApiProperty({
-        type: [DiscountResponseDto],
-    })
-    data!: DiscountResponseDto[];
-
-    @ApiProperty({
-        type: PaginationMetaDto,
-    })
-    meta!: PaginationMetaDto;
+  @ApiProperty({ type: [DiscountResponseDto] }) data!: DiscountResponseDto[];
+  @ApiProperty({ type: PaginationMetaDto }) meta!: PaginationMetaDto;
 }

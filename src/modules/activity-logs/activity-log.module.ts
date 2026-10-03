@@ -7,18 +7,18 @@ import { GetActivityLogService } from './services/get-activity-log.service';
 import { GetActivityLogsService } from './services/get-activity-logs.service';
 
 @Module({
-    controllers: [ActivityLogController],
+  controllers: [ActivityLogController],
 
-    providers: [
-        CreateActivityLogService,
-        GetActivityLogService,
-        GetActivityLogsService,
-    ],
+  providers: [
+    CreateActivityLogService,
+    GetActivityLogService,
+    GetActivityLogsService,
+  ],
 
-    exports: [
-        CreateActivityLogService,
-        GetActivityLogService,
-        GetActivityLogsService,
-    ],
+  exports: [
+    CreateActivityLogService,
+    GetActivityLogService,
+    GetActivityLogsService,
+  ],
 })
-export class ActivityLogModule { }
+export class ActivityLogModule {}

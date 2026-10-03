@@ -15,29 +15,22 @@ import { GetOrdersService } from './services/get-orders.service';
 import { UpdateOrderStatusService } from './services/update-order-status.service';
 
 @Module({
-    controllers: [
-        OrderController,
-        OrderReturnController,
-    ],
+  controllers: [OrderController, OrderReturnController],
 
-    providers: [
-        // Order Services
-        CreateOrderService,
-        GetOrderService,
-        GetOrdersService,
-        UpdateOrderStatusService,
-        CancelOrderService,
+  providers: [
+    // Order Services
+    CreateOrderService,
+    GetOrderService,
+    GetOrdersService,
+    UpdateOrderStatusService,
+    CancelOrderService,
 
-        // Order Return Services
-        CreateOrderReturnService,
-        GetOrderReturnService,
-        GetOrderReturnsService,
-    ],
+    // Order Return Services
+    CreateOrderReturnService,
+    GetOrderReturnService,
+    GetOrderReturnsService,
+  ],
 
-    exports: [
-        CreateOrderService,
-        GetOrderService,
-        GetOrdersService,
-    ],
+  exports: [CreateOrderService, GetOrderService, GetOrdersService],
 })
 export class OrderModule {}

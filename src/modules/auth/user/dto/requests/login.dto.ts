@@ -1,29 +1,30 @@
-import { IsBoolean, IsEmail, IsNotEmpty, IsString } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
-import { Optional } from "@nestjs/common";
+import { IsBoolean, IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { Optional } from '@nestjs/common';
 
 export class LoginDto {
   @IsEmail()
   @IsNotEmpty()
   @ApiProperty({
-    description: "The email address of the user",
-    example: "user@example.com"
+    description: 'The email address of the user',
+    example: 'user@example.com',
   })
   email!: string;
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    description: "The password of the user",
-    example: "password123"
+    description: 'The password of the user',
+    example: 'password123',
   })
   password!: string;
 
   @IsBoolean()
   @Optional()
   @ApiProperty({
-    description: "Indicates whether the user wants to be remembered on the device",
-    example: true
+    description:
+      'Indicates whether the user wants to be remembered on the device',
+    example: true,
   })
   remember!: boolean;
 }

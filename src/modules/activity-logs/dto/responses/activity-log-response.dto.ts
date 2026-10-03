@@ -1,51 +1,51 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class ActivityLogResponseDto {
-    @ApiProperty()
-    id!: string;
+  @ApiProperty()
+  id!: string;
 
-    @ApiProperty()
-    type!: string;
+  @ApiProperty()
+  type!: string;
 
-    @ApiProperty()
-    module!: string;
+  @ApiProperty()
+  module!: string;
 
-    @ApiProperty()
-    action!: string;
+  @ApiProperty()
+  action!: string;
 
-    @ApiPropertyOptional()
-    description!: string | null;
+  @ApiPropertyOptional()
+  description!: string | null;
 
-    @ApiPropertyOptional()
-    entityType!: string | null;
+  @ApiPropertyOptional()
+  entityType!: string | null;
 
-    @ApiPropertyOptional()
-    entityId!: string | null;
+  @ApiPropertyOptional()
+  entityId!: string | null;
 
-    @ApiPropertyOptional()
-    oldValue!: unknown;
+  @ApiPropertyOptional()
+  oldValue!: unknown;
 
-    @ApiPropertyOptional()
-    newValue!: unknown;
+  @ApiPropertyOptional()
+  newValue!: unknown;
 
-    @ApiPropertyOptional()
-    ipAddress!: string | null;
+  @ApiPropertyOptional()
+  ipAddress!: string | null;
 
-    @ApiPropertyOptional()
-    userAgent!: string | null;
+  @ApiPropertyOptional()
+  userAgent!: string | null;
 
-    @ApiPropertyOptional()
-    userId!: string | null;
+  @ApiPropertyOptional()
+  userId!: string | null;
 
-    @ApiPropertyOptional({
-        type: Object,
-    })
-    user?: {
-        id: string;
-        name: string | null;
-        email: string;
-    } | null;
+  @ApiPropertyOptional({
+    type: Object,
+  })
+  user?: {
+    id: string;
+    name: string | null;
+    email: string;
+  } | null;
 
-    @ApiProperty()
-    createdAt!: Date;
+  @ApiProperty()
+  createdAt!: Date;
 }

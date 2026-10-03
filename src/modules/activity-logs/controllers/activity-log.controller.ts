@@ -10,24 +10,24 @@ import { GetActivityLogsService } from '../services/get-activity-logs.service';
 @ApiBearerAuth()
 @Controller('activity-logs')
 export class ActivityLogController {
-    constructor(
-        private readonly getActivityLogService: GetActivityLogService,
-        private readonly getActivityLogsService: GetActivityLogsService,
-    ) { }
+  constructor(
+    private readonly getActivityLogService: GetActivityLogService,
+    private readonly getActivityLogsService: GetActivityLogsService,
+  ) {}
 
-    @Get()
-    @ApiOperation({
-        summary: 'Get activity logs',
-    })
-    findAll(@Query() query: ActivityLogQueryDto) {
-        return this.getActivityLogsService.execute(query);
-    }
+  @Get()
+  @ApiOperation({
+    summary: 'Get activity logs',
+  })
+  findAll(@Query() query: ActivityLogQueryDto) {
+    return this.getActivityLogsService.execute(query);
+  }
 
-    @Get(':id')
-    @ApiOperation({
-        summary: 'Get activity log by ID',
-    })
-    findOne(@Param('id') id: string) {
-        return this.getActivityLogService.execute(id);
-    }
+  @Get(':id')
+  @ApiOperation({
+    summary: 'Get activity log by ID',
+  })
+  findOne(@Param('id') id: string) {
+    return this.getActivityLogService.execute(id);
+  }
 }

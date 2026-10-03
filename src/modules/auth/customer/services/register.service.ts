@@ -8,40 +8,40 @@ import { hashPassword } from '../../../../common/utils/password.util';
 
 @Injectable()
 export class CustomerRegisterService {
-    constructor(
-        private readonly prismaService: PrismaService,
-        private readonly configService: ConfigService,
-    ) { }
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly configService: ConfigService,
+  ) {}
 
-    async execute(dto: RegisterDto): Promise<void> {
-        const { name, email, password } = dto;
+  async execute(dto: RegisterDto): Promise<void> {
+    const { name, email, password } = dto;
 
-        const existingCustomer = await this.prismaService.customer.findUnique({
-            where: {
-                email,
-            },
-            select: {
-                id: true,
-            },
-        });
+    const existingCustomer = await this.prismaService.customer.findUnique({
+      where: {
+        email,
+      },
+      select: {
+        id: true,
+      },
+    });
 
-        if (existingCustomer) {
-            throw new ConflictException('An account with this email already exists.');
-        }
-
-        const hashedPassword = await hashPassword(
-            password,
-            this.configService.getOrThrow<number>('bcrypt.saltRounds'),
-        );
-
-        await this.prismaService.customer.create({
-            data: {
-                name,
-                email,
-                password: hashedPassword,
-
-                isVerified: false,
-            },
-        });
+    if (existingCustomer) {
+      throw new ConflictException('An account with this email already exists.');
     }
+
+    const hashedPassword = await hashPassword(
+      password,
+      this.configService.getOrThrow<number>('bcrypt.saltRounds'),
+    );
+
+    await this.prismaService.customer.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+
+        isVerified: false,
+      },
+    });
+  }
 }

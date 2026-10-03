@@ -3,56 +3,56 @@ import { NotificationType } from '@/lib/prisma/client';
 import { NotificationPaginationMetaDto } from './notification-pagination-meta.dto';
 
 export class NotificationResponseDto {
-    @ApiProperty()
-    id!: string;
+  @ApiProperty()
+  id!: string;
 
-    @ApiProperty()
-    title!: string;
+  @ApiProperty()
+  title!: string;
 
-    @ApiProperty()
-    message!: string;
+  @ApiProperty()
+  message!: string;
 
-    @ApiProperty({
-        enum: NotificationType,
-    })
-    type!: NotificationType;
+  @ApiProperty({
+    enum: NotificationType,
+  })
+  type!: NotificationType;
 
-    @ApiProperty()
-    isRead!: boolean;
+  @ApiProperty()
+  isRead!: boolean;
 
-    @ApiPropertyOptional({
-        nullable: true,
-    })
-    link!: string | null;
+  @ApiPropertyOptional({
+    nullable: true,
+  })
+  link!: string | null;
 
-    @ApiPropertyOptional({
-        nullable: true,
-    })
-    entityType!: string | null;
+  @ApiPropertyOptional({
+    nullable: true,
+  })
+  entityType!: string | null;
 
-    @ApiPropertyOptional({
-        nullable: true,
-    })
-    entityId!: string | null;
+  @ApiPropertyOptional({
+    nullable: true,
+  })
+  entityId!: string | null;
 
-    @ApiProperty()
-    userId!: string;
+  @ApiProperty()
+  userId!: string;
 
-    @ApiProperty()
-    createdAt!: Date;
+  @ApiProperty()
+  createdAt!: Date;
 
-    @ApiProperty()
-    updatedAt!: Date;
+  @ApiProperty()
+  updatedAt!: Date;
 }
 
 export class NotificationPaginationResponseDto {
-    @ApiProperty({
-        type: [NotificationResponseDto],
-    })
-    data!: NotificationResponseDto[];
+  @ApiProperty({
+    type: [NotificationResponseDto],
+  })
+  data!: NotificationResponseDto[];
 
-    @ApiProperty({
-        type: NotificationPaginationMetaDto,
-    })
-    meta!: NotificationPaginationMetaDto;
+  @ApiProperty({
+    type: NotificationPaginationMetaDto,
+  })
+  meta!: NotificationPaginationMetaDto;
 }

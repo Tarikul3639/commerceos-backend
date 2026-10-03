@@ -41,7 +41,9 @@ export class CloudinaryService {
    * The frontend uses this signature
    * to upload files directly to Cloudinary.
    */
-  generateUploadSignature(folder: CloudinaryFolderType): CloudinaryUploadSignatureDto {
+  generateUploadSignature(
+    folder: CloudinaryFolderType,
+  ): CloudinaryUploadSignatureDto {
     const timestamp = Math.floor(Date.now() / 1000);
     const fullFolder = `${this.rootFolder}/${folder}`;
     const signature = cloudinary.utils.api_sign_request(

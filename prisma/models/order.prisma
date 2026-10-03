@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * COMMERCE
+ * ORDER MODELS
  * ============================================================
  */
 
@@ -28,12 +28,6 @@ enum OrderStatus {
   CANCELLED
 }
 
-enum PurchaseStatus {
-  PENDING
-  RECEIVED
-  CANCELLED
-}
-
 enum PaymentType {
   PAYMENT
   REFUND
@@ -45,141 +39,6 @@ enum OrderReturnStatus {
   PARTIALLY_PAID
   REJECTED
   COMPLETED
-}
-
-enum PurchaseReturnStatus {
-  PENDING
-  APPROVED
-  REJECTED
-  COMPLETED
-}
-
-model Supplier {
-  id String @id @default(cuid())
-
-  name String
-
-  email String? @unique
-  phone String? @unique
-
-  address       String?
-  contactPerson String?
-
-  isActive  Boolean   @default(true)
-  deletedAt DateTime?
-
-  purchases Purchase[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([deletedAt])
-  @@map("suppliers")
-}
-
-model Purchase {
-  id String @id @default(cuid())
-
-  invoiceNo String @unique
-
-  subtotal Decimal
-  discount Decimal @default(0)
-  tax      Decimal @default(0)
-  total    Decimal
-
-  status PurchaseStatus @default(PENDING)
-
-  supplierId String
-  supplier   Supplier @relation(fields: [supplierId], references: [id])
-
-  purchaseItems PurchaseItem[]
-  returns       PurchaseReturn[]
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([supplierId])
-  @@index([userId])
-  @@index([status])
-  @@map("purchases")
-}
-
-model PurchaseItem {
-  id String @id @default(cuid())
-
-  quantity  Int
-  unitPrice Decimal
-  subtotal  Decimal
-
-  purchaseId String
-  purchase   Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
-
-  productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
-
-  returnItems PurchaseReturnItem[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([purchaseId])
-  @@index([productId])
-  @@map("purchase_items")
-}
-
-model PurchaseReturn {
-  id String @id @default(cuid())
-
-  returnNo String               @unique
-  status   PurchaseReturnStatus @default(PENDING)
-
-  reason String?
-
-  purchaseId String
-  purchase   Purchase @relation(fields: [purchaseId], references: [id], onDelete: Restrict)
-
-  items PurchaseReturnItem[]
-
-  createdById String
-  createdBy   User   @relation("PurchaseReturnCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
-
-  approvedById String?
-  approvedBy   User?   @relation("PurchaseReturnApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
-
-  approvedAt DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([purchaseId])
-  @@index([createdById])
-  @@index([approvedById])
-  @@index([status])
-  @@map("purchase_returns")
-}
-
-model PurchaseReturnItem {
-  id String @id @default(cuid())
-
-  quantity Int
-  reason   String?
-
-  returnId       String
-  purchaseReturn PurchaseReturn @relation(fields: [returnId], references: [id], onDelete: Cascade)
-
-  purchaseItemId String
-  purchaseItem   PurchaseItem @relation(fields: [purchaseItemId], references: [id], onDelete: Restrict)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([returnId, purchaseItemId])
-  @@index([returnId])
-  @@index([purchaseItemId])
-  @@map("purchase_return_items")
 }
 
 model Cart {

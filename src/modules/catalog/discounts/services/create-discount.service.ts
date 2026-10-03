@@ -1,74 +1,85 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { Prisma } from '@/lib/prisma/client';
 import { PrismaService } from '../../../../common/prisma/prisma.service';
-
 import { CreateDiscountDto } from '../dto/requests/create-discount.dto';
 import { DiscountResponseDto } from '../dto/responses/discount-response.dto';
 
 @Injectable()
 export class CreateDiscountService {
-    constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-    async execute(
-        userId: string,
-        createDiscountDto: CreateDiscountDto,
-    ): Promise<DiscountResponseDto> {
-        const { name, description, type, value, startDate, endDate, isActive } =
-            createDiscountDto;
+  async execute(
+    userId: string,
+    dto: CreateDiscountDto,
+  ): Promise<DiscountResponseDto> {
+    this.validateDates(dto.startDate, dto.endDate);
 
-        if (userId === undefined || userId === null) {
-            throw new BadRequestException('Don\'t have permission to create discount');
-        }
-
-        if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
-            throw new BadRequestException('End date must be after start date');
-        }
-
-        const discount = await this.prisma.discount.create({
-            data: {
-                name: name.trim(),
-
-                ...(description !== undefined && {
-                    description: description.trim(),
-                }),
-
-                type,
-
-                value,
-
-                ...(startDate && {
-                    startDate: new Date(startDate),
-                }),
-
-                ...(endDate && {
-                    endDate: new Date(endDate),
-                }),
-
-                ...(isActive !== undefined && {
-                    isActive,
-                }),
-
-                createdById: userId,
-            },
-
-            select: {
-                id: true,
-                name: true,
-                description: true,
-                type: true,
-                value: true,
-                startDate: true,
-                endDate: true,
-                isActive: true,
-                createdById: true,
-                createdAt: true,
-                updatedAt: true,
-            },
-        });
-
-        return {
-            ...discount,
-            value: discount.value.toString(),
-        };
+    const product = await this.prisma.product.findFirst({
+      where: { id: dto.productId, deletedAt: null },
+      select: { id: true, discount: { select: { id: true } } },
+    });
+    if (!product) throw new NotFoundException('Product not found');
+    if (product.discount) {
+      throw new ConflictException('Product already has a discount');
     }
+
+    try {
+      const discount = await this.prisma.discount.create({
+        data: {
+          productId: dto.productId,
+          createdById: userId,
+          value: new Prisma.Decimal(dto.value),
+          startDate: dto.startDate ? new Date(dto.startDate) : null,
+          endDate: dto.endDate ? new Date(dto.endDate) : null,
+        },
+        include: {
+          product: {
+            select: {
+              id: true,
+              name: true,
+              sku: true,
+              images: {
+                orderBy: { sortOrder: 'asc' },
+                take: 1,
+                select: { imageUrl: true },
+              },
+            },
+          },
+          createdBy: { select: { id: true, name: true } },
+        },
+      });
+
+      return {
+        ...discount,
+        value: discount.value.toString(),
+        product: {
+          id: discount.product.id,
+          name: discount.product.name,
+          sku: discount.product.sku,
+          image: discount.product.images[0]?.imageUrl ?? null,
+        },
+      };
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException('Product already has a discount');
+      }
+      throw error;
+    }
+  }
+
+  private validateDates(startDate?: string | null, endDate?: string | null) {
+    if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
+      throw new BadRequestException(
+        'Discount end date must be on or after its start date',
+      );
+    }
+  }
 }

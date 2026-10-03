@@ -4,42 +4,42 @@ import { Permission } from '@/lib/prisma/enums';
 import { PrismaService } from '@/common/prisma/prisma.service';
 
 import {
-    RolePermissionsResponseDto,
-    UserRole,
+  RolePermissionsResponseDto,
+  UserRole,
 } from '../dto/responses/role-permissions.response.dto';
 
 @Injectable()
 export class GetRolesPermissionsService {
-    constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-    async execute(): Promise<RolePermissionsResponseDto[]> {
-        const roles = Object.values(UserRole);
+  async execute(): Promise<RolePermissionsResponseDto[]> {
+    const roles = Object.values(UserRole);
 
-        return Promise.all(
-            roles.map(async (role) => {
-                const permissions = await this.getRolePermissions(role);
+    return Promise.all(
+      roles.map(async (role) => {
+        const permissions = await this.getRolePermissions(role);
 
-                return {
-                    role,
-                    permissions,
-                };
-            }),
-        );
-    }
+        return {
+          role,
+          permissions,
+        };
+      }),
+    );
+  }
 
-    private async getRolePermissions(role: UserRole): Promise<Permission[]> {
-        const rolePermissions = await this.prisma.rolePermission.findMany({
-            where: {
-                role,
-            },
-            select: {
-                permission: true,
-            },
-            orderBy: {
-                permission: 'asc',
-            },
-        });
+  private async getRolePermissions(role: UserRole): Promise<Permission[]> {
+    const rolePermissions = await this.prisma.rolePermission.findMany({
+      where: {
+        role,
+      },
+      select: {
+        permission: true,
+      },
+      orderBy: {
+        permission: 'asc',
+      },
+    });
 
-        return rolePermissions.map(({ permission }) => permission);
-    }
+    return rolePermissions.map(({ permission }) => permission);
+  }
 }

@@ -10,16 +10,14 @@ import { UpdateCategoryService } from './services/update-category.service';
 import { DeleteCategoryService } from './services/delete-category.service';
 
 @Module({
-    controllers: [
-        CategoryController,
-    ],
+  controllers: [CategoryController],
 
-    providers: [
-        CreateCategoryService,
-        GetCategoriesService,
-        GetCategoryService,
-        UpdateCategoryService,
-        DeleteCategoryService,
-    ],
+  providers: [
+    CreateCategoryService,
+    GetCategoriesService,
+    GetCategoryService,
+    UpdateCategoryService,
+    DeleteCategoryService,
+  ],
 })
-export class CategoryModule { }
+export class CategoryModule {}

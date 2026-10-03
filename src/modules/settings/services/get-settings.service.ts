@@ -5,35 +5,35 @@ import { SettingsResponseDto } from '../dto/responses/settings-response.dto';
 
 @Injectable()
 export class GetSettingsService {
-    constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-    async execute(): Promise<SettingsResponseDto | null> {
-        const settings = await this.prisma.settings.findFirst({
-            orderBy: {
-                createdAt: 'asc',
-            },
-        });
+  async execute(): Promise<SettingsResponseDto | null> {
+    const settings = await this.prisma.settings.findFirst({
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
 
-        if (!settings) {
-            return null;
-        }
-
-        return {
-            id: settings.id,
-
-            companyName: settings.companyName,
-            companyEmail: settings.companyEmail,
-            companyPhone: settings.companyPhone,
-            companyAddress: settings.companyAddress,
-
-            logo: settings.logo,
-            favicon: settings.favicon,
-
-            currency: settings.currency,
-            timezone: settings.timezone,
-
-            createdAt: settings.createdAt,
-            updatedAt: settings.updatedAt,
-        };
+    if (!settings) {
+      return null;
     }
+
+    return {
+      id: settings.id,
+
+      companyName: settings.companyName,
+      companyEmail: settings.companyEmail,
+      companyPhone: settings.companyPhone,
+      companyAddress: settings.companyAddress,
+
+      logo: settings.logo,
+      favicon: settings.favicon,
+
+      currency: settings.currency,
+      timezone: settings.timezone,
+
+      createdAt: settings.createdAt,
+      updatedAt: settings.updatedAt,
+    };
+  }
 }

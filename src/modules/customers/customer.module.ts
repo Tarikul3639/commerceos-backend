@@ -12,26 +12,24 @@ import { DeleteCustomerService } from './services/delete-customer.service';
 import { RestoreCustomerService } from './services/restore-customer.service';
 
 @Module({
-    controllers: [
-        CustomerController,
-    ],
+  controllers: [CustomerController],
 
-    providers: [
-        CreateCustomerService,
-        GetCustomersService,
-        GetCustomerService,
-        UpdateCustomerService,
-        DeleteCustomerService,
-        RestoreCustomerService,
-    ],
+  providers: [
+    CreateCustomerService,
+    GetCustomersService,
+    GetCustomerService,
+    UpdateCustomerService,
+    DeleteCustomerService,
+    RestoreCustomerService,
+  ],
 
-    exports: [
-        CreateCustomerService,
-        GetCustomersService,
-        GetCustomerService,
-        UpdateCustomerService,
-        DeleteCustomerService,
-        RestoreCustomerService,
-    ],
+  exports: [
+    CreateCustomerService,
+    GetCustomersService,
+    GetCustomerService,
+    UpdateCustomerService,
+    DeleteCustomerService,
+    RestoreCustomerService,
+  ],
 })
 export class CustomerModule {}

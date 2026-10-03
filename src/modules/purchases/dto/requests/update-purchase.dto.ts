@@ -1,11 +1,11 @@
 import {
-    IsArray,
-    IsInt,
-    IsNumberString,
-    IsOptional,
-    IsString,
-    Min,
-    ValidateNested,
+  IsArray,
+  IsInt,
+  IsNumberString,
+  IsOptional,
+  IsString,
+  Min,
+  ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
@@ -15,26 +15,26 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
  */
 
 export class UpdatePurchaseItemDto {
-    /*
-     * Item Details
-     */
+  /*
+   * Item Details
+   */
 
-    @ApiPropertyOptional()
-    @IsOptional()
-    @IsString()
-    productId?: string;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  productId?: string;
 
-    @ApiPropertyOptional({ minimum: 1 })
-    @IsOptional()
-    @Type(() => Number)
-    @IsInt()
-    @Min(1)
-    quantity?: number;
+  @ApiPropertyOptional({ minimum: 1 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  quantity?: number;
 
-    @ApiPropertyOptional()
-    @IsOptional()
-    @IsNumberString()
-    unitPrice?: string;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNumberString()
+  unitPrice?: string;
 }
 
 /*
@@ -42,33 +42,33 @@ export class UpdatePurchaseItemDto {
  */
 
 export class UpdatePurchaseDto {
-    /*
-     * Supplier & Line Items
-     */
+  /*
+   * Supplier & Line Items
+   */
 
-    @ApiPropertyOptional()
-    @IsOptional()
-    @IsString()
-    supplierId?: string;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  supplierId?: string;
 
-    @ApiPropertyOptional({ type: [UpdatePurchaseItemDto] })
-    @IsOptional()
-    @IsArray()
-    @ValidateNested({ each: true })
-    @Type(() => UpdatePurchaseItemDto)
-    items?: UpdatePurchaseItemDto[];
+  @ApiPropertyOptional({ type: [UpdatePurchaseItemDto] })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => UpdatePurchaseItemDto)
+  items?: UpdatePurchaseItemDto[];
 
-    /*
-     * Financial Adjustments
-     */
+  /*
+   * Financial Adjustments
+   */
 
-    @ApiPropertyOptional()
-    @IsOptional()
-    @IsNumberString()
-    discount?: string;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNumberString()
+  discount?: string;
 
-    @ApiPropertyOptional()
-    @IsOptional()
-    @IsNumberString()
-    tax?: string;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNumberString()
+  tax?: string;
 }

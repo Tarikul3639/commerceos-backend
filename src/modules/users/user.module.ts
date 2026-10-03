@@ -17,26 +17,20 @@ import { DeleteUserService } from './services/delete-user.service';
 import { RestoreUserService } from './services/restore-user.service';
 
 @Module({
-    imports: [
-        PrismaModule,
-        AuthModule,
-        MailModule,
-    ],
+  imports: [PrismaModule, AuthModule, MailModule],
 
-    controllers: [
-        UserController,
-    ],
+  controllers: [UserController],
 
-    providers: [
-        CreateUserService,
-        GetUsersService,
-        GetUserService,
-        UpdateUserService,
-        UpdateUserStatusService,
-        DeleteUserService,
-        RestoreUserService,
-    ],
+  providers: [
+    CreateUserService,
+    GetUsersService,
+    GetUserService,
+    UpdateUserService,
+    UpdateUserStatusService,
+    DeleteUserService,
+    RestoreUserService,
+  ],
 
-    exports: [],
+  exports: [],
 })
-export class UsersModule { }
+export class UsersModule {}

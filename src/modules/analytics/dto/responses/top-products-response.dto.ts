@@ -1,27 +1,27 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class TopProductItemDto {
-    @ApiProperty()
-    productId!: string;
+  @ApiProperty()
+  productId!: string;
 
-    @ApiProperty()
-    productName!: string;
+  @ApiProperty()
+  productName!: string;
 
-    @ApiPropertyOptional({
-        example: 'https://example.com/product-image.jpg',
-    })
-    productImage?: string | null;
+  @ApiPropertyOptional({
+    example: 'https://example.com/product-image.jpg',
+  })
+  productImage?: string | null;
 
-    @ApiPropertyOptional()
-    sku?: string;
+  @ApiPropertyOptional()
+  sku?: string;
 
-    @ApiProperty({
-        example: 420,
-    })
-    totalSold!: number;
+  @ApiProperty({
+    example: 420,
+  })
+  totalSold!: number;
 
-    @ApiProperty({
-        example: '1250000',
-    })
-    totalRevenue!: string;
+  @ApiProperty({
+    example: '1250000',
+  })
+  totalRevenue!: string;
 }

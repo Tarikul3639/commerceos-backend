@@ -10,24 +10,22 @@ import { RemoveCartItemService } from './services/remove-cart-item.service';
 import { UpdateCartItemService } from './services/update-cart-item.service';
 
 @Module({
-    controllers: [
-        CartController,
-    ],
+  controllers: [CartController],
 
-    providers: [
-        AddCartItemService,
-        GetCartService,
-        UpdateCartItemService,
-        RemoveCartItemService,
-        ClearCartService,
-    ],
+  providers: [
+    AddCartItemService,
+    GetCartService,
+    UpdateCartItemService,
+    RemoveCartItemService,
+    ClearCartService,
+  ],
 
-    exports: [
-        AddCartItemService,
-        GetCartService,
-        UpdateCartItemService,
-        RemoveCartItemService,
-        ClearCartService,
-    ],
+  exports: [
+    AddCartItemService,
+    GetCartService,
+    UpdateCartItemService,
+    RemoveCartItemService,
+    ClearCartService,
+  ],
 })
 export class CartModule {}

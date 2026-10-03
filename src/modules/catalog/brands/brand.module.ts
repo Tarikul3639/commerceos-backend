@@ -10,16 +10,14 @@ import { UpdateBrandService } from './services/update-brand.service';
 import { DeleteBrandService } from './services/delete-brand.service';
 
 @Module({
-    controllers: [
-        BrandController,
-    ],
+  controllers: [BrandController],
 
-    providers: [
-        CreateBrandService,
-        GetBrandsService,
-        GetBrandService,
-        UpdateBrandService,
-        DeleteBrandService,
-    ],
+  providers: [
+    CreateBrandService,
+    GetBrandsService,
+    GetBrandService,
+    UpdateBrandService,
+    DeleteBrandService,
+  ],
 })
-export class BrandModule { }
+export class BrandModule {}

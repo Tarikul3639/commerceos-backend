@@ -10,18 +10,16 @@ import { DeleteProductService } from './services/delete-product.service';
 import { RestoreProductService } from './services/restore-product.service';
 
 @Module({
-    controllers: [
-        ProductController,
-    ],
+  controllers: [ProductController],
 
-    providers: [
-        // Product
-        CreateProductService,
-        GetProductsService,
-        GetProductService,
-        UpdateProductService,
-        DeleteProductService,
-        RestoreProductService,
-    ],
+  providers: [
+    // Product
+    CreateProductService,
+    GetProductsService,
+    GetProductService,
+    UpdateProductService,
+    DeleteProductService,
+    RestoreProductService,
+  ],
 })
-export class ProductModule { }
+export class ProductModule {}

@@ -7,8 +7,8 @@ import { GetSettingsService } from './services/get-settings.service';
 import { UpdateSettingsService } from './services/update-settings.service';
 
 @Module({
-    controllers: [SettingsController],
-    providers: [GetSettingsService, UpdateSettingsService],
-    exports: [GetSettingsService, UpdateSettingsService],
+  controllers: [SettingsController],
+  providers: [GetSettingsService, UpdateSettingsService],
+  exports: [GetSettingsService, UpdateSettingsService],
 })
-export class SettingsModule { }
+export class SettingsModule {}
