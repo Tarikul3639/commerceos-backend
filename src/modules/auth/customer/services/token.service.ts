@@ -6,8 +6,8 @@ import { createHash, randomBytes } from 'node:crypto';
 
 import ms, { type StringValue } from 'ms';
 
-import { CustomerJwtPayload } from '../../../../common/interfaces/customer-jwt-payload.interface';
-import { AuthTokens } from '../interfaces/auth-tokens.interface';
+import { CustomerJwtPayload } from '@/common/interfaces/customer-jwt-payload.interface';
+import { AuthTokens } from '@/modules/auth/customer/interfaces/auth-tokens.interface';
 
 @Injectable()
 export class CustomerTokenService {

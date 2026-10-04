@@ -15,26 +15,26 @@ import {
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 // DTOs
-import { CreateProductDto } from '../dto/requests/create-product.dto';
-import { UpdateProductDto } from '../dto/requests/update-product.dto';
-import { ProductQueryDto } from '../dto/requests/product-query.dto';
+import { CreateProductDto } from '@/modules/catalog/products/dto/requests/create-product.dto';
+import { UpdateProductDto } from '@/modules/catalog/products/dto/requests/update-product.dto';
+import { ProductQueryDto } from '@/modules/catalog/products/dto/requests/product-query.dto';
 
 // Response DTOs
-import { ProductResponseDto } from '../dto/responses/product-response.dto';
-import { ProductListResponseDto } from '../dto/responses/product-list-response.dto';
+import { ProductResponseDto } from '@/modules/catalog/products/dto/responses/product-response.dto';
+import { ProductListResponseDto } from '@/modules/catalog/products/dto/responses/product-list-response.dto';
 
 // Services
-import { CreateProductService } from '../services/create-product.service';
-import { GetProductsService } from '../services/get-products.service';
-import { GetProductService } from '../services/get-product.service';
-import { UpdateProductService } from '../services/update-product.service';
-import { DeleteProductService } from '../services/delete-product.service';
-import { RestoreProductService } from '../services/restore-product.service';
-import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
-import { UserJwtAuthGuard } from '../../../../common/guards/user-jwt-auth.guard';
-import { PermissionsGuard } from '../../../../common/guards/permissions.guard';
-import { Permissions } from '../../../../common/decorators/permissions.decorator';
-import { Permission } from '../../../../lib/prisma/enums';
+import { CreateProductService } from '@/modules/catalog/products/services/create-product.service';
+import { GetProductsService } from '@/modules/catalog/products/services/get-products.service';
+import { GetProductService } from '@/modules/catalog/products/services/get-product.service';
+import { UpdateProductService } from '@/modules/catalog/products/services/update-product.service';
+import { DeleteProductService } from '@/modules/catalog/products/services/delete-product.service';
+import { RestoreProductService } from '@/modules/catalog/products/services/restore-product.service';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { Permissions } from '@/common/decorators/permissions.decorator';
+import { Permission } from '@/lib/prisma/enums';
 
 @ApiTags('Products')
 @Controller('products')

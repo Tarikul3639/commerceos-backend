@@ -6,10 +6,10 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { UserJwtPayload } from '../interfaces/user-jwt-payload.interface';
-import { PERMISSIONS_KEY } from '../decorators/permissions.decorator';
-import { Permission, Role } from '../../lib/prisma/enums';
-import { PrismaService } from '../prisma/prisma.service';
+import { UserJwtPayload } from '@/common/interfaces/user-jwt-payload.interface';
+import { PERMISSIONS_KEY } from '@/common/decorators/permissions.decorator';
+import { Permission, Role } from '@/lib/prisma/enums';
+import { PrismaService } from '@/common/prisma/prisma.service';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {

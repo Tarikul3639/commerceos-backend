@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { Prisma } from '../../../lib/prisma/client';
+import { Prisma } from '@/lib/prisma/client';
 
-import { PrismaService } from '../../../common/prisma/prisma.service';
+import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { OrderReturnQueryDto } from '../dto/requests/order-return-query.dto';
-import { OrderReturnResponseDto } from '../dto/responses/order-return-response.dto';
+import { OrderReturnQueryDto } from '@/modules/orders/dto/requests/order-return-query.dto';
+import { OrderReturnResponseDto } from '@/modules/orders/dto/responses/order-return-response.dto';
 
-import { PaginatedResponse } from '../../../common/interfaces/paginated-response.interface';
+import { PaginatedResponse } from '@/common/interfaces/paginated-response.interface';
 
 /*
  * SERVICE: GetOrderReturnsService

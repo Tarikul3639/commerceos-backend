@@ -4,8 +4,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 
-import { CustomerJwtPayload } from '../interfaces/customer-jwt-payload.interface';
-import { CUSTOMER_ACCESS_TOKEN_COOKIE } from '../constants/cookie.constants';
+import { CustomerJwtPayload } from '@/common/interfaces/customer-jwt-payload.interface';
+import { CUSTOMER_ACCESS_TOKEN_COOKIE } from '@/common/constants/cookie.constants';
 
 @Injectable()
 export class CustomerJwtStrategy extends PassportStrategy(

@@ -7,11 +7,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { UpdateSettingsDto } from '../dto/requests/update-settings.dto';
-import { SettingsResponseDto } from '../dto/responses/settings-response.dto';
+import { UpdateSettingsDto } from '@/modules/settings/dto/requests/update-settings.dto';
+import { SettingsResponseDto } from '@/modules/settings/dto/responses/settings-response.dto';
 
-import { GetSettingsService } from '../services/get-settings.service';
-import { UpdateSettingsService } from '../services/update-settings.service';
+import { GetSettingsService } from '@/modules/settings/services/get-settings.service';
+import { UpdateSettingsService } from '@/modules/settings/services/update-settings.service';
 
 @ApiTags('Settings')
 @ApiBearerAuth()

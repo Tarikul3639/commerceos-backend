@@ -3,16 +3,16 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma } from '../../../lib/prisma/client';
+import { Prisma } from '@/lib/prisma/client';
 
-import { PrismaService } from '../../../common/prisma/prisma.service';
+import { PrismaService } from '@/common/prisma/prisma.service';
 import {
   generateDocumentNumber,
   getDocumentPrefix,
-} from '../../../common/utils/document-number.util';
+} from '@/common/utils/document-number.util';
 
-import { CreatePurchaseDto } from '../dto/requests/create-purchase.dto';
-import { PurchaseResponseDto } from '../dto/responses/purchase-response.dto';
+import { CreatePurchaseDto } from '@/modules/purchases/dto/requests/create-purchase.dto';
+import { PurchaseResponseDto } from '@/modules/purchases/dto/responses/purchase-response.dto';
 
 @Injectable()
 export class CreatePurchaseService {

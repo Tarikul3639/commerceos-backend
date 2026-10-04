@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../../../common/prisma/prisma.service';
-import { StockResponseDto } from '../dto/responses/stock-response.dto';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { StockResponseDto } from '@/modules/inventory/stocks/dto/responses/stock-response.dto';
 
 @Injectable()
 export class GetStockService {

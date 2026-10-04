@@ -2,13 +2,13 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'crypto';
 
-import { PrismaService } from '../../../common/prisma/prisma.service';
+import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { CreateUserDto } from '../dto/requests/create-user.dto';
-import { UserResponseDto } from '../dto/responses/user-response.dto';
+import { CreateUserDto } from '@/modules/users/dto/requests/create-user.dto';
+import { UserResponseDto } from '@/modules/users/dto/responses/user-response.dto';
 
-import { MailService } from '../../../common/mail/mail.service';
-import { hashPassword } from '../../../common/utils/password.util';
+import { MailService } from '@/common/mail/mail.service';
+import { hashPassword } from '@/common/utils/password.util';
 
 @Injectable()
 export class CreateUserService {

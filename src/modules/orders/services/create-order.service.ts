@@ -3,14 +3,14 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma } from '../../../lib/prisma/client';
-import { PrismaService } from '../../../common/prisma/prisma.service';
-import { CreateOrderDto } from '../dto/requests/create-order.dto';
-import { OrderResponseDto } from '../dto/responses/order-response.dto';
+import { Prisma } from '@/lib/prisma/client';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateOrderDto } from '@/modules/orders/dto/requests/create-order.dto';
+import { OrderResponseDto } from '@/modules/orders/dto/responses/order-response.dto';
 import {
   generateDocumentNumber,
   getDocumentPrefix,
-} from '../../../common/utils/document-number.util';
+} from '@/common/utils/document-number.util';
 
 @Injectable()
 export class CreateOrderService {

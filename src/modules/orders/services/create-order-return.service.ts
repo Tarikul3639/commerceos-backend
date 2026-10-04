@@ -4,15 +4,15 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PrismaService } from '../../../common/prisma/prisma.service';
+import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { CreateOrderReturnDto } from '../dto/requests/create-order-return.dto';
-import { OrderReturnResponseDto } from '../dto/responses/order-return-response.dto';
+import { CreateOrderReturnDto } from '@/modules/orders/dto/requests/create-order-return.dto';
+import { OrderReturnResponseDto } from '@/modules/orders/dto/responses/order-return-response.dto';
 
 import {
   generateDocumentNumber,
   getDocumentPrefix,
-} from '../../../common/utils/document-number.util';
+} from '@/common/utils/document-number.util';
 
 @Injectable()
 export class CreateOrderReturnService {

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../../../common/prisma/prisma.service';
-import { DiscountResponseDto } from '../dto/responses/discount-response.dto';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { DiscountResponseDto } from '@/modules/catalog/discounts/dto/responses/discount-response.dto';
 
 @Injectable()
 export class GetDiscountService {

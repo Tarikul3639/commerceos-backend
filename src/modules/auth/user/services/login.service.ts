@@ -1,16 +1,16 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service';
-import { UserStatus } from '../../../../lib/prisma/client';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { UserStatus } from '@/lib/prisma/client';
 
-import { comparePassword } from '../../../../common/utils/password.util';
-import { UserJwtPayload } from '../../../../common/interfaces/user-jwt-payload.interface';
+import { comparePassword } from '@/common/utils/password.util';
+import { UserJwtPayload } from '@/common/interfaces/user-jwt-payload.interface';
 
-import { LoginDto } from '../dto/requests/login.dto';
-import { AuthTokensPayload } from '../interfaces/auth-tokens.interface';
+import { LoginDto } from '@/modules/auth/user/dto/requests/login.dto';
+import { AuthTokensPayload } from '@/modules/auth/user/interfaces/auth-tokens.interface';
 
-import { TokenService } from './token.service';
-import { RefreshTokenService } from './refresh-token.service';
+import { TokenService } from '@/modules/auth/user/services/token.service';
+import { RefreshTokenService } from '@/modules/auth/user/services/refresh-token.service';
 
 @Injectable()
 export class LoginService {

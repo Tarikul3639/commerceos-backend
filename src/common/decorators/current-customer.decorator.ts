@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { CurrentCustomerPayload } from '../interfaces/current-customer.interface';
+import { CurrentCustomerPayload } from '@/common/interfaces/current-customer.interface';
 
 export const CurrentCustomer = createParamDecorator(
   (

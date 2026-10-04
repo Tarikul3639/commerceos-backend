@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaService } from '../../../common/prisma/prisma.service';
+import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { CustomerQueryDto } from '../dto/requests/customer-query.dto';
-import { CustomersPaginatedResponseDto } from '../dto/responses/customer-response.dto';
+import { CustomerQueryDto } from '@/modules/customers/dto/requests/customer-query.dto';
+import { CustomersPaginatedResponseDto } from '@/modules/customers/dto/responses/customer-response.dto';
 
 @Injectable()
 export class GetCustomersService {

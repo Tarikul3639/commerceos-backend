@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { PrismaService } from '../../../common/prisma/prisma.service';
+import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { BannerResponseDto } from '../dto/responses/banner-response.dto';
+import { BannerResponseDto } from '@/modules/banners/dto/responses/banner-response.dto';
 
 @Injectable()
 export class GetBannerService {

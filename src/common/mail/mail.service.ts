@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 
-import { MailOptions } from './interfaces/mail-options.interface';
+import { MailOptions } from '@/common/mail/interfaces/mail-options.interface';
 
 import {
   NewOrderNotificationTemplate,
@@ -14,7 +14,7 @@ import {
   ResetPasswordTemplate,
   VerifyEmailTemplate,
   WelcomeTemplate,
-} from './interfaces/mail-template.interface';
+} from '@/common/mail/interfaces/mail-template.interface';
 
 @Injectable()
 export class MailService {

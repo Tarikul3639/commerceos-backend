@@ -7,7 +7,7 @@ import {
   CUSTOMER_REFRESH_TOKEN_COOKIE,
   USER_ACCESS_TOKEN_COOKIE,
   USER_REFRESH_TOKEN_COOKIE,
-} from '../constants/cookie.constants';
+} from '@/common/constants/cookie.constants';
 
 /**
  * Utility class for handling cookie operations

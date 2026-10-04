@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 
-import { ProductController } from './controllers/product.controller';
+import { ProductController } from '@/modules/catalog/products/controllers/product.controller';
 // Product Services
-import { CreateProductService } from './services/create-product.service';
-import { GetProductsService } from './services/get-products.service';
-import { GetProductService } from './services/get-product.service';
-import { UpdateProductService } from './services/update-product.service';
-import { DeleteProductService } from './services/delete-product.service';
-import { RestoreProductService } from './services/restore-product.service';
+import { CreateProductService } from '@/modules/catalog/products/services/create-product.service';
+import { GetProductsService } from '@/modules/catalog/products/services/get-products.service';
+import { GetProductService } from '@/modules/catalog/products/services/get-product.service';
+import { UpdateProductService } from '@/modules/catalog/products/services/update-product.service';
+import { DeleteProductService } from '@/modules/catalog/products/services/delete-product.service';
+import { RestoreProductService } from '@/modules/catalog/products/services/restore-product.service';
 
 @Module({
   controllers: [ProductController],

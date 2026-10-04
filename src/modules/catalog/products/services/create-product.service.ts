@@ -4,12 +4,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma } from '../../../../lib/prisma/client';
+import { Prisma } from '@/lib/prisma/client';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service';
+import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { CreateProductDto } from '../dto/requests/create-product.dto';
-import { ProductResponseDto } from '../dto/responses/product-response.dto';
+import { CreateProductDto } from '@/modules/catalog/products/dto/requests/create-product.dto';
+import { ProductResponseDto } from '@/modules/catalog/products/dto/responses/product-response.dto';
 
 @Injectable()
 export class CreateProductService {

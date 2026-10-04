@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '../../../lib/prisma/client';
-import { PrismaService } from '../../../common/prisma/prisma.service';
-import { OrderQueryDto } from '../dto/requests/order-query.dto';
-import { OrderResponseDto } from '../dto/responses/order-response.dto';
-import { PaginatedResponse } from '../../../common/interfaces/paginated-response.interface';
+import { Prisma } from '@/lib/prisma/client';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { OrderQueryDto } from '@/modules/orders/dto/requests/order-query.dto';
+import { OrderResponseDto } from '@/modules/orders/dto/responses/order-response.dto';
+import { PaginatedResponse } from '@/common/interfaces/paginated-response.interface';
 
 /*
  * SERVICE: GetOrdersService

@@ -4,8 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PurchaseStatus } from '../../../lib/prisma/client';
-import { PrismaService } from '../../../common/prisma/prisma.service';
+import { PurchaseStatus } from '@/lib/prisma/client';
+import { PrismaService } from '@/common/prisma/prisma.service';
 
 @Injectable()
 export class DeletePurchaseService {

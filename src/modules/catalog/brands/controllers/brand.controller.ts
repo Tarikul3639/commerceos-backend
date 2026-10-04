@@ -14,16 +14,16 @@ import {
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 
 // DTOs
-import { CreateBrandDto } from '../dto/requests/create-brand.dto';
-import { UpdateBrandDto } from '../dto/requests/update-brand.dto';
-import { BrandQueryDto } from '../dto/requests/brand-query.dto';
+import { CreateBrandDto } from '@/modules/catalog/brands/dto/requests/create-brand.dto';
+import { UpdateBrandDto } from '@/modules/catalog/brands/dto/requests/update-brand.dto';
+import { BrandQueryDto } from '@/modules/catalog/brands/dto/requests/brand-query.dto';
 
 // Services
-import { CreateBrandService } from '../services/create-brand.service';
-import { GetBrandsService } from '../services/get-brands.service';
-import { GetBrandService } from '../services/get-brand.service';
-import { UpdateBrandService } from '../services/update-brand.service';
-import { DeleteBrandService } from '../services/delete-brand.service';
+import { CreateBrandService } from '@/modules/catalog/brands/services/create-brand.service';
+import { GetBrandsService } from '@/modules/catalog/brands/services/get-brands.service';
+import { GetBrandService } from '@/modules/catalog/brands/services/get-brand.service';
+import { UpdateBrandService } from '@/modules/catalog/brands/services/update-brand.service';
+import { DeleteBrandService } from '@/modules/catalog/brands/services/delete-brand.service';
 
 @ApiTags('Brands')
 @Controller('brands')

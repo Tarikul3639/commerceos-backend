@@ -17,14 +17,14 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CreateOrderReturnDto } from '../dto/requests/create-order-return.dto';
-import { OrderReturnQueryDto } from '../dto/requests/order-return-query.dto';
+import { CreateOrderReturnDto } from '@/modules/orders/dto/requests/create-order-return.dto';
+import { OrderReturnQueryDto } from '@/modules/orders/dto/requests/order-return-query.dto';
 
-import { CreateOrderReturnService } from '../services/create-order-return.service';
-import { GetOrderReturnService } from '../services/get-order-return.service';
-import { GetOrderReturnsService } from '../services/get-order-returns.service';
+import { CreateOrderReturnService } from '@/modules/orders/services/create-order-return.service';
+import { GetOrderReturnService } from '@/modules/orders/services/get-order-return.service';
+import { GetOrderReturnsService } from '@/modules/orders/services/get-order-returns.service';
 
-import { CurrentUser } from '../../../common/decorators/current-user.decorator';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
 
 @ApiTags('Order Returns')
 @ApiBearerAuth()

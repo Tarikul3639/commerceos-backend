@@ -4,10 +4,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PrismaService } from '../../../common/prisma/prisma.service';
+import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { UpdateSupplierDto } from '../dto/requests/update-supplier.dto';
-import { SupplierResponseDto } from '../dto/responses/supplier-response.dto';
+import { UpdateSupplierDto } from '@/modules/suppliers/dto/requests/update-supplier.dto';
+import { SupplierResponseDto } from '@/modules/suppliers/dto/responses/supplier-response.dto';
 
 @Injectable()
 export class UpdateSupplierService {

@@ -12,11 +12,11 @@ import { ApiOperation, ApiResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import {
   CloudinaryFolder,
   type CloudinaryFolderType,
-} from './cloudinary.types';
+} from '@/common/cloudinary/cloudinary.types';
 
-import { CloudinaryService } from './cloudinary.service';
+import { CloudinaryService } from '@/common/cloudinary/cloudinary.service';
 
-import { CloudinaryUploadSignatureDto } from './dto/responses/cloudinary-upload-signature.dto';
+import { CloudinaryUploadSignatureDto } from '@/common/cloudinary/dto/responses/cloudinary-upload-signature.dto';
 
 @ApiTags('Cloudinary')
 @Controller('uploads')

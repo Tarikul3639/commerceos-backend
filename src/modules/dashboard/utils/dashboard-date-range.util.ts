@@ -1,4 +1,4 @@
-import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto';
+import { DashboardQueryDto } from '@/modules/dashboard/dto/requests/dashboard-query.dto';
 
 export interface DashboardDateRange {
   startDate: Date;

@@ -15,18 +15,18 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { AddCartItemDto } from '../dto/requests/add-cart-item.dto';
-import { UpdateCartItemDto } from '../dto/requests/update-cart-item.dto';
-import { CartResponseDto } from '../dto/responses/cart-response.dto';
+import { AddCartItemDto } from '@/modules/carts/dto/requests/add-cart-item.dto';
+import { UpdateCartItemDto } from '@/modules/carts/dto/requests/update-cart-item.dto';
+import { CartResponseDto } from '@/modules/carts/dto/responses/cart-response.dto';
 
 // Services
-import { AddCartItemService } from '../services/add-cart-item.service';
-import { ClearCartService } from '../services/clear-cart.service';
-import { GetCartService } from '../services/get-cart.service';
-import { RemoveCartItemService } from '../services/remove-cart-item.service';
-import { UpdateCartItemService } from '../services/update-cart-item.service';
+import { AddCartItemService } from '@/modules/carts/services/add-cart-item.service';
+import { ClearCartService } from '@/modules/carts/services/clear-cart.service';
+import { GetCartService } from '@/modules/carts/services/get-cart.service';
+import { RemoveCartItemService } from '@/modules/carts/services/remove-cart-item.service';
+import { UpdateCartItemService } from '@/modules/carts/services/update-cart-item.service';
 
-import { CurrentCustomer } from '../../../common/decorators/current-customer.decorator';
+import { CurrentCustomer } from '@/common/decorators/current-customer.decorator';
 
 @ApiTags('Cart')
 @ApiBearerAuth()

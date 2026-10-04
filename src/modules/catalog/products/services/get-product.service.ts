@@ -1,17 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service';
+import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { ProductDetailResponseDto } from '../dto/responses/product-detail-response.dto';
+import { ProductDetailResponseDto } from '@/modules/catalog/products/dto/responses/product-detail-response.dto';
 import {
   ProductBrandResponseDto,
   ProductCategoryResponseDto,
-} from '../dto/responses/product-response.dto';
-import { ProductImageResponseDto } from '../dto/responses/product-image-response.dto';
-import { DiscountSummaryResponseDto } from '../dto/responses/discount-summary-response.dto';
-import { ProductColorResponseDto } from '../dto/responses/product-color-response.dto';
-import { ProductReviewResponseDto } from '../dto/responses/product-review-response.dto';
-import { ProductRatingResponseDto } from '../dto/responses/product-rating-response.dto';
+} from '@/modules/catalog/products/dto/responses/product-response.dto';
+import { ProductImageResponseDto } from '@/modules/catalog/products/dto/responses/product-image-response.dto';
+import { DiscountSummaryResponseDto } from '@/modules/catalog/products/dto/responses/discount-summary-response.dto';
+import { ProductColorResponseDto } from '@/modules/catalog/products/dto/responses/product-color-response.dto';
+import { ProductReviewResponseDto } from '@/modules/catalog/products/dto/responses/product-review-response.dto';
+import { ProductRatingResponseDto } from '@/modules/catalog/products/dto/responses/product-rating-response.dto';
 
 /*
  * SERVICE: GetProductService

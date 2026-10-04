@@ -1,4 +1,4 @@
-import { Role } from '../../lib/prisma/enums';
+import { Role } from '@/lib/prisma/enums';
 
 export interface UserJwtPayload {
   id: string;

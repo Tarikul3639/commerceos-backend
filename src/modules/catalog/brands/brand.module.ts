@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 
-import { BrandController } from './controllers/brand.controller';
+import { BrandController } from '@/modules/catalog/brands/controllers/brand.controller';
 
 // Services
-import { CreateBrandService } from './services/create-brand.service';
-import { GetBrandsService } from './services/get-brands.service';
-import { GetBrandService } from './services/get-brand.service';
-import { UpdateBrandService } from './services/update-brand.service';
-import { DeleteBrandService } from './services/delete-brand.service';
+import { CreateBrandService } from '@/modules/catalog/brands/services/create-brand.service';
+import { GetBrandsService } from '@/modules/catalog/brands/services/get-brands.service';
+import { GetBrandService } from '@/modules/catalog/brands/services/get-brand.service';
+import { UpdateBrandService } from '@/modules/catalog/brands/services/update-brand.service';
+import { DeleteBrandService } from '@/modules/catalog/brands/services/delete-brand.service';
 
 @Module({
   controllers: [BrandController],

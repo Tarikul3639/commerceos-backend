@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service';
-import { CloudinaryService } from '../../../../common/cloudinary';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { CloudinaryService } from '@/common/cloudinary';
 
 @Injectable()
 export class DeleteProductService {

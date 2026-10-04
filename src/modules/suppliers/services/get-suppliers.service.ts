@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { Prisma } from '../../../lib/prisma/client';
+import { Prisma } from '@/lib/prisma/client';
 
-import { PrismaService } from '../../../common/prisma/prisma.service';
+import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { SupplierQueryDto } from '../dto/requests/supplier-query.dto';
-import { SupplierResponseDto } from '../dto/responses/supplier-response.dto';
+import { SupplierQueryDto } from '@/modules/suppliers/dto/requests/supplier-query.dto';
+import { SupplierResponseDto } from '@/modules/suppliers/dto/responses/supplier-response.dto';
 
-import { PaginatedResponse } from '../../../common/interfaces/paginated-response.interface';
+import { PaginatedResponse } from '@/common/interfaces/paginated-response.interface';
 
 @Injectable()
 export class GetSuppliersService {

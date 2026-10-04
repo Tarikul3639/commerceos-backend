@@ -1,18 +1,18 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service';
-import { UserRefreshToken } from '../../../../lib/prisma/client';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { UserRefreshToken } from '@/lib/prisma/client';
 
 import {
   comparePassword,
   hashPassword,
-} from '../../../../common/utils/password.util';
+} from '@/common/utils/password.util';
 
-import { UserJwtPayload } from '../../../../common/interfaces/user-jwt-payload.interface';
-import { AuthTokensPayload } from '../interfaces/auth-tokens.interface';
+import { UserJwtPayload } from '@/common/interfaces/user-jwt-payload.interface';
+import { AuthTokensPayload } from '@/modules/auth/user/interfaces/auth-tokens.interface';
 
-import { TokenService } from './token.service';
+import { TokenService } from '@/modules/auth/user/services/token.service';
 
 @Injectable()
 export class RefreshTokenService {

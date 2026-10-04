@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { Prisma } from '../../../lib/prisma/client';
+import { Prisma } from '@/lib/prisma/client';
 
-import { PrismaService } from '../../../common/prisma/prisma.service';
+import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { BannerQueryDto } from '../dto/requests/banner-query.dto';
-import { BannerResponseDto } from '../dto/responses/banner-response.dto';
+import { BannerQueryDto } from '@/modules/banners/dto/requests/banner-query.dto';
+import { BannerResponseDto } from '@/modules/banners/dto/responses/banner-response.dto';
 
-import { PaginatedResponse } from '../../../common/interfaces/paginated-response.interface';
+import { PaginatedResponse } from '@/common/interfaces/paginated-response.interface';
 
 @Injectable()
 export class GetBannersService {

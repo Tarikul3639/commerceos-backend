@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-import { BannerPosition, BannerType } from '../../../../lib/prisma/client';
+import { BannerPosition, BannerType } from '@/lib/prisma/client';
 
 export class BannerResponseDto {
   @ApiProperty()

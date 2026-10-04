@@ -1,7 +1,7 @@
 import { IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-import { UserStatus } from '../../../../lib/prisma/client';
+import { UserStatus } from '@/lib/prisma/client';
 
 export class UpdateUserStatusDto {
   @IsEnum(UserStatus)

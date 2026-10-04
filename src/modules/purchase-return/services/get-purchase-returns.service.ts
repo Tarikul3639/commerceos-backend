@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { Prisma } from '../../../lib/prisma/client';
+import { Prisma } from '@/lib/prisma/client';
 
-import { PrismaService } from '../../../common/prisma/prisma.service';
-import { PurchaseReturnQueryDto } from '../dto/requests/purchase-return-query.dto';
-import { PurchaseReturnResponseDto } from '../dto/responses/purchase-return-response.dto';
-import { PaginatedResponse } from '../../../common/interfaces/paginated-response.interface';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { PurchaseReturnQueryDto } from '@/modules/purchase-return/dto/requests/purchase-return-query.dto';
+import { PurchaseReturnResponseDto } from '@/modules/purchase-return/dto/responses/purchase-return-response.dto';
+import { PaginatedResponse } from '@/common/interfaces/paginated-response.interface';
 
 @Injectable()
 export class GetPurchaseReturnsService {

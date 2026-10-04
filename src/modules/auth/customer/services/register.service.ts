@@ -1,10 +1,10 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service';
-import { RegisterDto } from '../dto/requests/register.dto';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { RegisterDto } from '@/modules/auth/customer/dto/requests/register.dto';
 
-import { hashPassword } from '../../../../common/utils/password.util';
+import { hashPassword } from '@/common/utils/password.util';
 
 @Injectable()
 export class CustomerRegisterService {

@@ -3,7 +3,7 @@ import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { UserStatus } from '../../../../lib/prisma/client';
+import { UserStatus } from '@/lib/prisma/client';
 
 export enum UserSortBy {
   CREATED_AT = 'createdAt',

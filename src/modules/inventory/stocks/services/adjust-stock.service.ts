@@ -3,9 +3,9 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '../../../../common/prisma/prisma.service';
-import { AdjustStockDto } from '../dto/requests/adjust-stock.dto';
-import { StockResponseDto } from '../dto/responses/stock-response.dto';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { AdjustStockDto } from '@/modules/inventory/stocks/dto/requests/adjust-stock.dto';
+import { StockResponseDto } from '@/modules/inventory/stocks/dto/responses/stock-response.dto';
 
 @Injectable()
 export class AdjustStockService {

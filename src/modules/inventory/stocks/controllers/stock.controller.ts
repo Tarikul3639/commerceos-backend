@@ -10,20 +10,20 @@ import {
 } from '@nestjs/common';
 
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
 
 // DTOs
-import { AdjustStockDto } from '../dto/requests/adjust-stock.dto';
-import { StockQueryDto } from '../dto/requests/stock-query.dto';
+import { AdjustStockDto } from '@/modules/inventory/stocks/dto/requests/adjust-stock.dto';
+import { StockQueryDto } from '@/modules/inventory/stocks/dto/requests/stock-query.dto';
 import {
     StockListResponseDto,
     StockResponseDto,
-} from '../dto/responses/stock-response.dto';
+} from '@/modules/inventory/stocks/dto/responses/stock-response.dto';
 
 // Services
-import { AdjustStockService } from '../services/adjust-stock.service';
-import { GetStockService } from '../services/get-stock.service';
-import { GetStocksService } from '../services/get-stocks.service';
+import { AdjustStockService } from '@/modules/inventory/stocks/services/adjust-stock.service';
+import { GetStockService } from '@/modules/inventory/stocks/services/get-stock.service';
+import { GetStocksService } from '@/modules/inventory/stocks/services/get-stocks.service';
 
 @ApiTags('Stocks')
 @Controller('stocks')

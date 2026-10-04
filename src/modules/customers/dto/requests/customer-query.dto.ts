@@ -12,7 +12,7 @@ import { Type } from 'class-transformer';
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { CustomerStatus } from '../../../../lib/prisma/client';
+import { CustomerStatus } from '@/lib/prisma/client';
 
 export class CustomerQueryDto {
   @IsOptional()

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaService } from '../../../common/prisma/prisma.service';
-import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto';
-import { RecentActivityItemDto } from '../dto/responses/recent-activities-response.dto';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { DashboardQueryDto } from '@/modules/dashboard/dto/requests/dashboard-query.dto';
+import { RecentActivityItemDto } from '@/modules/dashboard/dto/responses/recent-activities-response.dto';
 
 @Injectable()
 export class GetRecentActivitiesService {

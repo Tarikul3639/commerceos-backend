@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 
-import { CartController } from './controllers/cart.controller';
+import { CartController } from '@/modules/carts/controllers/cart.controller';
 
 // Services
-import { AddCartItemService } from './services/add-cart-item.service';
-import { ClearCartService } from './services/clear-cart.service';
-import { GetCartService } from './services/get-cart.service';
-import { RemoveCartItemService } from './services/remove-cart-item.service';
-import { UpdateCartItemService } from './services/update-cart-item.service';
+import { AddCartItemService } from '@/modules/carts/services/add-cart-item.service';
+import { ClearCartService } from '@/modules/carts/services/clear-cart.service';
+import { GetCartService } from '@/modules/carts/services/get-cart.service';
+import { RemoveCartItemService } from '@/modules/carts/services/remove-cart-item.service';
+import { UpdateCartItemService } from '@/modules/carts/services/update-cart-item.service';
 
 @Module({
   controllers: [CartController],

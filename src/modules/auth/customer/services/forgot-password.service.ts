@@ -2,11 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service';
-import { MailService } from '../../../../common/mail/mail.service';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { MailService } from '@/common/mail/mail.service';
 
-import { ForgotPasswordDto } from '../dto/requests/forgot-password.dto';
-import { CustomerTokenService } from '../services/token.service';
+import { ForgotPasswordDto } from '@/modules/auth/customer/dto/requests/forgot-password.dto';
+import { CustomerTokenService } from '@/modules/auth/customer/services/token.service';
 import ms, { StringValue } from 'ms';
 
 @Injectable()

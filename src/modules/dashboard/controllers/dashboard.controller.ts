@@ -6,26 +6,26 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto';
+import { DashboardQueryDto } from '@/modules/dashboard/dto/requests/dashboard-query.dto';
 
-import { DashboardOverviewResponseDto } from '../dto/responses/dashboard-overview-response.dto';
-import { SalesSummaryResponseDto } from '../dto/responses/sales-summary-response.dto';
-import { StockSummaryResponseDto } from '../dto/responses/stock-summary-response.dto';
-import { OrderSummaryResponseDto } from '../dto/responses/order-summary-response.dto';
-import { CustomerSummaryResponseDto } from '../dto/responses/customer-summary-response.dto';
-import { LowStockProductItemDto } from '../dto/responses/low-stock-products-response.dto';
-import { RecentActivityItemDto } from '../dto/responses/recent-activities-response.dto';
-import { RecentOrderItemDto } from '../dto/responses/recent-orders-response.dto';
-import { RecentOrdersQueryDto } from '../dto/requests/recent-orders-query.dto';
+import { DashboardOverviewResponseDto } from '@/modules/dashboard/dto/responses/dashboard-overview-response.dto';
+import { SalesSummaryResponseDto } from '@/modules/dashboard/dto/responses/sales-summary-response.dto';
+import { StockSummaryResponseDto } from '@/modules/dashboard/dto/responses/stock-summary-response.dto';
+import { OrderSummaryResponseDto } from '@/modules/dashboard/dto/responses/order-summary-response.dto';
+import { CustomerSummaryResponseDto } from '@/modules/dashboard/dto/responses/customer-summary-response.dto';
+import { LowStockProductItemDto } from '@/modules/dashboard/dto/responses/low-stock-products-response.dto';
+import { RecentActivityItemDto } from '@/modules/dashboard/dto/responses/recent-activities-response.dto';
+import { RecentOrderItemDto } from '@/modules/dashboard/dto/responses/recent-orders-response.dto';
+import { RecentOrdersQueryDto } from '@/modules/dashboard/dto/requests/recent-orders-query.dto';
 
-import { GetDashboardOverviewService } from '../services/get-dashboard-overview.service';
-import { GetSalesSummaryService } from '../services/get-sales-summary.service';
-import { GetStockSummaryService } from '../services/get-stock-summary.service';
-import { GetOrderSummaryService } from '../services/get-order-summary.service';
-import { GetCustomerSummaryService } from '../services/get-customer-summary.service';
-import { GetLowStockProductsService } from '../services/get-low-stock-products.service';
-import { GetRecentActivitiesService } from '../services/get-recent-activities.service';
-import { GetRecentOrdersService } from '../services/get-recent-orders.service';
+import { GetDashboardOverviewService } from '@/modules/dashboard/services/get-dashboard-overview.service';
+import { GetSalesSummaryService } from '@/modules/dashboard/services/get-sales-summary.service';
+import { GetStockSummaryService } from '@/modules/dashboard/services/get-stock-summary.service';
+import { GetOrderSummaryService } from '@/modules/dashboard/services/get-order-summary.service';
+import { GetCustomerSummaryService } from '@/modules/dashboard/services/get-customer-summary.service';
+import { GetLowStockProductsService } from '@/modules/dashboard/services/get-low-stock-products.service';
+import { GetRecentActivitiesService } from '@/modules/dashboard/services/get-recent-activities.service';
+import { GetRecentOrdersService } from '@/modules/dashboard/services/get-recent-orders.service';
 
 @ApiTags('Dashboard')
 @ApiBearerAuth()

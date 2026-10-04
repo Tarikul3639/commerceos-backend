@@ -15,7 +15,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { AddProductImageDto } from './add-product-image.dto';
+import { AddProductImageDto } from '@/modules/catalog/products/dto/requests/add-product-image.dto';
 
 export class DiscountInputDto {
   @ApiProperty({ example: 15, minimum: 0, maximum: 100 })

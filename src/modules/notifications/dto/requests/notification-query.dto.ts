@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { NotificationType } from '../../../../lib/prisma/client';
+import { NotificationType } from '@/lib/prisma/client';
 
 export class NotificationQueryDto {
   @ApiPropertyOptional({

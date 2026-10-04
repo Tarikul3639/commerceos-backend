@@ -4,11 +4,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma } from '../../../../lib/prisma/client';
+import { Prisma } from '@/lib/prisma/client';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service';
+import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { UpdateProductDto } from '../dto/requests/update-product.dto';
+import { UpdateProductDto } from '@/modules/catalog/products/dto/requests/update-product.dto';
 
 @Injectable()
 export class UpdateProductService {

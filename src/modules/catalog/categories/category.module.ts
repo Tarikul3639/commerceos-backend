@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 
-import { CategoryController } from './controllers/category.controller';
+import { CategoryController } from '@/modules/catalog/categories/controllers/category.controller';
 
 // Services
-import { CreateCategoryService } from './services/create-category.service';
-import { GetCategoriesService } from './services/get-categories.service';
-import { GetCategoryService } from './services/get-category.service';
-import { UpdateCategoryService } from './services/update-category.service';
-import { DeleteCategoryService } from './services/delete-category.service';
+import { CreateCategoryService } from '@/modules/catalog/categories/services/create-category.service';
+import { GetCategoriesService } from '@/modules/catalog/categories/services/get-categories.service';
+import { GetCategoryService } from '@/modules/catalog/categories/services/get-category.service';
+import { UpdateCategoryService } from '@/modules/catalog/categories/services/update-category.service';
+import { DeleteCategoryService } from '@/modules/catalog/categories/services/delete-category.service';
 
 @Module({
   controllers: [CategoryController],

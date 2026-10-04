@@ -5,15 +5,15 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service';
+import { PrismaService } from '@/common/prisma/prisma.service';
 
 import {
   comparePassword,
   hashPassword,
-} from '../../../../common/utils/password.util';
+} from '@/common/utils/password.util';
 
-import { RefreshTokenService } from './refresh-token.service';
-import { ChangePasswordDto } from '../dto/requests/change-password.dto';
+import { RefreshTokenService } from '@/modules/auth/user/services/refresh-token.service';
+import { ChangePasswordDto } from '@/modules/auth/user/dto/requests/change-password.dto';
 
 @Injectable()
 export class ChangePasswordService {

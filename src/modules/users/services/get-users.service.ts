@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { Prisma, Role } from '../../../lib/prisma/client';
+import { Prisma, Role } from '@/lib/prisma/client';
 
-import { PrismaService } from '../../../common/prisma/prisma.service';
+import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { UserQueryDto } from '../dto/requests/user-query.dto';
-import { UserResponseDto } from '../dto/responses/user-response.dto';
+import { UserQueryDto } from '@/modules/users/dto/requests/user-query.dto';
+import { UserResponseDto } from '@/modules/users/dto/responses/user-response.dto';
 
 @Injectable()
 export class GetUsersService {

@@ -3,7 +3,7 @@ import { IsBoolean, IsEnum, IsOptional } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { BannerPosition, BannerType } from '../../../../lib/prisma/client';
+import { BannerPosition, BannerType } from '@/lib/prisma/client';
 
 export class BannerQueryDto {
   @ApiPropertyOptional({

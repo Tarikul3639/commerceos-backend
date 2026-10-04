@@ -15,30 +15,30 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
 
-import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
-import { UserJwtAuthGuard } from '../../../../common/guards/user-jwt-auth.guard';
-import { USER_REFRESH_TOKEN_COOKIE } from '../../../../common/constants/cookie.constants';
-import { CookieUtil } from '../../../../common/utils/cookie.util';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { USER_REFRESH_TOKEN_COOKIE } from '@/common/constants/cookie.constants';
+import { CookieUtil } from '@/common/utils/cookie.util';
 
 import {
   VerifyEmailDto,
   ResendVerificationEmailDto,
-} from '../dto/requests/verify-email.dto';
-import { LoginDto } from '../dto/requests/login.dto';
-import { ForgotPasswordDto } from '../dto/requests/forgot-password.dto';
-import { ResetPasswordDto } from '../dto/requests/reset-password.dto';
-import { ChangePasswordDto } from '../dto/requests/change-password.dto';
-import { CurrentUserResponseDto } from '../dto/responses/current-user-response.dto';
+} from '@/modules/auth/user/dto/requests/verify-email.dto';
+import { LoginDto } from '@/modules/auth/user/dto/requests/login.dto';
+import { ForgotPasswordDto } from '@/modules/auth/user/dto/requests/forgot-password.dto';
+import { ResetPasswordDto } from '@/modules/auth/user/dto/requests/reset-password.dto';
+import { ChangePasswordDto } from '@/modules/auth/user/dto/requests/change-password.dto';
+import { CurrentUserResponseDto } from '@/modules/auth/user/dto/responses/current-user-response.dto';
 
-import { LoginService } from '../services/login.service';
-import { RefreshTokenService } from '../services/refresh-token.service';
-import { LogoutService } from '../services/logout.service';
-import { LogoutAllService } from '../services/logout-all.service';
-import { ChangePasswordService } from '../services/change-password.service';
-import { ForgotPasswordService } from '../services/forgot-password.service';
-import { ResetPasswordService } from '../services/reset-password.service';
-import { VerifyEmailService } from '../services/verify-email.service';
-import { GetCurrentUserService } from '../services/get-current-user.service';
+import { LoginService } from '@/modules/auth/user/services/login.service';
+import { RefreshTokenService } from '@/modules/auth/user/services/refresh-token.service';
+import { LogoutService } from '@/modules/auth/user/services/logout.service';
+import { LogoutAllService } from '@/modules/auth/user/services/logout-all.service';
+import { ChangePasswordService } from '@/modules/auth/user/services/change-password.service';
+import { ForgotPasswordService } from '@/modules/auth/user/services/forgot-password.service';
+import { ResetPasswordService } from '@/modules/auth/user/services/reset-password.service';
+import { VerifyEmailService } from '@/modules/auth/user/services/verify-email.service';
+import { GetCurrentUserService } from '@/modules/auth/user/services/get-current-user.service';
 
 @ApiTags('User Authentication')
 @Controller('auth/user')

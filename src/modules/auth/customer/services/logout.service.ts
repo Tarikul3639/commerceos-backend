@@ -2,7 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { CustomerRefreshTokenService } from './refresh-token.service';
+import { CustomerRefreshTokenService } from '@/modules/auth/customer/services/refresh-token.service';
 
 @Injectable()
 export class CustomerLogoutService {

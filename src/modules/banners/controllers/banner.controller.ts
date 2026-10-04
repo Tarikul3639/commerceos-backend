@@ -18,17 +18,17 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CreateBannerDto } from '../dto/requests/create-banner.dto';
-import { UpdateBannerDto } from '../dto/requests/update-banner.dto';
-import { BannerQueryDto } from '../dto/requests/banner-query.dto';
+import { CreateBannerDto } from '@/modules/banners/dto/requests/create-banner.dto';
+import { UpdateBannerDto } from '@/modules/banners/dto/requests/update-banner.dto';
+import { BannerQueryDto } from '@/modules/banners/dto/requests/banner-query.dto';
 
-import { BannerResponseDto } from '../dto/responses/banner-response.dto';
+import { BannerResponseDto } from '@/modules/banners/dto/responses/banner-response.dto';
 
-import { CreateBannerService } from '../services/create-banner.service';
-import { DeleteBannerService } from '../services/delete-banner.service';
-import { GetBannerService } from '../services/get-banner.service';
-import { GetBannersService } from '../services/get-banners.service';
-import { UpdateBannerService } from '../services/update-banner.service';
+import { CreateBannerService } from '@/modules/banners/services/create-banner.service';
+import { DeleteBannerService } from '@/modules/banners/services/delete-banner.service';
+import { GetBannerService } from '@/modules/banners/services/get-banner.service';
+import { GetBannersService } from '@/modules/banners/services/get-banners.service';
+import { UpdateBannerService } from '@/modules/banners/services/update-banner.service';
 
 @ApiTags('Banners')
 @Controller('banners')

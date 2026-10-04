@@ -21,28 +21,28 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CreatePurchaseDto } from './dto/requests/create-purchase.dto';
-import { UpdatePurchaseDto } from './dto/requests/update-purchase.dto';
-import { PurchaseQueryDto } from './dto/requests/purchase-query.dto';
-import { ReceivePurchaseDto } from './dto/requests/receive-purchase.dto';
-import { CancelPurchaseDto } from './dto/requests/cancel-purchase.dto';
+import { CreatePurchaseDto } from '@/modules/purchases/dto/requests/create-purchase.dto';
+import { UpdatePurchaseDto } from '@/modules/purchases/dto/requests/update-purchase.dto';
+import { PurchaseQueryDto } from '@/modules/purchases/dto/requests/purchase-query.dto';
+import { ReceivePurchaseDto } from '@/modules/purchases/dto/requests/receive-purchase.dto';
+import { CancelPurchaseDto } from '@/modules/purchases/dto/requests/cancel-purchase.dto';
 
-import { PurchaseResponseDto } from './dto/responses/purchase-response.dto';
+import { PurchaseResponseDto } from '@/modules/purchases/dto/responses/purchase-response.dto';
 
-import { CreatePurchaseService } from './services/create-purchase.service';
-import { GetPurchaseService } from './services/get-purchase.service';
-import { GetPurchasesService } from './services/get-purchases.service';
-import { UpdatePurchaseService } from './services/update-purchase.service';
-import { ReceivePurchaseService } from './services/receive-purchase.service';
-import { CancelPurchaseService } from './services/cancel-purchase.service';
-import { DeletePurchaseService } from './services/delete-purchase.service';
+import { CreatePurchaseService } from '@/modules/purchases/services/create-purchase.service';
+import { GetPurchaseService } from '@/modules/purchases/services/get-purchase.service';
+import { GetPurchasesService } from '@/modules/purchases/services/get-purchases.service';
+import { UpdatePurchaseService } from '@/modules/purchases/services/update-purchase.service';
+import { ReceivePurchaseService } from '@/modules/purchases/services/receive-purchase.service';
+import { CancelPurchaseService } from '@/modules/purchases/services/cancel-purchase.service';
+import { DeletePurchaseService } from '@/modules/purchases/services/delete-purchase.service';
 
-import { UserJwtAuthGuard } from '../../common/guards/user-jwt-auth.guard';
-import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { RolesGuard } from '../../common/guards/roles.guard';
-import { PermissionsGuard } from '../../common/guards/permissions.guard';
-import { Permissions } from '../../common/decorators/permissions.decorator';
-import { Permission } from '../../lib/prisma/enums';
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { RolesGuard } from '@/common/guards/roles.guard';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { Permissions } from '@/common/decorators/permissions.decorator';
+import { Permission } from '@/lib/prisma/enums';
 
 @ApiTags('Purchases')
 @ApiBearerAuth()

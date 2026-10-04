@@ -4,10 +4,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma } from '../../../../lib/prisma/client';
-import { PrismaService } from '../../../../common/prisma/prisma.service';
-import { CreateDiscountDto } from '../dto/requests/create-discount.dto';
-import { DiscountResponseDto } from '../dto/responses/discount-response.dto';
+import { Prisma } from '@/lib/prisma/client';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateDiscountDto } from '@/modules/catalog/discounts/dto/requests/create-discount.dto';
+import { DiscountResponseDto } from '@/modules/catalog/discounts/dto/responses/discount-response.dto';
 
 @Injectable()
 export class CreateDiscountService {

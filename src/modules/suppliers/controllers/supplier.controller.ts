@@ -20,17 +20,17 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CreateSupplierDto } from '../dto/requests/create-supplier.dto';
-import { SupplierQueryDto } from '../dto/requests/supplier-query.dto';
-import { UpdateSupplierDto } from '../dto/requests/update-supplier.dto';
+import { CreateSupplierDto } from '@/modules/suppliers/dto/requests/create-supplier.dto';
+import { SupplierQueryDto } from '@/modules/suppliers/dto/requests/supplier-query.dto';
+import { UpdateSupplierDto } from '@/modules/suppliers/dto/requests/update-supplier.dto';
 
-import { SupplierResponseDto } from '../dto/responses/supplier-response.dto';
+import { SupplierResponseDto } from '@/modules/suppliers/dto/responses/supplier-response.dto';
 
-import { CreateSupplierService } from '../services/create-supplier.service';
-import { DeleteSupplierService } from '../services/delete-supplier.service';
-import { GetSupplierService } from '../services/get-supplier.service';
-import { GetSuppliersService } from '../services/get-suppliers.service';
-import { UpdateSupplierService } from '../services/update-supplier.service';
+import { CreateSupplierService } from '@/modules/suppliers/services/create-supplier.service';
+import { DeleteSupplierService } from '@/modules/suppliers/services/delete-supplier.service';
+import { GetSupplierService } from '@/modules/suppliers/services/get-supplier.service';
+import { GetSuppliersService } from '@/modules/suppliers/services/get-suppliers.service';
+import { UpdateSupplierService } from '@/modules/suppliers/services/update-supplier.service';
 
 @ApiTags('Suppliers')
 @Controller('suppliers')

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { PrismaService } from '../../../common/prisma/prisma.service';
-import { ActivityLogResponseDto } from '../dto/responses/activity-log-response.dto';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { ActivityLogResponseDto } from '@/modules/activity-logs/dto/responses/activity-log-response.dto';
 
 @Injectable()
 export class GetActivityLogService {

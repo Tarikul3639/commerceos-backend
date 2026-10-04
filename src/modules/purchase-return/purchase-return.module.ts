@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 
-import { UserJwtAuthGuard } from '../../common/guards/user-jwt-auth.guard';
-import { RolesGuard } from '../../common/guards/roles.guard';
-import { PermissionsGuard } from '../../common/guards/permissions.guard';
-import { PurchaseReturnController } from './purchase-return.controller';
-import { CreatePurchaseReturnService } from './services/create-purchase-return.service';
-import { GetPurchaseReturnService } from './services/get-purchase-return.service';
-import { GetPurchaseReturnsService } from './services/get-purchase-returns.service';
-import { PurchaseReturnActionsService } from './services/purchase-return-actions.service';
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { RolesGuard } from '@/common/guards/roles.guard';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { PurchaseReturnController } from '@/modules/purchase-return/purchase-return.controller';
+import { CreatePurchaseReturnService } from '@/modules/purchase-return/services/create-purchase-return.service';
+import { GetPurchaseReturnService } from '@/modules/purchase-return/services/get-purchase-return.service';
+import { GetPurchaseReturnsService } from '@/modules/purchase-return/services/get-purchase-returns.service';
+import { PurchaseReturnActionsService } from '@/modules/purchase-return/services/purchase-return-actions.service';
 
 @Module({
   controllers: [PurchaseReturnController],

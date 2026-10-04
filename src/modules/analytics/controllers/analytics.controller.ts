@@ -6,19 +6,19 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { AnalyticsQueryDto } from '../dto/requests/analytics-query.dto';
+import { AnalyticsQueryDto } from '@/modules/analytics/dto/requests/analytics-query.dto';
 
-import { RevenueChartItemDto } from '../dto/responses/revenue-chart-response.dto';
-import { SalesPurchaseChartItemDto } from '../dto/responses/sales-purchase-chart-response.dto';
-import { TopProductItemDto } from '../dto/responses/top-products-response.dto';
-import { TopCustomerItemDto } from '../dto/responses/top-customers-response.dto';
-import { PurchaseSummaryResponseDto } from '../dto/responses/purchase-summary-response.dto';
+import { RevenueChartItemDto } from '@/modules/analytics/dto/responses/revenue-chart-response.dto';
+import { SalesPurchaseChartItemDto } from '@/modules/analytics/dto/responses/sales-purchase-chart-response.dto';
+import { TopProductItemDto } from '@/modules/analytics/dto/responses/top-products-response.dto';
+import { TopCustomerItemDto } from '@/modules/analytics/dto/responses/top-customers-response.dto';
+import { PurchaseSummaryResponseDto } from '@/modules/analytics/dto/responses/purchase-summary-response.dto';
 
-import { GetRevenueChartService } from '../services/get-revenue-chart.service';
-import { GetSalesPurchaseChartService } from '../services/get-sales-purchase-chart.service';
-import { GetTopProductsService } from '../services/get-top-products.service';
-import { GetTopCustomersService } from '../services/get-top-customers.service';
-import { GetPurchaseSummaryService } from '../services/get-purchase-summary.service';
+import { GetRevenueChartService } from '@/modules/analytics/services/get-revenue-chart.service';
+import { GetSalesPurchaseChartService } from '@/modules/analytics/services/get-sales-purchase-chart.service';
+import { GetTopProductsService } from '@/modules/analytics/services/get-top-products.service';
+import { GetTopCustomersService } from '@/modules/analytics/services/get-top-customers.service';
+import { GetPurchaseSummaryService } from '@/modules/analytics/services/get-purchase-summary.service';
 
 @ApiTags('Analytics')
 @ApiBearerAuth()

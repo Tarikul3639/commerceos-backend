@@ -2,15 +2,15 @@ import { Controller, Delete, Get, Param, Patch, Query } from '@nestjs/common';
 
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { CurrentUser } from '../../../common/decorators/current-user.decorator';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
 
-import { NotificationQueryDto } from '../dto/requests/notification-query.dto';
+import { NotificationQueryDto } from '@/modules/notifications/dto/requests/notification-query.dto';
 
-import { DeleteNotificationService } from '../services/delete-notification.service';
-import { GetNotificationService } from '../services/get-notification.service';
-import { GetNotificationsService } from '../services/get-notifications.service';
-import { MarkAllNotificationsReadService } from '../services/mark-all-notifications-read.service';
-import { MarkNotificationReadService } from '../services/mark-notification-read.service';
+import { DeleteNotificationService } from '@/modules/notifications/services/delete-notification.service';
+import { GetNotificationService } from '@/modules/notifications/services/get-notification.service';
+import { GetNotificationsService } from '@/modules/notifications/services/get-notifications.service';
+import { MarkAllNotificationsReadService } from '@/modules/notifications/services/mark-all-notifications-read.service';
+import { MarkNotificationReadService } from '@/modules/notifications/services/mark-notification-read.service';
 
 @ApiTags('Notifications')
 @ApiBearerAuth()

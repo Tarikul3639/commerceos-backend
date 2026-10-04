@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaService } from '../../../common/prisma/prisma.service';
+import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { UpdateSettingsDto } from '../dto/requests/update-settings.dto';
-import { SettingsResponseDto } from '../dto/responses/settings-response.dto';
+import { UpdateSettingsDto } from '@/modules/settings/dto/requests/update-settings.dto';
+import { SettingsResponseDto } from '@/modules/settings/dto/responses/settings-response.dto';
 
 @Injectable()
 export class UpdateSettingsService {

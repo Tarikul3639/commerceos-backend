@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '../../../lib/prisma/client';
+import { Prisma } from '@/lib/prisma/client';
 
-import { PrismaService } from '../../../common/prisma/prisma.service';
-import { AnalyticsQueryDto } from '../dto/requests/analytics-query.dto';
-import { PurchaseSummaryResponseDto } from '../dto/responses/purchase-summary-response.dto';
-import { getAnalyticsDateRange } from '../utils/analytics-date-range.util';
-import { getCreatedAtFilter } from '../utils/analytics-where.util';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { AnalyticsQueryDto } from '@/modules/analytics/dto/requests/analytics-query.dto';
+import { PurchaseSummaryResponseDto } from '@/modules/analytics/dto/responses/purchase-summary-response.dto';
+import { getAnalyticsDateRange } from '@/modules/analytics/utils/analytics-date-range.util';
+import { getCreatedAtFilter } from '@/modules/analytics/utils/analytics-where.util';
 
 @Injectable()
 export class GetPurchaseSummaryService {

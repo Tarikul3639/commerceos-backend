@@ -1,4 +1,4 @@
-import { AnalyticsQueryDto } from '../dto/requests/analytics-query.dto';
+import { AnalyticsQueryDto } from '@/modules/analytics/dto/requests/analytics-query.dto';
 
 export interface AnalyticsDateRange {
   startDate: Date;

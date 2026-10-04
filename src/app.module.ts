@@ -13,36 +13,36 @@ import {
   mailConfig,
   swaggerConfig,
   envValidationSchema,
-} from './config';
+} from '@/config';
 
 // Modules
-import { PrismaModule } from './common/prisma/prisma.module';
-import { CloudinaryModule } from './common/cloudinary/cloudinary.module';
-import { MailModule } from './common/mail/mail.module';
-import { AuthModule } from './modules/auth/auth.module';
-import { UsersModule } from './modules/users/user.module';
-import { CustomerModule } from './modules/customers/customer.module';
-import { PermissionsModule } from './modules/permissions/permissions.module';
+import { PrismaModule } from '@/common/prisma/prisma.module';
+import { CloudinaryModule } from '@/common/cloudinary/cloudinary.module';
+import { MailModule } from '@/common/mail/mail.module';
+import { AuthModule } from '@/modules/auth/auth.module';
+import { UsersModule } from '@/modules/users/user.module';
+import { CustomerModule } from '@/modules/customers/customer.module';
+import { PermissionsModule } from '@/modules/permissions/permissions.module';
 
-import { CategoryModule } from './modules/catalog/categories/category.module';
-import { BrandModule } from './modules/catalog/brands/brand.module';
-import { ProductModule } from './modules/catalog/products/product.module';
-import { DiscountModule } from './modules/catalog/discounts/discount.module';
-import { StockModule } from './modules/inventory/stocks/stock.module';
+import { CategoryModule } from '@/modules/catalog/categories/category.module';
+import { BrandModule } from '@/modules/catalog/brands/brand.module';
+import { ProductModule } from '@/modules/catalog/products/product.module';
+import { DiscountModule } from '@/modules/catalog/discounts/discount.module';
+import { StockModule } from '@/modules/inventory/stocks/stock.module';
 
-import { PurchaseModule } from './modules/purchases/purchase.module';
-import { PurchaseReturnModule } from './modules/purchase-return/purchase-return.module';
-import { SupplierModule } from './modules/suppliers/supplier.module';
-import { OrderModule } from './modules/orders/order.module';
-import { CartModule } from './modules/carts/cart.module';
-import { BannerModule } from './modules/banners/banner.module';
+import { PurchaseModule } from '@/modules/purchases/purchase.module';
+import { PurchaseReturnModule } from '@/modules/purchase-return/purchase-return.module';
+import { SupplierModule } from '@/modules/suppliers/supplier.module';
+import { OrderModule } from '@/modules/orders/order.module';
+import { CartModule } from '@/modules/carts/cart.module';
+import { BannerModule } from '@/modules/banners/banner.module';
 
-import { ActivityLogModule } from './modules/activity-logs/activity-log.module';
-import { SettingsModule } from './modules/settings/settings.module';
-import { NotificationModule } from './modules/notifications/notification.module';
+import { ActivityLogModule } from '@/modules/activity-logs/activity-log.module';
+import { SettingsModule } from '@/modules/settings/settings.module';
+import { NotificationModule } from '@/modules/notifications/notification.module';
 
-import { DashboardModule } from './modules/dashboard/dashboard.module';
-import { AnalyticsModule } from './modules/analytics/analytics.module';
+import { DashboardModule } from '@/modules/dashboard/dashboard.module';
+import { AnalyticsModule } from '@/modules/analytics/analytics.module';
 
 @Module({
   imports: [

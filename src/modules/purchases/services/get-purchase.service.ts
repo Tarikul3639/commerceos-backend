@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../../common/prisma/prisma.service';
-import { PurchaseResponseDto } from '../dto/responses/purchase-response.dto';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { PurchaseResponseDto } from '@/modules/purchases/dto/responses/purchase-response.dto';
 
 @Injectable()
 export class GetPurchaseService {

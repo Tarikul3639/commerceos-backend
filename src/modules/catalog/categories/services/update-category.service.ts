@@ -5,10 +5,10 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service';
+import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { UpdateCategoryDto } from '../dto/requests/update-category.dto';
-import { CategoryResponseDto } from '../dto/responses/category-response.dto';
+import { UpdateCategoryDto } from '@/modules/catalog/categories/dto/requests/update-category.dto';
+import { CategoryResponseDto } from '@/modules/catalog/categories/dto/responses/category-response.dto';
 
 @Injectable()
 export class UpdateCategoryService {

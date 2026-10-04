@@ -4,7 +4,7 @@ import { Type } from 'class-transformer';
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { PurchaseReturnStatus } from '../../../../lib/prisma/client';
+import { PurchaseReturnStatus } from '@/lib/prisma/client';
 
 export class PurchaseReturnQueryDto {
   @ApiPropertyOptional({
