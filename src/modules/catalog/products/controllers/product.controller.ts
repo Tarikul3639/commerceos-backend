@@ -31,10 +31,10 @@ import { UpdateProductService } from '../services/update-product.service';
 import { DeleteProductService } from '../services/delete-product.service';
 import { RestoreProductService } from '../services/restore-product.service';
 import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { UserJwtAuthGuard } from '../../../../common/guards/user-jwt-auth.guard';
 import { PermissionsGuard } from '../../../../common/guards/permissions.guard';
 import { Permissions } from '../../../../common/decorators/permissions.decorator';
-import { Permission } from '@/lib/prisma/enums';
+import { Permission } from '../../../../lib/prisma/enums';
 
 @ApiTags('Products')
 @Controller('products')

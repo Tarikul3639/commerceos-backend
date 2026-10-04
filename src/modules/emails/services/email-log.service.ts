@@ -3,7 +3,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../../../common/prisma/prisma.service';
 import { MailService } from '../../../common/mail/mail.service';
 
-import { EmailStatus } from '@/lib/prisma/client';
+import { EmailStatus } from '../../../lib/prisma/client';
 
 import {
   NewOrderNotificationTemplate,

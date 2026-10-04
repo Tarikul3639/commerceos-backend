@@ -15,12 +15,12 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Permission, Role } from '@/lib/prisma/enums';
+import { Permission, Role } from '../../../lib/prisma/enums';
 
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-// import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { Permissions } from '../../../common/decorators/permissions.decorator';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard';
+// import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard';
 
 import { GetPermissionsService } from '../services/get-permissions.service';
 import { GetRolesPermissionsService } from '../services/get-roles-permissions.service';

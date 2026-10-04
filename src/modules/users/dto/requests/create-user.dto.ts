@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Role } from '@/lib/prisma/enums';
+import { Role } from '../../../../lib/prisma/enums';
 
 export const UserRole = [Role.ADMIN, Role.MANAGER, Role.EMPLOYEE] as const;
 export class CreateUserDto {

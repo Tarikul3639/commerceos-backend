@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@/lib/prisma/client';
+import { Prisma } from '../../../lib/prisma/client';
 
 import { PrismaService } from '../../../common/prisma/prisma.service';
 import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto';

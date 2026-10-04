@@ -32,10 +32,10 @@ import { CreateDiscountService } from '../services/create-discount.service';
 import { UpdateDiscountService } from '../services/update-discount.service';
 
 import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { UserJwtAuthGuard } from '../../../../common/guards/user-jwt-auth.guard';
 import { PermissionsGuard } from '../../../../common/guards/permissions.guard';
 import { Permissions } from '../../../../common/decorators/permissions.decorator';
-import { Permission } from '@/lib/prisma/enums';
+import { Permission } from '../../../../lib/prisma/enums';
 
 @ApiTags('Discounts')
 @Controller('discounts')

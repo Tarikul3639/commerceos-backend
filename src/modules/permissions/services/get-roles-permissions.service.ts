@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { Permission } from '@/lib/prisma/enums';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { Permission } from '../../../lib/prisma/enums';
+import { PrismaService } from '../../../common/prisma/prisma.service';
 
 import {
   RolePermissionsResponseDto,

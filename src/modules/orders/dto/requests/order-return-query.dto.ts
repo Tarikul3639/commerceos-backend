@@ -2,7 +2,7 @@ import { IsEnum, IsOptional, IsString } from 'class-validator';
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { OrderReturnStatus } from '@/lib/prisma/client';
+import { OrderReturnStatus } from '../../../../lib/prisma/client';
 
 export class OrderReturnQueryDto {
   @ApiPropertyOptional({

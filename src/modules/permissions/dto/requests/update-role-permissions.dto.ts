@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Permission } from '@/lib/prisma/enums';
+import { Permission } from '../../../../lib/prisma/enums';
 import { ArrayUnique, IsArray, IsEnum } from 'class-validator';
 
 export class UpdateRolePermissionsDto {

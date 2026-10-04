@@ -34,7 +34,7 @@ import { UpdateUserStatusService } from '../services/update-user-status.service'
 import { CurrentUser } from '../../../common/decorators/current-user.decorator';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../../common/guards/roles.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard';
 
 // Prisma
 import { Role } from '../../../lib/prisma/enums';

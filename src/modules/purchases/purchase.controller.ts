@@ -42,7 +42,7 @@ import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { PermissionsGuard } from '../../common/guards/permissions.guard';
 import { Permissions } from '../../common/decorators/permissions.decorator';
-import { Permission } from '@/lib/prisma/enums';
+import { Permission } from '../../lib/prisma/enums';
 
 @ApiTags('Purchases')
 @ApiBearerAuth()

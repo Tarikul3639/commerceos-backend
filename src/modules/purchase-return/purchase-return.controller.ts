@@ -25,7 +25,7 @@ import { Permissions } from '../../common/decorators/permissions.decorator';
 import { UserJwtAuthGuard } from '../../common/guards/user-jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { PermissionsGuard } from '../../common/guards/permissions.guard';
-import { Permission } from '@/lib/prisma/enums';
+import { Permission } from '../../lib/prisma/enums';
 
 import { CreatePurchaseReturnDto } from './dto/requests/create-purchase-return.dto';
 import { PurchaseReturnQueryDto } from './dto/requests/purchase-return-query.dto';

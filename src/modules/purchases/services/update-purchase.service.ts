@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma, PurchaseStatus } from '@/lib/prisma/client';
+import { Prisma, PurchaseStatus } from '../../../lib/prisma/client';
 import { PrismaService } from '../../../common/prisma/prisma.service';
 import { UpdatePurchaseDto } from '../dto/requests/update-purchase.dto';
 import { PurchaseResponseDto } from '../dto/responses/purchase-response.dto';

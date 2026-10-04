@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
 
 // DTOs
 import { AdjustStockDto } from '../dto/requests/adjust-stock.dto';
