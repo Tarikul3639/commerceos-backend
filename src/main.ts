@@ -37,7 +37,7 @@ async function bootstrap() {
   app.enableShutdownHooks();
 
   app.enableCors({
-    origin: configService.getOrThrow<string>('cors.origin'),
+    origin: configService.getOrThrow<string>('cors.origin').split(',').map((origin) => origin.trim()),
     methods: configService.getOrThrow<string>('cors.methods'),
     allowedHeaders: configService.getOrThrow<string>('cors.allowedHeaders'),
     credentials: configService.getOrThrow<boolean>('cors.credentials'),
@@ -57,15 +57,17 @@ async function bootstrap() {
     SwaggerModule.setup(`${apiPrefix}/docs`, app, document);
   }
 
-  await app.listen(port);
+  const serverHost = configService.getOrThrow<string>('app.serverHost');
+
+  await app.listen(port, '0.0.0.0');
 
   console.log(`
   🚀 ${appName} v${appVersion}
   🌍 Environment : ${nodeEnv}
-  📡 Server      : http://localhost:${port}
-  🔗 API Base    : http://localhost:${port}/${apiPrefix}/v${apiVersion}
-  📚 API Docs    : http://localhost:${port}/${apiPrefix}/docs
-  `);
+  📡 Server      : http://${serverHost}:${port}
+  🔗 API Base    : http://${serverHost}:${port}/${apiPrefix}/v${apiVersion}
+  📚 API Docs    : http://${serverHost}:${port}/${apiPrefix}/docs
+`);
 }
 
 void bootstrap();

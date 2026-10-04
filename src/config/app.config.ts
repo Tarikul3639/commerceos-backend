@@ -9,4 +9,5 @@ export default registerAs('app', () => ({
   nodeEnv: process.env.NODE_ENV,
   isProduction: process.env.NODE_ENV === 'production',
   frontendUrl: process.env.FRONTEND_URL,
+  serverHost: process.env.SERVER_HOST,
 }));
