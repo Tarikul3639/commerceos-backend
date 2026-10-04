@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { DashboardQueryDto } from '@/modules/dashboard/dto/requests/dashboard-query.dto';
-import { StockSummaryResponseDto } from '@/modules/dashboard/dto/responses/stock-summary-response.dto';
+import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto';
+import { StockSummaryResponseDto } from '../dto/responses/stock-summary-response.dto';
 
 /*
  * SERVICE: GetStockSummaryService

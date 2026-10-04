@@ -3,12 +3,12 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   ProductBrandResponseDto,
   ProductCategoryResponseDto,
-} from '@/modules/catalog/products/dto/responses/product-response.dto';
-import { ProductImageResponseDto } from '@/modules/catalog/products/dto/responses/product-image-response.dto';
-import { DiscountSummaryResponseDto } from '@/modules/catalog/products/dto/responses/discount-summary-response.dto';
-import { ProductColorResponseDto } from '@/modules/catalog/products/dto/responses/product-color-response.dto';
-import { ProductReviewResponseDto } from '@/modules/catalog/products/dto/responses/product-review-response.dto';
-import { ProductRatingResponseDto } from '@/modules/catalog/products/dto/responses/product-rating-response.dto';
+} from './product-response.dto';
+import { ProductImageResponseDto } from './product-image-response.dto';
+import { DiscountSummaryResponseDto } from './discount-summary-response.dto';
+import { ProductColorResponseDto } from './product-color-response.dto';
+import { ProductReviewResponseDto } from './product-review-response.dto';
+import { ProductRatingResponseDto } from './product-rating-response.dto';
 
 export class ProductDetailResponseDto {
   @ApiProperty()

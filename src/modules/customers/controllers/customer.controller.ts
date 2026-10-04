@@ -14,19 +14,19 @@ import {
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 // DTOs
-import { CreateCustomerDto } from '@/modules/customers/dto/requests/create-customer.dto';
-import { UpdateCustomerDto } from '@/modules/customers/dto/requests/update-customer.dto';
-import { CustomerQueryDto } from '@/modules/customers/dto/requests/customer-query.dto';
+import { CreateCustomerDto } from '../dto/requests/create-customer.dto';
+import { UpdateCustomerDto } from '../dto/requests/update-customer.dto';
+import { CustomerQueryDto } from '../dto/requests/customer-query.dto';
 
-import { CustomerResponseDto } from '@/modules/customers/dto/responses/customer-response.dto';
+import { CustomerResponseDto } from '../dto/responses/customer-response.dto';
 
 // Services
-import { CreateCustomerService } from '@/modules/customers/services/create-customer.service';
-import { GetCustomersService } from '@/modules/customers/services/get-customers.service';
-import { GetCustomerService } from '@/modules/customers/services/get-customer.service';
-import { UpdateCustomerService } from '@/modules/customers/services/update-customer.service';
-import { DeleteCustomerService } from '@/modules/customers/services/delete-customer.service';
-import { RestoreCustomerService } from '@/modules/customers/services/restore-customer.service';
+import { CreateCustomerService } from '../services/create-customer.service';
+import { GetCustomersService } from '../services/get-customers.service';
+import { GetCustomerService } from '../services/get-customer.service';
+import { UpdateCustomerService } from '../services/update-customer.service';
+import { DeleteCustomerService } from '../services/delete-customer.service';
+import { RestoreCustomerService } from '../services/restore-customer.service';
 
 @ApiTags('Customers')
 @Controller('customers')

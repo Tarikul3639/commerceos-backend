@@ -18,16 +18,16 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CreateOrderDto } from '@/modules/orders/dto/requests/create-order.dto';
-import { OrderQueryDto } from '@/modules/orders/dto/requests/order-query.dto';
-import { CancelOrderDto } from '@/modules/orders/dto/requests/cancel-order.dto';
-import { UpdateOrderStatusDto } from '@/modules/orders/dto/requests/update-order-status.dto';
+import { CreateOrderDto } from '../dto/requests/create-order.dto';
+import { OrderQueryDto } from '../dto/requests/order-query.dto';
+import { CancelOrderDto } from '../dto/requests/cancel-order.dto';
+import { UpdateOrderStatusDto } from '../dto/requests/update-order-status.dto';
 
-import { CreateOrderService } from '@/modules/orders/services/create-order.service';
-import { GetOrderService } from '@/modules/orders/services/get-order.service';
-import { GetOrdersService } from '@/modules/orders/services/get-orders.service';
-import { CancelOrderService } from '@/modules/orders/services/cancel-order.service';
-import { UpdateOrderStatusService } from '@/modules/orders/services/update-order-status.service';
+import { CreateOrderService } from '../services/create-order.service';
+import { GetOrderService } from '../services/get-order.service';
+import { GetOrdersService } from '../services/get-orders.service';
+import { CancelOrderService } from '../services/cancel-order.service';
+import { UpdateOrderStatusService } from '../services/update-order-status.service';
 
 // import { CurrentUser } from '@/common/decorators/current-user.decorator';
 // import type { CurrentUserPayload } from '@/common/interfaces/current-user.interface';

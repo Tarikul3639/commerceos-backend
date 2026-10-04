@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { CurrentUserResponseDto } from '@/modules/auth/user/dto/responses/current-user-response.dto';
+import { CurrentUserResponseDto } from '../dto/responses/current-user-response.dto';
 
 @Injectable()
 export class GetCurrentUserService {

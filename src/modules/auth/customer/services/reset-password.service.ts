@@ -4,8 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { hashPassword } from '@/common/utils/password.util';
 
-import { CustomerTokenService } from '@/modules/auth/customer/services/token.service';
-import { ResetPasswordDto } from '@/modules/auth/customer/dto/requests/reset-password.dto';
+import { CustomerTokenService } from './token.service';
+import { ResetPasswordDto } from '../dto/requests/reset-password.dto';
 
 @Injectable()
 export class CustomerResetPasswordService {

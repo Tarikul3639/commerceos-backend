@@ -4,10 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { CustomerRefreshToken } from '@/lib/prisma/client';
 
-import {
-  comparePassword,
-  hashPassword,
-} from '@/common/utils/password.util';
+import { comparePassword, hashPassword } from '@/common/utils/password.util';
 
 @Injectable()
 export class CustomerRefreshTokenService {

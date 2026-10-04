@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-import { ProductImageResponseDto } from '@/modules/catalog/products/dto/responses/product-image-response.dto';
-import { ProductColorResponseDto } from '@/modules/catalog/products/dto/responses/product-color-response.dto';
-import { DiscountSummaryResponseDto } from '@/modules/catalog/products/dto/responses/discount-summary-response.dto';
+import { ProductImageResponseDto } from './product-image-response.dto';
+import { ProductColorResponseDto } from './product-color-response.dto';
+import { DiscountSummaryResponseDto } from './discount-summary-response.dto';
 
 export class ProductCategoryResponseDto {
   @ApiProperty({

@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@/lib/prisma/client';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { DashboardQueryDto } from '@/modules/dashboard/dto/requests/dashboard-query.dto';
-import { SalesSummaryResponseDto } from '@/modules/dashboard/dto/responses/sales-summary-response.dto';
+import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto';
+import { SalesSummaryResponseDto } from '../dto/responses/sales-summary-response.dto';
 
-import { getDashboardDateRange } from '@/modules/dashboard/utils/dashboard-date-range.util';
+import { getDashboardDateRange } from '../utils/dashboard-date-range.util';
 
 @Injectable()
 export class GetSalesSummaryService {

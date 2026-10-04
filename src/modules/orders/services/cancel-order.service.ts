@@ -7,7 +7,7 @@ import {
 import { OrderStatus } from '@/lib/prisma/client';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { CancelOrderDto } from '@/modules/orders/dto/requests/cancel-order.dto';
+import { CancelOrderDto } from '../dto/requests/cancel-order.dto';
 
 @Injectable()
 export class CancelOrderService {

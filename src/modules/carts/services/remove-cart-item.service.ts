@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { CartResponseDto } from '@/modules/carts/dto/responses/cart-response.dto';
-import { getCartResponse } from '@/modules/carts/services/get-cart-response';
+import { CartResponseDto } from '../dto/responses/cart-response.dto';
+import { getCartResponse } from './get-cart-response';
 
 @Injectable()
 export class RemoveCartItemService {

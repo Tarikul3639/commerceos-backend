@@ -15,20 +15,20 @@ import {
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 // DTOs
-import { CreateUserDto } from '@/modules/users/dto/requests/create-user.dto';
-import { UpdateUserDto } from '@/modules/users/dto/requests/update-user.dto';
-import { UpdateUserStatusDto } from '@/modules/users/dto/requests/update-user-status.dto';
-import { UserQueryDto } from '@/modules/users/dto/requests/user-query.dto';
-import { UserListResponseDto } from '@/modules/users/dto/responses/user-list-response.dto';
+import { CreateUserDto } from '../dto/requests/create-user.dto';
+import { UpdateUserDto } from '../dto/requests/update-user.dto';
+import { UpdateUserStatusDto } from '../dto/requests/update-user-status.dto';
+import { UserQueryDto } from '../dto/requests/user-query.dto';
+import { UserListResponseDto } from '../dto/responses/user-list-response.dto';
 
 // Services
-import { CreateUserService } from '@/modules/users/services/create-user.service';
-import { DeleteUserService } from '@/modules/users/services/delete-user.service';
-import { GetUserService } from '@/modules/users/services/get-user.service';
-import { GetUsersService } from '@/modules/users/services/get-users.service';
-import { RestoreUserService } from '@/modules/users/services/restore-user.service';
-import { UpdateUserService } from '@/modules/users/services/update-user.service';
-import { UpdateUserStatusService } from '@/modules/users/services/update-user-status.service';
+import { CreateUserService } from '../services/create-user.service';
+import { DeleteUserService } from '../services/delete-user.service';
+import { GetUserService } from '../services/get-user.service';
+import { GetUsersService } from '../services/get-users.service';
+import { RestoreUserService } from '../services/restore-user.service';
+import { UpdateUserService } from '../services/update-user.service';
+import { UpdateUserStatusService } from '../services/update-user-status.service';
 
 // Guards & Decorators
 import { CurrentUser } from '@/common/decorators/current-user.decorator';

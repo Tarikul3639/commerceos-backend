@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { CartResponseDto } from '@/modules/carts/dto/responses/cart-response.dto';
+import { CartResponseDto } from '../dto/responses/cart-response.dto';
 
 export async function getCartResponse(
   prisma: PrismaService,

@@ -6,8 +6,8 @@ import {
 
 import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { UpdateCustomerDto } from '@/modules/customers/dto/requests/update-customer.dto';
-import { CustomerResponseDto } from '@/modules/customers/dto/responses/customer-response.dto';
+import { UpdateCustomerDto } from '../dto/requests/update-customer.dto';
+import { CustomerResponseDto } from '../dto/responses/customer-response.dto';
 
 @Injectable()
 export class UpdateCustomerService {

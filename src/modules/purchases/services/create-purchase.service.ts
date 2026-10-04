@@ -11,8 +11,8 @@ import {
   getDocumentPrefix,
 } from '@/common/utils/document-number.util';
 
-import { CreatePurchaseDto } from '@/modules/purchases/dto/requests/create-purchase.dto';
-import { PurchaseResponseDto } from '@/modules/purchases/dto/responses/purchase-response.dto';
+import { CreatePurchaseDto } from '../dto/requests/create-purchase.dto';
+import { PurchaseResponseDto } from '../dto/responses/purchase-response.dto';
 
 @Injectable()
 export class CreatePurchaseService {

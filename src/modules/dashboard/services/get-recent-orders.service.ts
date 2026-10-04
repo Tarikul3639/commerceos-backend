@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { RecentOrderItemDto } from '@/modules/dashboard/dto/responses/recent-orders-response.dto';
+import { RecentOrderItemDto } from '../dto/responses/recent-orders-response.dto';
 
 @Injectable()
 export class GetRecentOrdersService {

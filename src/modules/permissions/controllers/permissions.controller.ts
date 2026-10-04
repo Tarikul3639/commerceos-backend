@@ -22,12 +22,12 @@ import { PermissionsGuard } from '@/common/guards/permissions.guard';
 // import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
 
-import { GetPermissionsService } from '@/modules/permissions/services/get-permissions.service';
-import { GetRolesPermissionsService } from '@/modules/permissions/services/get-roles-permissions.service';
-import { UpdateRolePermissionsService } from '@/modules/permissions/services/update-role-permissions.service';
+import { GetPermissionsService } from '../services/get-permissions.service';
+import { GetRolesPermissionsService } from '../services/get-roles-permissions.service';
+import { UpdateRolePermissionsService } from '../services/update-role-permissions.service';
 
-import { RolePermissionsResponseDto } from '@/modules/permissions/dto/responses/role-permissions.response.dto';
-import { UpdateRolePermissionsDto } from '@/modules/permissions/dto/requests/update-role-permissions.dto';
+import { RolePermissionsResponseDto } from '../dto/responses/role-permissions.response.dto';
+import { UpdateRolePermissionsDto } from '../dto/requests/update-role-permissions.dto';
 
 @ApiTags('Permissions')
 @ApiBearerAuth()

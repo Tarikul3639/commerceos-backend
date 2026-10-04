@@ -2,9 +2,9 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { ActivityLogQueryDto } from '@/modules/activity-logs/dto/requests/activity-log-query.dto';
-import { GetActivityLogService } from '@/modules/activity-logs/services/get-activity-log.service';
-import { GetActivityLogsService } from '@/modules/activity-logs/services/get-activity-logs.service';
+import { ActivityLogQueryDto } from '../dto/requests/activity-log-query.dto';
+import { GetActivityLogService } from '../services/get-activity-log.service';
+import { GetActivityLogsService } from '../services/get-activity-logs.service';
 
 @ApiTags('Activity Logs')
 @ApiBearerAuth()

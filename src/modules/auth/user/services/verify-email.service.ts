@@ -7,7 +7,7 @@ import ms, { type StringValue } from 'ms';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { MailService } from '@/common/mail/mail.service';
 
-import { TokenService } from '@/modules/auth/user/services/token.service';
+import { TokenService } from './token.service';
 
 @Injectable()
 export class VerifyEmailService {

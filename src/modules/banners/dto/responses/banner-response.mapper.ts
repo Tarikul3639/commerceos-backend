@@ -1,5 +1,5 @@
 import type { Prisma } from '@/lib/prisma/client';
-import { BannerResponseDto } from '@/modules/banners/dto/responses/banner-response.dto';
+import { BannerResponseDto } from './banner-response.dto';
 
 export const bannerWithUsers = {
   createdBy: {

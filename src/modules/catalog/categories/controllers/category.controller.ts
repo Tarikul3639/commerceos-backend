@@ -14,16 +14,16 @@ import {
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 
 // DTOs
-import { CreateCategoryDto } from '@/modules/catalog/categories/dto/requests/create-category.dto';
-import { UpdateCategoryDto } from '@/modules/catalog/categories/dto/requests/update-category.dto';
-import { CategoryQueryDto } from '@/modules/catalog/categories/dto/requests/category-query.dto';
+import { CreateCategoryDto } from '../dto/requests/create-category.dto';
+import { UpdateCategoryDto } from '../dto/requests/update-category.dto';
+import { CategoryQueryDto } from '../dto/requests/category-query.dto';
 
 // Services
-import { CreateCategoryService } from '@/modules/catalog/categories/services/create-category.service';
-import { GetCategoriesService } from '@/modules/catalog/categories/services/get-categories.service';
-import { GetCategoryService } from '@/modules/catalog/categories/services/get-category.service';
-import { UpdateCategoryService } from '@/modules/catalog/categories/services/update-category.service';
-import { DeleteCategoryService } from '@/modules/catalog/categories/services/delete-category.service';
+import { CreateCategoryService } from '../services/create-category.service';
+import { GetCategoriesService } from '../services/get-categories.service';
+import { GetCategoryService } from '../services/get-category.service';
+import { UpdateCategoryService } from '../services/update-category.service';
+import { DeleteCategoryService } from '../services/delete-category.service';
 
 @ApiTags('Categories')
 @Controller('categories')

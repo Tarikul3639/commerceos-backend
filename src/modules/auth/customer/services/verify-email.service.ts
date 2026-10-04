@@ -11,7 +11,7 @@ import ms, { type StringValue } from 'ms';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { MailService } from '@/common/mail/mail.service';
 
-import { CustomerTokenService } from '@/modules/auth/customer/services/token.service';
+import { CustomerTokenService } from './token.service';
 
 @Injectable()
 export class CustomerVerifyEmailService {

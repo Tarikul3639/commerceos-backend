@@ -7,7 +7,7 @@ import {
 import { OrderStatus } from '@/lib/prisma/client';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { UpdateOrderStatusDto } from '@/modules/orders/dto/requests/update-order-status.dto';
+import { UpdateOrderStatusDto } from '../dto/requests/update-order-status.dto';
 
 @Injectable()
 export class UpdateOrderStatusService {

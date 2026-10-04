@@ -12,8 +12,8 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { UpdateProductImageDto } from '@/modules/catalog/products/dto/requests/update-product-image.dto';
-import { DiscountInputDto, ProductColorDto } from '@/modules/catalog/products/dto/requests/create-product.dto';
+import { UpdateProductImageDto } from './update-product-image.dto';
+import { DiscountInputDto, ProductColorDto } from './create-product.dto';
 
 export class UpdateProductDto {
   @ApiPropertyOptional()

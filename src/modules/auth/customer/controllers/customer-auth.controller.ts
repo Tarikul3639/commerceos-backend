@@ -20,22 +20,22 @@ import { CustomerJwtAuthGuard } from '@/common/guards/customer-jwt-auth.guard';
 import { CookieUtil } from '@/common/utils/cookie.util';
 
 // DTOs
-import { LoginDto } from '@/modules/auth/customer/dto/requests/login.dto';
-import { RegisterDto } from '@/modules/auth/customer/dto/requests/register.dto';
-import { ChangePasswordDto } from '@/modules/auth/customer/dto/requests/change-password.dto';
-import { ForgotPasswordDto } from '@/modules/auth/customer/dto/requests/forgot-password.dto';
-import { ResetPasswordDto } from '@/modules/auth/customer/dto/requests/reset-password.dto';
-import { VerifyEmailDto } from '@/modules/auth/customer/dto/requests/verify-email.dto';
+import { LoginDto } from '../dto/requests/login.dto';
+import { RegisterDto } from '../dto/requests/register.dto';
+import { ChangePasswordDto } from '../dto/requests/change-password.dto';
+import { ForgotPasswordDto } from '../dto/requests/forgot-password.dto';
+import { ResetPasswordDto } from '../dto/requests/reset-password.dto';
+import { VerifyEmailDto } from '../dto/requests/verify-email.dto';
 
 // Services
-import { CustomerRegisterService } from '@/modules/auth/customer/services/register.service';
-import { CustomerLoginService } from '@/modules/auth/customer/services/login.service';
-import { CustomerLogoutService } from '@/modules/auth/customer/services/logout.service';
-import { CustomerLogoutAllService } from '@/modules/auth/customer/services/logout-all.service';
-import { CustomerChangePasswordService } from '@/modules/auth/customer/services/change-password.service';
-import { CustomerForgotPasswordService } from '@/modules/auth/customer/services/forgot-password.service';
-import { CustomerResetPasswordService } from '@/modules/auth/customer/services/reset-password.service';
-import { CustomerVerifyEmailService } from '@/modules/auth/customer/services/verify-email.service';
+import { CustomerRegisterService } from '../services/register.service';
+import { CustomerLoginService } from '../services/login.service';
+import { CustomerLogoutService } from '../services/logout.service';
+import { CustomerLogoutAllService } from '../services/logout-all.service';
+import { CustomerChangePasswordService } from '../services/change-password.service';
+import { CustomerForgotPasswordService } from '../services/forgot-password.service';
+import { CustomerResetPasswordService } from '../services/reset-password.service';
+import { CustomerVerifyEmailService } from '../services/verify-email.service';
 
 @ApiTags('Customer Authentication')
 @Controller('auth/customer')

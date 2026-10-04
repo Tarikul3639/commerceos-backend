@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { UserResponseDto } from '@/modules/users/dto/responses/user-response.dto';
+import { UserResponseDto } from '../dto/responses/user-response.dto';
 import { Role, UserStatus } from '@/lib/prisma/enums';
 
 @Injectable()

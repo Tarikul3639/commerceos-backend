@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { TokenService } from '@/modules/auth/user/services/token.service';
+import { TokenService } from './token.service';
 
 import { hashPassword } from '@/common/utils/password.util';
 

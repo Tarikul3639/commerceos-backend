@@ -6,8 +6,8 @@ import {
 
 import { PurchaseStatus } from '@/lib/prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreatePurchaseReturnDto } from '@/modules/purchase-return/dto/requests/create-purchase-return.dto';
-import { PurchaseReturnResponseDto } from '@/modules/purchase-return/dto/responses/purchase-return-response.dto';
+import { CreatePurchaseReturnDto } from '../dto/requests/create-purchase-return.dto';
+import { PurchaseReturnResponseDto } from '../dto/responses/purchase-return-response.dto';
 
 @Injectable()
 export class CreatePurchaseReturnService {

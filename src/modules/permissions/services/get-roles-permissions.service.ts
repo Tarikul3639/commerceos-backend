@@ -6,7 +6,7 @@ import { PrismaService } from '@/common/prisma/prisma.service';
 import {
   RolePermissionsResponseDto,
   UserRole,
-} from '@/modules/permissions/dto/responses/role-permissions.response.dto';
+} from '../dto/responses/role-permissions.response.dto';
 
 @Injectable()
 export class GetRolesPermissionsService {

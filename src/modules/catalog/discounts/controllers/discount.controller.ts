@@ -15,21 +15,21 @@ import {
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 // DTOs
-import { DiscountQueryDto } from '@/modules/catalog/discounts/dto/requests/discount-query.dto';
-import { CreateDiscountDto } from '@/modules/catalog/discounts/dto/requests/create-discount.dto';
-import { UpdateDiscountDto } from '@/modules/catalog/discounts/dto/requests/update-discount.dto';
+import { DiscountQueryDto } from '../dto/requests/discount-query.dto';
+import { CreateDiscountDto } from '../dto/requests/create-discount.dto';
+import { UpdateDiscountDto } from '../dto/requests/update-discount.dto';
 
 import {
   DiscountResponseDto,
   DiscountResponseWithPaginationDto,
-} from '@/modules/catalog/discounts/dto/responses/discount-response.dto';
+} from '../dto/responses/discount-response.dto';
 
 // Services
-import { GetDiscountsService } from '@/modules/catalog/discounts/services/get-discounts.service';
-import { GetDiscountService } from '@/modules/catalog/discounts/services/get-discount.service';
-import { DeleteDiscountService } from '@/modules/catalog/discounts/services/delete-discount.service';
-import { CreateDiscountService } from '@/modules/catalog/discounts/services/create-discount.service';
-import { UpdateDiscountService } from '@/modules/catalog/discounts/services/update-discount.service';
+import { GetDiscountsService } from '../services/get-discounts.service';
+import { GetDiscountService } from '../services/get-discount.service';
+import { DeleteDiscountService } from '../services/delete-discount.service';
+import { CreateDiscountService } from '../services/create-discount.service';
+import { UpdateDiscountService } from '../services/update-discount.service';
 
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';

@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { generateRandomHashPassword } from '@/common/utils/password.util';
-import { CreateCustomerDto } from '@/modules/customers/dto/requests/create-customer.dto';
+import { CreateCustomerDto } from '../dto/requests/create-customer.dto';
 
 @Injectable()
 export class CreateCustomerService {

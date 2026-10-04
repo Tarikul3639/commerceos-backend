@@ -6,8 +6,8 @@ import {
 
 import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { UpdateBrandDto } from '@/modules/catalog/brands/dto/requests/update-brand.dto';
-import { BrandResponseDto } from '@/modules/catalog/brands/dto/responses/brand-response.dto';
+import { UpdateBrandDto } from '../dto/requests/update-brand.dto';
+import { BrandResponseDto } from '../dto/responses/brand-response.dto';
 
 @Injectable()
 export class UpdateBrandService {

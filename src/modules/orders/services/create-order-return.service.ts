@@ -6,8 +6,8 @@ import {
 
 import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { CreateOrderReturnDto } from '@/modules/orders/dto/requests/create-order-return.dto';
-import { OrderReturnResponseDto } from '@/modules/orders/dto/responses/order-return-response.dto';
+import { CreateOrderReturnDto } from '../dto/requests/create-order-return.dto';
+import { OrderReturnResponseDto } from '../dto/responses/order-return-response.dto';
 
 import {
   generateDocumentNumber,

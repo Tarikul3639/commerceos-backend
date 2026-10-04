@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { SettingsResponseDto } from '@/modules/settings/dto/responses/settings-response.dto';
+import { SettingsResponseDto } from '../dto/responses/settings-response.dto';
 
 @Injectable()
 export class GetSettingsService {

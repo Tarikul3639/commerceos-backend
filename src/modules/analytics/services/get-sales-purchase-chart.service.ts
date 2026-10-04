@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@/lib/prisma/client';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { AnalyticsQueryDto } from '@/modules/analytics/dto/requests/analytics-query.dto';
-import { SalesPurchaseChartItemDto } from '@/modules/analytics/dto/responses/sales-purchase-chart-response.dto';
-import { getAnalyticsDateRange } from '@/modules/analytics/utils/analytics-date-range.util';
-import { getCreatedAtFilter } from '@/modules/analytics/utils/analytics-where.util';
+import { AnalyticsQueryDto } from '../dto/requests/analytics-query.dto';
+import { SalesPurchaseChartItemDto } from '../dto/responses/sales-purchase-chart-response.dto';
+import { getAnalyticsDateRange } from '../utils/analytics-date-range.util';
+import { getCreatedAtFilter } from '../utils/analytics-where.util';
 
 @Injectable()
 export class GetSalesPurchaseChartService {

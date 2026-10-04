@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { DashboardQueryDto } from '@/modules/dashboard/dto/requests/dashboard-query.dto';
-import { LowStockProductItemDto } from '@/modules/dashboard/dto/responses/low-stock-products-response.dto';
+import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto';
+import { LowStockProductItemDto } from '../dto/responses/low-stock-products-response.dto';
 
 @Injectable()
 export class GetLowStockProductsService {

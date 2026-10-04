@@ -5,8 +5,8 @@ import {
 } from '@nestjs/common';
 import { Prisma, PurchaseStatus } from '@/lib/prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { UpdatePurchaseDto } from '@/modules/purchases/dto/requests/update-purchase.dto';
-import { PurchaseResponseDto } from '@/modules/purchases/dto/responses/purchase-response.dto';
+import { UpdatePurchaseDto } from '../dto/requests/update-purchase.dto';
+import { PurchaseResponseDto } from '../dto/responses/purchase-response.dto';
 
 @Injectable()
 export class UpdatePurchaseService {

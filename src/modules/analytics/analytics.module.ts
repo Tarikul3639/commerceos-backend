@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { AnalyticsController } from '@/modules/analytics/controllers/analytics.controller';
+import { AnalyticsController } from './controllers/analytics.controller';
 
-import { GetRevenueChartService } from '@/modules/analytics/services/get-revenue-chart.service';
-import { GetSalesPurchaseChartService } from '@/modules/analytics/services/get-sales-purchase-chart.service';
-import { GetTopProductsService } from '@/modules/analytics/services/get-top-products.service';
-import { GetTopCustomersService } from '@/modules/analytics/services/get-top-customers.service';
-import { GetPurchaseSummaryService } from '@/modules/analytics/services/get-purchase-summary.service';
+import { GetRevenueChartService } from './services/get-revenue-chart.service';
+import { GetSalesPurchaseChartService } from './services/get-sales-purchase-chart.service';
+import { GetTopProductsService } from './services/get-top-products.service';
+import { GetTopCustomersService } from './services/get-top-customers.service';
+import { GetPurchaseSummaryService } from './services/get-purchase-summary.service';
 
 @Module({
   controllers: [AnalyticsController],

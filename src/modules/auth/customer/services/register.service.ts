@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { RegisterDto } from '@/modules/auth/customer/dto/requests/register.dto';
+import { RegisterDto } from '../dto/requests/register.dto';
 
 import { hashPassword } from '@/common/utils/password.util';
 

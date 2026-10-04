@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { CustomerResponseDto } from '@/modules/customers/dto/responses/customer-response.dto';
+import { CustomerResponseDto } from '../dto/responses/customer-response.dto';
 @Injectable()
 export class GetCustomerService {
   constructor(private readonly prisma: PrismaService) {}

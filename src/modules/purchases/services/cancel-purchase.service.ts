@@ -8,7 +8,7 @@ import { PurchaseStatus } from '@/lib/prisma/client';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { CancelPurchaseDto } from '@/modules/purchases/dto/requests/cancel-purchase.dto';
+import { CancelPurchaseDto } from '../dto/requests/cancel-purchase.dto';
 
 @Injectable()
 export class CancelPurchaseService {

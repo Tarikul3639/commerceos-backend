@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 
-import { NotificationController } from '@/modules/notifications/controllers/notification.controller';
+import { NotificationController } from './controllers/notification.controller';
 
-import { CreateNotificationService } from '@/modules/notifications/services/create-notification.service';
-import { DeleteNotificationService } from '@/modules/notifications/services/delete-notification.service';
-import { GetNotificationService } from '@/modules/notifications/services/get-notification.service';
-import { GetNotificationsService } from '@/modules/notifications/services/get-notifications.service';
-import { MarkAllNotificationsReadService } from '@/modules/notifications/services/mark-all-notifications-read.service';
-import { MarkNotificationReadService } from '@/modules/notifications/services/mark-notification-read.service';
+import { CreateNotificationService } from './services/create-notification.service';
+import { DeleteNotificationService } from './services/delete-notification.service';
+import { GetNotificationService } from './services/get-notification.service';
+import { GetNotificationsService } from './services/get-notifications.service';
+import { MarkAllNotificationsReadService } from './services/mark-all-notifications-read.service';
+import { MarkNotificationReadService } from './services/mark-notification-read.service';
 
 @Module({
   controllers: [NotificationController],

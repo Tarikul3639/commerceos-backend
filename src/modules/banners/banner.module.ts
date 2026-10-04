@@ -2,14 +2,14 @@ import { Module } from '@nestjs/common';
 import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
 import { PermissionsGuard } from '@/common/guards/permissions.guard';
 
-import { BannerController } from '@/modules/banners/controllers/banner.controller';
+import { BannerController } from './controllers/banner.controller';
 
 // Services
-import { CreateBannerService } from '@/modules/banners/services/create-banner.service';
-import { DeleteBannerService } from '@/modules/banners/services/delete-banner.service';
-import { GetBannerService } from '@/modules/banners/services/get-banner.service';
-import { GetBannersService } from '@/modules/banners/services/get-banners.service';
-import { UpdateBannerService } from '@/modules/banners/services/update-banner.service';
+import { CreateBannerService } from './services/create-banner.service';
+import { DeleteBannerService } from './services/delete-banner.service';
+import { GetBannerService } from './services/get-banner.service';
+import { GetBannersService } from './services/get-banners.service';
+import { UpdateBannerService } from './services/update-banner.service';
 
 @Module({
   controllers: [BannerController],

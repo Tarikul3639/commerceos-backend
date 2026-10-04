@@ -1,7 +1,7 @@
 // src/modules/auth/customer/services/logout-all.service.ts
 
 import { Injectable } from '@nestjs/common';
-import { CustomerRefreshTokenService } from '@/modules/auth/customer/services/refresh-token.service';
+import { CustomerRefreshTokenService } from './refresh-token.service';
 
 @Injectable()
 export class CustomerLogoutAllService {

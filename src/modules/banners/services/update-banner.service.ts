@@ -7,12 +7,12 @@ import {
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { CloudinaryService } from '@/common/cloudinary/cloudinary.service';
 
-import { UpdateBannerDto } from '@/modules/banners/dto/requests/update-banner.dto';
-import { BannerResponseDto } from '@/modules/banners/dto/responses/banner-response.dto';
+import { UpdateBannerDto } from '../dto/requests/update-banner.dto';
+import { BannerResponseDto } from '../dto/responses/banner-response.dto';
 import {
   bannerWithUsers,
   toBannerResponse,
-} from '@/modules/banners/dto/responses/banner-response.mapper';
+} from '../dto/responses/banner-response.mapper';
 
 @Injectable()
 export class UpdateBannerService {

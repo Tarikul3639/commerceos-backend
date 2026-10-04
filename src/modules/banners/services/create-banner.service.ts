@@ -3,12 +3,12 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { CloudinaryService } from '@/common/cloudinary/cloudinary.service';
 
-import { CreateBannerDto } from '@/modules/banners/dto/requests/create-banner.dto';
-import { BannerResponseDto } from '@/modules/banners/dto/responses/banner-response.dto';
+import { CreateBannerDto } from '../dto/requests/create-banner.dto';
+import { BannerResponseDto } from '../dto/responses/banner-response.dto';
 import {
   bannerWithUsers,
   toBannerResponse,
-} from '@/modules/banners/dto/responses/banner-response.mapper';
+} from '../dto/responses/banner-response.mapper';
 
 @Injectable()
 export class CreateBannerService {

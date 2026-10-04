@@ -2,8 +2,8 @@ import { ConflictException, Injectable } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { CreateSupplierDto } from '@/modules/suppliers/dto/requests/create-supplier.dto';
-import { SupplierResponseDto } from '@/modules/suppliers/dto/responses/supplier-response.dto';
+import { CreateSupplierDto } from '../dto/requests/create-supplier.dto';
+import { SupplierResponseDto } from '../dto/responses/supplier-response.dto';
 
 @Injectable()
 export class CreateSupplierService {

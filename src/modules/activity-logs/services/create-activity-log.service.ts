@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateActivityLogInput } from '@/modules/activity-logs/interfaces/activity-log.interface';
+import { CreateActivityLogInput } from '../interfaces/activity-log.interface';
 
 @Injectable()
 export class CreateActivityLogService {

@@ -7,8 +7,8 @@ import {
 import { CloudinaryService } from '@/common/cloudinary/cloudinary.service';
 import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { UpdateUserDto } from '@/modules/users/dto/requests/update-user.dto';
-import { UserResponseDto } from '@/modules/users/dto/responses/user-response.dto';
+import { UpdateUserDto } from '../dto/requests/update-user.dto';
+import { UserResponseDto } from '../dto/responses/user-response.dto';
 
 /* ============================================================================
  * SERVICE

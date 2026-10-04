@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { StockResponseDto } from '@/modules/inventory/stocks/dto/responses/stock-response.dto';
+import { StockResponseDto } from '../dto/responses/stock-response.dto';
 
 @Injectable()
 export class GetStockService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async execute(productId: string): Promise<StockResponseDto> {
     const product = await this.prisma.product.findFirst({

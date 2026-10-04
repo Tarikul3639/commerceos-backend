@@ -2,8 +2,8 @@ import { ConflictException, Injectable } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { CreateBrandDto } from '@/modules/catalog/brands/dto/requests/create-brand.dto';
-import { BrandResponseDto } from '@/modules/catalog/brands/dto/responses/brand-response.dto';
+import { CreateBrandDto } from '../dto/requests/create-brand.dto';
+import { BrandResponseDto } from '../dto/responses/brand-response.dto';
 
 @Injectable()
 export class CreateBrandService {

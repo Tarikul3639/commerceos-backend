@@ -45,7 +45,10 @@ export class UpdateBannerDto {
   @IsUrl()
   mobileImageUrl?: string | null;
 
-  @ApiPropertyOptional({ example: 'banners/summer-sale_mobile', nullable: true })
+  @ApiPropertyOptional({
+    example: 'banners/summer-sale_mobile',
+    nullable: true,
+  })
   @IsOptional()
   @IsString()
   mobileImagePublicId?: string | null;

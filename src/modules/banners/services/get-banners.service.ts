@@ -1,25 +1,20 @@
 import { Injectable } from '@nestjs/common';
-
 import { Prisma } from '@/lib/prisma/client';
-
 import { PrismaService } from '@/common/prisma/prisma.service';
 
-import { BannerQueryDto } from '@/modules/banners/dto/requests/banner-query.dto';
-import { BannerResponseDto } from '@/modules/banners/dto/responses/banner-response.dto';
+import { BannerQueryDto } from '../dto/requests/banner-query.dto';
 import {
   bannerWithUsers,
   toBannerResponse,
-} from '@/modules/banners/dto/responses/banner-response.mapper';
+} from '../dto/responses/banner-response.mapper';
 
-import { PaginatedResponse } from '@/common/interfaces/paginated-response.interface';
+import { BannerListResponseDto } from '../dto/responses/banner-list-response.dto';
 
 @Injectable()
 export class GetBannersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(
-    query: BannerQueryDto,
-  ): Promise<PaginatedResponse<BannerResponseDto>> {
+  async execute(query: BannerQueryDto): Promise<BannerListResponseDto> {
     const {
       page = '1',
       limit = '10',

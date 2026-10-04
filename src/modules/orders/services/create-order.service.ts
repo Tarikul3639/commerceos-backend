@@ -5,8 +5,8 @@ import {
 } from '@nestjs/common';
 import { Prisma } from '@/lib/prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateOrderDto } from '@/modules/orders/dto/requests/create-order.dto';
-import { OrderResponseDto } from '@/modules/orders/dto/responses/order-response.dto';
+import { CreateOrderDto } from '../dto/requests/create-order.dto';
+import { OrderResponseDto } from '../dto/responses/order-response.dto';
 import {
   generateDocumentNumber,
   getDocumentPrefix,

@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { PurchaseStatus } from '@/lib/prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { ReceivePurchaseDto } from '@/modules/purchases/dto/requests/receive-purchase.dto';
+import { ReceivePurchaseDto } from '../dto/requests/receive-purchase.dto';
 
 @Injectable()
 export class ReceivePurchaseService {

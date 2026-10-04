@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { PaginatedResponse } from '@/common/interfaces/paginated-response.interface';
-import { DiscountQueryDto } from '@/modules/catalog/discounts/dto/requests/discount-query.dto';
-import { DiscountResponseDto } from '@/modules/catalog/discounts/dto/responses/discount-response.dto';
+import { DiscountQueryDto } from '../dto/requests/discount-query.dto';
+import { DiscountResponseDto } from '../dto/responses/discount-response.dto';
 
 @Injectable()
 export class GetDiscountsService {
