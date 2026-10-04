@@ -58,7 +58,7 @@ const envValidationSchema = Joi.object({
 
   // Cloudinary configuration for image uploads
   // Database URL for connecting to the database
-  PRISMA_DATABASE_URL: Joi.string().required(),
+  DATABASE_URL: Joi.string().required(),
   // Frontend URL for CORS configuration
   CORS_ORIGIN: Joi.string().required(),
   CORS_METHODS: Joi.string().default('GET,POST,PUT,DELETE,PATCH'),

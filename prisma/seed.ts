@@ -11,10 +11,10 @@ import {
     Role,
 } from "../src/lib/prisma/client"
 
-const connectionString = process.env.PRISMA_DATABASE_URL
+const connectionString = process.env.DATABASE_URL
 
 if (!connectionString) {
-    throw new Error("PRISMA_DATABASE_URL environment variable is not set.")
+    throw new Error("DATABASE_URL environment variable is not set.")
 }
 
 const adapter = new PrismaPg({
