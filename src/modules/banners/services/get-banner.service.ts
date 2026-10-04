@@ -3,6 +3,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
 
 import { BannerResponseDto } from '@/modules/banners/dto/responses/banner-response.dto';
+import {
+  bannerWithUsers,
+  toBannerResponse,
+} from '@/modules/banners/dto/responses/banner-response.mapper';
 
 @Injectable()
 export class GetBannerService {
@@ -13,27 +17,13 @@ export class GetBannerService {
       where: {
         id: bannerId,
       },
+      include: bannerWithUsers,
     });
 
     if (!banner) {
       throw new NotFoundException('Banner not found');
     }
 
-    return {
-      id: banner.id,
-      title: banner.title,
-      imageUrl: banner.imageUrl,
-      mobileImageUrl: banner.mobileImageUrl,
-      type: banner.type,
-      position: banner.position,
-      link: banner.link,
-      buttonText: banner.buttonText,
-      sortOrder: banner.sortOrder,
-      isActive: banner.isActive,
-      startAt: banner.startAt,
-      endAt: banner.endAt,
-      createdAt: banner.createdAt,
-      updatedAt: banner.updatedAt,
-    };
+    return toBannerResponse(banner);
   }
 }

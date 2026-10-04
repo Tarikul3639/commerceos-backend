@@ -45,6 +45,11 @@ enum Permission {
   STOCK_READ
   STOCK_UPDATE
   STOCK_DELETE
+
+  BANNER_CREATE
+  BANNER_READ
+  BANNER_UPDATE
+  BANNER_DELETE
 }
 
 enum UserStatus {
@@ -96,6 +101,9 @@ model User {
 
   createdPurchaseReturns  PurchaseReturn[] @relation("PurchaseReturnCreatedBy")
   approvedPurchaseReturns PurchaseReturn[] @relation("PurchaseReturnApprovedBy")
+
+  createdBanners Banner[] @relation("BannerCreatedBy")
+  updatedBanners Banner[] @relation("BannerUpdatedBy")
 
   // Activity Logs
   activityLogs ActivityLog[]

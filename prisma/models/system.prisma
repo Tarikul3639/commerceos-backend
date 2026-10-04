@@ -68,7 +68,6 @@ enum EmailStatus {
 }
 
 enum BannerType {
-  HERO
   PROMOTION
   OFFER
   PRODUCT
@@ -80,6 +79,17 @@ enum BannerPosition {
   HOME_TOP
   HOME_MIDDLE
   HOME_BOTTOM
+
+  CATEGORY_TOP
+  CATEGORY_MIDDLE
+
+  PRODUCT_TOP
+  PRODUCT_MIDDLE
+
+  SHOP_TOP
+  SHOP_MIDDLE
+
+  SIDEBAR
 }
 
 model Settings {
@@ -225,11 +235,13 @@ model Banner {
 
   title String?
 
-  // Banner image URL
-  imageUrl String
+  // Desktop banner image
+  imageUrl      String
+  imagePublicId String
 
-  // Optional image for mobile devices
-  mobileImageUrl String?
+  // Optional mobile banner image
+  mobileImageUrl      String?
+  mobileImagePublicId String?
 
   type     BannerType
   position BannerPosition
@@ -238,6 +250,9 @@ model Banner {
   link String?
 
   buttonText String?
+
+  // Indicates whether the link should open in a new tab
+  openInNewTab Boolean @default(false)
 
   // Controls display order
   sortOrder Int @default(0)
@@ -248,11 +263,19 @@ model Banner {
   startAt DateTime?
   endAt   DateTime?
 
+  createdById String?
+  updatedById String?
+
+  createdBy User? @relation("BannerCreatedBy", fields: [createdById], references: [id])
+  updatedBy User? @relation("BannerUpdatedBy", fields: [updatedById], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([type])
   @@index([position])
   @@index([isActive])
+  @@index([createdById])
+  @@index([updatedById])
   @@map("banners")
 }

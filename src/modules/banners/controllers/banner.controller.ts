@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 
 import {
@@ -23,6 +24,12 @@ import { UpdateBannerDto } from '@/modules/banners/dto/requests/update-banner.dt
 import { BannerQueryDto } from '@/modules/banners/dto/requests/banner-query.dto';
 
 import { BannerResponseDto } from '@/modules/banners/dto/responses/banner-response.dto';
+
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { Permissions } from '@/common/decorators/permissions.decorator';
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { Permission } from '@/lib/prisma/enums';
 
 import { CreateBannerService } from '@/modules/banners/services/create-banner.service';
 import { DeleteBannerService } from '@/modules/banners/services/delete-banner.service';
@@ -42,6 +49,8 @@ export class BannerController {
   ) {}
 
   @Post()
+  @UseGuards(UserJwtAuthGuard, PermissionsGuard)
+  @Permissions(Permission.BANNER_CREATE)
   @ApiOperation({
     summary: 'Create a new banner',
   })
@@ -50,11 +59,14 @@ export class BannerController {
   })
   async create(
     @Body() createBannerDto: CreateBannerDto,
+    @CurrentUser('id') userId: string,
   ): Promise<BannerResponseDto> {
-    return this.createBannerService.execute(createBannerDto);
+    return this.createBannerService.execute(userId, createBannerDto);
   }
 
   @Get()
+  @UseGuards(UserJwtAuthGuard, PermissionsGuard)
+  @Permissions(Permission.BANNER_READ)
   @ApiOperation({
     summary: 'Get all banners',
   })
@@ -63,6 +75,8 @@ export class BannerController {
   }
 
   @Get(':id')
+  @UseGuards(UserJwtAuthGuard, PermissionsGuard)
+  @Permissions(Permission.BANNER_READ)
   @ApiOperation({
     summary: 'Get a banner by ID',
   })
@@ -74,6 +88,8 @@ export class BannerController {
   }
 
   @Patch(':id')
+  @UseGuards(UserJwtAuthGuard, PermissionsGuard)
+  @Permissions(Permission.BANNER_UPDATE)
   @ApiOperation({
     summary: 'Update a banner',
   })
@@ -84,11 +100,14 @@ export class BannerController {
     @Param('id') id: string,
 
     @Body() updateBannerDto: UpdateBannerDto,
+    @CurrentUser('id') userId: string,
   ): Promise<BannerResponseDto> {
-    return this.updateBannerService.execute(id, updateBannerDto);
+    return this.updateBannerService.execute(id, userId, updateBannerDto);
   }
 
   @Delete(':id')
+  @UseGuards(UserJwtAuthGuard, PermissionsGuard)
+  @Permissions(Permission.BANNER_DELETE)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Delete a banner',

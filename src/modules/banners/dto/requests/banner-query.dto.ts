@@ -1,4 +1,4 @@
-import { IsBoolean, IsEnum, IsOptional } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
 
 import { Transform, Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
@@ -6,6 +6,12 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { BannerPosition, BannerType } from '@/lib/prisma/client';
 
 export class BannerQueryDto {
+  @ApiPropertyOptional({ description: 'Search banners by title' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  search?: string;
+
   @ApiPropertyOptional({
     example: '1',
     default: '1',

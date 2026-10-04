@@ -1,84 +1,100 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CloudinaryService } from '@/common/cloudinary/cloudinary.service';
 
 import { CreateBannerDto } from '@/modules/banners/dto/requests/create-banner.dto';
 import { BannerResponseDto } from '@/modules/banners/dto/responses/banner-response.dto';
+import {
+  bannerWithUsers,
+  toBannerResponse,
+} from '@/modules/banners/dto/responses/banner-response.mapper';
 
 @Injectable()
 export class CreateBannerService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
-  async execute(createBannerDto: CreateBannerDto): Promise<BannerResponseDto> {
+  async execute(
+    userId: string,
+    createBannerDto: CreateBannerDto,
+  ): Promise<BannerResponseDto> {
     const {
       title,
       imageUrl,
+      imagePublicId,
       mobileImageUrl,
+      mobileImagePublicId,
       type,
       position,
       link,
       buttonText,
+      openInNewTab,
       sortOrder,
       isActive,
       startAt,
       endAt,
     } = createBannerDto;
 
-    const banner = await this.prisma.banner.create({
-      data: {
-        imageUrl,
-        type,
-        position,
+    if ((mobileImageUrl == null) !== (mobileImagePublicId == null)) {
+      throw new BadRequestException(
+        'Mobile image URL and public ID must be provided together',
+      );
+    }
 
-        ...(title !== undefined && {
-          title,
-        }),
+    if (startAt && endAt && startAt > endAt) {
+      throw new BadRequestException('End date must be after start date');
+    }
 
-        ...(mobileImageUrl !== undefined && {
-          mobileImageUrl,
-        }),
+    try {
+      const banner = await this.prisma.banner.create({
+        data: {
+          imageUrl,
+          imagePublicId,
+          type,
+          position,
+          createdById: userId,
+          updatedById: userId,
 
-        ...(link !== undefined && {
-          link,
-        }),
+          ...(title !== undefined && {
+            title: title.trim() || null,
+          }),
 
-        ...(buttonText !== undefined && {
-          buttonText,
-        }),
+          ...(mobileImageUrl != null && {
+            mobileImageUrl,
+            mobileImagePublicId,
+          }),
 
-        ...(sortOrder !== undefined && {
-          sortOrder,
-        }),
+          ...(link !== undefined && {
+            link: link.trim() || null,
+          }),
 
-        ...(isActive !== undefined && {
-          isActive,
-        }),
+          ...(buttonText !== undefined && {
+            buttonText: buttonText.trim() || null,
+          }),
 
-        ...(startAt !== undefined && {
-          startAt: new Date(startAt),
-        }),
+          ...(openInNewTab !== undefined && { openInNewTab }),
 
-        ...(endAt !== undefined && {
-          endAt: new Date(endAt),
-        }),
-      },
-    });
+          ...(sortOrder !== undefined && { sortOrder }),
+          ...(isActive !== undefined && { isActive }),
 
-    return {
-      id: banner.id,
-      title: banner.title,
-      imageUrl: banner.imageUrl,
-      mobileImageUrl: banner.mobileImageUrl,
-      type: banner.type,
-      position: banner.position,
-      link: banner.link,
-      buttonText: banner.buttonText,
-      sortOrder: banner.sortOrder,
-      isActive: banner.isActive,
-      startAt: banner.startAt,
-      endAt: banner.endAt,
-      createdAt: banner.createdAt,
-      updatedAt: banner.updatedAt,
-    };
+          ...(startAt !== undefined && { startAt }),
+          ...(endAt !== undefined && { endAt }),
+        },
+        include: bannerWithUsers,
+      });
+
+      return toBannerResponse(banner);
+    } catch (error) {
+      const uploadedIds = [imagePublicId, mobileImagePublicId].filter(
+        (publicId): publicId is string => !!publicId,
+      );
+      await Promise.allSettled(
+        uploadedIds.map((publicId) => this.cloudinaryService.delete(publicId)),
+      );
+      throw error;
+    }
   }
 }

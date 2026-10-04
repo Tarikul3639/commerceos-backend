@@ -6,6 +6,10 @@ import { PrismaService } from '@/common/prisma/prisma.service';
 
 import { BannerQueryDto } from '@/modules/banners/dto/requests/banner-query.dto';
 import { BannerResponseDto } from '@/modules/banners/dto/responses/banner-response.dto';
+import {
+  bannerWithUsers,
+  toBannerResponse,
+} from '@/modules/banners/dto/responses/banner-response.mapper';
 
 import { PaginatedResponse } from '@/common/interfaces/paginated-response.interface';
 
@@ -16,12 +20,25 @@ export class GetBannersService {
   async execute(
     query: BannerQueryDto,
   ): Promise<PaginatedResponse<BannerResponseDto>> {
-    const { page = '1', limit = '10', type, position, isActive } = query;
+    const {
+      page = '1',
+      limit = '10',
+      search,
+      type,
+      position,
+      isActive,
+    } = query;
 
     const currentPage = Math.max(Number(page), 1);
     const pageSize = Math.min(Math.max(Number(limit), 1), 100);
 
     const where: Prisma.BannerWhereInput = {
+      ...(search?.trim() && {
+        title: {
+          contains: search.trim(),
+          mode: 'insensitive',
+        },
+      }),
       ...(type && {
         type,
       }),
@@ -40,6 +57,7 @@ export class GetBannersService {
         where,
         skip: (currentPage - 1) * pageSize,
         take: pageSize,
+        include: bannerWithUsers,
 
         orderBy: [
           {
@@ -58,22 +76,7 @@ export class GetBannersService {
     ]);
 
     return {
-      data: banners.map((banner) => ({
-        id: banner.id,
-        title: banner.title,
-        imageUrl: banner.imageUrl,
-        mobileImageUrl: banner.mobileImageUrl,
-        type: banner.type,
-        position: banner.position,
-        link: banner.link,
-        buttonText: banner.buttonText,
-        sortOrder: banner.sortOrder,
-        isActive: banner.isActive,
-        startAt: banner.startAt,
-        endAt: banner.endAt,
-        createdAt: banner.createdAt,
-        updatedAt: banner.updatedAt,
-      })),
+      data: banners.map(toBannerResponse),
 
       meta: {
         total,

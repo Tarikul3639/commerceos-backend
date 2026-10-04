@@ -1,5 +1,6 @@
 import {
   IsBoolean,
+  IsDate,
   IsEnum,
   IsInt,
   IsOptional,
@@ -30,13 +31,22 @@ export class CreateBannerDto {
   @IsUrl()
   imageUrl!: string;
 
+  @ApiProperty({ example: 'banners/summer-sale_desktop' })
+  @IsString()
+  imagePublicId!: string;
+
   @ApiPropertyOptional({
     example: 'https://example.com/banner-mobile.jpg',
   })
   @IsOptional()
   @IsString()
   @IsUrl()
-  mobileImageUrl?: string;
+  mobileImageUrl?: string | null;
+
+  @ApiPropertyOptional({ example: 'banners/summer-sale_mobile' })
+  @IsOptional()
+  @IsString()
+  mobileImagePublicId?: string | null;
 
   @ApiProperty({
     enum: BannerType,
@@ -66,6 +76,11 @@ export class CreateBannerDto {
   @MaxLength(100)
   buttonText?: string;
 
+  @ApiPropertyOptional({ default: false })
+  @IsOptional()
+  @IsBoolean()
+  openInNewTab?: boolean;
+
   @ApiPropertyOptional({
     example: 0,
     default: 0,
@@ -89,6 +104,7 @@ export class CreateBannerDto {
   })
   @IsOptional()
   @Type(() => Date)
+  @IsDate()
   startAt?: Date;
 
   @ApiPropertyOptional({
@@ -96,5 +112,6 @@ export class CreateBannerDto {
   })
   @IsOptional()
   @Type(() => Date)
+  @IsDate()
   endAt?: Date;
 }

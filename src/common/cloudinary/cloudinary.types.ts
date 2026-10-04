@@ -6,6 +6,7 @@ export const CloudinaryFolder = Object.freeze({
   PRODUCTS: 'products',
   CATEGORIES: 'categories',
   BRANDS: 'brands',
+  BANNERS: 'banners',
 
   USERS: 'users',
   CUSTOMERS: 'customers',

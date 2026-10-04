@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
 
 import { BannerController } from '@/modules/banners/controllers/banner.controller';
 
@@ -18,6 +20,8 @@ import { UpdateBannerService } from '@/modules/banners/services/update-banner.se
     GetBannersService,
     UpdateBannerService,
     DeleteBannerService,
+    UserJwtAuthGuard,
+    PermissionsGuard,
   ],
 })
 export class BannerModule {}

@@ -16,10 +16,16 @@ export class BannerResponseDto {
   })
   imageUrl!: string;
 
+  @ApiProperty()
+  imagePublicId!: string;
+
   @ApiPropertyOptional({
     example: 'https://example.com/banner-mobile.jpg',
   })
   mobileImageUrl!: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  mobileImagePublicId!: string | null;
 
   @ApiProperty({
     enum: BannerType,
@@ -41,6 +47,9 @@ export class BannerResponseDto {
   })
   buttonText!: string | null;
 
+  @ApiProperty()
+  openInNewTab!: boolean;
+
   @ApiProperty({
     example: 0,
   })
@@ -55,9 +64,32 @@ export class BannerResponseDto {
   @ApiPropertyOptional()
   endAt!: Date | null;
 
+  @ApiPropertyOptional({ nullable: true })
+  createdById!: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  updatedById!: string | null;
+
+  @ApiPropertyOptional({ type: () => BannerActorResponseDto, nullable: true })
+  createdBy!: BannerActorResponseDto | null;
+
+  @ApiPropertyOptional({ type: () => BannerActorResponseDto, nullable: true })
+  updatedBy!: BannerActorResponseDto | null;
+
   @ApiProperty()
   createdAt!: Date;
 
   @ApiProperty()
   updatedAt!: Date;
+}
+
+export class BannerActorResponseDto {
+  @ApiProperty()
+  id!: string;
+
+  @ApiProperty()
+  name!: string;
+
+  @ApiProperty()
+  email!: string;
 }
