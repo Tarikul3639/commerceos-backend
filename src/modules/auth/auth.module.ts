@@ -7,8 +7,8 @@ import { PassportModule } from '@nestjs/passport';
 import type { StringValue } from 'ms';
 
 // Common Modules
-import { PrismaModule } from '../../common/prisma/prisma.module';
-import { MailModule } from '../../common/mail/mail.module';
+import { PrismaModule } from '@/common/prisma/prisma.module';
+import { MailModule } from '@/common/mail/mail.module';
 
 // Customer Authentication
 import { CustomerJwtStrategy } from '../../common/strategies/customer-jwt.strategy';
