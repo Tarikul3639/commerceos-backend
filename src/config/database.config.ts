@@ -1,5 +1,5 @@
 import { registerAs } from '@nestjs/config';
 
 export default registerAs('database', () => ({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.PRISMA_DATABASE_URL,
 }));
