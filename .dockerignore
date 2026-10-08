@@ -1,0 +1,12 @@
+# Ignore files and directories
+node_modules
+dist
+.git
+.gitignore
+.env
+.env.*
+coverage
+npm-debug.log
+pnpm-debug.log
+Dockerfile
+docker-compose.yml
