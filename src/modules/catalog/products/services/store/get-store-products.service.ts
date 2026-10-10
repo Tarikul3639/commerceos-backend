@@ -3,32 +3,56 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
 
 import { ProductQueryDto } from '../../dto/requests/product-query.dto';
-import { StoreProductListResponseDto } from '../../dto/responses/store-product-list-response.dto';
+import {
+    StoreProductListItemDto,
+    StoreProductListResponseDto,
+} from '../../dto/responses/store-product-list-response.dto';
+import { buildStoreProductWhere } from '../../utils/product-query.util';
 
 @Injectable()
 export class GetStoreProductsService {
-  constructor(private readonly prisma: PrismaService) {}
+    constructor(private readonly prisma: PrismaService) { }
 
-  async execute(query: ProductQueryDto): Promise<StoreProductListResponseDto> {
-    const products = await this.prisma.product.findMany({
-      where: {
-        deletedAt: null,
-        status: 'PUBLISHED',
-        ...(query.categoryId && { categoryId: query.categoryId }),
-      },
-      orderBy: { createdAt: 'desc' },
-      take: Number(query.limit ?? 10),
-      skip: Number(query.page ?? 1) > 1 ? (Number(query.page ?? 1) - 1) * Number(query.limit ?? 10) : 0,
-      include: { images: { orderBy: { sortOrder: 'asc' }, take: 1 } },
-    });
+    async execute(
+        query: ProductQueryDto,
+    ): Promise<StoreProductListResponseDto> {
+        const page = query.page ?? 1;
+        const limit = Math.min(query.limit ?? 10, 100);
+        const skip = (page - 1) * limit;
+        const where = buildStoreProductWhere(query);
 
-    return {
-      data: products.map((product) => ({
-        id: product.id,
-        name: product.name,
-        sellingPrice: product.sellingPrice.toString(),
-        imageUrl: product.images[0]?.imageUrl ?? null,
-      })),
-    };
-  }
+        const [products, total] = await this.prisma.$transaction([
+            this.prisma.product.findMany({
+                where,
+                skip,
+                take: limit,
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    images: {
+                        orderBy: { sortOrder: 'asc' },
+                    },
+                },
+            }),
+            this.prisma.product.count({ where }),
+        ]);
+
+        const data: StoreProductListItemDto[] = products.map((product) => ({
+            id: product.id,
+            name: product.name,
+            subDescription: product.subDescription,
+            sellingPrice: product.sellingPrice.toString(),
+            categoryId: product.categoryId,
+            brandId: product.brandId,
+            createdAt: product.createdAt,
+            images: product.images.map((image) => image.imageUrl),
+        }));
+
+        return {
+            data,
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total / limit),
+        };
+    }
 }

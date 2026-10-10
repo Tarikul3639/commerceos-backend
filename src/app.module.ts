@@ -24,10 +24,8 @@ import { UsersModule } from '@/modules/users/user.module';
 import { CustomerModule } from '@/modules/customers/customer.module';
 import { PermissionsModule } from '@/modules/permissions/permissions.module';
 
-import { CategoryModule } from '@/modules/catalog/categories/category.module';
-import { BrandModule } from '@/modules/catalog/brands/brand.module';
-import { ProductModule } from '@/modules/catalog/products/product.module';
-import { StockModule } from '@/modules/inventory/stocks/stock.module';
+import { CatalogModule } from '@/modules/catalog/catalog.module';
+import { SizeGuideModule } from '@/modules/size-guides/size-guide.module';
 
 import { PurchaseModule } from '@/modules/purchases/purchase.module';
 import { PurchaseReturnModule } from '@/modules/purchase-return/purchase-return.module';
@@ -82,10 +80,8 @@ import { AnalyticsModule } from '@/modules/analytics/analytics.module';
 
     CustomerModule,
 
-    CategoryModule,
-    BrandModule,
-    ProductModule,
-    StockModule,
+    CatalogModule,
+    SizeGuideModule,
 
     PurchaseModule,
     PurchaseReturnModule,

@@ -1,45 +1,79 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { Prisma } from '@/lib/prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
 
 import { CreateProductDto } from '../../dto/requests/create-product.dto';
-import { ProductDetailResponseDto } from '../../dto/responses/product-detail-response.dto';
+import { AdminProductDetailResponseDto } from '../../dto/responses/admin-product-detail-response.dto';
 
 @Injectable()
 export class CreateProductService {
-  constructor(private readonly prisma: PrismaService) {}
+    constructor(private readonly prisma: PrismaService) { }
 
-  async execute(
-    userId: string,
-    dto: CreateProductDto,
-  ): Promise<ProductDetailResponseDto> {
-    const product = await this.prisma.product.create({
-      data: {
-        name: dto.name,
-        description: dto.description ?? null,
-        subDescription: dto.subDescription ?? null,
-        purchasePrice: new Prisma.Decimal(dto.purchasePrice),
-        sellingPrice: new Prisma.Decimal(dto.sellingPrice),
-        categoryId: dto.categoryId,
-        brandId: dto.brandId ?? null,
-        status: dto.status ?? 'DRAFT',
-      },
-      include: {
-        category: { select: { id: true, name: true, slug: true } },
-      },
-    });
+    async execute(dto: CreateProductDto): Promise<AdminProductDetailResponseDto> {
+        const category = await this.prisma.category.findUnique({
+            where: { id: dto.categoryId },
+            select: { id: true },
+        });
 
-    return {
-      id: product.id,
-      name: product.name,
-      description: product.description,
-      subDescription: product.subDescription,
-      purchasePrice: product.purchasePrice.toString(),
-      sellingPrice: product.sellingPrice.toString(),
-      status: product.status,
-      createdAt: product.createdAt,
-      updatedAt: product.updatedAt,
-    } as ProductDetailResponseDto;
-  }
+        if (!category) {
+            throw new NotFoundException('Category not found');
+        }
+
+        if (dto.brandId) {
+            const brand = await this.prisma.brand.findUnique({
+                where: { id: dto.brandId },
+                select: { id: true },
+            });
+
+            if (!brand) {
+                throw new NotFoundException('Brand not found');
+            }
+        }
+
+        if (dto.sizeGuideId) {
+            const sizeGuide = await this.prisma.sizeGuide.findUnique({
+                where: { id: dto.sizeGuideId },
+                select: { id: true },
+            });
+
+            if (!sizeGuide) {
+                throw new NotFoundException('Size guide not found');
+            }
+        }
+
+        const product = await this.prisma.product.create({
+            data: {
+                name: dto.name,
+                ...(dto.subDescription !== undefined && {
+                    subDescription: dto.subDescription,
+                }),
+                ...(dto.description !== undefined && {
+                    description: dto.description,
+                }),
+                purchasePrice: dto.purchasePrice,
+                sellingPrice: dto.sellingPrice,
+                categoryId: category.id,
+                ...(dto.brandId !== undefined && {
+                    brandId: dto.brandId,
+                }),
+                ...(dto.sizeGuideId !== undefined && {
+                    sizeGuideId: dto.sizeGuideId,
+                }),
+                ...(dto.status !== undefined && {
+                    status: dto.status,
+                }),
+            },
+            include: {
+                images: {
+                    orderBy: { sortOrder: 'asc' },
+                },
+            },
+        });
+
+        return {
+            ...product,
+            purchasePrice: product.purchasePrice.toString(),
+            sellingPrice: product.sellingPrice.toString(),
+        };
+    }
 }

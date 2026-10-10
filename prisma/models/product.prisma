@@ -29,7 +29,7 @@ model Product {
   images        ProductImage[]
   variants      ProductVariant[]
   options       ProductOption[]
-  discount      Discount? // TODO: Model will be updated
+  // discount      Discount? // TODO: Model will be updated
   purchaseItems PurchaseItem[]
   cartItems     CartItem[]
   orderItems    OrderItem[]

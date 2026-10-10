@@ -91,7 +91,7 @@ model User {
   emailVerificationTokens UserEmailVerificationToken[]
 
   orders    Order[]
-  discounts Discount[]
+  // discounts Discount[]
 
   purchases Purchase[]
   payments  Payment[]
