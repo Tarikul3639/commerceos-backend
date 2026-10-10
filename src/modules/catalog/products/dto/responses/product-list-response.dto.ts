@@ -1,18 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { PaginationMetaDto } from '@/common/dto/responses/pagination-meta.dto';
 import { ProductResponseDto } from './product-response.dto';
 
-export class ProductListResponseDto {
-  @ApiProperty({
-    type: [ProductResponseDto],
-    description: 'List of products',
-  })
-  data!: ProductResponseDto[];
+export class ProductListMetaDto {
+  @ApiProperty() total!: number;
+  @ApiProperty() page!: number;
+  @ApiProperty() limit!: number;
+  @ApiProperty() totalPages!: number;
+  @ApiProperty() hasNextPage!: boolean;
+  @ApiProperty() hasPreviousPage!: boolean;
+}
 
-  @ApiProperty({
-    type: PaginationMetaDto,
-    description: 'Pagination metadata',
-  })
-  meta!: PaginationMetaDto;
+export class ProductListResponseDto {
+  @ApiProperty({ type: [ProductResponseDto] }) data!: ProductResponseDto[];
+  @ApiProperty({ type: ProductListMetaDto }) meta!: ProductListMetaDto;
 }

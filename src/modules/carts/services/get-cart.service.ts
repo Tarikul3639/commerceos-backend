@@ -17,6 +17,7 @@ export class GetCartService {
             product: {
               include: { images: { orderBy: { sortOrder: 'asc' }, take: 1 } },
             },
+            variant: true,
           },
           orderBy: { createdAt: 'desc' },
         },
@@ -25,12 +26,20 @@ export class GetCartService {
     return {
       id: cart.id,
       customerId: cart.customerId,
-      items: cart.items.map(({ product, ...item }) => ({
+      items: cart.items.map(({ product, variant, ...item }) => ({
         ...item,
+        variant: variant
+          ? {
+              id: variant.id,
+              sku: variant.sku,
+              colorName: null,
+              colorHex: null,
+              size: null,
+            }
+          : null,
         product: {
           id: product.id,
           name: product.name,
-          sku: product.sku,
           price: product.sellingPrice.toString(),
           imageUrl: product.images[0]?.imageUrl ?? null,
         },

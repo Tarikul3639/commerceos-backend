@@ -3,7 +3,10 @@ import { ConfigService } from '@nestjs/config';
 
 import { v2 as cloudinary } from 'cloudinary';
 
-import { CloudinaryFolderType, ResourceType } from '@/common/cloudinary/cloudinary.types';
+import {
+  CloudinaryFolderType,
+  ResourceType,
+} from '@/common/cloudinary/cloudinary.types';
 import { CloudinaryUploadSignatureDto } from '@/common/cloudinary/dto/responses/cloudinary-upload-signature.dto';
 
 @Injectable()

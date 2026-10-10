@@ -1,14 +1,15 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
 import { PaginationMetaDto } from '@/common/dto/responses/pagination-meta.dto';
 
-/*
+/* ============================================================================
  * DTO: StockResponseDto
- */
+ * ============================================================================ */
 
 export class StockResponseDto {
-  /*
+  /* --------------------------------------------------------------------------
    * Identifiers & References
-   */
+   * -------------------------------------------------------------------------- */
 
   @ApiProperty({
     description: 'Unique stock record identifier',
@@ -22,25 +23,31 @@ export class StockResponseDto {
   })
   productId!: string;
 
-  /*
+  @ApiProperty({
+    description: 'Product variant identifier',
+    example: 'clx456variant789',
+  })
+  variantId!: string;
+
+  /* --------------------------------------------------------------------------
    * Stock Details
-   */
+   * -------------------------------------------------------------------------- */
 
   @ApiProperty({
-    description: 'Current product stock quantity',
+    description: 'Current product variant stock quantity',
     example: 25,
   })
   quantity!: number;
 
   @ApiProperty({
-    description: 'Product SKU',
+    description: 'Product variant SKU',
     example: 'TSHIRT-RED-M',
   })
   sku!: string;
 
-  /*
+  /* --------------------------------------------------------------------------
    * Product Info & Metadata
-   */
+   * -------------------------------------------------------------------------- */
 
   @ApiProperty({
     description: 'Product name',
@@ -61,6 +68,10 @@ export class StockResponseDto {
   })
   updatedAt!: Date;
 }
+
+/* ============================================================================
+ * DTO: StockListResponseDto
+ * ============================================================================ */
 
 export class StockListResponseDto {
   @ApiProperty({

@@ -121,7 +121,6 @@ export class CreateOrderReturnService {
                   product: {
                     select: {
                       id: true,
-                      sku: true,
                       name: true,
                     },
                   },

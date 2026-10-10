@@ -25,7 +25,7 @@ export class CookieUtil {
     return {
       httpOnly: true,
       secure: configService.getOrThrow<boolean>('app.isProduction'),
-      sameSite: 'none',
+      sameSite: 'lax',
       path: '/',
     };
   }

@@ -27,7 +27,6 @@ import { PermissionsModule } from '@/modules/permissions/permissions.module';
 import { CategoryModule } from '@/modules/catalog/categories/category.module';
 import { BrandModule } from '@/modules/catalog/brands/brand.module';
 import { ProductModule } from '@/modules/catalog/products/product.module';
-import { DiscountModule } from '@/modules/catalog/discounts/discount.module';
 import { StockModule } from '@/modules/inventory/stocks/stock.module';
 
 import { PurchaseModule } from '@/modules/purchases/purchase.module';
@@ -86,7 +85,6 @@ import { AnalyticsModule } from '@/modules/analytics/analytics.module';
     CategoryModule,
     BrandModule,
     ProductModule,
-    DiscountModule,
     StockModule,
 
     PurchaseModule,

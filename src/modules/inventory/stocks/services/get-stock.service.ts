@@ -1,39 +1,51 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+
 import { PrismaService } from '@/common/prisma/prisma.service';
+
 import { StockResponseDto } from '../dto/responses/stock-response.dto';
 
 @Injectable()
 export class GetStockService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(productId: string): Promise<StockResponseDto> {
-    const product = await this.prisma.product.findFirst({
+  async execute(variantId: string): Promise<StockResponseDto> {
+    // Fetch the variant with its product and primary image.
+    const variant = await this.prisma.productVariant.findFirst({
       where: {
-        id: productId,
+        id: variantId,
         deletedAt: null,
+        product: {
+          deletedAt: null,
+        },
       },
       include: {
-        images: {
-          orderBy: {
-            sortOrder: 'asc',
+        product: {
+          include: {
+            images: {
+              orderBy: {
+                sortOrder: 'asc',
+              },
+              take: 1,
+            },
           },
-          take: 1,
         },
       },
     });
 
-    if (!product) {
-      throw new NotFoundException('Product not found');
+    if (!variant) {
+      throw new NotFoundException('Product variant not found');
     }
 
+    // Map the variant and product details to the stock response DTO.
     return {
-      id: product.id,
-      productId: product.id,
-      quantity: product.stock,
-      sku: product.sku,
-      productName: product.name,
-      productImage: product.images[0]?.imageUrl ?? null,
-      updatedAt: product.updatedAt,
+      id: variant.id,
+      variantId: variant.id,
+      productId: variant.productId,
+      quantity: variant.stock,
+      sku: variant.sku,
+      productName: variant.product.name,
+      productImage: variant.product.images[0]?.imageUrl ?? null,
+      updatedAt: variant.updatedAt,
     };
   }
 }

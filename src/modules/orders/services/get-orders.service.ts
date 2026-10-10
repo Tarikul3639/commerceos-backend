@@ -65,7 +65,7 @@ export class GetOrdersService {
           user: { select: { id: true, name: true, email: true } },
           orderItems: {
             include: {
-              product: { select: { id: true, name: true, sku: true } },
+              product: { select: { id: true, name: true } },
             },
           },
         },
@@ -95,6 +95,10 @@ export class GetOrdersService {
           subtotal: item.subtotal.toString(),
           productId: item.productId,
           product: item.product,
+          variantId: item.variantId,
+          variantSku: item.variantSku,
+          variantColor: item.variantColor,
+          variantSize: item.variantSize,
           createdAt: item.createdAt,
           updatedAt: item.updatedAt,
         })),

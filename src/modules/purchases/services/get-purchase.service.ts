@@ -1,22 +1,51 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+
 import { PrismaService } from '@/common/prisma/prisma.service';
+
 import { PurchaseResponseDto } from '../dto/responses/purchase-response.dto';
 
 @Injectable()
 export class GetPurchaseService {
   constructor(private readonly prisma: PrismaService) {}
+
   async execute(purchaseId: string): Promise<PurchaseResponseDto> {
+    // Fetch the purchase with supplier, user, and purchase item details.
     const purchase = await this.prisma.purchase.findUnique({
-      where: { id: purchaseId },
+      where: {
+        id: purchaseId,
+      },
       include: {
-        supplier: { select: { id: true, name: true } },
-        user: { select: { id: true, name: true, email: true } },
+        supplier: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
         purchaseItems: {
-          include: { product: { select: { id: true, name: true, sku: true } } },
+          include: {
+            product: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
         },
       },
     });
-    if (!purchase) throw new NotFoundException('Purchase not found');
+
+    if (!purchase) {
+      throw new NotFoundException('Purchase not found');
+    }
+
+    // Convert Decimal values to strings for the API response.
     return {
       id: purchase.id,
       invoiceNo: purchase.invoiceNo,

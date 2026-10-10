@@ -1,49 +1,35 @@
-import { IsOptional, IsString } from 'class-validator';
-
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
+
+import { ProductStatus } from '@/lib/prisma/client';
 
 export class ProductQueryDto {
-  @ApiPropertyOptional({
-    example: 'nike',
-  })
+  @ApiPropertyOptional({ example: 'nike' })
   @IsOptional()
   @IsString()
   search?: string;
 
-  @ApiPropertyOptional({
-    example: 'cmf123categoryid',
-  })
+  @ApiPropertyOptional({ example: 'category_123' })
   @IsOptional()
   @IsString()
   categoryId?: string;
 
-  @ApiPropertyOptional({
-    example: 'cmf123brandid',
-  })
+  @ApiPropertyOptional({ example: 'brand_123' })
   @IsOptional()
   @IsString()
   brandId?: string;
 
-  @ApiPropertyOptional({
-    example: 'true',
-    enum: ['true', 'false'],
-  })
+  @ApiPropertyOptional({ enum: ProductStatus })
   @IsOptional()
-  @IsString()
-  isActive?: string;
+  @IsEnum(ProductStatus)
+  status?: ProductStatus;
 
-  @ApiPropertyOptional({
-    example: '1',
-    default: '1',
-  })
+  @ApiPropertyOptional({ example: '1' })
   @IsOptional()
   @IsString()
   page?: string;
 
-  @ApiPropertyOptional({
-    example: '10',
-    default: '10',
-  })
+  @ApiPropertyOptional({ example: '10' })
   @IsOptional()
   @IsString()
   limit?: string;

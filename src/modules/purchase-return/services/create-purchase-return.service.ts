@@ -165,7 +165,6 @@ export class CreatePurchaseReturnService {
                 product: {
                   select: {
                     id: true,
-                    sku: true,
                     name: true,
                   },
                 },

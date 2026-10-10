@@ -1,0 +1,63 @@
+enum ProductStatus {
+  DRAFT
+  PROPOSED
+  PUBLISHED
+  REJECTED
+}
+
+model Product {
+  id             String  @id @default(cuid())
+  name           String
+  subDescription String?
+  description    String?
+
+  purchasePrice Decimal
+  sellingPrice  Decimal
+
+  status    ProductStatus @default(DRAFT)
+  deletedAt DateTime?
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  brandId String?
+  brand   Brand?  @relation(fields: [brandId], references: [id], onDelete: SetNull)
+
+  sizeGuideId String?
+  sizeGuide   SizeGuide? @relation(fields: [sizeGuideId], references: [id], onDelete: SetNull)
+
+  images        ProductImage[]
+  variants      ProductVariant[]
+  options       ProductOption[]
+  discount      Discount? // TODO: Model will be updated
+  purchaseItems PurchaseItem[]
+  cartItems     CartItem[]
+  orderItems    OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([categoryId])
+  @@index([brandId])
+  @@index([sizeGuideId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("products")
+}
+
+model ProductImage {
+  id       String @id @default(cuid())
+  imageUrl String
+  publicId String @unique
+
+  sortOrder Int @default(0)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId, sortOrder])
+  @@map("product_images")
+}

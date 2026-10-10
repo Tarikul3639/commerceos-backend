@@ -15,7 +15,7 @@ export class AdjustStockDto {
   })
   @IsString()
   @IsNotEmpty()
-  productId!: string;
+  variantId!: string;
 
   @ApiProperty({
     example: 10,

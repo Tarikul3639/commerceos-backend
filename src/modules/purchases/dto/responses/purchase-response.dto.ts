@@ -20,7 +20,6 @@ export class PurchaseItemResponseDto {
   product!: {
     id: string;
     name: string;
-    sku: string;
   };
 
   @ApiProperty()

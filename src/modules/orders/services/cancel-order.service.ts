@@ -19,7 +19,7 @@ export class CancelOrderService {
         where: { id: orderId },
         include: {
           orderItems: {
-            select: { productId: true, quantity: true },
+            select: { variantId: true, quantity: true },
           },
         },
       });
@@ -47,10 +47,12 @@ export class CancelOrderService {
       }
 
       for (const item of order.orderItems) {
-        await tx.product.update({
-          where: { id: item.productId },
-          data: { stock: { increment: item.quantity } },
-        });
+        if (item.variantId) {
+          await tx.productVariant.update({
+            where: { id: item.variantId },
+            data: { stock: { increment: item.quantity } },
+          });
+        }
       }
 
       return tx.order.findUniqueOrThrow({ where: { id: orderId } });

@@ -17,15 +17,15 @@ export class CreateOrderItemDto {
   @IsNotEmpty()
   productId!: string;
 
+  @ApiPropertyOptional({ example: 'cmabc123variant', nullable: true })
+  @IsOptional()
+  @IsString()
+  variantId?: string | null;
+
   @ApiProperty({ example: 2, minimum: 1 })
   @IsInt()
   @IsPositive()
   quantity!: number;
-
-  @ApiProperty({ example: '500.00' })
-  @IsString()
-  @IsNotEmpty()
-  unitPrice!: string;
 }
 
 export class CreateOrderDto {

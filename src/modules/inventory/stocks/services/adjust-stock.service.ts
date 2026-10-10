@@ -15,60 +15,35 @@ export class AdjustStockService {
     _userId: string,
     dto: AdjustStockDto,
   ): Promise<StockResponseDto> {
-    const product = await this.prisma.product.findFirst({
-      where: {
-        id: dto.productId,
-        deletedAt: null,
-      },
-      select: {
-        id: true,
-        stock: true,
-      },
+    const variant = await this.prisma.productVariant.findFirst({
+      where: { id: dto.variantId, deletedAt: null },
+      select: { id: true, stock: true },
     });
-
-    if (!product) {
-      throw new NotFoundException('Product not found');
-    }
-
-    const stock = product.stock + dto.quantity;
-
-    if (stock < 0) {
-      throw new BadRequestException('Stock cannot be negative');
-    }
-
-    const updatedProduct = await this.prisma.product.update({
-      where: {
-        id: product.id,
-      },
-      data: {
-        stock,
-      },
-      select: {
-        id: true,
-        sku: true,
-        name: true,
-        stock: true,
-        updatedAt: true,
-        images: {
-          orderBy: {
-            sortOrder: 'asc',
-          },
-          take: 1,
-          select: {
-            imageUrl: true,
+    if (!variant) throw new NotFoundException('Product variant not found');
+    const stock = variant.stock + dto.quantity;
+    if (stock < 0) throw new BadRequestException('Stock cannot be negative');
+    await this.prisma.productVariant.update({
+      where: { id: variant.id },
+      data: { stock },
+    });
+    return this.prisma.productVariant
+      .findUniqueOrThrow({
+        where: { id: variant.id },
+        include: {
+          product: {
+            include: { images: { orderBy: { sortOrder: 'asc' }, take: 1 } },
           },
         },
-      },
-    });
-
-    return {
-      id: updatedProduct.id,
-      productId: updatedProduct.id,
-      quantity: updatedProduct.stock,
-      sku: updatedProduct.sku,
-      productName: updatedProduct.name,
-      productImage: updatedProduct.images[0]?.imageUrl ?? null,
-      updatedAt: updatedProduct.updatedAt,
-    };
+      })
+      .then((updated) => ({
+        id: updated.id,
+        variantId: updated.id,
+        productId: updated.productId,
+        quantity: updated.stock,
+        sku: updated.sku,
+        productName: updated.product.name,
+        productImage: updated.product.images[0]?.imageUrl ?? null,
+        updatedAt: updated.updatedAt,
+      }));
   }
 }

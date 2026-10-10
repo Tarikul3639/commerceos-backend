@@ -89,7 +89,7 @@ export class StockController {
     description: 'Stock details',
     type: StockResponseDto,
   })
-  async findOne(@Param('id') productId: string): Promise<StockResponseDto> {
-    return await this.getStockService.execute(productId);
+  async findOne(@Param('id') variantId: string): Promise<StockResponseDto> {
+    return await this.getStockService.execute(variantId);
   }
 }

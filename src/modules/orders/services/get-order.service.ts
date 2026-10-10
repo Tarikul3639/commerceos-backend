@@ -26,7 +26,7 @@ export class GetOrderService {
         orderItems: {
           include: {
             product: {
-              select: { id: true, name: true, sku: true },
+              select: { id: true, name: true },
             },
           },
         },
@@ -58,6 +58,10 @@ export class GetOrderService {
         subtotal: item.subtotal.toString(),
         productId: item.productId,
         product: item.product,
+        variantId: item.variantId,
+        variantSku: item.variantSku,
+        variantColor: item.variantColor,
+        variantSize: item.variantSize,
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
       })),

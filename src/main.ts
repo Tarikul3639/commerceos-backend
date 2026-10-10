@@ -37,7 +37,10 @@ async function bootstrap() {
   app.enableShutdownHooks();
 
   app.enableCors({
-    origin: configService.getOrThrow<string>('cors.origin').split(',').map((origin) => origin.trim()),
+    origin: configService
+      .getOrThrow<string>('cors.origin')
+      .split(',')
+      .map((origin) => origin.trim()),
     methods: configService.getOrThrow<string>('cors.methods'),
     allowedHeaders: configService.getOrThrow<string>('cors.allowedHeaders'),
     credentials: configService.getOrThrow<boolean>('cors.credentials'),

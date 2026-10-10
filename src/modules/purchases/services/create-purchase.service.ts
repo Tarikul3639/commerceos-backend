@@ -53,7 +53,6 @@ export class CreatePurchaseService {
           in: productIds,
         },
         deletedAt: null,
-        isActive: true,
       },
       select: {
         id: true,
@@ -150,7 +149,6 @@ export class CreatePurchaseService {
               select: {
                 id: true,
                 name: true,
-                sku: true,
               },
             },
           },

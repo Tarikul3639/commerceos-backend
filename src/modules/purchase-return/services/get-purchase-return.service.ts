@@ -28,7 +28,6 @@ export class GetPurchaseReturnService {
                 product: {
                   select: {
                     id: true,
-                    sku: true,
                     name: true,
                   },
                 },

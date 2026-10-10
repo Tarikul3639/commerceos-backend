@@ -1,78 +1,65 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsArray,
-  IsBoolean,
-  IsInt,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
-  Max,
-  IsDateString,
-  MaxLength,
   Min,
   ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
 
-import { AddProductImageDto } from './add-product-image.dto';
+import { ProductStatus } from '@/lib/prisma/client';
 
-export class DiscountInputDto {
-  @ApiProperty({ example: 15, minimum: 0, maximum: 100 })
+export class ProductImageInputDto {
+  @ApiProperty({ example: 'https://cdn.example.com/images/1.jpg' })
+  @IsString()
+  @IsNotEmpty()
+  imageUrl!: string;
+
+  @ApiProperty({ example: 'product-1-image-1' })
+  @IsString()
+  @IsNotEmpty()
+  publicId!: string;
+
+  @ApiPropertyOptional({ example: 0 })
+  @IsOptional()
   @IsNumber()
   @Min(0)
-  @Max(100)
-  value!: number;
-
-  @ApiPropertyOptional({ nullable: true, example: '2026-10-01T00:00:00.000Z' })
-  @IsOptional()
-  @IsDateString()
-  startDate?: string | null;
-
-  @ApiPropertyOptional({ nullable: true, example: '2026-10-31T23:59:59.000Z' })
-  @IsOptional()
-  @IsDateString()
-  endDate?: string | null;
+  sortOrder?: number;
 }
 
-export class ProductColorDto {
-  @ApiProperty({ example: 'Red' })
-  @IsString()
-  @IsNotEmpty()
-  name!: string;
+export class ProductDiscountInputDto {
+  @ApiProperty({ example: 15 })
+  @IsNumber()
+  @Min(0)
+  value!: number;
 
-  @ApiProperty({ example: '#FF0000' })
+  @ApiPropertyOptional({ example: '2026-10-01T00:00:00.000Z', nullable: true })
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  hex!: string;
+  startDate?: string | null;
+
+  @ApiPropertyOptional({ example: '2026-10-31T23:59:59.000Z', nullable: true })
+  @IsOptional()
+  @IsString()
+  endDate?: string | null;
 }
 
 export class CreateProductDto {
   @ApiProperty({ example: 'Nike Air Max 270' })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(255)
   name!: string;
 
-  @ApiProperty({ example: 'nike-air-max-270-black' })
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(255)
-  sku!: string;
-
-  @ApiPropertyOptional({ example: '012345678905' })
-  @IsOptional()
-  @IsString()
-  barcode?: string;
-
-  @ApiPropertyOptional({ example: 'Comfortable running shoes' })
+  @ApiPropertyOptional({ example: 'Comfortable running shoe' })
   @IsOptional()
   @IsString()
   description?: string;
 
-  @ApiPropertyOptional({
-    example: 'Lightweight running shoes for everyday comfort',
-  })
+  @ApiPropertyOptional({ example: 'Lightweight everyday runner' })
   @IsOptional()
   @IsString()
   subDescription?: string;
@@ -87,67 +74,31 @@ export class CreateProductDto {
   @Min(0)
   sellingPrice!: number;
 
-  @ApiPropertyOptional({ example: 10, minimum: 0, default: 0 })
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  stock?: number;
-
-  @ApiPropertyOptional({
-    type: [String],
-    example: ['S', 'M', 'L'],
-  })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  sizes?: string[];
-
-  @ApiPropertyOptional({
-    type: [ProductColorDto],
-    example: [
-      { name: 'Red', hex: '#FF0000' },
-      { name: 'Black', hex: '#000000' },
-    ],
-  })
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => ProductColorDto)
-  colors?: ProductColorDto[];
-
-  @ApiProperty({
-    example: 'cmf123categoryid',
-  })
+  @ApiProperty({ example: 'category_123' })
   @IsString()
   @IsNotEmpty()
   categoryId!: string;
 
-  @ApiPropertyOptional({
-    example: 'cmf123brandid',
-  })
+  @ApiPropertyOptional({ example: 'brand_123' })
   @IsOptional()
   @IsString()
   brandId?: string;
 
-  @ApiPropertyOptional({
-    type: [AddProductImageDto],
-  })
+  @ApiPropertyOptional({ enum: ProductStatus, default: ProductStatus.DRAFT })
+  @IsOptional()
+  @IsEnum(ProductStatus)
+  status?: ProductStatus;
+
+  @ApiPropertyOptional({ type: [ProductImageInputDto] })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => AddProductImageDto)
-  images?: AddProductImageDto[];
+  @Type(() => ProductImageInputDto)
+  images?: ProductImageInputDto[];
 
-  @ApiPropertyOptional({
-    default: true,
-  })
-  @IsOptional()
-  @IsBoolean()
-  isActive?: boolean;
-
-  @ApiPropertyOptional({ type: DiscountInputDto })
+  @ApiPropertyOptional({ type: ProductDiscountInputDto })
   @IsOptional()
   @ValidateNested()
-  @Type(() => DiscountInputDto)
-  discount?: DiscountInputDto;
+  @Type(() => ProductDiscountInputDto)
+  discount?: ProductDiscountInputDto;
 }

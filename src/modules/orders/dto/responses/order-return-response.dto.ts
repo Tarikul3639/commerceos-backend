@@ -21,7 +21,7 @@ export class OrderReturnItemResponseDto {
 
     quantity: number;
 
-    product: { id: string; name: string; sku: string };
+    product: { id: string; name: string };
   };
 
   @ApiProperty()

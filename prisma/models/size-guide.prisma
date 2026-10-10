@@ -1,0 +1,17 @@
+model SizeGuide {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  unit        String  @default("cm")
+
+  columns Json
+  rows    Json
+
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+  @@map("size_guides")
+}

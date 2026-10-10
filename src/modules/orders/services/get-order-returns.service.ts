@@ -76,7 +76,6 @@ export class GetOrderReturnsService {
                   product: {
                     select: {
                       id: true,
-                      sku: true,
                       name: true,
                     },
                   },

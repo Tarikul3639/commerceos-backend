@@ -1,0 +1,66 @@
+enum ProductOptionType {
+  COLOR
+  SIZE
+  MATERIAL
+  STYLE
+  CUSTOM
+}
+
+model ProductVariant {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  title   String?
+  sku     String  @unique
+  barcode String? @unique
+  stock   Int     @default(0)
+
+  options ProductOptionValue[]
+
+  isActive  Boolean   @default(true)
+  deletedAt DateTime?
+
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId, isActive])
+  @@index([deletedAt])
+  @@map("product_variants")
+}
+
+model ProductOption {
+  id        String            @id @default(cuid())
+  name      String
+  type      ProductOptionType @default(CUSTOM)
+  productId String
+  product   Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  values ProductOptionValue[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, name])
+  @@map("product_options")
+}
+
+model ProductOptionValue {
+  id       String  @id @default(cuid())
+  value    String
+  colorHex String?
+
+  optionId String
+  option   ProductOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  variants ProductVariant[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([optionId, value])
+  @@map("product_option_values")
+}

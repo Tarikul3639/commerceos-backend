@@ -8,18 +8,27 @@ export class GetLowStockProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(_query: DashboardQueryDto): Promise<LowStockProductItemDto[]> {
-    const products = await this.prisma.product.findMany({
-      where: { deletedAt: null, stock: { lte: 5 } },
+    const variants = await this.prisma.productVariant.findMany({
+      where: {
+        deletedAt: null,
+        stock: { lte: 5 },
+        product: { deletedAt: null },
+      },
       orderBy: { stock: 'asc' },
       take: 10,
-      include: { images: { orderBy: { sortOrder: 'asc' }, take: 1 } },
+      include: {
+        product: {
+          include: { images: { orderBy: { sortOrder: 'asc' }, take: 1 } },
+        },
+      },
     });
-    return products.map((product) => ({
-      productId: product.id,
-      productName: product.name,
-      sku: product.sku,
-      productImage: product.images[0]?.imageUrl ?? null,
-      quantity: product.stock,
+    return variants.map((variant) => ({
+      variantId: variant.id,
+      productId: variant.productId,
+      productName: variant.product.name,
+      sku: variant.sku,
+      productImage: variant.product.images[0]?.imageUrl ?? null,
+      quantity: variant.stock,
     }));
   }
 }

@@ -1,12 +1,5 @@
-/**
- * ============================================================
- * PRODUCT CATALOG
- * ============================================================
- */
-
 model Category {
-  id String @id @default(cuid())
-
+  id          String  @id @default(cuid())
   name        String  @unique
   slug        String  @unique
   description String?
@@ -24,8 +17,7 @@ model Category {
 }
 
 model Brand {
-  id String @id @default(cuid())
-
+  id          String  @id @default(cuid())
   name        String  @unique
   slug        String  @unique
   description String?
@@ -44,118 +36,4 @@ model Brand {
 
   @@index([deletedAt])
   @@map("brands")
-}
-
-model Product {
-  id String @id @default(cuid())
-
-  name           String
-  subDescription String?
-  description    String?
-
-  sku     String  @unique
-  barcode String? @unique
-
-  purchasePrice Decimal
-  sellingPrice  Decimal
-
-  stock Int @default(0)
-
-  /**
-   * Example: [{"name": "Red", "hex": "#FF0000"}]
-   */
-  colors Json?
-  sizes  String[]
-
-  isActive  Boolean   @default(true)
-  deletedAt DateTime?
-
-  categoryId String
-  category   Category @relation(fields: [categoryId], references: [id])
-
-  brandId String?
-  brand   Brand?  @relation(fields: [brandId], references: [id])
-
-  images   ProductImage[]
-  reviews  ProductReview[]
-  discount Discount?
-
-  purchaseItems PurchaseItem[]
-  cartItems     CartItem[]
-  orderItems    OrderItem[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([categoryId])
-  @@index([brandId])
-  @@index([deletedAt])
-  @@map("products")
-}
-
-model ProductImage {
-  id String @id @default(cuid())
-
-  imageUrl String
-  publicId String @unique
-
-  sortOrder Int @default(0)
-
-  productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([productId])
-  @@map("product_images")
-}
-
-model ProductReview {
-  id String @id @default(cuid())
-
-  rating  Int
-  comment String?
-
-  productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  customerId String
-  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  isActive  Boolean   @default(true)
-  deletedAt DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([productId, customerId])
-  @@index([productId, isActive])
-  @@index([customerId])
-  @@index([deletedAt])
-  @@map("product_reviews")
-}
-
-model Discount {
-  id String @id @default(cuid())
-
-  /**
-   * Discount percentage.
-   * Example: 20 = 20% discount
-   */
-  value Decimal
-
-  startDate DateTime?
-  endDate   DateTime?
-
-  createdById String
-  createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Restrict)
-
-  productId String  @unique
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("discounts")
 }

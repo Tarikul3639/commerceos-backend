@@ -39,7 +39,7 @@ export class GetPurchasesService {
           user: { select: { id: true, name: true, email: true } },
           purchaseItems: {
             include: {
-              product: { select: { id: true, name: true, sku: true } },
+              product: { select: { id: true, name: true } },
             },
           },
         },
