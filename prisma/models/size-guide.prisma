@@ -1,5 +1,5 @@
 model SizeGuide {
-  id          String  @id @default(cuid())
+  id          String  @id @default(uuid())
   name        String
   description String?
   unit        String  @default("cm")

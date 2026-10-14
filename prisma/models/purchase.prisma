@@ -18,7 +18,7 @@ enum PurchaseReturnStatus {
 }
 
 model Supplier {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   name String
 
@@ -41,7 +41,7 @@ model Supplier {
 }
 
 model Purchase {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   invoiceNo String @unique
 
@@ -71,7 +71,7 @@ model Purchase {
 }
 
 model PurchaseItem {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   quantity  Int
   unitPrice Decimal
@@ -94,7 +94,7 @@ model PurchaseItem {
 }
 
 model PurchaseReturn {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   returnNo String               @unique
   status   PurchaseReturnStatus @default(PENDING)
@@ -125,7 +125,7 @@ model PurchaseReturn {
 }
 
 model PurchaseReturnItem {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   quantity Int
   reason   String?

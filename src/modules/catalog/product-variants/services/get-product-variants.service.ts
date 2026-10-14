@@ -31,7 +31,6 @@ export class GetProductVariantsService {
         const variants = await this.prisma.productVariant.findMany({
             where: {
                 productId: product.id,
-                deletedAt: null,
             },
             include: {
                 options: {

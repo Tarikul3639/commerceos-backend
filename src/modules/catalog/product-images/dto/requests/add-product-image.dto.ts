@@ -41,14 +41,6 @@ class ProductImageItemDto {
 
 export class AddProductImageDto {
     @ApiProperty({
-        example: 'cm123product456',
-        description: 'Product ID',
-    })
-    @IsString()
-    @IsNotEmpty()
-    productId!: string;
-
-    @ApiProperty({
         type: [ProductImageItemDto],
         description: 'Array of product images',
         example: [

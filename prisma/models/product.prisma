@@ -6,7 +6,7 @@ enum ProductStatus {
 }
 
 model Product {
-  id             String  @id @default(cuid())
+  id             String  @id @default(uuid())
   name           String
   subDescription String?
   description    String?
@@ -46,7 +46,7 @@ model Product {
 }
 
 model ProductImage {
-  id       String @id @default(cuid())
+  id       String @id @default(uuid())
   imageUrl String
   publicId String @unique
 

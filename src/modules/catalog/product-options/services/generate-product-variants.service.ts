@@ -10,7 +10,7 @@ import { ProductVariantResponseDto } from '@/modules/catalog/product-variants/dt
 
 @Injectable()
 export class GenerateProductVariantsService {
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(private readonly prisma: PrismaService) {}
 
     async execute(productId: string): Promise<ProductVariantResponseDto[]> {
         const product = await this.prisma.product.findFirst({
@@ -44,7 +44,7 @@ export class GenerateProductVariantsService {
             );
         }
 
-        // Generate every possible combination of option values.
+        // Generate every possible combination.
         const combinations = options.reduce<
             Array<(typeof options)[number]['values']>
         >(
@@ -60,9 +60,12 @@ export class GenerateProductVariantsService {
         for (const combination of combinations) {
             const optionValueIds = combination.map((value) => value.id);
 
-            // Stable SKU prevents duplicate generation for the same combination.
-            const sku = `${product.id}-${[...optionValueIds].sort().join('-')}`;
+            // Use option value IDs to avoid SKU collisions between combinations.
+            const sku = `${product.id.slice(0, 8)}-${optionValueIds
+                .map((id) => id.slice(0, 8))
+                .join('-')}`.toUpperCase();
 
+            // Skip an existing variant with the same SKU.
             const existingVariant = await this.prisma.productVariant.findUnique({
                 where: { sku },
                 select: { id: true },
@@ -75,7 +78,9 @@ export class GenerateProductVariantsService {
             const variant = await this.prisma.productVariant.create({
                 data: {
                     productId: product.id,
-                    title: combination.map((value) => value.value).join(' / '),
+                    title: combination
+                        .map((value) => value.value)
+                        .join(' / '),
                     sku,
                     stock: 0,
                     options: {

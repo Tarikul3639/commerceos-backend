@@ -1,17 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
-
 import { AddProductImageDto } from '../dto/requests/add-product-image.dto';
+import { ProductImageResponseDto } from '../dto/responses/product-image-response.dto';
 
 @Injectable()
 export class AddProductImageService {
     constructor(private readonly prisma: PrismaService) { }
 
-    async execute(dto: AddProductImageDto) {
+    async execute(productId: string, dto: AddProductImageDto): Promise<ProductImageResponseDto[]> {
+        
         const product = await this.prisma.product.findFirst({
             where: {
-                id: dto.productId,
+                id: productId,
                 deletedAt: null,
             },
             select: {

@@ -7,6 +7,7 @@ import { StoreProductsController } from './controllers/store-products.controller
 
 import { CreateProductService } from './services/admin/create-product.service';
 import { DeleteProductService } from './services/admin/delete-product.service';
+import { RestoreProductService } from './services/admin/restore-product.service';
 import { GetAdminProductDetailsService } from './services/admin/get-admin-product-details.service';
 import { GetAdminProductsService } from './services/admin/get-admin-products.service';
 import { UpdateProductService } from './services/admin/update-product.service';
@@ -24,6 +25,7 @@ import { GetStoreProductsService } from './services/store/get-store-products.ser
         CreateProductService,
         UpdateProductService,
         DeleteProductService,
+        RestoreProductService,
         GetAdminProductsService,
         GetAdminProductDetailsService,
         GetStoreProductsService,
@@ -33,10 +35,11 @@ import { GetStoreProductsService } from './services/store/get-store-products.ser
         CreateProductService,
         UpdateProductService,
         DeleteProductService,
+        RestoreProductService,
         GetAdminProductsService,
         GetAdminProductDetailsService,
         GetStoreProductsService,
         GetStoreProductDetailsService,
     ],
 })
-export class ProductModule {}
+export class ProductModule { }

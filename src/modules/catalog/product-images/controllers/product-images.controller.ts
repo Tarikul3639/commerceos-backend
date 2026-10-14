@@ -12,6 +12,7 @@ import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 
@@ -32,15 +33,17 @@ export class ProductImagesController {
     private readonly getProductImagesService: GetProductImagesService,
     private readonly updateProductImageService: UpdateProductImageService,
     private readonly deleteProductImageService: DeleteProductImageService,
-  ) {}
+  ) { }
 
-  @Post()
+  @Post(':productId')
   @ApiOperation({ summary: 'Add multiple images to a product' })
+  @ApiParam({ name: 'productId', type: String })
   @ApiCreatedResponse({ type: [ProductImageResponseDto] })
   async add(
+    @Param('productId', ParseUUIDPipe) productId: string,
     @Body() dto: AddProductImageDto,
   ): Promise<ProductImageResponseDto[]> {
-    return this.addProductImageService.execute(dto);
+    return this.addProductImageService.execute(productId, dto);
   }
 
   @Get(':productId')
@@ -50,7 +53,7 @@ export class ProductImagesController {
     isArray: true,
   })
   async getAll(
-    @Param('productId') productId: string,
+    @Param('productId', ParseUUIDPipe) productId: string,
   ): Promise<ProductImageResponseDto[]> {
     return this.getProductImagesService.execute(productId);
   }
@@ -59,7 +62,7 @@ export class ProductImagesController {
   @ApiOperation({ summary: 'Update a product image' })
   @ApiOkResponse({ type: ProductImageResponseDto })
   async update(
-    @Param('imageId') imageId: string,
+    @Param('imageId', ParseUUIDPipe) imageId: string,
     @Body() dto: UpdateProductImageDto,
   ): Promise<ProductImageResponseDto> {
     return this.updateProductImageService.execute(imageId, dto);
@@ -69,7 +72,7 @@ export class ProductImagesController {
   @ApiOperation({ summary: 'Delete a product image' })
   @ApiOkResponse({ description: 'Product image deleted successfully' })
   async remove(
-    @Param('imageId') imageId: string,
+    @Param('imageId', ParseUUIDPipe) imageId: string,
   ): Promise<ProductImageResponseDto> {
     return this.deleteProductImageService.execute(imageId);
   }

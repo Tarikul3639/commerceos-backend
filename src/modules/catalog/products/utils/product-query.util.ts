@@ -6,7 +6,7 @@ export function buildAdminProductWhere(
     query: ProductQueryDto,
 ): Prisma.ProductWhereInput {
     return {
-        deletedAt: null,
+        // deletedAt: null,
 
         ...(query.search && {
             name: {

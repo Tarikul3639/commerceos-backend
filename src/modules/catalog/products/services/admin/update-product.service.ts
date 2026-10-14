@@ -4,10 +4,15 @@ import { PrismaService } from '@/common/prisma/prisma.service';
 
 import { UpdateProductDto } from '../../dto/requests/update-product.dto';
 import { AdminProductDetailResponseDto } from '../../dto/responses/admin-product-detail-response.dto';
+import { GetAdminProductDetailsService } from './get-admin-product-details.service';
 
+/** Updates a product and returns its complete details. */
 @Injectable()
 export class UpdateProductService {
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly getAdminProductDetailsService: GetAdminProductDetailsService,
+    ) { }
 
     async execute(
         productId: string,
@@ -18,7 +23,9 @@ export class UpdateProductService {
                 id: productId,
                 deletedAt: null,
             },
-            select: { id: true },
+            select: {
+                id: true,
+            },
         });
 
         if (!product) {
@@ -27,8 +34,12 @@ export class UpdateProductService {
 
         if (dto.categoryId !== undefined) {
             const category = await this.prisma.category.findUnique({
-                where: { id: dto.categoryId },
-                select: { id: true },
+                where: {
+                    id: dto.categoryId,
+                },
+                select: {
+                    id: true,
+                },
             });
 
             if (!category) {
@@ -38,8 +49,12 @@ export class UpdateProductService {
 
         if (dto.brandId) {
             const brand = await this.prisma.brand.findUnique({
-                where: { id: dto.brandId },
-                select: { id: true },
+                where: {
+                    id: dto.brandId,
+                },
+                select: {
+                    id: true,
+                },
             });
 
             if (!brand) {
@@ -49,8 +64,12 @@ export class UpdateProductService {
 
         if (dto.sizeGuideId) {
             const sizeGuide = await this.prisma.sizeGuide.findUnique({
-                where: { id: dto.sizeGuideId },
-                select: { id: true },
+                where: {
+                    id: dto.sizeGuideId,
+                },
+                select: {
+                    id: true,
+                },
             });
 
             if (!sizeGuide) {
@@ -58,10 +77,14 @@ export class UpdateProductService {
             }
         }
 
-        const updatedProduct = await this.prisma.product.update({
-            where: { id: product.id },
+        await this.prisma.product.update({
+            where: {
+                id: product.id,
+            },
             data: {
-                ...(dto.name !== undefined && { name: dto.name }),
+                ...(dto.name !== undefined && {
+                    name: dto.name,
+                }),
                 ...(dto.subDescription !== undefined && {
                     subDescription: dto.subDescription,
                 }),
@@ -87,17 +110,8 @@ export class UpdateProductService {
                     status: dto.status,
                 }),
             },
-            include: {
-                images: {
-                    orderBy: { sortOrder: 'asc' },
-                },
-            },
         });
 
-        return {
-            ...updatedProduct,
-            purchasePrice: updatedProduct.purchasePrice.toString(),
-            sellingPrice: updatedProduct.sellingPrice.toString(),
-        };
+        return this.getAdminProductDetailsService.execute(product.id);
     }
 }

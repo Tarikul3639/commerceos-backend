@@ -60,7 +60,7 @@ enum UserStatus {
 }
 
 model User {
-  id       String  @id @default(cuid())
+  id       String  @id @default(uuid())
   name     String
   email    String  @unique
   phone    String? @unique
@@ -124,7 +124,7 @@ model User {
 }
 
 model RolePermission {
-  id         String     @id @default(cuid())
+  id         String     @id @default(uuid())
   role       Role
   permission Permission
 
@@ -138,7 +138,7 @@ model RolePermission {
 }
 
 model UserRefreshToken {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   // Hashed Refresh Token
   tokenHash String @unique
@@ -163,7 +163,7 @@ model UserRefreshToken {
 }
 
 model UserPasswordResetToken {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   // Hashed Reset Token
   tokenHash String @unique
@@ -182,7 +182,7 @@ model UserPasswordResetToken {
 }
 
 model UserEmailVerificationToken {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   // Hashed Verification Token
   tokenHash String @unique

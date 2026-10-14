@@ -1,7 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger';
-
 import { ProductStatus } from '@/lib/prisma/enums';
+import { PaginationMetaDto } from "@/common/dto/responses/pagination-meta.dto"
 
+/** Common relation summary */
+export class RelationSummaryDto {
+    @ApiProperty({
+        example: 'cm123abc456',
+        description: 'Relation ID',
+    })
+    id!: string;
+
+    @ApiProperty({
+        example: 'Panjabi',
+        description: 'Relation name',
+    })
+    name!: string;
+}
+
+/** Admin product list item */
 export class AdminProductListItemDto {
     @ApiProperty()
     id!: string;
@@ -9,26 +25,39 @@ export class AdminProductListItemDto {
     @ApiProperty()
     name!: string;
 
+    @ApiProperty({
+        example: 'https://res.cloudinary.com/demo/image/upload/product.jpg',
+        nullable: true,
+        description: 'Primary product image URL',
+    })
+    image!: string | null;
+
     @ApiProperty({ nullable: true })
     subDescription!: string | null;
 
-    @ApiProperty()
+    @ApiProperty({ example: '850.00' })
     purchasePrice!: string;
 
-    @ApiProperty()
+    @ApiProperty({ example: '1290.00' })
     sellingPrice!: string;
 
     @ApiProperty({ enum: ProductStatus, enumName: 'ProductStatus' })
     status!: ProductStatus;
 
-    @ApiProperty()
-    categoryId!: string;
+    @ApiProperty({ type: RelationSummaryDto })
+    category!: RelationSummaryDto;
 
-    @ApiProperty({ nullable: true })
-    brandId!: string | null;
+    @ApiProperty({
+        type: RelationSummaryDto,
+        nullable: true,
+    })
+    brand!: RelationSummaryDto | null;
 
-    @ApiProperty({ nullable: true })
-    sizeGuideId!: string | null;
+    @ApiProperty({
+        type: RelationSummaryDto,
+        nullable: true,
+    })
+    sizeGuide!: RelationSummaryDto | null;
 
     @ApiProperty({ nullable: true, type: String, format: 'date-time' })
     deletedAt!: Date | null;
@@ -40,19 +69,11 @@ export class AdminProductListItemDto {
     updatedAt!: Date;
 }
 
+/** Admin product list response */
 export class AdminProductListResponseDto {
     @ApiProperty({ type: [AdminProductListItemDto] })
     data!: AdminProductListItemDto[];
 
-    @ApiProperty()
-    total!: number;
-
-    @ApiProperty()
-    page!: number;
-
-    @ApiProperty()
-    limit!: number;
-
-    @ApiProperty()
-    totalPages!: number;
+    @ApiProperty({ type: PaginationMetaDto })
+    meta!: PaginationMetaDto;
 }

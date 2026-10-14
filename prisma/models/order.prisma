@@ -42,7 +42,7 @@ enum OrderReturnStatus {
 }
 
 model Cart {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   customerId String   @unique
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
@@ -56,7 +56,7 @@ model Cart {
 }
 
 model CartItem {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   quantity Int
 
@@ -79,7 +79,7 @@ model CartItem {
 }
 
 model Order {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   invoiceNo String @unique
 
@@ -112,7 +112,7 @@ model Order {
 }
 
 model OrderItem {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   quantity  Int
   unitPrice Decimal
@@ -143,7 +143,7 @@ model OrderItem {
 }
 
 model Payment {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   amount Decimal
 
@@ -171,7 +171,7 @@ model Payment {
 }
 
 model OrderReturn {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   returnNo String            @unique
   status   OrderReturnStatus @default(PENDING)
@@ -202,7 +202,7 @@ model OrderReturn {
 }
 
 model OrderReturnItem {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   quantity Int
   reason   String?

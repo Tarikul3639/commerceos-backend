@@ -27,7 +27,6 @@ export class DeleteUserService {
             emailVerificationTokens: true,
 
             orders: true,
-            discounts: true,
             purchases: true,
             payments: true,
 

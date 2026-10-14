@@ -12,7 +12,7 @@ enum CustomerStatus {
 }
 
 model Customer {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   name     String
   email    String  @unique
@@ -54,7 +54,7 @@ model Customer {
 }
 
 model CustomerRefreshToken {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   tokenHash String
 
@@ -78,7 +78,7 @@ model CustomerRefreshToken {
 }
 
 model CustomerEmailVerificationToken {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   tokenHash String @unique
 
@@ -97,7 +97,7 @@ model CustomerEmailVerificationToken {
 }
 
 model CustomerPasswordResetToken {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   // Stores the hashed password reset token
   tokenHash String @unique

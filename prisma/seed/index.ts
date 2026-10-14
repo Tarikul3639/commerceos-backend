@@ -7,6 +7,7 @@ import { seedCategories } from './categories.seed';
 import { seedBrands } from './brands.seed';
 import { seedSizeGuides } from './size-guides.seed';
 import { seedCustomers } from './customers.seed';
+import { seedProducts } from './product.seed';
 
 async function main() {
     console.log('🌱 Database seeding started...\n');
@@ -31,6 +32,9 @@ async function main() {
 
     // 7. Customers
     await seedCustomers();
+
+    // 8. Products
+    await seedProducts();
 
     console.log('\n✅ Database seeding completed.');
 }

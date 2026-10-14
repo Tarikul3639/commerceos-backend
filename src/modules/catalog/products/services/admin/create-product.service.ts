@@ -4,10 +4,15 @@ import { PrismaService } from '@/common/prisma/prisma.service';
 
 import { CreateProductDto } from '../../dto/requests/create-product.dto';
 import { AdminProductDetailResponseDto } from '../../dto/responses/admin-product-detail-response.dto';
+import { GetAdminProductDetailsService } from './get-admin-product-details.service';
 
+/** Creates a product and returns its complete details. */
 @Injectable()
 export class CreateProductService {
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly getAdminProductDetailsService: GetAdminProductDetailsService,
+    ) { }
 
     async execute(dto: CreateProductDto): Promise<AdminProductDetailResponseDto> {
         const category = await this.prisma.category.findUnique({
@@ -63,17 +68,11 @@ export class CreateProductService {
                     status: dto.status,
                 }),
             },
-            include: {
-                images: {
-                    orderBy: { sortOrder: 'asc' },
-                },
+            select: {
+                id: true,
             },
         });
 
-        return {
-            ...product,
-            purchasePrice: product.purchasePrice.toString(),
-            sellingPrice: product.sellingPrice.toString(),
-        };
+        return this.getAdminProductDetailsService.execute(product.id);
     }
 }

@@ -27,6 +27,7 @@ import { CreateProductService } from '../services/admin/create-product.service';
 import { DeleteProductService } from '../services/admin/delete-product.service';
 import { GetAdminProductDetailsService } from '../services/admin/get-admin-product-details.service';
 import { GetAdminProductsService } from '../services/admin/get-admin-products.service';
+import { RestoreProductService } from '../services/admin/restore-product.service';
 import { UpdateProductService } from '../services/admin/update-product.service';
 
 @ApiTags('Admin - Products')
@@ -38,7 +39,8 @@ export class AdminProductsController {
         private readonly getAdminProductDetailsService: GetAdminProductDetailsService,
         private readonly updateProductService: UpdateProductService,
         private readonly deleteProductService: DeleteProductService,
-    ) { }
+        private readonly restoreProductService: RestoreProductService,
+    ) {}
 
     @Post()
     @ApiOperation({ summary: 'Create a product' })
@@ -102,5 +104,24 @@ export class AdminProductsController {
         @Param('productId') productId: string,
     ): Promise<{ message: string }> {
         return this.deleteProductService.execute(productId);
+    }
+
+    @Patch(':productId/restore')
+    @ApiOperation({ summary: 'Restore a soft-deleted product' })
+    @ApiParam({
+        name: 'productId',
+        example: 'cm123product456',
+    })
+    @ApiOkResponse({
+        schema: {
+            example: {
+                message: 'Product restored successfully',
+            },
+        },
+    })
+    async restore(
+        @Param('productId') productId: string,
+    ): Promise<{ message: string }> {
+        return this.restoreProductService.execute(productId);
     }
 }

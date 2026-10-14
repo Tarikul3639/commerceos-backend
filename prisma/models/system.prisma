@@ -93,7 +93,7 @@ enum BannerPosition {
 }
 
 model Settings {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   companyName    String
   companyEmail   String
@@ -113,7 +113,7 @@ model Settings {
 }
 
 model ActivityLog {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   type   ActivityType
   module ActivityModule
@@ -152,7 +152,7 @@ model ActivityLog {
 }
 
 model Notification {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   title   String
   message String
@@ -186,7 +186,7 @@ model Notification {
 }
 
 model EmailLog {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   // Email address of the recipient
   to String
@@ -231,7 +231,7 @@ model EmailLog {
 }
 
 model Banner {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   title String?
 
