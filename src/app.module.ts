@@ -40,6 +40,7 @@ import { NotificationModule } from '@/modules/notifications/notification.module'
 
 import { DashboardModule } from '@/modules/dashboard/dashboard.module';
 import { AnalyticsModule } from '@/modules/analytics/analytics.module';
+import { StockModule } from '@/modules/inventory/stocks/stock.module';
 
 @Module({
   imports: [
@@ -73,6 +74,7 @@ import { AnalyticsModule } from '@/modules/analytics/analytics.module';
 
     DashboardModule,
     AnalyticsModule,
+    StockModule,
 
     AuthModule,
     UsersModule,

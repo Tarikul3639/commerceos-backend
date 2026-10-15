@@ -8,6 +8,8 @@ import { seedBrands } from './brands.seed';
 import { seedSizeGuides } from './size-guides.seed';
 import { seedCustomers } from './customers.seed';
 import { seedProducts } from './product.seed';
+import { seedBanners } from './banners';
+import { seedSuppliers } from './supplier.seed';
 
 async function main() {
     console.log('🌱 Database seeding started...\n');
@@ -35,6 +37,12 @@ async function main() {
 
     // 8. Products
     await seedProducts();
+
+    // 9. Banners
+    await seedBanners();
+
+    // 10. Suppliers
+    await seedSuppliers();
 
     console.log('\n✅ Database seeding completed.');
 }
