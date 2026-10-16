@@ -10,39 +10,43 @@ import { seedCustomers } from './customers.seed';
 import { seedProducts } from './product.seed';
 import { seedBanners } from './banners';
 import { seedSuppliers } from './supplier.seed';
+import { seedSettings } from "./settings.seed"
 
 async function main() {
     console.log('🌱 Database seeding started...\n');
 
-    // 1. Roles
-    await seedRoles();
+    // // 1. Roles
+    // await seedRoles();
 
-    // 2. Role permissions
-    await seedPermissions();
+    // // 2. Role permissions
+    // await seedPermissions();
 
-    // 3. Admin user
-    await seedUsers();
+    // // 3. Admin user
+    // await seedUsers();
 
-    // 4. Categories
-    await seedCategories();
+    // // 4. Categories
+    // await seedCategories();
 
-    // 5. Brands
-    await seedBrands();
+    // // 5. Brands
+    // await seedBrands();
 
-    // 6. Size guides
-    await seedSizeGuides();
+    // // 6. Size guides
+    // await seedSizeGuides();
 
-    // 7. Customers
-    await seedCustomers();
+    // // 7. Customers
+    // await seedCustomers();
 
-    // 8. Products
-    await seedProducts();
+    // // 8. Products
+    // await seedProducts();
 
-    // 9. Banners
-    await seedBanners();
+    // // 9. Banners
+    // await seedBanners();
 
-    // 10. Suppliers
-    await seedSuppliers();
+    // // 10. Suppliers
+    // await seedSuppliers();
+
+    // 11. Settings
+    await seedSettings();
 
     console.log('\n✅ Database seeding completed.');
 }

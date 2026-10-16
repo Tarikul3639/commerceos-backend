@@ -1,74 +1,91 @@
-// --------------------------------------------------------------------
-// Payment Model
-// --------------------------------------------------------------------
 
 enum PaymentMethod {
-    CASH
-    CARD
-    BKASH
-    NAGAD
-    ROCKET
+  CASH
+  CARD
+  BKASH
+  NAGAD
+  ROCKET
+}
+
+enum PaymentProvider {
+  MANUAL
+  STRIPE
+  SSL_COMMERZ
+  BKASH
+  NAGAD
+  ROCKET
 }
 
 enum PaymentStatus {
-    PENDING
-    PAID
-    FAILED
-    REFUNDED
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+  CANCELLED
 }
 
 enum PaymentType {
-    PAYMENT
-    REFUND
+  PAYMENT
+  REFUND
+}
+
+enum PaymentGatewayMode {
+  TEST
+  LIVE
 }
 
 model Payment {
-    id String @id @default(uuid())
+  id       String          @id @default(uuid())
+  amount   Decimal         @db.Decimal(12, 2)
+  currency String          @default("BDT")
+  method   PaymentMethod
+  provider PaymentProvider @default(MANUAL)
+  status   PaymentStatus   @default(PENDING)
+  type     PaymentType     @default(PAYMENT)
 
-    amount Decimal
+  // External gateway references and duplicate-request protection.
+  transactionId  String?
+  sessionId      String?
+  idempotencyKey String? @unique
+  notes          String?
 
-    method PaymentMethod
-    status PaymentStatus @default(PENDING)
-    type   PaymentType   @default(PAYMENT)
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Restrict)
 
-    transactionId String?
-    notes         String?
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 
-    orderId String
-    order   Order  @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  // Links refund transactions to their original payment.
+  originalPaymentId String?
+  originalPayment   Payment?  @relation("PaymentRefunds", fields: [originalPaymentId], references: [id], onDelete: Restrict)
+  refunds           Payment[] @relation("PaymentRefunds")
 
-    userId String?
-    user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    @@index([orderId])
-    @@index([userId])
-    @@index([status])
-    @@index([method])
-    @@map("payments")
+  @@index([orderId])
+  @@index([userId])
+  @@index([status])
+  @@index([method])
+  @@index([provider])
+  @@index([transactionId])
+  @@index([sessionId])
+  @@index([originalPaymentId])
+  @@map("payments")
 }
 
-model PaymentMethodConfig {
-    id String @id @default(uuid())
+model PaymentGatewayConfig {
+  id          String            @id @default(uuid())
+  provider    PaymentProvider   @unique
+  displayName String
+  isEnabled   Boolean           @default(false)
+  mode        PaymentGatewayMode @default(TEST)
 
-    method      PaymentMethod @unique
-    displayName String
-    isEnabled   Boolean       @default(false)
+  // Non-secret settings only; keep credentials in environment variables.
+  settings Json?
 
-    // Manual payment destination details
-    accountName   String?
-    accountNumber String?
-    bankName      String?
-    branchName    String?
-    routingNumber String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    // Additional non-secret configuration, if needed
-    instructions String?
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    @@map("payment_method_configs")
+  @@map("payment_gateway_configs")
 }
