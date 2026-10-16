@@ -1,0 +1,74 @@
+// --------------------------------------------------------------------
+// Payment Model
+// --------------------------------------------------------------------
+
+enum PaymentMethod {
+    CASH
+    CARD
+    BKASH
+    NAGAD
+    ROCKET
+}
+
+enum PaymentStatus {
+    PENDING
+    PAID
+    FAILED
+    REFUNDED
+}
+
+enum PaymentType {
+    PAYMENT
+    REFUND
+}
+
+model Payment {
+    id String @id @default(uuid())
+
+    amount Decimal
+
+    method PaymentMethod
+    status PaymentStatus @default(PENDING)
+    type   PaymentType   @default(PAYMENT)
+
+    transactionId String?
+    notes         String?
+
+    orderId String
+    order   Order  @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+    userId String?
+    user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([orderId])
+    @@index([userId])
+    @@index([status])
+    @@index([method])
+    @@map("payments")
+}
+
+model PaymentMethodConfig {
+    id String @id @default(uuid())
+
+    method      PaymentMethod @unique
+    displayName String
+    isEnabled   Boolean       @default(false)
+
+    // Manual payment destination details
+    accountName   String?
+    accountNumber String?
+    bankName      String?
+    branchName    String?
+    routingNumber String?
+
+    // Additional non-secret configuration, if needed
+    instructions String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("payment_method_configs")
+}

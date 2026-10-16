@@ -4,21 +4,6 @@
  * ============================================================
  */
 
-enum PaymentMethod {
-  CASH
-  CARD
-  BKASH
-  NAGAD
-  ROCKET
-}
-
-enum PaymentStatus {
-  PENDING
-  PAID
-  FAILED
-  REFUNDED
-}
-
 enum OrderStatus {
   PENDING
   CONFIRMED
@@ -26,11 +11,6 @@ enum OrderStatus {
   SHIPPED
   DELIVERED
   CANCELLED
-}
-
-enum PaymentType {
-  PAYMENT
-  REFUND
 }
 
 enum OrderReturnStatus {
@@ -140,34 +120,6 @@ model OrderItem {
   @@index([productId])
   @@index([variantId])
   @@map("order_items")
-}
-
-model Payment {
-  id String @id @default(uuid())
-
-  amount Decimal
-
-  method PaymentMethod
-  status PaymentStatus @default(PENDING)
-  type   PaymentType   @default(PAYMENT)
-
-  transactionId String?
-  notes         String?
-
-  orderId String
-  order   Order  @relation(fields: [orderId], references: [id], onDelete: Restrict)
-
-  userId String?
-  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([orderId])
-  @@index([userId])
-  @@index([status])
-  @@index([method])
-  @@map("payments")
 }
 
 model OrderReturn {
