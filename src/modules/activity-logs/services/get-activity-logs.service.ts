@@ -52,6 +52,17 @@ export class GetActivityLogsService {
         userId: query.userId,
       }),
 
+      ...((query.fromDate !== undefined || query.toDate !== undefined) && {
+        createdAt: {
+          ...(query.fromDate !== undefined && {
+            gte: new Date(query.fromDate),
+          }),
+          ...(query.toDate !== undefined && {
+            lte: new Date(query.toDate),
+          }),
+        },
+      }),
+
       ...(query.search !== undefined && {
         OR: [
           {

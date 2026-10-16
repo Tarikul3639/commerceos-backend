@@ -5,10 +5,15 @@ import {
 } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 
 @Injectable()
 export class RestoreCustomerService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly createActivityLogService: CreateActivityLogService,
+  ) {}
 
   async execute(customerId: string): Promise<void> {
     const customer = await this.prisma.customer.findUnique({

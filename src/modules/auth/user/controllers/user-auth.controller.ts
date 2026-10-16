@@ -89,8 +89,8 @@ export class UserAuthController {
   ) {
     const result = await this.loginService.execute(
       loginDto,
-      request.headers['user-agent'],
       request.ip,
+      request.headers['user-agent'],
     );
 
     CookieUtil.setUserAccessToken(

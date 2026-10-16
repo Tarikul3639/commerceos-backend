@@ -5,6 +5,8 @@ import {
 } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 import { CloudinaryService } from '@/common/cloudinary/cloudinary.service';
 
 import { UpdateBannerDto } from '../dto/requests/update-banner.dto';
@@ -19,6 +21,8 @@ export class UpdateBannerService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cloudinaryService: CloudinaryService,
+
+    private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
   async execute(
@@ -151,6 +155,15 @@ export class UpdateBannerService {
       oldImageIds.map((publicId) => this.cloudinaryService.delete(publicId)),
     );
 
+    await this.createActivityLogService.execute({
+      type: ActivityType.UPDATE,
+      module: ActivityModule.OTHER,
+      action: 'UPDATE_BANNER',
+      entityType: 'Banner',
+      entityId: banner.id,
+      oldValue: { id: existingBanner.id },
+      newValue: { id: banner.id },
+    });
     return toBannerResponse(banner);
   }
 }

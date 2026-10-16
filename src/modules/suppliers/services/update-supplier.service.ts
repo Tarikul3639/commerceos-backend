@@ -5,13 +5,18 @@ import {
 } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 
 import { UpdateSupplierDto } from '../dto/requests/update-supplier.dto';
 import { SupplierResponseDto } from '../dto/responses/supplier-response.dto';
 
 @Injectable()
 export class UpdateSupplierService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly createActivityLogService: CreateActivityLogService,
+  ) { }
 
   async execute(
     supplierId: string,
@@ -86,6 +91,37 @@ export class UpdateSupplierService {
         ...(isActive !== undefined && {
           isActive,
         }),
+      },
+    });
+
+    // ------------------------------------------------------------------------
+    // 5. Create Activity Log
+    // ------------------------------------------------------------------------
+
+    await this.createActivityLogService.execute({
+      type: ActivityType.UPDATE,
+      module: ActivityModule.SUPPLIER,
+      action: 'UPDATE_SUPPLIER',
+      description: `Supplier "${supplier.name}" was updated`,
+      entityType: 'Supplier',
+      entityId: updatedSupplier.id,
+
+      oldValue: {
+        name: supplier.name,
+        email: supplier.email,
+        phone: supplier.phone,
+        address: supplier.address,
+        contactPerson: supplier.contactPerson,
+        isActive: supplier.isActive,
+      },
+
+      newValue: {
+        name: updatedSupplier.name,
+        email: updatedSupplier.email,
+        phone: updatedSupplier.phone,
+        address: updatedSupplier.address,
+        contactPerson: updatedSupplier.contactPerson,
+        isActive: updatedSupplier.isActive,
       },
     });
 

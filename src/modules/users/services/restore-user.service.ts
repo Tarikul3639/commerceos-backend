@@ -4,12 +4,17 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 import { UserResponseDto } from '../dto/responses/user-response.dto';
 import { Role, UserStatus } from '@/lib/prisma/enums';
 
 @Injectable()
 export class RestoreUserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly createActivityLogService: CreateActivityLogService,
+  ) { }
 
   async execute(userId: string): Promise<UserResponseDto> {
     const user = await this.prisma.user.findUnique({
@@ -25,6 +30,7 @@ export class RestoreUserService {
         role: true,
         status: true,
         isVerified: true,
+        deletedAt: true,
         lastLoginAt: true,
         createdAt: true,
         updatedAt: true,
@@ -53,6 +59,23 @@ export class RestoreUserService {
       },
     });
 
+    await this.createActivityLogService.execute({
+      type: ActivityType.STATUS_CHANGE,
+      module: ActivityModule.USER,
+      action: 'RESTORE_USER',
+      description: `User restored from ${user.status} to ${restoredUser.status}`,
+      entityType: 'User',
+      entityId: restoredUser.id,
+      oldValue: {
+        status: user.status,
+        deletedAt: user.deletedAt,
+      },
+      newValue: {
+        status: restoredUser.status,
+        deletedAt: restoredUser.deletedAt,
+      },
+    });
+    
     return {
       id: restoredUser.id,
       name: restoredUser.name,

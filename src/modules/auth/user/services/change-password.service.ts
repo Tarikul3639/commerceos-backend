@@ -11,6 +11,8 @@ import { comparePassword, hashPassword } from '@/common/utils/password.util';
 
 import { RefreshTokenService } from './refresh-token.service';
 import { ChangePasswordDto } from '../dto/requests/change-password.dto';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 
 @Injectable()
 export class ChangePasswordService {
@@ -18,6 +20,7 @@ export class ChangePasswordService {
     private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,
     private readonly refreshTokenService: RefreshTokenService,
+    private readonly createActivityLog: CreateActivityLogService,
   ) {}
 
   async execute(userId: string, dto: ChangePasswordDto): Promise<void> {
@@ -78,5 +81,14 @@ export class ChangePasswordService {
      * after changing the password.
      */
     await this.refreshTokenService.revokeAll(userId);
+    await this.createActivityLog.execute({
+      type: ActivityType.PASSWORD_CHANGE,
+      module: ActivityModule.AUTH,
+      action: 'CHANGE_PASSWORD',
+      description: 'User password changed successfully',
+      entityType: 'User',
+      entityId: userId,
+      userId,
+    });
   }
 }

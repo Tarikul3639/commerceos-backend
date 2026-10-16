@@ -19,12 +19,17 @@ export class CookieUtil {
    * @returns The base cookie options
    */
 
+
   private static getBaseCookieOptions(
     configService: ConfigService,
   ): CookieOptions {
+    const isProduction = configService.getOrThrow<boolean>(
+      'app.isProduction',
+    );
+
     return {
       httpOnly: true,
-      secure: configService.getOrThrow<boolean>('app.isProduction'),
+      secure: isProduction,
       sameSite: 'lax',
       path: '/',
     };

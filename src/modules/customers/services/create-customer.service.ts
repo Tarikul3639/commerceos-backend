@@ -2,6 +2,8 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 import { generateRandomHashPassword } from '@/common/utils/password.util';
 import { CreateCustomerDto } from '../dto/requests/create-customer.dto';
 
@@ -10,6 +12,8 @@ export class CreateCustomerService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
+
+    private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
   async execute(createCustomerDto: CreateCustomerDto) {
@@ -42,7 +46,7 @@ export class CreateCustomerService {
       this.configService.getOrThrow<number>('bcrypt.saltRounds'),
     );
 
-    return this.prisma.customer.create({
+    const customer = await this.prisma.customer.create({
       data: {
         name,
         email,
@@ -66,5 +70,16 @@ export class CreateCustomerService {
         updatedAt: true,
       },
     });
+
+    await this.createActivityLogService.execute({
+      type: ActivityType.CREATE,
+      module: ActivityModule.CUSTOMER,
+      action: 'CREATE_CUSTOMER',
+      entityType: 'Customer',
+      entityId: customer.id,
+      newValue: { id: customer.id },
+    });
+
+    return customer;
   }
 }

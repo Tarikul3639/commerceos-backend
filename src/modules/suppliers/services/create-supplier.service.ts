@@ -1,13 +1,18 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 
 import { CreateSupplierDto } from '../dto/requests/create-supplier.dto';
 import { SupplierResponseDto } from '../dto/responses/supplier-response.dto';
 
 @Injectable()
 export class CreateSupplierService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly createActivityLogService: CreateActivityLogService,
+  ) { }
 
   async execute(
     createSupplierDto: CreateSupplierDto,
@@ -68,6 +73,24 @@ export class CreateSupplierService {
         ...(contactPerson !== undefined && {
           contactPerson,
         }),
+      },
+    });
+
+    // Activity Log Creation
+    await this.createActivityLogService.execute({
+      type: ActivityType.CREATE,
+      module: ActivityModule.SUPPLIER,
+      action: 'CREATE_SUPPLIER',
+      description: `Supplier "${supplier.name}" was created`,
+      entityType: 'Supplier',
+      entityId: supplier.id,
+      newValue: {
+        name: supplier.name,
+        email: supplier.email,
+        phone: supplier.phone,
+        address: supplier.address,
+        contactPerson: supplier.contactPerson,
+        isActive: supplier.isActive,
       },
     });
 

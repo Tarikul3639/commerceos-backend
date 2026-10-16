@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 
 import { ActivityLogController } from './controllers/activity-log.controller';
 
@@ -6,6 +6,7 @@ import { CreateActivityLogService } from './services/create-activity-log.service
 import { GetActivityLogService } from './services/get-activity-log.service';
 import { GetActivityLogsService } from './services/get-activity-logs.service';
 
+@Global()
 @Module({
   controllers: [ActivityLogController],
 

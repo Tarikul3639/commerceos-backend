@@ -6,6 +6,8 @@ import {
 
 import { CloudinaryService } from '@/common/cloudinary/cloudinary.service';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 
 import { UpdateUserDto } from '../dto/requests/update-user.dto';
 import { UserResponseDto } from '../dto/responses/user-response.dto';
@@ -19,7 +21,9 @@ export class UpdateUserService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cloudinaryService: CloudinaryService,
-  ) {}
+
+    private readonly createActivityLogService: CreateActivityLogService,
+  ) { }
 
   async execute(
     userId: string,
@@ -118,6 +122,21 @@ export class UpdateUserService {
         ...(publicId !== undefined && { publicId }),
         ...(role !== undefined && { role }),
       },
+    });
+
+    // ------------------------------------------------------------------------
+    // 5. Activity Logging
+    // ------------------------------------------------------------------------
+    
+    await this.createActivityLogService.execute({
+      type: ActivityType.UPDATE,
+      module: ActivityModule.USER,
+      action: 'UPDATE_USER',
+      entityType: 'User',
+      entityId: updatedUser.id,
+      userId: userId,
+      oldValue: { id: user.id },
+      newValue: { id: updatedUser.id },
     });
 
     // ------------------------------------------------------------------------

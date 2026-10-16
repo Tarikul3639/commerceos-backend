@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 import { CloudinaryService } from '@/common/cloudinary/cloudinary.service';
 
 @Injectable()
@@ -8,6 +10,8 @@ export class DeleteCustomerService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cloudinaryService: CloudinaryService,
+
+    private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
   async execute(customerId: string): Promise<void> {
@@ -56,6 +60,17 @@ export class DeleteCustomerService {
     await this.prisma.customer.delete({
       where: {
         id: customerId,
+      },
+    });
+    await this.createActivityLogService.execute({
+      type: ActivityType.DELETE,
+      module: ActivityModule.CUSTOMER,
+      action: 'DELETE_CUSTOMER',
+      entityType: 'Customer',
+      entityId: customerId,
+      oldValue: {
+        publicId: customer.publicId,
+        orderCount: customer._count.orders,
       },
     });
   }

@@ -1,6 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 import { CloudinaryService } from '@/common/cloudinary/cloudinary.service';
 
 import { CreateBannerDto } from '../dto/requests/create-banner.dto';
@@ -15,6 +17,8 @@ export class CreateBannerService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cloudinaryService: CloudinaryService,
+
+    private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
   async execute(
@@ -84,6 +88,15 @@ export class CreateBannerService {
           ...(endAt !== undefined && { endAt }),
         },
         include: bannerWithUsers,
+      });
+
+      await this.createActivityLogService.execute({
+        type: ActivityType.CREATE,
+        module: ActivityModule.OTHER,
+        action: 'CREATE_BANNER',
+        entityType: 'Banner',
+        entityId: banner.id,
+        newValue: { id: banner.id },
       });
 
       return toBannerResponse(banner);

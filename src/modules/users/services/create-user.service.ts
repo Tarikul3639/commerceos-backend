@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'crypto';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 
 import { CreateUserDto } from '../dto/requests/create-user.dto';
 import { UserResponseDto } from '../dto/responses/user-response.dto';
@@ -16,7 +18,9 @@ export class CreateUserService {
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
     private readonly mailService: MailService,
-  ) {}
+
+    private readonly createActivityLogService: CreateActivityLogService,
+  ) { }
 
   async execute(createUserDto: CreateUserDto): Promise<UserResponseDto> {
     const { name, email, phone, avatar, role } = createUserDto;
@@ -73,6 +77,25 @@ export class CreateUserService {
       name: user.name,
       loginUrl: `${frontendUrl}/login`,
       year: new Date().getFullYear(),
+    });
+
+    await this.createActivityLogService.execute({
+      type: ActivityType.CREATE,
+      module: ActivityModule.USER,
+      action: 'CREATE_USER',
+      description: `User "${user.name}" was created with role ${user.role}`,
+      entityType: 'User',
+      entityId: user.id,
+      newValue: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        avatar: user.avatar,
+        role: user.role,
+        status: user.status,
+        isVerified: user.isVerified,
+      },
     });
 
     return {

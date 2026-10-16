@@ -1,13 +1,18 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 
 import { CreateBrandDto } from '../dto/requests/create-brand.dto';
 import { BrandResponseDto } from '../dto/responses/brand-response.dto';
 
 @Injectable()
 export class CreateBrandService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly createActivityLogService: CreateActivityLogService,
+  ) { }
 
   async execute(createBrandDto: CreateBrandDto): Promise<BrandResponseDto> {
     const { name, slug, description, image, publicId, isActive } =
@@ -74,6 +79,24 @@ export class CreateBrandService {
         ...(isActive !== undefined && {
           isActive,
         }),
+      },
+    });
+
+    // Activity Log Creation
+    await this.createActivityLogService.execute({
+      type: ActivityType.CREATE,
+      module: ActivityModule.BRAND,
+      action: 'CREATE_BRAND',
+      description: `Brand "${brand.name}" was created`,
+      entityType: 'BRAND',
+      entityId: brand.id,
+      newValue: {
+        name: brand.name,
+        slug: brand.slug,
+        description: brand.description,
+        image: brand.image,
+        publicId: brand.publicId,
+        isActive: brand.isActive,
       },
     });
 

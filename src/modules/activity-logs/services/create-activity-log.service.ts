@@ -1,13 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { AuditContextService } from '@/common/audit/audit-context.service';
 import { CreateActivityLogInput } from '../interfaces/activity-log.interface';
 
 @Injectable()
 export class CreateActivityLogService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly auditContext: AuditContextService,
+  ) {}
 
   async execute(data: CreateActivityLogInput) {
+    const context = this.auditContext.get();
+
     return this.prisma.activityLog.create({
       data: {
         type: data.type,
@@ -34,18 +40,18 @@ export class CreateActivityLogService {
           newValue: data.newValue,
         }),
 
-        ...(data.ipAddress !== undefined && {
-          ipAddress: data.ipAddress,
+        ...((data.ipAddress ?? context?.ipAddress) !== undefined && {
+          ipAddress: (data.ipAddress ?? context?.ipAddress)!,
         }),
 
-        ...(data.userAgent !== undefined && {
-          userAgent: data.userAgent,
+        ...((data.userAgent ?? context?.userAgent) !== undefined && {
+          userAgent: (data.userAgent ?? context?.userAgent)!,
         }),
 
-        ...(data.userId !== undefined && {
+        ...((data.userId ?? context?.userId) !== undefined && {
           user: {
             connect: {
-              id: data.userId,
+              id: (data.userId ?? context?.userId)!,
             },
           },
         }),

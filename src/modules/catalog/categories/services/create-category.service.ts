@@ -1,11 +1,16 @@
 import { Injectable, ConflictException } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 import { CreateCategoryDto } from '../dto/requests/create-category.dto';
 import { CategoryResponseDto } from '../dto/responses/category-response.dto';
 
 @Injectable()
 export class CreateCategoryService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly createActivityLogService: CreateActivityLogService,
+  ) { }
 
   async execute(
     createCategoryDto: CreateCategoryDto,
@@ -39,6 +44,22 @@ export class CreateCategoryService {
         slug,
         ...(description !== undefined && { description }),
         ...(isActive !== undefined && { isActive }),
+      },
+    });
+
+    // Activity Log Creation
+    await this.createActivityLogService.execute({
+      type: ActivityType.CREATE,
+      module: ActivityModule.CATEGORY,
+      action: 'CREATE_CATEGORY',
+      description: `Category "${newCategory.name}" was created`,
+      entityType: 'CATEGORY',
+      entityId: newCategory.id,
+      newValue: {
+        name: newCategory.name,
+        slug: newCategory.slug,
+        description: newCategory.description,
+        isActive: newCategory.isActive,
       },
     });
 

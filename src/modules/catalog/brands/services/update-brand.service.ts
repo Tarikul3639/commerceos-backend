@@ -5,13 +5,18 @@ import {
 } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 
 import { UpdateBrandDto } from '../dto/requests/update-brand.dto';
 import { BrandResponseDto } from '../dto/responses/brand-response.dto';
 
 @Injectable()
 export class UpdateBrandService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly createActivityLogService: CreateActivityLogService,
+  ) { }
 
   async execute(
     brandId: string,
@@ -25,6 +30,10 @@ export class UpdateBrandService {
         id: true,
         name: true,
         slug: true,
+        description: true,
+        image: true,
+        publicId: true,
+        isActive: true,
         deletedAt: true,
       },
     });
@@ -122,6 +131,32 @@ export class UpdateBrandService {
         ...(updateBrandDto.isActive !== undefined && {
           isActive: updateBrandDto.isActive,
         }),
+      },
+    });
+
+    // Activity Log Creation
+    await this.createActivityLogService.execute({
+      type: ActivityType.UPDATE,
+      module: ActivityModule.BRAND,
+      action: 'UPDATE_BRAND',
+      description: `Brand "${updatedBrand.name}" was updated`,
+      entityType: 'BRAND',
+      entityId: updatedBrand.id,
+      oldValue: {
+        name: brand.name,
+        slug: brand.slug,
+        description: brand.description,
+        image: brand.image,
+        publicId: brand.publicId,
+        isActive: brand.isActive,
+      },
+      newValue: {
+        name: updatedBrand.name,
+        slug: updatedBrand.slug,
+        description: updatedBrand.description,
+        image: updatedBrand.image,
+        publicId: updatedBrand.publicId,
+        isActive: updatedBrand.isActive,
       },
     });
 

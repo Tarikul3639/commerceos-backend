@@ -5,13 +5,18 @@ import {
 } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 
 import { UpdateUserStatusDto } from '../dto/requests/update-user-status.dto';
 import { UserResponseDto } from '../dto/responses/user-response.dto';
 
 @Injectable()
 export class UpdateUserStatusService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly createActivityLogService: CreateActivityLogService,
+  ) { }
 
   async execute(
     userId: string,
@@ -58,6 +63,22 @@ export class UpdateUserStatusService {
 
       data: {
         status: updateUserStatusDto.status,
+      },
+    });
+
+    await this.createActivityLogService.execute({
+      type: ActivityType.STATUS_CHANGE,
+      module: ActivityModule.USER,
+      action: 'CHANGE_USER_STATUS',
+      description: `User status changed from ${user.status} to ${updatedUser.status}`,
+      entityType: 'User',
+      entityId: updatedUser.id,
+      userId: requesterId,
+      oldValue: {
+        status: user.status,
+      },
+      newValue: {
+        status: updatedUser.status,
       },
     });
 

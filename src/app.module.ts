@@ -37,6 +37,9 @@ import { BannerModule } from '@/modules/banners/banner.module';
 import { ActivityLogModule } from '@/modules/activity-logs/activity-log.module';
 import { SettingsModule } from '@/modules/settings/settings.module';
 import { NotificationModule } from '@/modules/notifications/notification.module';
+import { AuditModule } from '@/common/audit/audit.module';
+import { AuditContextInterceptor } from '@/common/audit/audit-context.interceptor';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 import { DashboardModule } from '@/modules/dashboard/dashboard.module';
 import { AnalyticsModule } from '@/modules/analytics/analytics.module';
@@ -96,8 +99,14 @@ import { StockModule } from '@/modules/inventory/stocks/stock.module';
     ActivityLogModule,
     SettingsModule,
     NotificationModule,
+    AuditModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AuditContextInterceptor,
+    },
+  ],
 })
 export class AppModule {}

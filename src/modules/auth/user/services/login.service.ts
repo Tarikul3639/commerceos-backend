@@ -11,6 +11,8 @@ import { AuthTokensPayload } from '../interfaces/auth-tokens.interface';
 
 import { TokenService } from './token.service';
 import { RefreshTokenService } from './refresh-token.service';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 
 @Injectable()
 export class LoginService {
@@ -20,7 +22,8 @@ export class LoginService {
     private readonly prismaService: PrismaService,
     private readonly tokenService: TokenService,
     private readonly refreshTokenService: RefreshTokenService,
-  ) {}
+    private readonly createActivityLog: CreateActivityLogService,
+  ) { }
 
   async execute(
     loginDto: LoginDto,
@@ -93,6 +96,19 @@ export class LoginService {
     });
 
     this.logger.log(`User ${user.email} logged in.`);
+
+    // Audit log
+    await this.createActivityLog.execute({
+      type: ActivityType.LOGIN,
+      module: ActivityModule.AUTH,
+      action: 'LOGIN',
+      description: `User ${user.email} logged in`,
+      entityType: 'User',
+      entityId: user.id,
+      userId: user.id,
+      ...(ipAddress && { ipAddress }),
+      ...(userAgent && { userAgent }),
+    });
 
     return tokens;
   }

@@ -50,6 +50,8 @@ enum Permission {
   BANNER_READ
   BANNER_UPDATE
   BANNER_DELETE
+
+  ACTIVITY_LOG_READ
 }
 
 enum UserStatus {

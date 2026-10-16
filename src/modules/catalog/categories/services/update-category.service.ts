@@ -6,13 +6,18 @@ import {
 } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 
 import { UpdateCategoryDto } from '../dto/requests/update-category.dto';
 import { CategoryResponseDto } from '../dto/responses/category-response.dto';
 
 @Injectable()
 export class UpdateCategoryService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly createActivityLogService: CreateActivityLogService,
+  ) { }
 
   async execute(
     categoryId: string,
@@ -84,6 +89,28 @@ export class UpdateCategoryService {
         ...(isActive !== undefined && {
           isActive,
         }),
+      },
+    });
+
+    // Activity Log Creation
+    await this.createActivityLogService.execute({
+      type: ActivityType.UPDATE,
+      module: ActivityModule.CATEGORY,
+      action: 'UPDATE_CATEGORY',
+      description: `Category "${updatedCategory.name}" was updated`,
+      entityType: 'CATEGORY',
+      entityId: updatedCategory.id,
+      oldValue: {
+        name: category.name,
+        slug: category.slug,
+        description: category.description,
+        isActive: category.isActive,
+      },
+      newValue: {
+        name: updatedCategory.name,
+        slug: updatedCategory.slug,
+        description: updatedCategory.description,
+        isActive: updatedCategory.isActive,
       },
     });
 
