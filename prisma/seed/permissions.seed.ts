@@ -39,6 +39,10 @@ const rolePermissions: Record<Role, Permission[]> = {
         Permission.ACTIVITY_LOG_READ,
         Permission.EMAIL_READ,
         Permission.CART_READ,
+        Permission.DISCOUNT_CREATE,
+        Permission.DISCOUNT_READ,
+        Permission.DISCOUNT_UPDATE,
+        Permission.DISCOUNT_DELETE,
     ],
 
     [Role.MANAGER]: [

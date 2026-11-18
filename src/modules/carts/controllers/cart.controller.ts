@@ -87,9 +87,7 @@ export class CartController {
 
   @Delete()
   @ApiOperation({ summary: 'Clear cart' })
-  async clearCart(
-    @CurrentCustomer('id') customerId: string,
-  ): Promise<void> {
+  async clearCart(@CurrentCustomer('id') customerId: string): Promise<void> {
     return this.clearCartService.execute(customerId);
   }
 }

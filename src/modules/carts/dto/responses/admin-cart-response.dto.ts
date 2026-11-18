@@ -41,7 +41,9 @@ export class AdminCartResponseDto {
   items!: AdminCartItemResponseDto[];
   @ApiProperty() itemCount!: number;
   @ApiProperty() totalQuantity!: number;
-  @ApiProperty({ description: 'Estimated merchandise value; not a checkout total' })
+  @ApiProperty({
+    description: 'Estimated merchandise value; not a checkout total',
+  })
   estimatedValue!: string;
   @ApiProperty() createdAt!: Date;
   @ApiProperty() updatedAt!: Date;

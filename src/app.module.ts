@@ -33,6 +33,7 @@ import { SupplierModule } from '@/modules/suppliers/supplier.module';
 import { OrderModule } from '@/modules/orders/order.module';
 import { CartModule } from '@/modules/carts/cart.module';
 import { BannerModule } from '@/modules/banners/banner.module';
+import { DiscountModule } from '@/modules/discounts/discount.module';
 
 import { ActivityLogModule } from '@/modules/activity-logs/activity-log.module';
 import { SettingsModule } from '@/modules/settings/settings.module';
@@ -100,6 +101,7 @@ import { PaymentGatewayConfigModule } from './modules/payment-gateway-config/pay
     CartModule,
 
     BannerModule,
+    DiscountModule,
 
     ActivityLogModule,
     SettingsModule,

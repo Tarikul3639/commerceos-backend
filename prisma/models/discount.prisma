@@ -1,0 +1,31 @@
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+model Discount {
+  id String @id @default(uuid())
+
+  code              String       @unique
+  description       String?
+  type              DiscountType
+  value             Decimal
+  minOrderAmount    Decimal      @default(0)
+  maxDiscountAmount Decimal?
+  startsAt          DateTime?
+  endsAt            DateTime?
+  usageLimit        Int?
+  isActive          Boolean      @default(true)
+
+  createdById String
+  updatedById String?
+  createdBy   User    @relation("DiscountCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  updatedBy   User?   @relation("DiscountUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([startsAt, endsAt])
+  @@map("discounts")
+}
