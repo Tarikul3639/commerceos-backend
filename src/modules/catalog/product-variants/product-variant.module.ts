@@ -10,13 +10,13 @@ import { GetProductVariantsService } from './services/get-product-variants.servi
 import { UpdateProductVariantService } from './services/update-product-variant.service';
 
 @Module({
-    imports: [PrismaModule],
-    controllers: [ProductVariantsController],
-    providers: [
-        CreateProductVariantService,
-        GetProductVariantsService,
-        UpdateProductVariantService,
-        DeleteProductVariantService,
-    ],
+  imports: [PrismaModule],
+  controllers: [ProductVariantsController],
+  providers: [
+    CreateProductVariantService,
+    GetProductVariantsService,
+    UpdateProductVariantService,
+    DeleteProductVariantService,
+  ],
 })
-export class ProductVariantModule { }
+export class ProductVariantModule {}

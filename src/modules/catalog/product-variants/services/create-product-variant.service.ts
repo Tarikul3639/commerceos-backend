@@ -17,7 +17,7 @@ export class CreateProductVariantService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(
     dto: CreateProductVariantDto,

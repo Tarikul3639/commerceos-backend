@@ -4,22 +4,22 @@ import { PaymentGatewayConfigResponseDto } from '../dto/responses/payment-gatewa
 
 @Injectable()
 export class GetPaymentGatewayConfigsService {
-    constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-    async execute(): Promise<PaymentGatewayConfigResponseDto[]> {
-        const configs = await this.prisma.paymentGatewayConfig.findMany({
-            orderBy: { createdAt: 'desc' },
-        });
+  async execute(): Promise<PaymentGatewayConfigResponseDto[]> {
+    const configs = await this.prisma.paymentGatewayConfig.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
 
-        return configs.map((config) => ({
-            id: config.id,
-            provider: config.provider,
-            displayName: config.displayName,
-            isEnabled: config.isEnabled,
-            mode: config.mode,
-            settings: config.settings as Record<string, unknown> | null,
-            createdAt: config.createdAt,
-            updatedAt: config.updatedAt,
-        }));
-    }
+    return configs.map((config) => ({
+      id: config.id,
+      provider: config.provider,
+      displayName: config.displayName,
+      isEnabled: config.isEnabled,
+      mode: config.mode,
+      settings: config.settings as Record<string, unknown> | null,
+      createdAt: config.createdAt,
+      updatedAt: config.updatedAt,
+    }));
+  }
 }

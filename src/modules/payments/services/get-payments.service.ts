@@ -6,20 +6,25 @@ import { PaymentQueryDto } from '../dto/requests/payment-query.dto';
 @Injectable()
 export class GetPaymentsService {
   constructor(private readonly prisma: PrismaService) {}
+
   async execute(query: PaymentQueryDto) {
     const page = Math.max(Number(query.page ?? 1), 1);
     const limit = Math.min(Math.max(Number(query.limit ?? 20), 1), 100);
     const search = query.search?.trim();
+
     const where: Prisma.PaymentWhereInput = {
       ...(query.method && { method: query.method }),
       ...(query.status && { status: query.status }),
+      ...(query.type && { type: query.type }),
       ...(search && {
         OR: [
           { transactionId: { contains: search, mode: 'insensitive' } },
           { order: { invoiceNo: { contains: search, mode: 'insensitive' } } },
+          { orderId: { contains: search, mode: 'insensitive' } },
         ],
       }),
     };
+
     const [payments, total] = await Promise.all([
       this.prisma.payment.findMany({
         where,
@@ -35,10 +40,19 @@ export class GetPaymentsService {
               paymentStatus: true,
             },
           },
+          originalPayment: {
+            select: {
+              id: true,
+              transactionId: true,
+              method: true,
+              status: true,
+            },
+          },
         },
       }),
       this.prisma.payment.count({ where }),
     ]);
+
     return {
       data: payments.map((payment) => ({
         ...payment,

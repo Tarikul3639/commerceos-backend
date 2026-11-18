@@ -11,7 +11,7 @@ export class DeleteProductVariantService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(variantId: string): Promise<ProductVariantResponseDto> {
     return this.prisma.$transaction(async (tx) => {
@@ -78,7 +78,7 @@ export class DeleteProductVariantService {
           entityType: 'ProductVariant',
           entityId: variant.id,
           oldValue,
-          newValue: "Variant permanently deleted",
+          newValue: 'Variant permanently deleted',
         });
 
         return {

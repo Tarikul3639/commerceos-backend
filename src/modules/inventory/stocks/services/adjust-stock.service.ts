@@ -16,7 +16,7 @@ export class AdjustStockService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLog: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(
     _userId: string,

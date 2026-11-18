@@ -16,7 +16,7 @@ export class UpdateProductService {
     private readonly getAdminProductDetailsService: GetAdminProductDetailsService,
 
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(
     productId: string,

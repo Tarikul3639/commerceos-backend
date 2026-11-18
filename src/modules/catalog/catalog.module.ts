@@ -17,4 +17,4 @@ import { ProductOptionModule } from './product-options/product-option.module';
     ProductOptionModule,
   ],
 })
-export class CatalogModule { }
+export class CatalogModule {}

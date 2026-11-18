@@ -6,35 +6,37 @@ import { ProductImageResponseDto } from '../dto/responses/product-image-response
 
 @Injectable()
 export class AddProductImageService {
-    constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-    async execute(productId: string, dto: AddProductImageDto): Promise<ProductImageResponseDto[]> {
-        
-        const product = await this.prisma.product.findFirst({
-            where: {
-                id: productId,
-                deletedAt: null,
-            },
-            select: {
-                id: true,
-            },
-        });
+  async execute(
+    productId: string,
+    dto: AddProductImageDto,
+  ): Promise<ProductImageResponseDto[]> {
+    const product = await this.prisma.product.findFirst({
+      where: {
+        id: productId,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+      },
+    });
 
-        if (!product) {
-            throw new NotFoundException('Product not found');
-        }
-
-        return this.prisma.$transaction(
-            dto.images.map((image) =>
-                this.prisma.productImage.create({
-                    data: {
-                        productId: product.id,
-                        imageUrl: image.imageUrl,
-                        publicId: image.publicId,
-                        sortOrder: image.sortOrder,
-                    },
-                }),
-            ),
-        );
+    if (!product) {
+      throw new NotFoundException('Product not found');
     }
+
+    return this.prisma.$transaction(
+      dto.images.map((image) =>
+        this.prisma.productImage.create({
+          data: {
+            productId: product.id,
+            imageUrl: image.imageUrl,
+            publicId: image.publicId,
+            sortOrder: image.sortOrder,
+          },
+        }),
+      ),
+    );
+  }
 }

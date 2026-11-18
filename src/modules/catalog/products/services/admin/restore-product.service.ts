@@ -9,7 +9,7 @@ export class RestoreProductService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   /** Restore a soft-deleted product. */
   async execute(productId: string): Promise<{ message: string }> {

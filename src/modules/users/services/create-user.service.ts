@@ -20,7 +20,7 @@ export class CreateUserService {
     private readonly mailService: MailService,
 
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(createUserDto: CreateUserDto): Promise<UserResponseDto> {
     const { name, email, phone, avatar, role } = createUserDto;

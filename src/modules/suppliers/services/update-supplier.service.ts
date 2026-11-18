@@ -16,7 +16,7 @@ export class UpdateSupplierService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(
     supplierId: string,

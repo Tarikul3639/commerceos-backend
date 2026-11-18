@@ -13,7 +13,7 @@ import { PaymentResponseDto } from '../dto/responses/payment-response.dto';
 
 @Injectable()
 export class CreatePaymentService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async execute(
     dto: CreatePaymentDto,

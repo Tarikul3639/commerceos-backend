@@ -14,7 +14,7 @@ export class RestoreUserService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(userId: string): Promise<UserResponseDto> {
     const user = await this.prisma.user.findUnique({
@@ -75,7 +75,7 @@ export class RestoreUserService {
         deletedAt: restoredUser.deletedAt,
       },
     });
-    
+
     return {
       id: restoredUser.id,
       name: restoredUser.name,

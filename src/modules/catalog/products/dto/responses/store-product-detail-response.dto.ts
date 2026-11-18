@@ -7,17 +7,17 @@ import { ProductOptionType } from '@/lib/prisma/enums';
  * ============================================================================ */
 
 export class StoreProductImageDto {
-    @ApiProperty()
-    id!: string;
+  @ApiProperty()
+  id!: string;
 
-    @ApiProperty()
-    imageUrl!: string;
+  @ApiProperty()
+  imageUrl!: string;
 
-    @ApiProperty()
-    publicId!: string;
+  @ApiProperty()
+  publicId!: string;
 
-    @ApiProperty()
-    sortOrder!: number;
+  @ApiProperty()
+  sortOrder!: number;
 }
 
 /* ============================================================================
@@ -25,11 +25,11 @@ export class StoreProductImageDto {
  * ============================================================================ */
 
 export class StoreProductCategoryDto {
-    @ApiProperty()
-    id!: string;
+  @ApiProperty()
+  id!: string;
 
-    @ApiProperty()
-    name!: string;
+  @ApiProperty()
+  name!: string;
 }
 
 /* ============================================================================
@@ -37,11 +37,11 @@ export class StoreProductCategoryDto {
  * ============================================================================ */
 
 export class StoreProductBrandDto {
-    @ApiProperty()
-    id!: string;
+  @ApiProperty()
+  id!: string;
 
-    @ApiProperty()
-    name!: string;
+  @ApiProperty()
+  name!: string;
 }
 
 /* ============================================================================
@@ -49,17 +49,17 @@ export class StoreProductBrandDto {
  * ============================================================================ */
 
 export class StoreProductOptionValueDto {
-    @ApiProperty()
-    id!: string;
+  @ApiProperty()
+  id!: string;
 
-    @ApiProperty()
-    value!: string;
+  @ApiProperty()
+  value!: string;
 
-    @ApiProperty({
-        nullable: true,
-        example: '#FF0000',
-    })
-    colorHex!: string | null;
+  @ApiProperty({
+    nullable: true,
+    example: '#FF0000',
+  })
+  colorHex!: string | null;
 }
 
 /* ============================================================================
@@ -67,20 +67,20 @@ export class StoreProductOptionValueDto {
  * ============================================================================ */
 
 export class StoreProductOptionDto {
-    @ApiProperty()
-    id!: string;
+  @ApiProperty()
+  id!: string;
 
-    @ApiProperty()
-    name!: string;
+  @ApiProperty()
+  name!: string;
 
-    @ApiProperty({
-        enum: ProductOptionType,
-        enumName: 'ProductOptionType',
-    })
-    type!: ProductOptionType;
+  @ApiProperty({
+    enum: ProductOptionType,
+    enumName: 'ProductOptionType',
+  })
+  type!: ProductOptionType;
 
-    @ApiProperty({ type: [StoreProductOptionValueDto] })
-    values!: StoreProductOptionValueDto[];
+  @ApiProperty({ type: [StoreProductOptionValueDto] })
+  values!: StoreProductOptionValueDto[];
 }
 
 /* ============================================================================
@@ -88,29 +88,29 @@ export class StoreProductOptionDto {
  * ============================================================================ */
 
 export class StoreProductVariantOptionDto {
-    @ApiProperty()
-    id!: string;
+  @ApiProperty()
+  id!: string;
 
-    @ApiProperty()
-    value!: string;
+  @ApiProperty()
+  value!: string;
 
-    @ApiProperty({
-        nullable: true,
-        example: '#FF0000',
-    })
-    colorHex!: string | null;
+  @ApiProperty({
+    nullable: true,
+    example: '#FF0000',
+  })
+  colorHex!: string | null;
 
-    @ApiProperty()
-    optionId!: string;
+  @ApiProperty()
+  optionId!: string;
 
-    @ApiProperty()
-    optionName!: string;
+  @ApiProperty()
+  optionName!: string;
 
-    @ApiProperty({
-        enum: ProductOptionType,
-        enumName: 'ProductOptionType',
-    })
-    optionType!: ProductOptionType;
+  @ApiProperty({
+    enum: ProductOptionType,
+    enumName: 'ProductOptionType',
+  })
+  optionType!: ProductOptionType;
 }
 
 /* ============================================================================
@@ -118,27 +118,27 @@ export class StoreProductVariantOptionDto {
  * ============================================================================ */
 
 export class StoreProductVariantDto {
-    @ApiProperty()
-    id!: string;
+  @ApiProperty()
+  id!: string;
 
-    @ApiProperty({
-        nullable: true,
-    })
-    title!: string | null;
+  @ApiProperty({
+    nullable: true,
+  })
+  title!: string | null;
 
-    @ApiProperty()
-    sku!: string;
+  @ApiProperty()
+  sku!: string;
 
-    @ApiProperty()
-    stock!: number;
+  @ApiProperty()
+  stock!: number;
 
-    @ApiProperty({
-        description: 'Whether the variant has available stock',
-    })
-    isAvailable!: boolean;
+  @ApiProperty({
+    description: 'Whether the variant has available stock',
+  })
+  isAvailable!: boolean;
 
-    @ApiProperty({ type: [StoreProductVariantOptionDto] })
-    options!: StoreProductVariantOptionDto[];
+  @ApiProperty({ type: [StoreProductVariantOptionDto] })
+  options!: StoreProductVariantOptionDto[];
 }
 
 /* ============================================================================
@@ -146,62 +146,62 @@ export class StoreProductVariantDto {
  * ============================================================================ */
 
 export class StoreProductDetailResponseDto {
-    @ApiProperty()
-    id!: string;
+  @ApiProperty()
+  id!: string;
 
-    @ApiProperty()
-    name!: string;
+  @ApiProperty()
+  name!: string;
 
-    @ApiProperty({
-        nullable: true,
-    })
-    subDescription!: string | null;
+  @ApiProperty({
+    nullable: true,
+  })
+  subDescription!: string | null;
 
-    @ApiProperty({
-        nullable: true,
-    })
-    description!: string | null;
+  @ApiProperty({
+    nullable: true,
+  })
+  description!: string | null;
 
-    @ApiProperty({
-        example: '650.00',
-        description: 'Product selling price',
-    })
-    sellingPrice!: string;
+  @ApiProperty({
+    example: '650.00',
+    description: 'Product selling price',
+  })
+  sellingPrice!: string;
 
-    @ApiProperty({ type: StoreProductCategoryDto })
-    category!: StoreProductCategoryDto;
+  @ApiProperty({ type: StoreProductCategoryDto })
+  category!: StoreProductCategoryDto;
 
-    @ApiProperty({
-        type: StoreProductBrandDto,
-        nullable: true,
-    })
-    brand!: StoreProductBrandDto | null;
+  @ApiProperty({
+    type: StoreProductBrandDto,
+    nullable: true,
+  })
+  brand!: StoreProductBrandDto | null;
 
-    @ApiProperty({
-        nullable: true,
-        description: 'Product size guide details',
-        type: Object,
-    })
-    sizeGuide!: Record<string, unknown> | null;
+  @ApiProperty({
+    nullable: true,
+    description: 'Product size guide details',
+    type: Object,
+  })
+  sizeGuide!: Record<string, unknown> | null;
 
-    @ApiProperty({ type: [StoreProductImageDto] })
-    images!: StoreProductImageDto[];
+  @ApiProperty({ type: [StoreProductImageDto] })
+  images!: StoreProductImageDto[];
 
-    @ApiProperty({ type: [StoreProductOptionDto] })
-    options!: StoreProductOptionDto[];
+  @ApiProperty({ type: [StoreProductOptionDto] })
+  options!: StoreProductOptionDto[];
 
-    @ApiProperty({ type: [StoreProductVariantDto] })
-    variants!: StoreProductVariantDto[];
+  @ApiProperty({ type: [StoreProductVariantDto] })
+  variants!: StoreProductVariantDto[];
 
-    @ApiProperty({
-        type: String,
-        format: 'date-time',
-    })
-    createdAt!: Date;
+  @ApiProperty({
+    type: String,
+    format: 'date-time',
+  })
+  createdAt!: Date;
 
-    @ApiProperty({
-        type: String,
-        format: 'date-time',
-    })
-    updatedAt!: Date;
+  @ApiProperty({
+    type: String,
+    format: 'date-time',
+  })
+  updatedAt!: Date;
 }

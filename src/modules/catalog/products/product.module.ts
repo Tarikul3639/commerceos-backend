@@ -16,30 +16,27 @@ import { GetStoreProductDetailsService } from './services/store/get-store-produc
 import { GetStoreProductsService } from './services/store/get-store-products.service';
 
 @Module({
-    imports: [PrismaModule],
-    controllers: [
-        AdminProductsController,
-        StoreProductsController,
-    ],
-    providers: [
-        CreateProductService,
-        UpdateProductService,
-        DeleteProductService,
-        RestoreProductService,
-        GetAdminProductsService,
-        GetAdminProductDetailsService,
-        GetStoreProductsService,
-        GetStoreProductDetailsService,
-    ],
-    exports: [
-        CreateProductService,
-        UpdateProductService,
-        DeleteProductService,
-        RestoreProductService,
-        GetAdminProductsService,
-        GetAdminProductDetailsService,
-        GetStoreProductsService,
-        GetStoreProductDetailsService,
-    ],
+  imports: [PrismaModule],
+  controllers: [AdminProductsController, StoreProductsController],
+  providers: [
+    CreateProductService,
+    UpdateProductService,
+    DeleteProductService,
+    RestoreProductService,
+    GetAdminProductsService,
+    GetAdminProductDetailsService,
+    GetStoreProductsService,
+    GetStoreProductDetailsService,
+  ],
+  exports: [
+    CreateProductService,
+    UpdateProductService,
+    DeleteProductService,
+    RestoreProductService,
+    GetAdminProductsService,
+    GetAdminProductDetailsService,
+    GetStoreProductsService,
+    GetStoreProductDetailsService,
+  ],
 })
-export class ProductModule { }
+export class ProductModule {}

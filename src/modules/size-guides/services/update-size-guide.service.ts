@@ -15,7 +15,7 @@ export class UpdateSizeGuideService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   /** Update a size guide */
   async execute(

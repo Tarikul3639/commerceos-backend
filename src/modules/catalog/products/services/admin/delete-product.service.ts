@@ -9,7 +9,7 @@ export class DeleteProductService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(productId: string): Promise<{ message: string }> {
     const product = await this.prisma.product.findFirst({

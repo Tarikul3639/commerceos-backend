@@ -16,7 +16,7 @@ export class UpdateBrandService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(
     brandId: string,

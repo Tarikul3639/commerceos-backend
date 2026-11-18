@@ -8,7 +8,7 @@ export class DeleteSupplierService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(supplierId: string): Promise<void> {
     const supplier = await this.prisma.supplier.findFirst({

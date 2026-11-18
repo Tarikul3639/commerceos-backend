@@ -1,4 +1,3 @@
-
 import { Module } from '@nestjs/common';
 
 import { PrismaModule } from '@/common/prisma/prisma.module';
@@ -12,21 +11,21 @@ import { GetProductOptionsService } from './services/get-product-options.service
 import { UpdateProductOptionService } from './services/update-product-option.service';
 
 @Module({
-    imports: [PrismaModule],
-    controllers: [ProductOptionsController],
-    providers: [
-        CreateProductOptionService,
-        GetProductOptionsService,
-        UpdateProductOptionService,
-        DeleteProductOptionService,
-        GenerateProductVariantsService,
-    ],
-    exports: [
-        CreateProductOptionService,
-        GetProductOptionsService,
-        UpdateProductOptionService,
-        DeleteProductOptionService,
-        GenerateProductVariantsService,
-    ],
+  imports: [PrismaModule],
+  controllers: [ProductOptionsController],
+  providers: [
+    CreateProductOptionService,
+    GetProductOptionsService,
+    UpdateProductOptionService,
+    DeleteProductOptionService,
+    GenerateProductVariantsService,
+  ],
+  exports: [
+    CreateProductOptionService,
+    GetProductOptionsService,
+    UpdateProductOptionService,
+    DeleteProductOptionService,
+    GenerateProductVariantsService,
+  ],
 })
 export class ProductOptionModule {}

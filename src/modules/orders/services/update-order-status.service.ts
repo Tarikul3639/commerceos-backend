@@ -22,10 +22,7 @@ const allowedTransitions: Record<OrderStatus, OrderStatus[]> = {
 export class UpdateOrderStatusService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(
-    orderId: string,
-    updateOrderStatusDto: UpdateOrderStatusDto,
-  ) {
+  async execute(orderId: string, updateOrderStatusDto: UpdateOrderStatusDto) {
     const order = await this.prisma.order.findUnique({
       where: {
         id: orderId,
@@ -36,7 +33,9 @@ export class UpdateOrderStatusService {
       throw new NotFoundException('Order not found');
     }
 
-    if (!allowedTransitions[order.status].includes(updateOrderStatusDto.status)) {
+    if (
+      !allowedTransitions[order.status].includes(updateOrderStatusDto.status)
+    ) {
       throw new BadRequestException(
         `Order cannot transition from ${order.status} to ${updateOrderStatusDto.status}`,
       );

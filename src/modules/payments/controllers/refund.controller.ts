@@ -20,9 +20,7 @@ import { CreateRefundService } from '../services/create-refund.service';
 @Controller('payments')
 @UseGuards(UserJwtAuthGuard, PermissionsGuard)
 export class RefundController {
-  constructor(
-    private readonly createRefundService: CreateRefundService,
-  ) { }
+  constructor(private readonly createRefundService: CreateRefundService) {}
 
   @Post(':id/refunds')
   @Permissions(Permission.ORDER_UPDATE)
@@ -40,7 +38,10 @@ export class RefundController {
     description: 'Refund created successfully.',
     type: RefundResponseDto,
   })
-  @ApiResponse({ status: 400, description: 'Invalid refund request or amount.' })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid refund request or amount.',
+  })
   @ApiResponse({ status: 401, description: 'Authentication required.' })
   @ApiResponse({ status: 403, description: 'Insufficient permissions.' })
   @ApiResponse({ status: 404, description: 'Payment not found.' })

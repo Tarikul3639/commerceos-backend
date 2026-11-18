@@ -23,7 +23,7 @@ export class LoginService {
     private readonly tokenService: TokenService,
     private readonly refreshTokenService: RefreshTokenService,
     private readonly createActivityLog: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(
     loginDto: LoginDto,

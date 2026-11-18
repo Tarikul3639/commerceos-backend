@@ -5,30 +5,30 @@ import { ProductImageResponseDto } from '../dto/responses/product-image-response
 
 @Injectable()
 export class GetProductImagesService {
-    constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-    async execute(productId: string): Promise<ProductImageResponseDto[]> {
-        const product = await this.prisma.product.findFirst({
-            where: {
-                id: productId,
-                deletedAt: null,
-            },
-            select: {
-                id: true,
-            },
-        });
+  async execute(productId: string): Promise<ProductImageResponseDto[]> {
+    const product = await this.prisma.product.findFirst({
+      where: {
+        id: productId,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+      },
+    });
 
-        if (!product) {
-            throw new NotFoundException('Product not found');
-        }
-
-        return this.prisma.productImage.findMany({
-            where: {
-                productId: product.id,
-            },
-            orderBy: {
-                sortOrder: 'asc',
-            },
-        });
+    if (!product) {
+      throw new NotFoundException('Product not found');
     }
+
+    return this.prisma.productImage.findMany({
+      where: {
+        productId: product.id,
+      },
+      orderBy: {
+        sortOrder: 'asc',
+      },
+    });
+  }
 }

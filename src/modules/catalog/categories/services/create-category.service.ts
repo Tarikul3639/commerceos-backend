@@ -10,7 +10,7 @@ export class CreateCategoryService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(
     createCategoryDto: CreateCategoryDto,

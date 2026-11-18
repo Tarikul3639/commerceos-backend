@@ -12,7 +12,7 @@ export class CreateBrandService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(createBrandDto: CreateBrandDto): Promise<BrandResponseDto> {
     const { name, slug, description, image, publicId, isActive } =

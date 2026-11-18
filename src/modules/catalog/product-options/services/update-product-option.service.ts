@@ -1,4 +1,3 @@
-
 import {
   ConflictException,
   Injectable,
@@ -17,7 +16,7 @@ export class UpdateProductOptionService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(
     optionId: string,

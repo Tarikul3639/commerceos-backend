@@ -16,7 +16,7 @@ export class UpdateUserStatusService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(
     userId: string,

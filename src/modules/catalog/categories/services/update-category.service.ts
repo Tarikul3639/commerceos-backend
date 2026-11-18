@@ -17,7 +17,7 @@ export class UpdateCategoryService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(
     categoryId: string,

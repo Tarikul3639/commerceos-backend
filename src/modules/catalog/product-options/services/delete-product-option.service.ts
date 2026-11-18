@@ -9,7 +9,7 @@ export class DeleteProductOptionService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(optionId: string): Promise<{ message: string }> {
     const option = await this.prisma.productOption.findUnique({
@@ -46,7 +46,7 @@ export class DeleteProductOptionService {
           colorHex: value.colorHex,
         })),
       },
-      newValue: "Product option permanently deleted",
+      newValue: 'Product option permanently deleted',
     });
 
     return { message: 'Product option deleted successfully' };

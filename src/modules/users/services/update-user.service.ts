@@ -23,7 +23,7 @@ export class UpdateUserService {
     private readonly cloudinaryService: CloudinaryService,
 
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(
     userId: string,
@@ -127,7 +127,7 @@ export class UpdateUserService {
     // ------------------------------------------------------------------------
     // 5. Activity Logging
     // ------------------------------------------------------------------------
-    
+
     await this.createActivityLogService.execute({
       type: ActivityType.UPDATE,
       module: ActivityModule.USER,

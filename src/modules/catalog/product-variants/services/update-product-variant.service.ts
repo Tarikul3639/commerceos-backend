@@ -17,7 +17,7 @@ export class UpdateProductVariantService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(
     variantId: string,
@@ -80,14 +80,14 @@ export class UpdateProductVariantService {
         optionValueIds.length === 0
           ? []
           : await this.prisma.productOptionValue.findMany({
-            where: {
-              id: { in: optionValueIds },
-              option: {
-                productId: variant.productId,
+              where: {
+                id: { in: optionValueIds },
+                option: {
+                  productId: variant.productId,
+                },
               },
-            },
-            select: { id: true },
-          });
+              select: { id: true },
+            });
 
       if (optionValues.length !== optionValueIds.length) {
         throw new BadRequestException(

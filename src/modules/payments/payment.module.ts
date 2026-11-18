@@ -9,10 +9,7 @@ import { UpdatePaymentStatusService } from './services/update-payment-status.ser
 import { PaymentProviderFactory } from '@/integrations/payments/factories/payment.factory';
 
 @Module({
-  controllers: [
-    PaymentController,
-    RefundController,
-  ],
+  controllers: [PaymentController, RefundController],
   providers: [
     CreatePaymentService,
     CreateRefundService,
@@ -23,4 +20,4 @@ import { PaymentProviderFactory } from '@/integrations/payments/factories/paymen
   ],
   exports: [CreatePaymentService, GetPaymentService],
 })
-export class PaymentModule { }
+export class PaymentModule {}

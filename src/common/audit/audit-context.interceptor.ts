@@ -11,14 +11,9 @@ import { AuditContextService } from './audit-context.service';
 
 @Injectable()
 export class AuditContextInterceptor implements NestInterceptor {
-  constructor(
-    private readonly auditContextService: AuditContextService,
-  ) { }
+  constructor(private readonly auditContextService: AuditContextService) {}
 
-  intercept(
-    context: ExecutionContext,
-    next: CallHandler,
-  ): Observable<unknown> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     // Get the current HTTP request.
     const request = context.switchToHttp().getRequest();
 

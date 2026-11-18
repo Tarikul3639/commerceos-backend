@@ -1,4 +1,3 @@
-
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
@@ -12,7 +11,7 @@ export class DeleteBrandService {
     private readonly prisma: PrismaService,
     private readonly cloudinaryService: CloudinaryService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(brandId: string): Promise<void> {
     const brand = await this.prisma.brand.findFirst({
@@ -93,7 +92,7 @@ export class DeleteBrandService {
       entityType: 'BRAND',
       entityId: brand.id,
       oldValue,
-      newValue: "Brand permanently deleted",
+      newValue: 'Brand permanently deleted',
     });
   }
 }

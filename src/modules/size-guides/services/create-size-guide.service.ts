@@ -11,7 +11,7 @@ export class CreateSizeGuideService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   /** Create a size guide */
   async execute(dto: CreateSizeGuideDto): Promise<SizeGuideResponseDto> {

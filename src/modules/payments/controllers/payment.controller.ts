@@ -38,7 +38,7 @@ export class PaymentController {
     private readonly getPaymentService: GetPaymentService,
     private readonly getPaymentsService: GetPaymentsService,
     private readonly updatePaymentStatusService: UpdatePaymentStatusService,
-  ) { }
+  ) {}
 
   @Post()
   @UseGuards(CustomerJwtAuthGuard)

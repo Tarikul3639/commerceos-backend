@@ -12,7 +12,7 @@ export class CreateSupplierService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(
     createSupplierDto: CreateSupplierDto,

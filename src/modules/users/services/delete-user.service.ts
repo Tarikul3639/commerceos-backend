@@ -13,7 +13,7 @@ export class DeleteUserService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(userId: string): Promise<void> {
     const user = await this.prisma.user.findUnique({

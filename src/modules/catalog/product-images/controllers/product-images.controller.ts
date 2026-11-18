@@ -33,7 +33,7 @@ export class ProductImagesController {
     private readonly getProductImagesService: GetProductImagesService,
     private readonly updateProductImageService: UpdateProductImageService,
     private readonly deleteProductImageService: DeleteProductImageService,
-  ) { }
+  ) {}
 
   @Post(':productId')
   @ApiOperation({ summary: 'Add multiple images to a product' })

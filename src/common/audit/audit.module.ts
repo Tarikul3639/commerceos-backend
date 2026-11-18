@@ -8,4 +8,4 @@ import { AuditContextService } from './audit-context.service';
   providers: [AuditContextService, AuditContextInterceptor],
   exports: [AuditContextService, AuditContextInterceptor],
 })
-export class AuditModule { }
+export class AuditModule {}

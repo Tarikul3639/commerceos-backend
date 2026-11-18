@@ -16,7 +16,7 @@ export class CreateProductService {
     private readonly getAdminProductDetailsService: GetAdminProductDetailsService,
 
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(dto: CreateProductDto): Promise<AdminProductDetailResponseDto> {
     const category = await this.prisma.category.findUnique({

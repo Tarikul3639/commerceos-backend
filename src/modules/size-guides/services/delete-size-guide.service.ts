@@ -12,7 +12,7 @@ export class DeleteSizeGuideService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   /** Delete an unused size guide */
   async execute(id: string): Promise<{ message: string }> {
