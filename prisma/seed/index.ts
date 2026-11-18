@@ -13,6 +13,7 @@ import { seedSuppliers } from './supplier.seed';
 import { seedSettings } from "./settings.seed"
 import { seedOrderReturns } from './order-returns.seed';
 import { seedEmails } from './emails.seed';
+import { seedCarts } from './carts.seed';
 
 async function main() {
     console.log('🌱 Database seeding started...\n');
@@ -55,6 +56,9 @@ async function main() {
 
     // 13. Email delivery log test fixtures
     await seedEmails();
+
+    // 14. Admin Carts test fixtures
+    await seedCarts();
 
     console.log('\n✅ Database seeding completed.');
 }

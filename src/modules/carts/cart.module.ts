@@ -1,16 +1,18 @@
 import { Module } from '@nestjs/common';
 
+import { AdminCartController } from './controllers/admin-cart.controller';
 import { CartController } from './controllers/cart.controller';
 
 // Services
 import { AddCartItemService } from './services/add-cart-item.service';
 import { ClearCartService } from './services/clear-cart.service';
+import { GetAdminCartsService } from './services/get-admin-carts.service';
 import { GetCartService } from './services/get-cart.service';
 import { RemoveCartItemService } from './services/remove-cart-item.service';
 import { UpdateCartItemService } from './services/update-cart-item.service';
 
 @Module({
-  controllers: [CartController],
+  controllers: [CartController, AdminCartController],
 
   providers: [
     AddCartItemService,
@@ -18,6 +20,7 @@ import { UpdateCartItemService } from './services/update-cart-item.service';
     UpdateCartItemService,
     RemoveCartItemService,
     ClearCartService,
+    GetAdminCartsService,
   ],
 
   exports: [
@@ -26,6 +29,7 @@ import { UpdateCartItemService } from './services/update-cart-item.service';
     UpdateCartItemService,
     RemoveCartItemService,
     ClearCartService,
+    GetAdminCartsService,
   ],
 })
 export class CartModule {}

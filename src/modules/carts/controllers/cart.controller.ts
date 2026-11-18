@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 
 import {
@@ -27,10 +28,12 @@ import { RemoveCartItemService } from '../services/remove-cart-item.service';
 import { UpdateCartItemService } from '../services/update-cart-item.service';
 
 import { CurrentCustomer } from '@/common/decorators/current-customer.decorator';
+import { CustomerJwtAuthGuard } from '@/common/guards/customer-jwt-auth.guard';
 
 @ApiTags('Cart')
 @ApiBearerAuth()
 @Controller('cart')
+@UseGuards(CustomerJwtAuthGuard)
 export class CartController {
   constructor(
     private readonly addCartItemService: AddCartItemService,
@@ -41,24 +44,16 @@ export class CartController {
   ) {}
 
   @Post('items')
-  @ApiOperation({
-    summary: 'Add item to cart',
-  })
+  @ApiOperation({ summary: 'Add item to the authenticated customer cart' })
   async addItem(
     @Body() addCartItemDto: AddCartItemDto,
+    @CurrentCustomer('id') customerId: string,
   ): Promise<CartResponseDto> {
-    /*
-     * পরে JWT থেকে customerId নিবে
-     */
-    const customerId = 'CUSTOMER_ID';
-
     return this.addCartItemService.execute(customerId, addCartItemDto);
   }
 
   @Get()
-  @ApiOperation({
-    summary: 'Get current customer cart',
-  })
+  @ApiOperation({ summary: 'Get current customer cart' })
   async getCart(
     @CurrentCustomer('id') customerId: string,
   ): Promise<CartResponseDto> {
@@ -66,12 +61,8 @@ export class CartController {
   }
 
   @Patch('items/:cartItemId')
-  @ApiOperation({
-    summary: 'Update cart item quantity',
-  })
-  @ApiParam({
-    name: 'cartItemId',
-  })
+  @ApiOperation({ summary: 'Update cart item quantity' })
+  @ApiParam({ name: 'cartItemId' })
   async updateItem(
     @Param('cartItemId') cartItemId: string,
     @Body() updateCartItemDto: UpdateCartItemDto,
@@ -85,12 +76,8 @@ export class CartController {
   }
 
   @Delete('items/:cartItemId')
-  @ApiOperation({
-    summary: 'Remove item from cart',
-  })
-  @ApiParam({
-    name: 'cartItemId',
-  })
+  @ApiOperation({ summary: 'Remove item from cart' })
+  @ApiParam({ name: 'cartItemId' })
   async removeItem(
     @Param('cartItemId') cartItemId: string,
     @CurrentCustomer('id') customerId: string,
@@ -99,10 +86,10 @@ export class CartController {
   }
 
   @Delete()
-  @ApiOperation({
-    summary: 'Clear cart',
-  })
-  async clearCart(@CurrentCustomer('id') customerId: string): Promise<void> {
+  @ApiOperation({ summary: 'Clear cart' })
+  async clearCart(
+    @CurrentCustomer('id') customerId: string,
+  ): Promise<void> {
     return this.clearCartService.execute(customerId);
   }
 }
