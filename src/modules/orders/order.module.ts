@@ -8,6 +8,7 @@ import { OrderReturnController } from './controllers/order-return.controller';
 import { CancelOrderService } from './services/cancel-order.service';
 import { CreateOrderReturnService } from './services/create-order-return.service';
 import { CreateOrderService } from './services/create-order.service';
+import { DecideOrderReturnService } from './services/decide-order-return.service';
 import { GetOrderReturnService } from './services/get-order-return.service';
 import { GetOrderReturnsService } from './services/get-order-returns.service';
 import { GetOrderService } from './services/get-order.service';
@@ -29,6 +30,7 @@ import { UpdateOrderStatusService } from './services/update-order-status.service
     CreateOrderReturnService,
     GetOrderReturnService,
     GetOrderReturnsService,
+    DecideOrderReturnService,
   ],
 
   exports: [CreateOrderService, GetOrderService, GetOrdersService],

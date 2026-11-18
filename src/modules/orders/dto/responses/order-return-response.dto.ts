@@ -18,9 +18,8 @@ export class OrderReturnItemResponseDto {
   @ApiProperty()
   orderItem!: {
     id: string;
-
     quantity: number;
-
+    variantId: string | null;
     product: { id: string; name: string };
   };
 
@@ -31,18 +30,7 @@ export class OrderReturnItemResponseDto {
   updatedAt!: Date;
 }
 
-export class OrderReturnCreatedByResponseDto {
-  @ApiProperty()
-  id!: string;
-
-  @ApiProperty()
-  name!: string;
-
-  @ApiProperty()
-  email!: string;
-}
-
-export class OrderReturnApprovedByResponseDto {
+export class OrderReturnUserResponseDto {
   @ApiProperty()
   id!: string;
 
@@ -71,41 +59,44 @@ export class OrderReturnResponseDto {
   @ApiProperty()
   id!: string;
 
-  @ApiProperty({
-    example: 'RET-20260914-0001',
-  })
+  @ApiProperty({ example: 'RET-20260914-0001' })
   returnNo!: string;
 
-  @ApiProperty({
-    example: 'PENDING',
-  })
+  @ApiProperty({ example: 'PENDING' })
   status!: string;
 
-  @ApiProperty({
-    nullable: true,
-  })
+  @ApiProperty({ nullable: true })
   reason!: string | null;
+
+  @ApiProperty({ nullable: true })
+  rejectionReason!: string | null;
 
   @ApiProperty()
   order!: OrderReturnOrderResponseDto;
 
-  @ApiProperty({
-    type: [OrderReturnItemResponseDto],
-  })
+  @ApiProperty({ type: [OrderReturnItemResponseDto] })
   items!: OrderReturnItemResponseDto[];
 
   @ApiProperty()
-  createdBy!: OrderReturnCreatedByResponseDto;
+  createdBy!: OrderReturnUserResponseDto;
 
-  @ApiProperty({
-    nullable: true,
-  })
-  approvedBy!: OrderReturnApprovedByResponseDto | null;
+  @ApiProperty({ nullable: true })
+  approvedBy!: OrderReturnUserResponseDto | null;
 
-  @ApiProperty({
-    nullable: true,
-  })
+  @ApiProperty({ nullable: true })
   approvedAt!: Date | null;
+
+  @ApiProperty({ nullable: true })
+  rejectedBy!: OrderReturnUserResponseDto | null;
+
+  @ApiProperty({ nullable: true })
+  rejectedAt!: Date | null;
+
+  @ApiProperty({ nullable: true })
+  completedBy!: OrderReturnUserResponseDto | null;
+
+  @ApiProperty({ nullable: true })
+  completedAt!: Date | null;
 
   @ApiProperty()
   createdAt!: Date;

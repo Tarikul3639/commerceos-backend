@@ -1,17 +1,9 @@
 import { Injectable } from '@nestjs/common';
-
 import { Prisma } from '@/lib/prisma/client';
-
 import { PrismaService } from '@/common/prisma/prisma.service';
-
+import { PaginatedResponse } from '@/common/interfaces/paginated-response.interface';
 import { OrderReturnQueryDto } from '../dto/requests/order-return-query.dto';
 import { OrderReturnResponseDto } from '../dto/responses/order-return-response.dto';
-
-import { PaginatedResponse } from '@/common/interfaces/paginated-response.interface';
-
-/*
- * SERVICE: GetOrderReturnsService
- */
 
 @Injectable()
 export class GetOrderReturnsService {
@@ -20,98 +12,72 @@ export class GetOrderReturnsService {
   async execute(
     query: OrderReturnQueryDto,
   ): Promise<PaginatedResponse<OrderReturnResponseDto>> {
-    /*
-     * Parse and sanitize pagination parameters
-     */
-    const {
-      page = '1',
-      limit = '10',
-      status,
-      orderId,
-      createdById,
-      approvedById,
-    } = query;
+    const page = Math.max(Number(query.page ?? 1), 1);
+    const limit = Math.min(Math.max(Number(query.limit ?? 10), 1), 100);
+    const search = query.search?.trim();
 
-    const currentPage = Math.max(Number(page), 1);
-    const pageSize = Math.min(Math.max(Number(limit), 1), 100);
-
-    /*
-     * Build database query filters
-     */
     const where: Prisma.OrderReturnWhereInput = {
-      ...(status && { status }),
-      ...(orderId && { orderId }),
-      ...(createdById && { createdById }),
-      ...(approvedById && { approvedById }),
+      ...(query.status && { status: query.status }),
+      ...(query.orderId && { orderId: query.orderId }),
+      ...(query.createdById && { createdById: query.createdById }),
+      ...(query.approvedById && { approvedById: query.approvedById }),
+      ...(search && {
+        OR: [
+          { returnNo: { contains: search, mode: 'insensitive' } },
+          { order: { invoiceNo: { contains: search, mode: 'insensitive' } } },
+          {
+            order: {
+              customer: { name: { contains: search, mode: 'insensitive' } },
+            },
+          },
+        ],
+      }),
     };
 
-    /*
-     * Fetch paginated order returns and total record count concurrently
-     */
+    const include = {
+      order: {
+        select: {
+          id: true,
+          invoiceNo: true,
+          customer: { select: { id: true, name: true } },
+        },
+      },
+      items: {
+        include: {
+          orderItem: {
+            select: {
+              id: true,
+              quantity: true,
+              variantId: true,
+              product: { select: { id: true, name: true } },
+            },
+          },
+        },
+      },
+      createdBy: { select: { id: true, name: true, email: true } },
+      approvedBy: { select: { id: true, name: true, email: true } },
+      rejectedBy: { select: { id: true, name: true, email: true } },
+      completedBy: { select: { id: true, name: true, email: true } },
+    } satisfies Prisma.OrderReturnInclude;
+
     const [orderReturns, total] = await Promise.all([
       this.prisma.orderReturn.findMany({
         where,
-        skip: (currentPage - 1) * pageSize,
-        take: pageSize,
-        orderBy: {
-          createdAt: 'desc',
-        },
-        include: {
-          order: {
-            select: {
-              id: true,
-              invoiceNo: true,
-              customer: {
-                select: {
-                  id: true,
-                  name: true,
-                },
-              },
-            },
-          },
-          items: {
-            include: {
-              orderItem: {
-                include: {
-                  product: {
-                    select: {
-                      id: true,
-                      name: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-          createdBy: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
-          approvedBy: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
-        },
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        include,
       }),
-
       this.prisma.orderReturn.count({ where }),
     ]);
 
-    /*
-     * Format response payload and pagination metadata
-     */
     return {
       data: orderReturns.map((orderReturn) => ({
         id: orderReturn.id,
         returnNo: orderReturn.returnNo,
         status: orderReturn.status,
         reason: orderReturn.reason,
+        rejectionReason: orderReturn.rejectionReason,
         order: orderReturn.order,
         items: orderReturn.items.map((item) => ({
           id: item.id,
@@ -125,16 +91,20 @@ export class GetOrderReturnsService {
         createdBy: orderReturn.createdBy,
         approvedBy: orderReturn.approvedBy,
         approvedAt: orderReturn.approvedAt,
+        rejectedBy: orderReturn.rejectedBy,
+        rejectedAt: orderReturn.rejectedAt,
+        completedBy: orderReturn.completedBy,
+        completedAt: orderReturn.completedAt,
         createdAt: orderReturn.createdAt,
         updatedAt: orderReturn.updatedAt,
       })),
       meta: {
         total,
-        page: currentPage,
-        limit: pageSize,
-        totalPages: Math.ceil(total / pageSize),
-        hasNextPage: currentPage * pageSize < total,
-        hasPreviousPage: currentPage > 1,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+        hasNextPage: page * limit < total,
+        hasPreviousPage: page > 1,
       },
     };
   }

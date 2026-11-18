@@ -144,6 +144,20 @@ export class CreateOrderReturnService {
               email: true,
             },
           },
+          rejectedBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          completedBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
         },
       });
 
@@ -152,6 +166,7 @@ export class CreateOrderReturnService {
         returnNo: orderReturn.returnNo,
         status: orderReturn.status,
         reason: orderReturn.reason,
+        rejectionReason: orderReturn.rejectionReason,
         order: orderReturn.order,
 
         items: orderReturn.items.map((item) => ({
@@ -167,6 +182,10 @@ export class CreateOrderReturnService {
         createdBy: orderReturn.createdBy,
         approvedBy: orderReturn.approvedBy,
         approvedAt: orderReturn.approvedAt,
+        rejectedBy: orderReturn.rejectedBy,
+        rejectedAt: orderReturn.rejectedAt,
+        completedBy: orderReturn.completedBy,
+        completedAt: orderReturn.completedAt,
         createdAt: orderReturn.createdAt,
         updatedAt: orderReturn.updatedAt,
       };

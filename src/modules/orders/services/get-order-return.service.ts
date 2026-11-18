@@ -1,7 +1,34 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { Prisma } from '@/lib/prisma/client';
 import { OrderReturnResponseDto } from '../dto/responses/order-return-response.dto';
+
+const orderReturnInclude = {
+  order: {
+    select: {
+      id: true,
+      invoiceNo: true,
+      customer: { select: { id: true, name: true } },
+    },
+  },
+  items: {
+    include: {
+      orderItem: {
+        select: {
+          id: true,
+          quantity: true,
+          variantId: true,
+          product: { select: { id: true, name: true } },
+        },
+      },
+    },
+  },
+  createdBy: { select: { id: true, name: true, email: true } },
+  approvedBy: { select: { id: true, name: true, email: true } },
+  rejectedBy: { select: { id: true, name: true, email: true } },
+  completedBy: { select: { id: true, name: true, email: true } },
+} satisfies Prisma.OrderReturnInclude;
 
 @Injectable()
 export class GetOrderReturnService {
@@ -9,57 +36,8 @@ export class GetOrderReturnService {
 
   async execute(returnId: string): Promise<OrderReturnResponseDto> {
     const orderReturn = await this.prisma.orderReturn.findUnique({
-      where: {
-        id: returnId,
-      },
-
-      include: {
-        order: {
-          select: {
-            id: true,
-
-            invoiceNo: true,
-
-            customer: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-
-        items: {
-          include: {
-            orderItem: {
-              include: {
-                product: {
-                  select: {
-                    id: true,
-                    name: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-
-        createdBy: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-
-        approvedBy: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
+      where: { id: returnId },
+      include: orderReturnInclude,
     });
 
     if (!orderReturn) {
@@ -71,8 +49,8 @@ export class GetOrderReturnService {
       returnNo: orderReturn.returnNo,
       status: orderReturn.status,
       reason: orderReturn.reason,
+      rejectionReason: orderReturn.rejectionReason,
       order: orderReturn.order,
-
       items: orderReturn.items.map((item) => ({
         id: item.id,
         quantity: item.quantity,
@@ -82,10 +60,13 @@ export class GetOrderReturnService {
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
       })),
-
       createdBy: orderReturn.createdBy,
       approvedBy: orderReturn.approvedBy,
       approvedAt: orderReturn.approvedAt,
+      rejectedBy: orderReturn.rejectedBy,
+      rejectedAt: orderReturn.rejectedAt,
+      completedBy: orderReturn.completedBy,
+      completedAt: orderReturn.completedAt,
       createdAt: orderReturn.createdAt,
       updatedAt: orderReturn.updatedAt,
     };

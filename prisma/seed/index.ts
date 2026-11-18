@@ -11,6 +11,7 @@ import { seedProducts } from './product.seed';
 import { seedBanners } from './banners';
 import { seedSuppliers } from './supplier.seed';
 import { seedSettings } from "./settings.seed"
+import { seedOrderReturns } from './order-returns.seed';
 
 async function main() {
     console.log('🌱 Database seeding started...\n');
@@ -21,8 +22,8 @@ async function main() {
     // // 2. Role permissions
     // await seedPermissions();
 
-    // // 3. Admin user
-    // await seedUsers();
+    // 3. Admin users required by Order Returns test fixtures
+    await seedUsers();
 
     // // 4. Categories
     // await seedCategories();
@@ -33,8 +34,8 @@ async function main() {
     // // 6. Size guides
     // await seedSizeGuides();
 
-    // // 7. Customers
-    // await seedCustomers();
+    // 7. Customer required by Order Returns test fixtures
+    await seedCustomers();
 
     // // 8. Products
     // await seedProducts();
@@ -47,6 +48,9 @@ async function main() {
 
     // 11. Settings
     await seedSettings();
+
+    // 12. Order Returns test fixtures
+    await seedOrderReturns();
 
     console.log('\n✅ Database seeding completed.');
 }

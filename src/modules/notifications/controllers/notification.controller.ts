@@ -1,8 +1,17 @@
-import { Controller, Delete, Get, Param, Patch, Query } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
 
 import { NotificationQueryDto } from '../dto/requests/notification-query.dto';
 
@@ -14,6 +23,7 @@ import { MarkNotificationReadService } from '../services/mark-notification-read.
 
 @ApiTags('Notifications')
 @ApiBearerAuth()
+@UseGuards(UserJwtAuthGuard)
 @Controller('notifications')
 export class NotificationController {
   constructor(

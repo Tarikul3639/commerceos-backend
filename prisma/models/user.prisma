@@ -98,8 +98,10 @@ model User {
   purchases Purchase[]
   payments  Payment[]
 
-  createdOrderReturns  OrderReturn[] @relation("OrderReturnCreatedBy")
-  approvedOrderReturns OrderReturn[] @relation("OrderReturnApprovedBy")
+  createdOrderReturns   OrderReturn[] @relation("OrderReturnCreatedBy")
+  approvedOrderReturns  OrderReturn[] @relation("OrderReturnApprovedBy")
+  rejectedOrderReturns  OrderReturn[] @relation("OrderReturnRejectedBy")
+  completedOrderReturns OrderReturn[] @relation("OrderReturnCompletedBy")
 
   createdPurchaseReturns  PurchaseReturn[] @relation("PurchaseReturnCreatedBy")
   approvedPurchaseReturns PurchaseReturn[] @relation("PurchaseReturnApprovedBy")

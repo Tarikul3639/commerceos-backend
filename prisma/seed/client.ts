@@ -1,5 +1,7 @@
-// @ts-ignore
-import "dotenv/config"
+import { config as loadEnv } from "dotenv";
+
+loadEnv({ path: [".env.local", ".env.prod", '.env'] });
+loadEnv();
 
 import { PrismaPg } from "@prisma/adapter-pg"
 import { PrismaClient } from "../../src/lib/prisma/client"
