@@ -1,9 +1,17 @@
-import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 
-import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { UserStatus } from '@/lib/prisma/client';
+import { Role, UserStatus } from '@/lib/prisma/client';
 
 export enum UserSortBy {
   CREATED_AT = 'createdAt',
@@ -22,11 +30,7 @@ export class UserQueryDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  @ApiPropertyOptional({
-    description: 'Page number',
-    example: 1,
-    default: 1,
-  })
+  @ApiPropertyOptional({ description: 'Page number', example: 1, default: 1 })
   page?: number = 1;
 
   @IsOptional()
@@ -54,16 +58,28 @@ export class UserQueryDto {
   @ApiPropertyOptional({
     description: 'Filter users by status',
     enum: UserStatus,
-    example: UserStatus.ACTIVE,
   })
   status?: UserStatus;
+
+  @IsOptional()
+  @IsEnum(Role)
+  @ApiPropertyOptional({ description: 'Filter users by role', enum: Role })
+  role?: Role;
+
+  @IsOptional()
+  @Transform(({ value }) => value === true || value === 'true')
+  @IsBoolean()
+  @ApiPropertyOptional({
+    description: 'Limit results to MANAGER and EMPLOYEE roles',
+    default: false,
+  })
+  staffOnly?: boolean = false;
 
   @IsOptional()
   @IsEnum(UserSortBy)
   @ApiPropertyOptional({
     description: 'Field to sort by',
     enum: UserSortBy,
-    example: UserSortBy.CREATED_AT,
     default: UserSortBy.CREATED_AT,
   })
   sortBy?: UserSortBy = UserSortBy.CREATED_AT;
@@ -73,7 +89,6 @@ export class UserQueryDto {
   @ApiPropertyOptional({
     description: 'Sort order',
     enum: SortOrder,
-    example: SortOrder.DESC,
     default: SortOrder.DESC,
   })
   sortOrder?: SortOrder = SortOrder.DESC;

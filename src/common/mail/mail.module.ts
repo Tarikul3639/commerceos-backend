@@ -5,10 +5,12 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.ad
 import { join } from 'node:path';
 
 import { MailService } from '@/common/mail/mail.service';
+import { PrismaModule } from '@/common/prisma/prisma.module';
 
 @Module({
   imports: [
     ConfigModule,
+    PrismaModule,
 
     MailerModule.forRootAsync({
       inject: [ConfigService],

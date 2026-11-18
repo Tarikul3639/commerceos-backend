@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 
 import { MailOptions } from '@/common/mail/interfaces/mail-options.interface';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { EmailStatus } from '@/lib/prisma/client';
 
 import {
   NewOrderNotificationTemplate,
@@ -20,29 +22,64 @@ import {
 export class MailService {
   private readonly logger = new Logger(MailService.name);
 
-  constructor(private readonly mailerService: MailerService) {}
+  constructor(
+    private readonly mailerService: MailerService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   /**
-   * Base mail method
-   * @param mailOptions The options for sending the email.
-   * */
+   * Persist a safe delivery summary before sending. Rendered content and
+   * template context are intentionally never stored in the email log.
+   */
   async sendMail(mailOptions: MailOptions): Promise<void> {
+    const recipient = Array.isArray(mailOptions.to)
+      ? mailOptions.to.map((item) => String(item)).join(', ')
+      : String(mailOptions.to ?? '');
+    const subject = String(mailOptions.subject ?? '');
+    const preview =
+      typeof mailOptions.template === 'string'
+        ? 'Template: ' + mailOptions.template
+        : 'Transactional email';
+
+    const log = await this.prisma.emailLog.create({
+      data: {
+        to: recipient,
+        subject,
+        body: preview,
+        status: EmailStatus.PENDING,
+        attemptCount: 1,
+      },
+    });
+
     try {
       await this.mailerService.sendMail(mailOptions);
-
-      this.logger.log(`Email sent successfully to ${mailOptions.to}`);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        this.logger.error(
-          `Failed to send email to ${mailOptions.to}`,
-          error.stack,
-        );
-      } else {
-        this.logger.error(`Failed to send email to ${mailOptions.to}`);
-      }
+      await this.prisma.emailLog.update({
+        where: { id: log.id },
+        data: {
+          status: EmailStatus.FAILED,
+          errorMessage:
+            'Email delivery failed. Check server logs for diagnostics.',
+        },
+      });
 
+      if (error instanceof Error) {
+        this.logger.error('Failed to send email to ' + recipient, error.stack);
+      } else {
+        this.logger.error('Failed to send email to ' + recipient);
+      }
       throw error;
     }
+
+    await this.prisma.emailLog.update({
+      where: { id: log.id },
+      data: {
+        status: EmailStatus.SENT,
+        sentAt: new Date(),
+        errorMessage: null,
+      },
+    });
+    this.logger.log('Email sent successfully to ' + recipient);
   }
 
   /**

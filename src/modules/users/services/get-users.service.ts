@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { Prisma, Role } from '@/lib/prisma/client';
-
 import { PrismaService } from '@/common/prisma/prisma.service';
 
 import { UserQueryDto } from '../dto/requests/user-query.dto';
@@ -17,42 +16,25 @@ export class GetUsersService {
       limit = 10,
       search,
       status,
+      role,
+      staffOnly = false,
       sortBy = 'createdAt',
       sortOrder = 'desc',
     } = query;
 
     const skip = (page - 1) * limit;
-
     const isSuperAdmin = requesterRole === Role.SUPER_ADMIN;
 
     const where: Prisma.UserWhereInput = {
-      ...(!isSuperAdmin && {
-        deletedAt: null,
-      }),
-
-      ...(status && {
-        status,
-      }),
-
+      ...(!isSuperAdmin && { deletedAt: null }),
+      ...(status && { status }),
+      ...(role && { role }),
+      ...(staffOnly && { role: { in: [Role.MANAGER, Role.EMPLOYEE] } }),
       ...(search && {
         OR: [
-          {
-            name: {
-              contains: search,
-              mode: 'insensitive',
-            },
-          },
-          {
-            email: {
-              contains: search,
-              mode: 'insensitive',
-            },
-          },
-          {
-            phone: {
-              contains: search,
-            },
-          },
+          { name: { contains: search, mode: 'insensitive' } },
+          { email: { contains: search, mode: 'insensitive' } },
+          { phone: { contains: search } },
         ],
       }),
     };
@@ -62,19 +44,12 @@ export class GetUsersService {
         where,
         skip,
         take: limit,
-
-        orderBy: {
-          [sortBy]: sortOrder,
-        },
+        orderBy: { [sortBy]: sortOrder },
       }),
-
-      this.prisma.user.count({
-        where,
-      }),
+      this.prisma.user.count({ where }),
     ]);
 
     const totalPages = Math.ceil(total / limit);
-
     const data: UserResponseDto[] = users.map((user) => ({
       id: user.id,
       name: user.name,
@@ -82,9 +57,7 @@ export class GetUsersService {
       phone: user.phone,
       avatar: user.avatar,
       publicId: user.publicId,
-
       role: user.role,
-
       status: user.status,
       isVerified: user.isVerified,
       lastLoginAt: user.lastLoginAt,
@@ -94,7 +67,6 @@ export class GetUsersService {
 
     return {
       data,
-
       meta: {
         total,
         page,

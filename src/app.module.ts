@@ -37,6 +37,7 @@ import { BannerModule } from '@/modules/banners/banner.module';
 import { ActivityLogModule } from '@/modules/activity-logs/activity-log.module';
 import { SettingsModule } from '@/modules/settings/settings.module';
 import { NotificationModule } from '@/modules/notifications/notification.module';
+import { EmailModule } from '@/modules/emails/email.module';
 import { AuditModule } from '@/common/audit/audit.module';
 import { AuditContextInterceptor } from '@/common/audit/audit-context.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
@@ -103,6 +104,7 @@ import { PaymentGatewayConfigModule } from './modules/payment-gateway-config/pay
     ActivityLogModule,
     SettingsModule,
     NotificationModule,
+    EmailModule,
     AuditModule,
   ],
   controllers: [],

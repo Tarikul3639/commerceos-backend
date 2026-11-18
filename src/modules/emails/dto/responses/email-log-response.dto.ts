@@ -1,56 +1,21 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-
 import { EmailStatus } from '@/lib/prisma/client';
 
 export class EmailLogResponseDto {
-  @ApiProperty()
-  id!: string;
-
-  @ApiProperty()
-  to!: string;
-
-  @ApiProperty()
-  subject!: string;
-
-  @ApiProperty()
-  body!: string;
-
+  @ApiProperty() id!: string;
+  @ApiProperty() to!: string;
+  @ApiProperty() subject!: string;
   @ApiProperty({
-    enum: EmailStatus,
+    description:
+      'Safe template or message summary; rendered content is never exposed.',
   })
-  status!: EmailStatus;
-
-  @ApiPropertyOptional({
-    nullable: true,
-  })
-  errorMessage!: string | null;
-
-  @ApiPropertyOptional({
-    nullable: true,
-  })
-  sentAt!: Date | null;
-
-  @ApiPropertyOptional({
-    nullable: true,
-  })
-  entityType!: string | null;
-
-  @ApiPropertyOptional({
-    nullable: true,
-  })
-  entityId!: string | null;
-
-  @ApiProperty()
-  attemptCount!: number;
-
-  @ApiPropertyOptional({
-    nullable: true,
-  })
-  triggeredById!: string | null;
-
-  @ApiProperty()
-  createdAt!: Date;
-
-  @ApiProperty()
-  updatedAt!: Date;
+  preview!: string;
+  @ApiProperty({ enum: EmailStatus }) status!: EmailStatus;
+  @ApiProperty() attemptCount!: number;
+  @ApiPropertyOptional({ nullable: true }) sentAt!: Date | null;
+  @ApiPropertyOptional({ nullable: true }) entityType!: string | null;
+  @ApiPropertyOptional({ nullable: true }) entityId!: string | null;
+  @ApiPropertyOptional({ nullable: true }) triggeredById!: string | null;
+  @ApiProperty() createdAt!: Date;
+  @ApiProperty() updatedAt!: Date;
 }
