@@ -4,6 +4,7 @@ import { Prisma } from '@/lib/prisma/client';
 import { PaymentGatewayMode } from '@/lib/prisma/enums';
 import { CreatePaymentGatewayConfigDto } from '../dto/requests/create-payment-gateway-config.dto';
 import { PaymentGatewayConfigResponseDto } from '../dto/responses/payment-gateway-config-response.dto';
+import { assertNoGatewaySecrets, sanitizeGatewaySettings } from '../utils/gateway-settings-safety';
 
 @Injectable()
 export class CreatePaymentGatewayConfigService {
@@ -12,6 +13,8 @@ export class CreatePaymentGatewayConfigService {
   async execute(
     dto: CreatePaymentGatewayConfigDto,
   ): Promise<PaymentGatewayConfigResponseDto> {
+    assertNoGatewaySecrets(dto.settings);
+
     const existing = await this.prisma.paymentGatewayConfig.findUnique({
       where: { provider: dto.provider },
     });
@@ -40,7 +43,7 @@ export class CreatePaymentGatewayConfigService {
       displayName: config.displayName,
       isEnabled: config.isEnabled,
       mode: config.mode,
-      settings: config.settings as Record<string, unknown> | null,
+      settings: sanitizeGatewaySettings(config.settings),
       createdAt: config.createdAt,
       updatedAt: config.updatedAt,
     };

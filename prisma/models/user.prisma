@@ -54,6 +54,9 @@ enum Permission {
   ACTIVITY_LOG_READ
   EMAIL_READ
   CART_READ
+
+  SETTING_READ
+  SETTING_UPDATE
 }
 
 enum UserStatus {

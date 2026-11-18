@@ -1,4 +1,9 @@
-import { Body, Controller, Get, Patch } from '@nestjs/common';
+import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
+
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { Permissions } from '@/common/decorators/permissions.decorator';
+import { Permission } from '@/lib/prisma/enums';
 
 import {
   ApiBearerAuth,
@@ -16,6 +21,7 @@ import { UpdateSettingsService } from '../services/update-settings.service';
 @ApiTags('Settings')
 @ApiBearerAuth()
 @Controller('settings')
+@UseGuards(UserJwtAuthGuard, PermissionsGuard)
 export class SettingsController {
   constructor(
     private readonly getSettingsService: GetSettingsService,
@@ -23,6 +29,7 @@ export class SettingsController {
   ) {}
 
   @Get()
+  @Permissions(Permission.SETTING_READ)
   @ApiOperation({
     summary: 'Get application settings',
   })
@@ -34,6 +41,7 @@ export class SettingsController {
   }
 
   @Patch()
+  @Permissions(Permission.SETTING_UPDATE)
   @ApiOperation({
     summary: 'Update application settings',
   })

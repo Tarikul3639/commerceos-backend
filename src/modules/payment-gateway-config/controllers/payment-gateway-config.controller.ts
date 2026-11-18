@@ -44,7 +44,7 @@ export class PaymentGatewayConfigController {
   ) {}
 
   @Post()
-  @Permissions(Permission.ORDER_UPDATE)
+  @Permissions(Permission.SETTING_UPDATE)
   @ApiOperation({ summary: 'Create payment gateway configuration' })
   @ApiCreatedResponse({
     description: 'Payment gateway configuration created successfully',
@@ -55,7 +55,7 @@ export class PaymentGatewayConfigController {
   }
 
   @Get()
-  @Permissions(Permission.ORDER_READ)
+  @Permissions(Permission.SETTING_READ)
   @ApiOperation({ summary: 'Get all payment gateway configurations' })
   @ApiOkResponse({
     description: 'Payment gateway configurations retrieved successfully',
@@ -67,7 +67,7 @@ export class PaymentGatewayConfigController {
   }
 
   @Get(':id')
-  @Permissions(Permission.ORDER_READ)
+  @Permissions(Permission.SETTING_READ)
   @ApiOperation({ summary: 'Get payment gateway configuration by ID' })
   @ApiOkResponse({
     description: 'Payment gateway configuration retrieved successfully',
@@ -81,7 +81,7 @@ export class PaymentGatewayConfigController {
   }
 
   @Patch(':id')
-  @Permissions(Permission.ORDER_UPDATE)
+  @Permissions(Permission.SETTING_UPDATE)
   @ApiOperation({ summary: 'Update payment gateway configuration' })
   @ApiOkResponse({
     description: 'Payment gateway configuration updated successfully',

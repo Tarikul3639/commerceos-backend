@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { PaymentGatewayConfigResponseDto } from '../dto/responses/payment-gateway-config-response.dto';
+import { sanitizeGatewaySettings } from '../utils/gateway-settings-safety';
 
 @Injectable()
 export class GetPaymentGatewayConfigsService {
@@ -17,7 +18,7 @@ export class GetPaymentGatewayConfigsService {
       displayName: config.displayName,
       isEnabled: config.isEnabled,
       mode: config.mode,
-      settings: config.settings as Record<string, unknown> | null,
+      settings: sanitizeGatewaySettings(config.settings),
       createdAt: config.createdAt,
       updatedAt: config.updatedAt,
     }));
