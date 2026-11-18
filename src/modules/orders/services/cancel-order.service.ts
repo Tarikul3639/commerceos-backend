@@ -28,8 +28,14 @@ export class CancelOrderService {
         throw new NotFoundException('Order not found');
       }
 
-      if (order.status === OrderStatus.CANCELLED) {
-        throw new BadRequestException('Order is already cancelled');
+      if (
+        order.status === OrderStatus.CANCELLED ||
+        order.status === OrderStatus.SHIPPED ||
+        order.status === OrderStatus.DELIVERED
+      ) {
+        throw new BadRequestException(
+          `Order in ${order.status} status cannot be cancelled`,
+        );
       }
 
       const cancelled = await tx.order.updateMany({

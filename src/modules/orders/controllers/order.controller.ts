@@ -9,6 +9,7 @@ import {
   Post,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 
 import {
@@ -29,11 +30,14 @@ import { GetOrdersService } from '../services/get-orders.service';
 import { CancelOrderService } from '../services/cancel-order.service';
 import { UpdateOrderStatusService } from '../services/update-order-status.service';
 
-// import { CurrentUser } from '@/common/decorators/current-user.decorator';
-// import type { CurrentUserPayload } from '@/common/interfaces/current-user.interface';
+import { Permissions } from '@/common/decorators/permissions.decorator';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { Permission } from '@/lib/prisma/enums';
 
 @ApiTags('Orders')
 @ApiBearerAuth()
+@UseGuards(UserJwtAuthGuard, PermissionsGuard)
 @Controller('orders')
 export class OrderController {
   constructor(
@@ -45,6 +49,7 @@ export class OrderController {
   ) {}
 
   @Post()
+  @Permissions(Permission.ORDER_CREATE)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create a new order',
@@ -54,6 +59,7 @@ export class OrderController {
   }
 
   @Get()
+  @Permissions(Permission.ORDER_READ)
   @ApiOperation({
     summary: 'Get all orders',
   })
@@ -62,6 +68,7 @@ export class OrderController {
   }
 
   @Get(':id')
+  @Permissions(Permission.ORDER_READ)
   @ApiOperation({
     summary: 'Get order by ID',
   })
@@ -74,6 +81,7 @@ export class OrderController {
   }
 
   @Patch(':id/status')
+  @Permissions(Permission.ORDER_UPDATE)
   @ApiOperation({
     summary: 'Update order status',
   })
@@ -83,14 +91,13 @@ export class OrderController {
   })
   async updateStatus(
     @Param('id') orderId: string,
-
-    @Body()
-    updateOrderStatusDto: UpdateOrderStatusDto,
+    @Body() updateOrderStatusDto: UpdateOrderStatusDto,
   ) {
     return this.updateOrderStatusService.execute(orderId, updateOrderStatusDto);
   }
 
   @Patch(':id/cancel')
+  @Permissions(Permission.ORDER_UPDATE)
   @ApiOperation({
     summary: 'Cancel an order',
   })
@@ -100,9 +107,7 @@ export class OrderController {
   })
   async cancel(
     @Param('id') orderId: string,
-
-    @Body()
-    cancelOrderDto: CancelOrderDto,
+    @Body() cancelOrderDto: CancelOrderDto,
   ) {
     return this.cancelOrderService.execute(orderId, cancelOrderDto);
   }

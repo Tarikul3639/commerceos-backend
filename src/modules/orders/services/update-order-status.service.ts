@@ -9,13 +9,21 @@ import { OrderStatus } from '@/lib/prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { UpdateOrderStatusDto } from '../dto/requests/update-order-status.dto';
 
+const allowedTransitions: Record<OrderStatus, OrderStatus[]> = {
+  [OrderStatus.PENDING]: [OrderStatus.CONFIRMED],
+  [OrderStatus.CONFIRMED]: [OrderStatus.PROCESSING],
+  [OrderStatus.PROCESSING]: [OrderStatus.SHIPPED],
+  [OrderStatus.SHIPPED]: [OrderStatus.DELIVERED],
+  [OrderStatus.DELIVERED]: [],
+  [OrderStatus.CANCELLED]: [],
+};
+
 @Injectable()
 export class UpdateOrderStatusService {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(
     orderId: string,
-
     updateOrderStatusDto: UpdateOrderStatusDto,
   ) {
     const order = await this.prisma.order.findUnique({
@@ -28,25 +36,16 @@ export class UpdateOrderStatusService {
       throw new NotFoundException('Order not found');
     }
 
-    if (order.status === OrderStatus.CANCELLED) {
-      throw new BadRequestException('Cancelled order status cannot be changed');
-    }
-
-    if (updateOrderStatusDto.status === OrderStatus.CANCELLED) {
+    if (!allowedTransitions[order.status].includes(updateOrderStatusDto.status)) {
       throw new BadRequestException(
-        'Use cancel order endpoint to cancel an order',
+        `Order cannot transition from ${order.status} to ${updateOrderStatusDto.status}`,
       );
-    }
-
-    if (order.status === updateOrderStatusDto.status) {
-      throw new BadRequestException('Order already has this status');
     }
 
     return this.prisma.order.update({
       where: {
         id: orderId,
       },
-
       data: {
         status: updateOrderStatusDto.status,
       },
