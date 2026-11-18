@@ -40,7 +40,7 @@ export class ProductImagesController {
   @ApiParam({ name: 'productId', type: String })
   @ApiCreatedResponse({ type: [ProductImageResponseDto] })
   async add(
-    @Param('productId', ParseUUIDPipe) productId: string,
+    @Param('productId') productId: string,
     @Body() dto: AddProductImageDto,
   ): Promise<ProductImageResponseDto[]> {
     return this.addProductImageService.execute(productId, dto);
@@ -53,7 +53,7 @@ export class ProductImagesController {
     isArray: true,
   })
   async getAll(
-    @Param('productId', ParseUUIDPipe) productId: string,
+    @Param('productId') productId: string,
   ): Promise<ProductImageResponseDto[]> {
     return this.getProductImagesService.execute(productId);
   }
