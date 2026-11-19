@@ -39,30 +39,35 @@ export class CreateCategoryService {
       }
     }
 
-    const newCategory = await this.prisma.category.create({
-      data: {
-        name,
-        slug,
-        ...(description !== undefined && { description }),
-        ...(isActive !== undefined && { isActive }),
-      },
-    });
+    const newCategory = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.category.create({
+        data: {
+          name,
+          slug,
+          ...(description !== undefined && { description }),
+          ...(isActive !== undefined && { isActive }),
+        },
+      });
 
-    // Activity Log Creation
-    await this.createActivityLogService.execute({
-      type: ActivityType.CREATE,
-      module: ActivityModule.CATEGORY,
-      action: 'CREATE_CATEGORY',
-      description: `Category "${newCategory.name}" was created`,
-      entityType: 'CATEGORY',
-      entityId: newCategory.id,
-      userId,
-      newValue: {
-        name: newCategory.name,
-        slug: newCategory.slug,
-        description: newCategory.description,
-        isActive: newCategory.isActive,
-      },
+      await this.createActivityLogService.execute(
+        {
+          type: ActivityType.CREATE,
+          module: ActivityModule.CATEGORY,
+          action: 'CREATE_CATEGORY',
+          description: 'Category created',
+          entityType: 'CATEGORY',
+          entityId: created.id,
+          userId,
+          newValue: {
+            name: created.name,
+            slug: created.slug,
+            description: created.description,
+            isActive: created.isActive,
+          },
+        },
+        tx,
+      );
+      return created;
     });
 
     return {

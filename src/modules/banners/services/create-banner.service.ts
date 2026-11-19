@@ -53,50 +53,67 @@ export class CreateBannerService {
     }
 
     try {
-      const banner = await this.prisma.banner.create({
-        data: {
-          imageUrl,
-          imagePublicId,
-          type,
-          position,
-          createdById: userId,
-          updatedById: userId,
+      const banner = await this.prisma.$transaction(async (tx) => {
+        const created = await tx.banner.create({
+          data: {
+            imageUrl,
+            imagePublicId,
+            type,
+            position,
+            createdById: userId,
+            updatedById: userId,
 
-          ...(title !== undefined && {
-            title: title.trim() || null,
-          }),
+            ...(title !== undefined && {
+              title: title.trim() || null,
+            }),
 
-          ...(mobileImageUrl != null && {
-            mobileImageUrl,
-            mobileImagePublicId,
-          }),
+            ...(mobileImageUrl != null && {
+              mobileImageUrl,
+              mobileImagePublicId,
+            }),
 
-          ...(link !== undefined && {
-            link: link.trim() || null,
-          }),
+            ...(link !== undefined && {
+              link: link.trim() || null,
+            }),
 
-          ...(buttonText !== undefined && {
-            buttonText: buttonText.trim() || null,
-          }),
+            ...(buttonText !== undefined && {
+              buttonText: buttonText.trim() || null,
+            }),
 
-          ...(openInNewTab !== undefined && { openInNewTab }),
+            ...(openInNewTab !== undefined && { openInNewTab }),
 
-          ...(sortOrder !== undefined && { sortOrder }),
-          ...(isActive !== undefined && { isActive }),
+            ...(sortOrder !== undefined && { sortOrder }),
+            ...(isActive !== undefined && { isActive }),
 
-          ...(startAt !== undefined && { startAt }),
-          ...(endAt !== undefined && { endAt }),
-        },
-        include: bannerWithUsers,
-      });
+            ...(startAt !== undefined && { startAt }),
+            ...(endAt !== undefined && { endAt }),
+          },
+          include: bannerWithUsers,
+        });
 
-      await this.createActivityLogService.execute({
-        type: ActivityType.CREATE,
-        module: ActivityModule.OTHER,
-        action: 'CREATE_BANNER',
-        entityType: 'Banner',
-        entityId: banner.id,
-        newValue: { id: banner.id },
+        await this.createActivityLogService.execute(
+          {
+            type: ActivityType.CREATE,
+            module: ActivityModule.OTHER,
+            action: 'CREATE_BANNER',
+            entityType: 'Banner',
+            entityId: created.id,
+            userId,
+            newValue: {
+              title: created.title,
+              imagePublicId: created.imagePublicId,
+              mobileImagePublicId: created.mobileImagePublicId,
+              type: created.type,
+              position: created.position,
+              isActive: created.isActive,
+              sortOrder: created.sortOrder,
+              startAt: created.startAt,
+              endAt: created.endAt,
+            },
+          },
+          tx,
+        );
+        return created;
       });
 
       return toBannerResponse(banner);

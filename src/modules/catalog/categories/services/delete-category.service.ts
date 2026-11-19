@@ -40,43 +40,45 @@ export class DeleteCategoryService {
       productCount: category._count.products,
     };
 
-    if (category._count.products > 0) {
-      const deletedCategory = await this.prisma.category.update({
-        where: { id: categoryId },
-        data: { deletedAt: new Date() },
-      });
+    await this.prisma.$transaction(async (tx) => {
+      if (category._count.products > 0) {
+        const deletedCategory = await tx.category.update({
+          where: { id: categoryId },
+          data: { deletedAt: new Date() },
+        });
 
-      await this.createActivityLogService.execute({
-        type: ActivityType.DELETE,
-        module: ActivityModule.CATEGORY,
-        action: 'DELETE_CATEGORY',
-        description: `Category "${category.name}" was soft deleted`,
-        entityType: 'CATEGORY',
-        entityId: category.id,
-        userId,
-        oldValue,
-        newValue: {
-          deletedAt: deletedCategory.deletedAt,
+        await this.createActivityLogService.execute(
+          {
+            type: ActivityType.DELETE,
+            module: ActivityModule.CATEGORY,
+            action: 'DELETE_CATEGORY',
+            description: 'Category soft deleted',
+            entityType: 'CATEGORY',
+            entityId: category.id,
+            userId,
+            oldValue,
+            newValue: { deletedAt: deletedCategory.deletedAt },
+          },
+          tx,
+        );
+        return;
+      }
+
+      await tx.category.delete({ where: { id: categoryId } });
+      await this.createActivityLogService.execute(
+        {
+          type: ActivityType.DELETE,
+          module: ActivityModule.CATEGORY,
+          action: 'DELETE_CATEGORY',
+          description: 'Category permanently deleted',
+          entityType: 'CATEGORY',
+          entityId: category.id,
+          userId,
+          oldValue,
+          newValue: 'Category permanently deleted',
         },
-      });
-
-      return;
-    }
-
-    await this.prisma.category.delete({
-      where: { id: categoryId },
-    });
-
-    await this.createActivityLogService.execute({
-      type: ActivityType.DELETE,
-      module: ActivityModule.CATEGORY,
-      action: 'DELETE_CATEGORY',
-      description: `Category "${category.name}" was permanently deleted`,
-      entityType: 'CATEGORY',
-      entityId: category.id,
-      userId,
-      oldValue,
-      newValue: 'Category permanently deleted',
+        tx,
+      );
     });
   }
 }

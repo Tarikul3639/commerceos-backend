@@ -76,42 +76,41 @@ export class CreateBrandService {
       }
     }
 
-    const brand = await this.prisma.brand.create({
-      data: {
-        name: normalizedName,
-        slug,
-        ...(description !== undefined && {
-          description: description.trim(),
-        }),
-        ...(image !== undefined && {
-          image,
-        }),
-        ...(publicId !== undefined && {
-          publicId,
-        }),
-        ...(isActive !== undefined && {
-          isActive,
-        }),
-      },
-    });
+    const brand = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.brand.create({
+        data: {
+          name: normalizedName,
+          slug,
+          ...(description !== undefined && {
+            description: description.trim(),
+          }),
+          ...(image !== undefined && { image }),
+          ...(publicId !== undefined && { publicId }),
+          ...(isActive !== undefined && { isActive }),
+        },
+      });
 
-    // Activity Log Creation
-    await this.createActivityLogService.execute({
-      type: ActivityType.CREATE,
-      module: ActivityModule.BRAND,
-      action: 'CREATE_BRAND',
-      description: `Brand "${brand.name}" was created`,
-      entityType: 'BRAND',
-      entityId: brand.id,
-      userId,
-      newValue: {
-        name: brand.name,
-        slug: brand.slug,
-        description: brand.description,
-        image: brand.image,
-        publicId: brand.publicId,
-        isActive: brand.isActive,
-      },
+      await this.createActivityLogService.execute(
+        {
+          type: ActivityType.CREATE,
+          module: ActivityModule.BRAND,
+          action: 'CREATE_BRAND',
+          description: 'Brand created',
+          entityType: 'BRAND',
+          entityId: created.id,
+          userId,
+          newValue: {
+            name: created.name,
+            slug: created.slug,
+            description: created.description,
+            image: created.image,
+            publicId: created.publicId,
+            isActive: created.isActive,
+          },
+        },
+        tx,
+      );
+      return created;
     });
 
     return {

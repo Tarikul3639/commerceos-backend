@@ -144,34 +144,37 @@ export class UpdateCustomerService {
         });
       }
 
-      return updated;
-    });
+      await this.createActivityLogService.execute(
+        {
+          type: ActivityType.UPDATE,
+          module: ActivityModule.CUSTOMER,
+          action: 'UPDATE_CUSTOMER',
+          entityType: 'Customer',
+          entityId: updated.id,
+          userId,
+          oldValue: {
+            name: customer.name,
+            email: customer.email,
+            phone: customer.phone,
+            avatarUrl: customer.avatarUrl,
+            publicId: customer.publicId,
+            address: customer.address,
+            status: customer.status,
+          },
+          newValue: {
+            name: updated.name,
+            email: updated.email,
+            phone: updated.phone,
+            avatarUrl: updated.avatarUrl,
+            publicId: updated.publicId,
+            address: updated.address,
+            status: updated.status,
+          },
+        },
+        tx,
+      );
 
-    await this.createActivityLogService.execute({
-      type: ActivityType.UPDATE,
-      module: ActivityModule.CUSTOMER,
-      action: 'UPDATE_CUSTOMER',
-      entityType: 'Customer',
-      entityId: updatedCustomer.id,
-      userId,
-      oldValue: {
-        name: customer.name,
-        email: customer.email,
-        phone: customer.phone,
-        avatarUrl: customer.avatarUrl,
-        publicId: customer.publicId,
-        address: customer.address,
-        status: customer.status,
-      },
-      newValue: {
-        name: updatedCustomer.name,
-        email: updatedCustomer.email,
-        phone: updatedCustomer.phone,
-        avatarUrl: updatedCustomer.avatarUrl,
-        publicId: updatedCustomer.publicId,
-        address: updatedCustomer.address,
-        status: updatedCustomer.status,
-      },
+      return updated;
     });
 
     if (

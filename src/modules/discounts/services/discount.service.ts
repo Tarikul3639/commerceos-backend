@@ -119,24 +119,52 @@ export class DiscountService {
   ): Promise<DiscountResponseDto> {
     this.validateRules(dto);
     try {
-      const row = await this.prisma.discount.create({
-        data: {
-          code: dto.code,
-          description: dto.description?.trim() || null,
-          type: dto.type,
-          value: new Prisma.Decimal(dto.value),
-          minOrderAmount: new Prisma.Decimal(dto.minOrderAmount ?? 0),
-          maxDiscountAmount:
-            dto.maxDiscountAmount == null
-              ? null
-              : new Prisma.Decimal(dto.maxDiscountAmount),
-          startsAt: dto.startsAt ?? null,
-          endsAt: dto.endsAt ?? null,
-          usageLimit: dto.usageLimit ?? null,
-          isActive: dto.isActive ?? true,
-          createdById: userId,
-          updatedById: userId,
-        },
+      const row = await this.prisma.$transaction(async (tx) => {
+        const created = await tx.discount.create({
+          data: {
+            code: dto.code,
+            description: dto.description?.trim() || null,
+            type: dto.type,
+            value: new Prisma.Decimal(dto.value),
+            minOrderAmount: new Prisma.Decimal(dto.minOrderAmount ?? 0),
+            maxDiscountAmount:
+              dto.maxDiscountAmount == null
+                ? null
+                : new Prisma.Decimal(dto.maxDiscountAmount),
+            startsAt: dto.startsAt ?? null,
+            endsAt: dto.endsAt ?? null,
+            usageLimit: dto.usageLimit ?? null,
+            isActive: dto.isActive ?? true,
+            createdById: userId,
+            updatedById: userId,
+          },
+        });
+
+        await this.createActivityLogService.execute(
+          {
+            type: ActivityType.CREATE,
+            module: ActivityModule.DISCOUNT,
+            action: 'CREATE_DISCOUNT',
+            description: 'Discount created',
+            entityType: 'Discount',
+            entityId: created.id,
+            userId,
+            newValue: {
+              code: created.code,
+              description: created.description,
+              type: created.type,
+              value: created.value.toString(),
+              minOrderAmount: created.minOrderAmount.toString(),
+              maxDiscountAmount: created.maxDiscountAmount?.toString() ?? null,
+              startsAt: created.startsAt,
+              endsAt: created.endsAt,
+              usageLimit: created.usageLimit,
+              isActive: created.isActive,
+            },
+          },
+          tx,
+        );
+        return created;
       });
       return this.toResponse(row);
     } catch (error) {
@@ -155,49 +183,88 @@ export class DiscountService {
     userId: string,
     dto: UpdateDiscountDto,
   ): Promise<DiscountResponseDto> {
-    const existing = await this.prisma.discount.findUnique({ where: { id } });
-    if (!existing) throw new NotFoundException('Discount not found');
-    const type = dto.type ?? existing.type;
-    const value = dto.value ?? Number(existing.value);
-    const maxDiscountAmount =
-      dto.maxDiscountAmount === undefined
-        ? (existing.maxDiscountAmount?.toNumber() ?? null)
-        : dto.maxDiscountAmount;
-    const startsAt =
-      dto.startsAt === undefined ? existing.startsAt : dto.startsAt;
-    const endsAt = dto.endsAt === undefined ? existing.endsAt : dto.endsAt;
-    this.validateRules({ type, value, maxDiscountAmount, startsAt, endsAt });
     try {
-      const row = await this.prisma.discount.update({
-        where: { id },
-        data: {
-          ...(dto.code !== undefined ? { code: dto.code } : {}),
-          ...(dto.description !== undefined
-            ? { description: dto.description?.trim() || null }
-            : {}),
-          ...(dto.type !== undefined ? { type: dto.type } : {}),
-          ...(dto.value !== undefined
-            ? { value: new Prisma.Decimal(dto.value) }
-            : {}),
-          ...(dto.minOrderAmount !== undefined
-            ? { minOrderAmount: new Prisma.Decimal(dto.minOrderAmount) }
-            : {}),
-          ...(dto.maxDiscountAmount !== undefined
-            ? {
-                maxDiscountAmount:
-                  dto.maxDiscountAmount == null
-                    ? null
-                    : new Prisma.Decimal(dto.maxDiscountAmount),
-              }
-            : {}),
-          ...(dto.startsAt !== undefined ? { startsAt: dto.startsAt } : {}),
-          ...(dto.endsAt !== undefined ? { endsAt: dto.endsAt } : {}),
-          ...(dto.usageLimit !== undefined
-            ? { usageLimit: dto.usageLimit }
-            : {}),
-          ...(dto.isActive !== undefined ? { isActive: dto.isActive } : {}),
-          updatedById: userId,
-        },
+      const row = await this.prisma.$transaction(async (tx) => {
+        const existing = await tx.discount.findUnique({ where: { id } });
+        if (!existing) throw new NotFoundException('Discount not found');
+
+        const type = dto.type ?? existing.type;
+        const value = dto.value ?? Number(existing.value);
+        const maxDiscountAmount =
+          dto.maxDiscountAmount === undefined
+            ? (existing.maxDiscountAmount?.toNumber() ?? null)
+            : dto.maxDiscountAmount;
+        const startsAt =
+          dto.startsAt === undefined ? existing.startsAt : dto.startsAt;
+        const endsAt = dto.endsAt === undefined ? existing.endsAt : dto.endsAt;
+        this.validateRules({
+          type,
+          value,
+          maxDiscountAmount,
+          startsAt,
+          endsAt,
+        });
+
+        const updated = await tx.discount.update({
+          where: { id },
+          data: {
+            ...(dto.code !== undefined ? { code: dto.code } : {}),
+            ...(dto.description !== undefined
+              ? { description: dto.description?.trim() || null }
+              : {}),
+            ...(dto.type !== undefined ? { type: dto.type } : {}),
+            ...(dto.value !== undefined
+              ? { value: new Prisma.Decimal(dto.value) }
+              : {}),
+            ...(dto.minOrderAmount !== undefined
+              ? { minOrderAmount: new Prisma.Decimal(dto.minOrderAmount) }
+              : {}),
+            ...(dto.maxDiscountAmount !== undefined
+              ? {
+                  maxDiscountAmount:
+                    dto.maxDiscountAmount == null
+                      ? null
+                      : new Prisma.Decimal(dto.maxDiscountAmount),
+                }
+              : {}),
+            ...(dto.startsAt !== undefined ? { startsAt: dto.startsAt } : {}),
+            ...(dto.endsAt !== undefined ? { endsAt: dto.endsAt } : {}),
+            ...(dto.usageLimit !== undefined
+              ? { usageLimit: dto.usageLimit }
+              : {}),
+            ...(dto.isActive !== undefined ? { isActive: dto.isActive } : {}),
+            updatedById: userId,
+          },
+        });
+
+        const snapshot = (discount: Discount) => ({
+          code: discount.code,
+          description: discount.description,
+          type: discount.type,
+          value: discount.value.toString(),
+          minOrderAmount: discount.minOrderAmount.toString(),
+          maxDiscountAmount: discount.maxDiscountAmount?.toString() ?? null,
+          startsAt: discount.startsAt,
+          endsAt: discount.endsAt,
+          usageLimit: discount.usageLimit,
+          isActive: discount.isActive,
+        });
+
+        await this.createActivityLogService.execute(
+          {
+            type: ActivityType.UPDATE,
+            module: ActivityModule.DISCOUNT,
+            action: 'UPDATE_DISCOUNT',
+            description: 'Discount updated',
+            entityType: 'Discount',
+            entityId: updated.id,
+            userId,
+            oldValue: snapshot(existing),
+            newValue: snapshot(updated),
+          },
+          tx,
+        );
+        return updated;
       });
       return this.toResponse(row);
     } catch (error) {

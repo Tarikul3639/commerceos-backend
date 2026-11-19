@@ -68,51 +68,42 @@ export class UpdateCategoryService {
       }
     }
 
-    const updatedCategory = await this.prisma.category.update({
-      where: {
-        id: categoryId,
-      },
+    const updatedCategory = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.category.update({
+        where: { id: categoryId },
+        data: {
+          ...(name !== undefined && { name }),
+          ...(slug !== undefined && { slug }),
+          ...(description !== undefined && { description }),
+          ...(isActive !== undefined && { isActive }),
+        },
+      });
 
-      data: {
-        ...(name !== undefined && {
-          name,
-        }),
-
-        ...(slug !== undefined && {
-          slug,
-        }),
-
-        ...(description !== undefined && {
-          description,
-        }),
-
-        ...(isActive !== undefined && {
-          isActive,
-        }),
-      },
-    });
-
-    // Activity Log Creation
-    await this.createActivityLogService.execute({
-      type: ActivityType.UPDATE,
-      module: ActivityModule.CATEGORY,
-      action: 'UPDATE_CATEGORY',
-      description: `Category "${updatedCategory.name}" was updated`,
-      entityType: 'CATEGORY',
-      entityId: updatedCategory.id,
-      userId,
-      oldValue: {
-        name: category.name,
-        slug: category.slug,
-        description: category.description,
-        isActive: category.isActive,
-      },
-      newValue: {
-        name: updatedCategory.name,
-        slug: updatedCategory.slug,
-        description: updatedCategory.description,
-        isActive: updatedCategory.isActive,
-      },
+      await this.createActivityLogService.execute(
+        {
+          type: ActivityType.UPDATE,
+          module: ActivityModule.CATEGORY,
+          action: 'UPDATE_CATEGORY',
+          description: 'Category updated',
+          entityType: 'CATEGORY',
+          entityId: updated.id,
+          userId,
+          oldValue: {
+            name: category.name,
+            slug: category.slug,
+            description: category.description,
+            isActive: category.isActive,
+          },
+          newValue: {
+            name: updated.name,
+            slug: updated.slug,
+            description: updated.description,
+            isActive: updated.isActive,
+          },
+        },
+        tx,
+      );
+      return updated;
     });
 
     return {

@@ -63,68 +63,48 @@ export class UpdateSupplierService {
       }
     }
 
-    const updatedSupplier = await this.prisma.supplier.update({
-      where: {
-        id: supplierId,
-      },
+    const updatedSupplier = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.supplier.update({
+        where: { id: supplierId },
+        data: {
+          ...(name !== undefined && { name }),
+          ...(email !== undefined && { email }),
+          ...(phone !== undefined && { phone }),
+          ...(address !== undefined && { address }),
+          ...(contactPerson !== undefined && { contactPerson }),
+          ...(isActive !== undefined && { isActive }),
+        },
+      });
 
-      data: {
-        ...(name !== undefined && {
-          name,
-        }),
-
-        ...(email !== undefined && {
-          email,
-        }),
-
-        ...(phone !== undefined && {
-          phone,
-        }),
-
-        ...(address !== undefined && {
-          address,
-        }),
-
-        ...(contactPerson !== undefined && {
-          contactPerson,
-        }),
-
-        ...(isActive !== undefined && {
-          isActive,
-        }),
-      },
-    });
-
-    // ------------------------------------------------------------------------
-    // 5. Create Activity Log
-    // ------------------------------------------------------------------------
-
-    await this.createActivityLogService.execute({
-      type: ActivityType.UPDATE,
-      module: ActivityModule.SUPPLIER,
-      action: 'UPDATE_SUPPLIER',
-      description: `Supplier "${supplier.name}" was updated`,
-      entityType: 'Supplier',
-      entityId: updatedSupplier.id,
-      userId,
-
-      oldValue: {
-        name: supplier.name,
-        email: supplier.email,
-        phone: supplier.phone,
-        address: supplier.address,
-        contactPerson: supplier.contactPerson,
-        isActive: supplier.isActive,
-      },
-
-      newValue: {
-        name: updatedSupplier.name,
-        email: updatedSupplier.email,
-        phone: updatedSupplier.phone,
-        address: updatedSupplier.address,
-        contactPerson: updatedSupplier.contactPerson,
-        isActive: updatedSupplier.isActive,
-      },
+      await this.createActivityLogService.execute(
+        {
+          type: ActivityType.UPDATE,
+          module: ActivityModule.SUPPLIER,
+          action: 'UPDATE_SUPPLIER',
+          description: 'Supplier updated',
+          entityType: 'Supplier',
+          entityId: updated.id,
+          userId,
+          oldValue: {
+            name: supplier.name,
+            email: supplier.email,
+            phone: supplier.phone,
+            address: supplier.address,
+            contactPerson: supplier.contactPerson,
+            isActive: supplier.isActive,
+          },
+          newValue: {
+            name: updated.name,
+            email: updated.email,
+            phone: updated.phone,
+            address: updated.address,
+            contactPerson: updated.contactPerson,
+            isActive: updated.isActive,
+          },
+        },
+        tx,
+      );
+      return updated;
     });
 
     return {

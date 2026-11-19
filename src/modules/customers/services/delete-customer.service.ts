@@ -42,7 +42,7 @@ export class DeleteCustomerService {
     }
 
     if (customer._count.orders > 0) {
-      const deletedCustomer = await this.prisma.$transaction(async (tx) => {
+      await this.prisma.$transaction(async (tx) => {
         const updated = await tx.customer.update({
           where: { id: customerId },
           data: {
@@ -52,70 +52,66 @@ export class DeleteCustomerService {
         });
 
         await tx.customerRefreshToken.updateMany({
-          where: {
-            customerId,
-            revokedAt: null,
-          },
+          where: { customerId, revokedAt: null },
           data: { revokedAt: new Date() },
         });
-
         await tx.customerPasswordResetToken.deleteMany({
           where: { customerId },
         });
-
         await tx.customerEmailVerificationToken.deleteMany({
           where: { customerId },
         });
 
-        return updated;
+        await this.createActivityLogService.execute(
+          {
+            type: ActivityType.DELETE,
+            module: ActivityModule.CUSTOMER,
+            action: 'SOFT_DELETE_CUSTOMER',
+            entityType: 'Customer',
+            entityId: customerId,
+            userId,
+            oldValue: {
+              status: customer.status,
+              deletedAt: customer.deletedAt,
+              orderCount: customer._count.orders,
+            },
+            newValue: {
+              status: updated.status,
+              deletedAt: updated.deletedAt,
+              activeSessionsRevoked: true,
+            },
+          },
+          tx,
+        );
       });
-
-      await this.createActivityLogService.execute({
-        type: ActivityType.DELETE,
-        module: ActivityModule.CUSTOMER,
-        action: 'SOFT_DELETE_CUSTOMER',
-        entityType: 'Customer',
-        entityId: customerId,
-        userId,
-        oldValue: {
-          status: customer.status,
-          deletedAt: customer.deletedAt,
-          orderCount: customer._count.orders,
-        },
-        newValue: {
-          status: deletedCustomer.status,
-          deletedAt: deletedCustomer.deletedAt,
-          activeSessionsRevoked: true,
-        },
-      });
-
       return;
     }
 
+    await this.prisma.$transaction(async (tx) => {
+      await tx.customer.delete({ where: { id: customerId } });
+      await this.createActivityLogService.execute(
+        {
+          type: ActivityType.DELETE,
+          module: ActivityModule.CUSTOMER,
+          action: 'DELETE_CUSTOMER',
+          entityType: 'Customer',
+          entityId: customerId,
+          userId,
+          oldValue: {
+            name: customer.name,
+            email: customer.email,
+            publicId: customer.publicId,
+            orderCount: customer._count.orders,
+          },
+          newValue: 'Customer permanently deleted',
+        },
+        tx,
+      );
+    });
+
+    // Delete the external avatar only after the database transaction commits.
     if (customer.publicId) {
       await this.cloudinaryService.delete(customer.publicId, 'image');
     }
-
-    await this.prisma.customer.delete({
-      where: {
-        id: customerId,
-      },
-    });
-
-    await this.createActivityLogService.execute({
-      type: ActivityType.DELETE,
-      module: ActivityModule.CUSTOMER,
-      action: 'DELETE_CUSTOMER',
-      entityType: 'Customer',
-      entityId: customerId,
-      userId,
-      oldValue: {
-        name: customer.name,
-        email: customer.email,
-        publicId: customer.publicId,
-        orderCount: customer._count.orders,
-      },
-      newValue: 'Customer permanently deleted',
-    });
   }
 }

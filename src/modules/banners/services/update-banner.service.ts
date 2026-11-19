@@ -36,8 +36,15 @@ export class UpdateBannerService {
       },
       select: {
         id: true,
+        title: true,
         imagePublicId: true,
         mobileImagePublicId: true,
+        type: true,
+        position: true,
+        link: true,
+        buttonText: true,
+        isActive: true,
+        sortOrder: true,
         startAt: true,
         endAt: true,
       },
@@ -97,73 +104,75 @@ export class UpdateBannerService {
       mobileImageUrl === null ? existingBanner.mobileImagePublicId : null,
     ].filter((publicId): publicId is string => !!publicId);
 
-    const banner = await this.prisma.banner.update({
-      where: {
-        id: bannerId,
-      },
+    const banner = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.banner.update({
+        where: { id: bannerId },
+        data: {
+          updatedById: userId,
+          ...(title !== undefined && { title: title.trim() || null }),
+          ...(imageUrl !== undefined && { imageUrl, imagePublicId }),
+          ...(mobileImageUrl !== undefined && {
+            mobileImageUrl,
+            mobileImagePublicId,
+          }),
+          ...(type !== undefined && { type }),
+          ...(position !== undefined && { position }),
+          ...(link !== undefined && { link: link?.trim() || null }),
+          ...(buttonText !== undefined && {
+            buttonText: buttonText?.trim() || null,
+          }),
+          ...(openInNewTab !== undefined && { openInNewTab }),
+          ...(sortOrder !== undefined && { sortOrder }),
+          ...(isActive !== undefined && { isActive }),
+          ...(startAt !== undefined && { startAt }),
+          ...(endAt !== undefined && { endAt }),
+        },
+        include: bannerWithUsers,
+      });
 
-      data: {
-        updatedById: userId,
-        ...(title !== undefined && {
-          title: title.trim() || null,
-        }),
-
-        ...(imageUrl !== undefined && {
-          imageUrl,
-          imagePublicId,
-        }),
-
-        ...(mobileImageUrl !== undefined && {
-          mobileImageUrl,
-          mobileImagePublicId,
-        }),
-
-        ...(type !== undefined && {
-          type,
-        }),
-
-        ...(position !== undefined && {
-          position,
-        }),
-
-        ...(link !== undefined && {
-          link: link?.trim() || null,
-        }),
-
-        ...(buttonText !== undefined && {
-          buttonText: buttonText?.trim() || null,
-        }),
-
-        ...(openInNewTab !== undefined && { openInNewTab }),
-
-        ...(sortOrder !== undefined && {
-          sortOrder,
-        }),
-
-        ...(isActive !== undefined && {
-          isActive,
-        }),
-
-        ...(startAt !== undefined && { startAt }),
-
-        ...(endAt !== undefined && { endAt }),
-      },
-      include: bannerWithUsers,
+      await this.createActivityLogService.execute(
+        {
+          type: ActivityType.UPDATE,
+          module: ActivityModule.OTHER,
+          action: 'UPDATE_BANNER',
+          entityType: 'Banner',
+          entityId: updated.id,
+          userId,
+          oldValue: {
+            title: existingBanner.title,
+            imagePublicId: existingBanner.imagePublicId,
+            mobileImagePublicId: existingBanner.mobileImagePublicId,
+            type: existingBanner.type,
+            position: existingBanner.position,
+            link: existingBanner.link,
+            buttonText: existingBanner.buttonText,
+            isActive: existingBanner.isActive,
+            sortOrder: existingBanner.sortOrder,
+            startAt: existingBanner.startAt,
+            endAt: existingBanner.endAt,
+          },
+          newValue: {
+            title: updated.title,
+            imagePublicId: updated.imagePublicId,
+            mobileImagePublicId: updated.mobileImagePublicId,
+            type: updated.type,
+            position: updated.position,
+            link: updated.link,
+            buttonText: updated.buttonText,
+            isActive: updated.isActive,
+            sortOrder: updated.sortOrder,
+            startAt: updated.startAt,
+            endAt: updated.endAt,
+          },
+        },
+        tx,
+      );
+      return updated;
     });
 
     await Promise.all(
       oldImageIds.map((publicId) => this.cloudinaryService.delete(publicId)),
     );
-
-    await this.createActivityLogService.execute({
-      type: ActivityType.UPDATE,
-      module: ActivityModule.OTHER,
-      action: 'UPDATE_BANNER',
-      entityType: 'Banner',
-      entityId: banner.id,
-      oldValue: { id: existingBanner.id },
-      newValue: { id: banner.id },
-    });
     return toBannerResponse(banner);
   }
 }

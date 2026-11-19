@@ -5,6 +5,8 @@ import {
 } from '@nestjs/common';
 
 import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
+import { ActivityModule, ActivityType } from '../../../lib/prisma/enums.js';
 import { Prisma } from '../../../lib/prisma/client.js';
 import {
   PaymentGatewayMode,
@@ -21,7 +23,10 @@ import {
 
 @Injectable()
 export class PaymentGatewayService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly activityLog: CreateActivityLogService,
+  ) {}
 
   /**
    * Creates a payment gateway configuration after validating provider uniqueness
@@ -31,29 +36,50 @@ export class PaymentGatewayService {
     createPaymentGatewayDto: CreatePaymentGatewayDto,
     userId: string,
   ): Promise<PaymentGatewayResponseDto> {
-    void userId;
     assertNoGatewaySecrets(createPaymentGatewayDto.settings);
 
-    const existing = await this.prisma.paymentGateway.findUnique({
-      where: { provider: createPaymentGatewayDto.provider },
-    });
+    const paymentGateway = await this.prisma.$transaction(async (tx) => {
+      const existing = await tx.paymentGateway.findUnique({
+        where: { provider: createPaymentGatewayDto.provider },
+      });
 
-    if (existing) {
-      throw new ConflictException(
-        `Configuration for ${createPaymentGatewayDto.provider} already exists`,
+      if (existing) {
+        throw new ConflictException(
+          `Configuration for ${createPaymentGatewayDto.provider} already exists`,
+        );
+      }
+
+      const created = await tx.paymentGateway.create({
+        data: {
+          provider: createPaymentGatewayDto.provider,
+          displayName: createPaymentGatewayDto.displayName,
+          isEnabled: createPaymentGatewayDto.isEnabled ?? false,
+          mode: createPaymentGatewayDto.mode ?? PaymentGatewayMode.TEST,
+          ...(createPaymentGatewayDto.settings !== undefined && {
+            settings: createPaymentGatewayDto.settings as Prisma.InputJsonValue,
+          }),
+        },
+      });
+
+      await this.activityLog.execute(
+        {
+          type: ActivityType.CREATE,
+          module: ActivityModule.SETTINGS,
+          action: 'CREATE_PAYMENT_GATEWAY',
+          description: `Payment gateway ${created.provider} created`,
+          entityType: 'PaymentGateway',
+          entityId: created.id,
+          userId,
+          newValue: {
+            provider: created.provider,
+            displayName: created.displayName,
+            isEnabled: created.isEnabled,
+            mode: created.mode,
+          },
+        },
+        tx,
       );
-    }
-
-    const paymentGateway = await this.prisma.paymentGateway.create({
-      data: {
-        provider: createPaymentGatewayDto.provider,
-        displayName: createPaymentGatewayDto.displayName,
-        isEnabled: createPaymentGatewayDto.isEnabled ?? false,
-        mode: createPaymentGatewayDto.mode ?? PaymentGatewayMode.TEST,
-        ...(createPaymentGatewayDto.settings !== undefined && {
-          settings: createPaymentGatewayDto.settings as Prisma.InputJsonValue,
-        }),
-      },
+      return created;
     });
 
     return this.toResponse(paymentGateway);
@@ -99,55 +125,78 @@ export class PaymentGatewayService {
     updatePaymentGatewayDto: UpdatePaymentGatewayDto,
     userId: string,
   ): Promise<PaymentGatewayResponseDto> {
-    void userId;
     assertNoGatewaySecrets(updatePaymentGatewayDto.settings);
 
-    const existing = await this.prisma.paymentGateway.findUnique({
-      where: { id },
-    });
-
-    if (!existing) {
-      throw new NotFoundException(
-        `Payment gateway configuration with ID ${id} not found`,
-      );
-    }
-
-    if (
-      updatePaymentGatewayDto.provider !== undefined &&
-      updatePaymentGatewayDto.provider !== existing.provider
-    ) {
-      const providerExists = await this.prisma.paymentGateway.findUnique({
-        where: { provider: updatePaymentGatewayDto.provider },
-      });
-
-      if (providerExists) {
-        throw new ConflictException(
-          `Configuration for ${updatePaymentGatewayDto.provider} already exists`,
+    const paymentGateway = await this.prisma.$transaction(async (tx) => {
+      const existing = await tx.paymentGateway.findUnique({ where: { id } });
+      if (!existing) {
+        throw new NotFoundException(
+          `Payment gateway configuration with ID ${id} not found`,
         );
       }
-    }
 
-    const updateData: Prisma.PaymentGatewayUpdateInput = {
-      ...(updatePaymentGatewayDto.provider !== undefined && {
-        provider: updatePaymentGatewayDto.provider,
-      }),
-      ...(updatePaymentGatewayDto.displayName !== undefined && {
-        displayName: updatePaymentGatewayDto.displayName,
-      }),
-      ...(updatePaymentGatewayDto.isEnabled !== undefined && {
-        isEnabled: updatePaymentGatewayDto.isEnabled,
-      }),
-      ...(updatePaymentGatewayDto.mode !== undefined && {
-        mode: updatePaymentGatewayDto.mode,
-      }),
-      ...(updatePaymentGatewayDto.settings !== undefined && {
-        settings: updatePaymentGatewayDto.settings as Prisma.InputJsonValue,
-      }),
-    };
+      if (
+        updatePaymentGatewayDto.provider !== undefined &&
+        updatePaymentGatewayDto.provider !== existing.provider
+      ) {
+        const providerExists = await tx.paymentGateway.findUnique({
+          where: { provider: updatePaymentGatewayDto.provider },
+        });
+        if (providerExists) {
+          throw new ConflictException(
+            `Configuration for ${updatePaymentGatewayDto.provider} already exists`,
+          );
+        }
+      }
 
-    const paymentGateway = await this.prisma.paymentGateway.update({
-      where: { id },
-      data: updateData,
+      const updateData: Prisma.PaymentGatewayUpdateInput = {
+        ...(updatePaymentGatewayDto.provider !== undefined && {
+          provider: updatePaymentGatewayDto.provider,
+        }),
+        ...(updatePaymentGatewayDto.displayName !== undefined && {
+          displayName: updatePaymentGatewayDto.displayName,
+        }),
+        ...(updatePaymentGatewayDto.isEnabled !== undefined && {
+          isEnabled: updatePaymentGatewayDto.isEnabled,
+        }),
+        ...(updatePaymentGatewayDto.mode !== undefined && {
+          mode: updatePaymentGatewayDto.mode,
+        }),
+        ...(updatePaymentGatewayDto.settings !== undefined && {
+          settings: updatePaymentGatewayDto.settings as Prisma.InputJsonValue,
+        }),
+      };
+
+      const updated = await tx.paymentGateway.update({
+        where: { id },
+        data: updateData,
+      });
+
+      await this.activityLog.execute(
+        {
+          type: ActivityType.UPDATE,
+          module: ActivityModule.SETTINGS,
+          action: 'UPDATE_PAYMENT_GATEWAY',
+          description: `Payment gateway ${updated.provider} updated`,
+          entityType: 'PaymentGateway',
+          entityId: updated.id,
+          userId,
+          oldValue: {
+            provider: existing.provider,
+            displayName: existing.displayName,
+            isEnabled: existing.isEnabled,
+            mode: existing.mode,
+          },
+          newValue: {
+            provider: updated.provider,
+            displayName: updated.displayName,
+            isEnabled: updated.isEnabled,
+            mode: updated.mode,
+          },
+        },
+        tx,
+      );
+      return updated;
     });
 
     return this.toResponse(paymentGateway);

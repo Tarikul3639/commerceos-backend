@@ -29,71 +29,66 @@ export class DeleteSupplierService {
       throw new NotFoundException('Supplier not found');
     }
 
-    // Soft delete when the supplier has purchase history
-    if (supplier._count.purchases > 0) {
-      const deletedSupplier = await this.prisma.supplier.update({
-        where: {
-          id: supplierId,
-        },
-        data: {
-          deletedAt: new Date(),
-          isActive: false,
-        },
-      });
+    const hasPurchaseHistory = supplier._count.purchases > 0;
+    await this.prisma.$transaction(async (tx) => {
+      if (hasPurchaseHistory) {
+        const deletedSupplier = await tx.supplier.update({
+          where: { id: supplierId },
+          data: { deletedAt: new Date(), isActive: false },
+        });
 
-      await this.createActivityLogService.execute({
-        type: ActivityType.DELETE,
-        module: ActivityModule.SUPPLIER,
-        action: 'SOFT_DELETE_SUPPLIER',
-        description: `Supplier "${supplier.name}" was soft deleted`,
-        entityType: 'Supplier',
-        entityId: supplier.id,
-        userId,
-        oldValue: {
-          name: supplier.name,
-          email: supplier.email,
-          phone: supplier.phone,
-          isActive: supplier.isActive,
-          deletedAt: supplier.deletedAt,
+        await this.createActivityLogService.execute(
+          {
+            type: ActivityType.DELETE,
+            module: ActivityModule.SUPPLIER,
+            action: 'SOFT_DELETE_SUPPLIER',
+            description: 'Supplier soft deleted',
+            entityType: 'Supplier',
+            entityId: supplier.id,
+            userId,
+            oldValue: {
+              name: supplier.name,
+              email: supplier.email,
+              phone: supplier.phone,
+              isActive: supplier.isActive,
+              deletedAt: supplier.deletedAt,
+            },
+            newValue: {
+              name: deletedSupplier.name,
+              email: deletedSupplier.email,
+              phone: deletedSupplier.phone,
+              isActive: deletedSupplier.isActive,
+              deletedAt: deletedSupplier.deletedAt,
+            },
+          },
+          tx,
+        );
+        return;
+      }
+
+      await tx.supplier.delete({ where: { id: supplierId } });
+      await this.createActivityLogService.execute(
+        {
+          type: ActivityType.DELETE,
+          module: ActivityModule.SUPPLIER,
+          action: 'DELETE_SUPPLIER',
+          description: 'Supplier permanently deleted',
+          entityType: 'Supplier',
+          entityId: supplier.id,
+          userId,
+          oldValue: {
+            name: supplier.name,
+            email: supplier.email,
+            phone: supplier.phone,
+            address: supplier.address,
+            contactPerson: supplier.contactPerson,
+            isActive: supplier.isActive,
+            deletedAt: supplier.deletedAt,
+          },
+          newValue: '',
         },
-        newValue: {
-          name: deletedSupplier.name,
-          email: deletedSupplier.email,
-          phone: deletedSupplier.phone,
-          isActive: deletedSupplier.isActive,
-          deletedAt: deletedSupplier.deletedAt,
-        },
-      });
-
-      return;
-    }
-
-    // Hard delete when the supplier has no purchase history
-    await this.prisma.supplier.delete({
-      where: {
-        id: supplierId,
-      },
-    });
-
-    // Activity Log Creation
-    await this.createActivityLogService.execute({
-      type: ActivityType.DELETE,
-      module: ActivityModule.SUPPLIER,
-      action: 'DELETE_SUPPLIER',
-      description: `Supplier "${supplier.name}" was permanently deleted`,
-      entityType: 'Supplier',
-      entityId: supplier.id,
-      userId,
-      oldValue: {
-        name: supplier.name,
-        email: supplier.email,
-        phone: supplier.phone,
-        address: supplier.address,
-        contactPerson: supplier.contactPerson,
-        isActive: supplier.isActive,
-        deletedAt: supplier.deletedAt,
-      },
-      newValue: '',
+        tx,
+      );
     });
   }
 }

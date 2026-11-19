@@ -125,62 +125,56 @@ export class UpdateBrandService {
       }
     }
 
-    const updatedBrand = await this.prisma.brand.update({
-      where: {
-        id: brandId,
-      },
-      data: {
-        ...(normalizedName !== undefined && {
-          name: normalizedName,
-        }),
+    const updatedBrand = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.brand.update({
+        where: { id: brandId },
+        data: {
+          ...(normalizedName !== undefined && { name: normalizedName }),
+          ...(normalizedSlug !== undefined && { slug: normalizedSlug }),
+          ...(updateBrandDto.description !== undefined && {
+            description: updateBrandDto.description.trim(),
+          }),
+          ...(updateBrandDto.image !== undefined && {
+            image: updateBrandDto.image,
+          }),
+          ...(updateBrandDto.publicId !== undefined && {
+            publicId: updateBrandDto.publicId,
+          }),
+          ...(updateBrandDto.isActive !== undefined && {
+            isActive: updateBrandDto.isActive,
+          }),
+        },
+      });
 
-        ...(normalizedSlug !== undefined && {
-          slug: normalizedSlug,
-        }),
-
-        ...(updateBrandDto.description !== undefined && {
-          description: updateBrandDto.description.trim(),
-        }),
-
-        ...(updateBrandDto.image !== undefined && {
-          image: updateBrandDto.image,
-        }),
-
-        ...(updateBrandDto.publicId !== undefined && {
-          publicId: updateBrandDto.publicId,
-        }),
-
-        ...(updateBrandDto.isActive !== undefined && {
-          isActive: updateBrandDto.isActive,
-        }),
-      },
-    });
-
-    // Activity Log Creation
-    await this.createActivityLogService.execute({
-      type: ActivityType.UPDATE,
-      module: ActivityModule.BRAND,
-      action: 'UPDATE_BRAND',
-      description: `Brand "${updatedBrand.name}" was updated`,
-      entityType: 'BRAND',
-      entityId: updatedBrand.id,
-      userId,
-      oldValue: {
-        name: brand.name,
-        slug: brand.slug,
-        description: brand.description,
-        image: brand.image,
-        publicId: brand.publicId,
-        isActive: brand.isActive,
-      },
-      newValue: {
-        name: updatedBrand.name,
-        slug: updatedBrand.slug,
-        description: updatedBrand.description,
-        image: updatedBrand.image,
-        publicId: updatedBrand.publicId,
-        isActive: updatedBrand.isActive,
-      },
+      await this.createActivityLogService.execute(
+        {
+          type: ActivityType.UPDATE,
+          module: ActivityModule.BRAND,
+          action: 'UPDATE_BRAND',
+          description: 'Brand updated',
+          entityType: 'BRAND',
+          entityId: updated.id,
+          userId,
+          oldValue: {
+            name: brand.name,
+            slug: brand.slug,
+            description: brand.description,
+            image: brand.image,
+            publicId: brand.publicId,
+            isActive: brand.isActive,
+          },
+          newValue: {
+            name: updated.name,
+            slug: updated.slug,
+            description: updated.description,
+            image: updated.image,
+            publicId: updated.publicId,
+            isActive: updated.isActive,
+          },
+        },
+        tx,
+      );
+      return updated;
     });
 
     if (

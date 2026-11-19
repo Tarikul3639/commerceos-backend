@@ -56,39 +56,45 @@ export class CreateCustomerService {
       this.configService.getOrThrow<number>('bcrypt.saltRounds'),
     );
 
-    const customer = await this.prisma.customer.create({
-      data: {
-        name,
-        email,
-        ...(phone !== undefined && { phone }),
-        password: hashedPassword,
-        ...(address !== undefined && { address }),
-        ...(avatarUrl !== undefined && { avatarUrl }),
-        ...(publicId !== undefined && { publicId }),
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        phone: true,
-        avatarUrl: true,
-        publicId: true,
-        address: true,
-        status: true,
-        isVerified: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+    const customer = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.customer.create({
+        data: {
+          name,
+          email,
+          ...(phone !== undefined && { phone }),
+          password: hashedPassword,
+          ...(address !== undefined && { address }),
+          ...(avatarUrl !== undefined && { avatarUrl }),
+          ...(publicId !== undefined && { publicId }),
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          avatarUrl: true,
+          publicId: true,
+          address: true,
+          status: true,
+          isVerified: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
 
-    await this.createActivityLogService.execute({
-      type: ActivityType.CREATE,
-      module: ActivityModule.CUSTOMER,
-      action: 'CREATE_CUSTOMER',
-      entityType: 'Customer',
-      entityId: customer.id,
-      userId,
-      newValue: { id: customer.id },
+      await this.createActivityLogService.execute(
+        {
+          type: ActivityType.CREATE,
+          module: ActivityModule.CUSTOMER,
+          action: 'CREATE_CUSTOMER',
+          entityType: 'Customer',
+          entityId: created.id,
+          userId,
+          newValue: { id: created.id },
+        },
+        tx,
+      );
+      return created;
     });
 
     return customer;

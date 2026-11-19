@@ -43,58 +43,54 @@ export class DeleteBrandService {
       productCount: brand._count.products,
     };
 
-    // Soft delete if the brand has associated products.
-    if (brand._count.products > 0) {
-      const deletedBrand = await this.prisma.brand.update({
-        where: {
-          id: brandId,
-        },
-        data: {
-          deletedAt: new Date(),
-          isActive: false,
-        },
-      });
+    const hasProducts = brand._count.products > 0;
+    await this.prisma.$transaction(async (tx) => {
+      if (hasProducts) {
+        const deletedBrand = await tx.brand.update({
+          where: { id: brandId },
+          data: { deletedAt: new Date(), isActive: false },
+        });
 
-      await this.createActivityLogService.execute({
-        type: ActivityType.DELETE,
-        module: ActivityModule.BRAND,
-        action: 'DELETE_BRAND',
-        description: `Brand "${brand.name}" was soft deleted`,
-        entityType: 'BRAND',
-        entityId: brand.id,
-        userId,
-        oldValue,
-        newValue: {
-          deletedAt: deletedBrand.deletedAt,
-          isActive: deletedBrand.isActive,
+        await this.createActivityLogService.execute(
+          {
+            type: ActivityType.DELETE,
+            module: ActivityModule.BRAND,
+            action: 'DELETE_BRAND',
+            description: 'Brand soft deleted',
+            entityType: 'BRAND',
+            entityId: brand.id,
+            userId,
+            oldValue,
+            newValue: {
+              deletedAt: deletedBrand.deletedAt,
+              isActive: deletedBrand.isActive,
+            },
+          },
+          tx,
+        );
+        return;
+      }
+
+      await tx.brand.delete({ where: { id: brandId } });
+      await this.createActivityLogService.execute(
+        {
+          type: ActivityType.DELETE,
+          module: ActivityModule.BRAND,
+          action: 'DELETE_BRAND',
+          description: 'Brand permanently deleted',
+          entityType: 'BRAND',
+          entityId: brand.id,
+          userId,
+          oldValue,
+          newValue: 'Brand permanently deleted',
         },
-      });
+        tx,
+      );
+    });
 
-      return;
-    }
-
-    // Delete the image from Cloudinary before hard delete.
-    if (brand.publicId) {
+    // External asset cleanup happens only after the database delete commits.
+    if (!hasProducts && brand.publicId) {
       await this.cloudinaryService.delete(brand.publicId);
     }
-
-    // Hard delete if the brand has no associated products.
-    await this.prisma.brand.delete({
-      where: {
-        id: brandId,
-      },
-    });
-
-    await this.createActivityLogService.execute({
-      type: ActivityType.DELETE,
-      module: ActivityModule.BRAND,
-      action: 'DELETE_BRAND',
-      description: `Brand "${brand.name}" was permanently deleted`,
-      entityType: 'BRAND',
-      entityId: brand.id,
-      userId,
-      oldValue,
-      newValue: 'Brand permanently deleted',
-    });
   }
 }

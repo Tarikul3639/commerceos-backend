@@ -55,45 +55,38 @@ export class CreateSupplierService {
     /**
      * Create a new supplier in the database
      */
-    const supplier = await this.prisma.supplier.create({
-      data: {
-        name,
+    const supplier = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.supplier.create({
+        data: {
+          name,
+          ...(email !== undefined && { email }),
+          ...(phone !== undefined && { phone }),
+          ...(address !== undefined && { address }),
+          ...(contactPerson !== undefined && { contactPerson }),
+        },
+      });
 
-        ...(email !== undefined && {
-          email,
-        }),
-
-        ...(phone !== undefined && {
-          phone,
-        }),
-
-        ...(address !== undefined && {
-          address,
-        }),
-
-        ...(contactPerson !== undefined && {
-          contactPerson,
-        }),
-      },
-    });
-
-    // Activity Log Creation
-    await this.createActivityLogService.execute({
-      type: ActivityType.CREATE,
-      module: ActivityModule.SUPPLIER,
-      action: 'CREATE_SUPPLIER',
-      description: `Supplier "${supplier.name}" was created`,
-      entityType: 'Supplier',
-      entityId: supplier.id,
-      userId,
-      newValue: {
-        name: supplier.name,
-        email: supplier.email,
-        phone: supplier.phone,
-        address: supplier.address,
-        contactPerson: supplier.contactPerson,
-        isActive: supplier.isActive,
-      },
+      await this.createActivityLogService.execute(
+        {
+          type: ActivityType.CREATE,
+          module: ActivityModule.SUPPLIER,
+          action: 'CREATE_SUPPLIER',
+          description: 'Supplier created',
+          entityType: 'Supplier',
+          entityId: created.id,
+          userId,
+          newValue: {
+            name: created.name,
+            email: created.email,
+            phone: created.phone,
+            address: created.address,
+            contactPerson: created.contactPerson,
+            isActive: created.isActive,
+          },
+        },
+        tx,
+      );
+      return created;
     });
 
     return {

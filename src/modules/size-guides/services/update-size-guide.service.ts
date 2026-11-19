@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../../../common/prisma/prisma.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../lib/prisma/client.js';
+import { ActivityModule, ActivityType } from '../../../lib/prisma/enums.js';
 import { UpdateSizeGuideDto } from '../dto/requests/update-size-guide.dto.js';
 import { SizeGuideResponseDto } from '../dto/responses/size-guide-response.dto.js';
 
@@ -16,83 +16,71 @@ export class UpdateSizeGuideService {
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
-  /** Update a size guide */
   async execute(
     id: string,
     dto: UpdateSizeGuideDto,
     userId: string,
   ): Promise<SizeGuideResponseDto> {
-    const existing = await this.prisma.sizeGuide.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        unit: true,
-        columns: true,
-        rows: true,
-      },
-    });
-
-    if (!existing) {
-      throw new NotFoundException('Size guide not found');
-    }
-
-    if (dto.name !== undefined) {
-      const duplicate = await this.prisma.sizeGuide.findFirst({
-        where: {
-          name: { equals: dto.name, mode: 'insensitive' },
-          NOT: { id },
+    const sizeGuide = await this.prisma.$transaction(async (tx) => {
+      const existing = await tx.sizeGuide.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          unit: true,
+          columns: true,
+          rows: true,
         },
-        select: { id: true },
       });
+      if (!existing) throw new NotFoundException('Size guide not found');
 
-      if (duplicate) {
-        throw new ConflictException('Size guide already exists');
+      if (dto.name !== undefined) {
+        const duplicate = await tx.sizeGuide.findFirst({
+          where: {
+            name: { equals: dto.name, mode: 'insensitive' },
+            NOT: { id },
+          },
+          select: { id: true },
+        });
+        if (duplicate) throw new ConflictException('Size guide already exists');
       }
-    }
 
-    const sizeGuide = await this.prisma.sizeGuide.update({
-      where: { id },
-      data: {
-        ...(dto.name !== undefined && { name: dto.name }),
-        ...(dto.description !== undefined && {
-          description: dto.description,
-        }),
-        ...(dto.unit !== undefined && { unit: dto.unit }),
-        ...(dto.columns !== undefined && {
-          columns: dto.columns,
-        }),
-        ...(dto.rows !== undefined && {
-          rows: dto.rows,
-        }),
-      },
+      const updated = await tx.sizeGuide.update({
+        where: { id },
+        data: {
+          ...(dto.name !== undefined && { name: dto.name }),
+          ...(dto.description !== undefined && {
+            description: dto.description,
+          }),
+          ...(dto.unit !== undefined && { unit: dto.unit }),
+          ...(dto.columns !== undefined && { columns: dto.columns }),
+          ...(dto.rows !== undefined && { rows: dto.rows }),
+        },
+      });
+      const snapshot = (value: typeof existing | typeof updated) => ({
+        name: value.name,
+        description: value.description,
+        unit: value.unit,
+        columns: value.columns,
+        rows: value.rows,
+      });
+      await this.createActivityLogService.execute(
+        {
+          type: ActivityType.UPDATE,
+          module: ActivityModule.OTHER,
+          action: 'UPDATE_SIZE_GUIDE',
+          description: `Size guide "${existing.name}" was updated`,
+          entityType: 'SizeGuide',
+          entityId: updated.id,
+          userId,
+          oldValue: snapshot(existing),
+          newValue: snapshot(updated),
+        },
+        tx,
+      );
+      return updated;
     });
-
-    await this.createActivityLogService.execute({
-      type: ActivityType.UPDATE,
-      module: ActivityModule.OTHER,
-      action: 'UPDATE_SIZE_GUIDE',
-      description: `Size guide "${existing.name}" was updated`,
-      entityType: 'SizeGuide',
-      entityId: sizeGuide.id,
-      userId,
-      oldValue: {
-        name: existing.name,
-        description: existing.description,
-        unit: existing.unit,
-        columns: existing.columns,
-        rows: existing.rows,
-      },
-      newValue: {
-        name: sizeGuide.name,
-        description: sizeGuide.description,
-        unit: sizeGuide.unit,
-        columns: sizeGuide.columns,
-        rows: sizeGuide.rows,
-      },
-    });
-
     return sizeGuide as unknown as SizeGuideResponseDto;
   }
 }

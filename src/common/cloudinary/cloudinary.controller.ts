@@ -2,12 +2,22 @@ import {
   BadRequestException,
   Controller,
   Get,
+  Header,
   HttpCode,
   HttpStatus,
   Param,
+  UseGuards,
 } from '@nestjs/common';
 
-import { ApiOperation, ApiResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
+import { UserJwtAuthGuard } from '../guards/user-jwt-auth.guard.js';
+import { CloudinaryUploadGuard } from './cloudinary-upload.guard.js';
 
 import {
   CloudinaryFolder,
@@ -19,11 +29,15 @@ import { CloudinaryService } from './cloudinary.service.js';
 import { CloudinaryUploadSignatureDto } from './dto/responses/cloudinary-upload-signature.dto.js';
 
 @ApiTags('Cloudinary')
+@ApiBearerAuth()
 @Controller('uploads')
+@UseGuards(UserJwtAuthGuard, CloudinaryUploadGuard)
 export class CloudinaryController {
   constructor(private readonly cloudinaryService: CloudinaryService) {}
 
   @Get('signature/:folder')
+  @Header('Cache-Control', 'no-store, private')
+  @Header('Pragma', 'no-cache')
   @HttpCode(HttpStatus.OK)
   @ApiResponse({
     status: HttpStatus.OK,

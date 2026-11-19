@@ -34,31 +34,28 @@ export class RestoreCustomerService {
       throw new BadRequestException('Customer is not deleted');
     }
 
-    const restoredCustomer = await this.prisma.customer.update({
-      where: {
-        id: customerId,
-      },
+    await this.prisma.$transaction(async (tx) => {
+      const restoredCustomer = await tx.customer.update({
+        where: { id: customerId },
+        data: { status: 'ACTIVE', deletedAt: null },
+      });
 
-      data: {
-        status: 'ACTIVE',
-        deletedAt: null,
-      },
-    });
-
-    await this.createActivityLogService.execute({
-      type: ActivityType.UPDATE,
-      module: ActivityModule.CUSTOMER,
-      action: 'RESTORE_CUSTOMER',
-      entityType: 'Customer',
-      entityId: restoredCustomer.id,
-      userId,
-      oldValue: {
-        status: customer.status,
-      },
-      newValue: {
-        status: restoredCustomer.status,
-        deletedAt: restoredCustomer.deletedAt,
-      },
+      await this.createActivityLogService.execute(
+        {
+          type: ActivityType.UPDATE,
+          module: ActivityModule.CUSTOMER,
+          action: 'RESTORE_CUSTOMER',
+          entityType: 'Customer',
+          entityId: restoredCustomer.id,
+          userId,
+          oldValue: { status: customer.status },
+          newValue: {
+            status: restoredCustomer.status,
+            deletedAt: restoredCustomer.deletedAt,
+          },
+        },
+        tx,
+      );
     });
   }
 }
