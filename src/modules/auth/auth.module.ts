@@ -30,6 +30,7 @@ import { LogoutAllService } from './user/services/logout-all.service.js';
 import { RefreshTokenService } from './user/services/refresh-token.service.js';
 
 import { GetCurrentUserService } from './user/services/get-current-user.service.js';
+import { UpdateCurrentUserProfileService } from './user/services/update-current-user-profile.service.js';
 import { ChangePasswordService } from './user/services/change-password.service.js';
 import { ForgotPasswordService } from './user/services/forgot-password.service.js';
 import { ResetPasswordService } from './user/services/reset-password.service.js';
@@ -85,6 +86,7 @@ import { CustomerVerifyEmailService } from './customer/services/verify-email.ser
     RefreshTokenService,
 
     GetCurrentUserService,
+    UpdateCurrentUserProfileService,
     LoginService,
     LogoutService,
     LogoutAllService,

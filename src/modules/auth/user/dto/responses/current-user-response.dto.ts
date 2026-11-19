@@ -32,6 +32,9 @@ export class CurrentUserResponseDto {
   })
   avatar!: string | null;
 
+  @ApiProperty({ example: 'users/avatar_public_id', nullable: true })
+  publicId!: string | null;
+
   @ApiProperty({
     enum: Role,
     example: Role.ADMIN,
@@ -59,4 +62,7 @@ export class CurrentUserResponseDto {
     nullable: true,
   })
   lastLoginAt!: Date | null;
+
+  @ApiProperty({ example: '2026-09-18T16:30:00.000Z' })
+  createdAt!: Date;
 }

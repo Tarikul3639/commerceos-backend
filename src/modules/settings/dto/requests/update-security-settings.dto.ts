@@ -23,7 +23,7 @@ export class UpdateSecuritySettingsDto {
   @Max(180)
   rememberMeRefreshLifetimeDays?: number;
 
-  @ApiPropertyOptional({ example: 12, minimum: 8, maximum: 128 })
+  @ApiPropertyOptional({ example: 8, minimum: 8, maximum: 128 })
   @IsOptional()
   @IsInt()
   @Min(8)

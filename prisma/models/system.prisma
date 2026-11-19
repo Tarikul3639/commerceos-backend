@@ -116,7 +116,7 @@ model SecuritySettings {
   accessTokenLifetimeMinutes    Int @default(15)
   refreshTokenLifetimeDays      Int @default(7)
   rememberMeRefreshLifetimeDays Int @default(30)
-  minimumPasswordLength         Int @default(12)
+  minimumPasswordLength         Int @default(8)
   maximumFailedLoginAttempts    Int @default(5)
   accountLockoutDurationMinutes Int @default(15)
 

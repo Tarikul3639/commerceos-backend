@@ -35,9 +35,12 @@ export class CloudinaryService {
 
   generateUploadSignature(
     folder: CloudinaryFolderType,
+    ownerId?: string,
   ): CloudinaryUploadSignatureDto {
     const timestamp = Math.floor(Date.now() / 1000);
-    const fullFolder = `${this.rootFolder}/${folder}`;
+    const scopedFolder =
+      folder === 'users' && ownerId ? `${folder}/${ownerId}` : folder;
+    const fullFolder = `${this.rootFolder}/${scopedFolder}`;
     const signature = cloudinary.utils.api_sign_request(
       { timestamp, folder: fullFolder },
       this.apiSecret,
@@ -49,6 +52,10 @@ export class CloudinaryService {
       cloudName: this.cloudName,
       apiKey: this.apiKey,
     };
+  }
+
+  isUserAssetOwnedBy(userId: string, publicId: string): boolean {
+    return publicId.startsWith(`${this.rootFolder}/users/${userId}/`);
   }
 
   async delete(

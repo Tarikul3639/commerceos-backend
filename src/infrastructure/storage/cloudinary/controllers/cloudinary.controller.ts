@@ -16,6 +16,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { UserJwtAuthGuard } from '../../../../common/guards/user-jwt-auth.guard.js';
+import { CurrentUser } from '../../../../common/decorators/current-user.decorator.js';
 import { CloudinaryUploadGuard } from '../guards/cloudinary-upload.guard.js';
 import {
   CloudinaryFolder,
@@ -52,11 +53,12 @@ export class CloudinaryController {
   })
   generateSignature(
     @Param('folder') folder: CloudinaryFolderType,
+    @CurrentUser('id') userId: string,
   ): CloudinaryUploadSignatureDto {
     const validFolders = Object.values(CloudinaryFolder);
     if (!validFolders.includes(folder)) {
       throw new BadRequestException('Invalid upload folder');
     }
-    return this.cloudinaryService.generateUploadSignature(folder);
+    return this.cloudinaryService.generateUploadSignature(folder, userId);
   }
 }

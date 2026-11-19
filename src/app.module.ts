@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ConfigModule } from '@nestjs/config';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 // Configs
 import {
@@ -42,7 +44,8 @@ import { NotificationModule } from './modules/notifications/notification.module.
 import { EmailModule as EmailLogsModule } from './modules/emails/email.module.js';
 import { AuditModule } from './common/audit/audit.module.js';
 import { AuditContextInterceptor } from './common/audit/audit-context.interceptor.js';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor.js';
+import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor.js';
 
 import { DashboardModule } from './modules/dashboard/dashboard.module.js';
 import { AnalyticsModule } from './modules/analytics/analytics.module.js';
@@ -111,6 +114,16 @@ import { PaymentModule } from './modules/payments/payment.module.js';
   ],
   controllers: [],
   providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useFactory: (configService: ConfigService) =>
+        new TimeoutInterceptor(configService),
+      inject: [ConfigService],
+    },
     {
       provide: APP_INTERCEPTOR,
       useClass: AuditContextInterceptor,

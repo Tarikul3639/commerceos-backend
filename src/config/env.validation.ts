@@ -5,6 +5,7 @@ const envValidationSchema = Joi.object({
     .valid('development', 'production', 'test', 'provision')
     .default('development'),
   PORT: Joi.number().default(5000),
+  REQUEST_TIMEOUT_MS: Joi.number().integer().positive().default(120_000),
   API_PREFIX: Joi.string().required(),
   API_VERSION: Joi.number().required(),
   APP_VERSION: Joi.string().required(),

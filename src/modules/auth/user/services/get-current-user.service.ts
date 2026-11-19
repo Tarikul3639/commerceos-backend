@@ -18,8 +18,10 @@ export class GetCurrentUserService {
         email: true,
         phone: true,
         avatar: true,
+        publicId: true,
         isVerified: true,
         lastLoginAt: true,
+        createdAt: true,
         role: true,
       },
     });
@@ -43,8 +45,10 @@ export class GetCurrentUserService {
       email: user.email,
       phone: user.phone,
       avatar: user.avatar,
+      publicId: user.publicId,
       isVerified: user.isVerified,
       lastLoginAt: user.lastLoginAt,
+      createdAt: user.createdAt,
       role: user.role,
       permissions: rolePermissions.map((row) => row.permission),
     };

@@ -4,6 +4,7 @@ import {
   Controller,
   HttpCode,
   HttpStatus,
+  Patch,
   UseGuards,
   Post,
   Req,
@@ -29,6 +30,7 @@ import { LoginDto } from '../dto/requests/login.dto.js';
 import { ForgotPasswordDto } from '../dto/requests/forgot-password.dto.js';
 import { ResetPasswordDto } from '../dto/requests/reset-password.dto.js';
 import { ChangePasswordDto } from '../dto/requests/change-password.dto.js';
+import { UpdateCurrentUserProfileDto } from '../dto/requests/update-current-user-profile.dto.js';
 import { CurrentUserResponseDto } from '../dto/responses/current-user-response.dto.js';
 
 import { LoginService } from '../services/login.service.js';
@@ -40,6 +42,7 @@ import { ForgotPasswordService } from '../services/forgot-password.service.js';
 import { ResetPasswordService } from '../services/reset-password.service.js';
 import { VerifyEmailService } from '../services/verify-email.service.js';
 import { GetCurrentUserService } from '../services/get-current-user.service.js';
+import { UpdateCurrentUserProfileService } from '../services/update-current-user-profile.service.js';
 
 @ApiTags('User Authentication')
 @Controller('auth/user')
@@ -48,6 +51,7 @@ export class UserAuthController {
     private readonly configService: ConfigService,
 
     private readonly getCurrentUserService: GetCurrentUserService,
+    private readonly updateCurrentUserProfileService: UpdateCurrentUserProfileService,
 
     private readonly loginService: LoginService,
     private readonly refreshTokenService: RefreshTokenService,
@@ -75,6 +79,23 @@ export class UserAuthController {
     @CurrentUser('id') userId: string,
   ): Promise<CurrentUserResponseDto> {
     return this.getCurrentUserService.execute(userId);
+  }
+
+  /**
+   * Update the authenticated staff member's own profile.
+   */
+  @Patch('profile')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(UserJwtAuthGuard)
+  async updateCurrentUserProfile(
+    @CurrentUser('id') userId: string,
+    @Body() dto: UpdateCurrentUserProfileDto,
+  ) {
+    const user = await this.updateCurrentUserProfileService.execute(
+      userId,
+      dto,
+    );
+    return { message: 'Profile updated successfully', data: user };
   }
 
   /**

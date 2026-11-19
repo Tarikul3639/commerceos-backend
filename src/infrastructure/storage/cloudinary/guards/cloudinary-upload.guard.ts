@@ -51,6 +51,9 @@ export class CloudinaryUploadGuard implements CanActivate {
       throw new ForbiddenException('Authenticated staff account required');
     if (user.role === Role.SUPER_ADMIN) return true;
 
+    // Every authenticated staff member may upload their own profile avatar.
+    if (request.params.folder === CloudinaryFolder.USERS) return true;
+
     const requiredPermissions = FOLDER_PERMISSIONS[request.params.folder ?? ''];
     if (!requiredPermissions) {
       throw new ForbiddenException('Uploads are not enabled for this folder');

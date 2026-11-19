@@ -10,4 +10,5 @@ export default registerAs('app', () => ({
   isProduction: process.env.NODE_ENV === 'production',
   frontendUrl: process.env.FRONTEND_URL,
   serverHost: process.env.SERVER_HOST,
+  requestTimeoutMs: Number(process.env.REQUEST_TIMEOUT_MS),
 }));
