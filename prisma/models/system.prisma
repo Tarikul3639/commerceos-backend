@@ -110,6 +110,22 @@ model NotificationPreferences {
   @@map("notification_preferences")
 }
 
+model SecuritySettings {
+  id String @id @default("default")
+
+  accessTokenLifetimeMinutes    Int @default(15)
+  refreshTokenLifetimeDays      Int @default(7)
+  rememberMeRefreshLifetimeDays Int @default(30)
+  minimumPasswordLength         Int @default(12)
+  maximumFailedLoginAttempts    Int @default(5)
+  accountLockoutDurationMinutes Int @default(15)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("security_settings")
+}
+
 model Settings {
   id String @id @default(uuid())
 

@@ -38,6 +38,18 @@ export class ResetPasswordService {
       throw new UnauthorizedException('Password reset token has expired.');
     }
 
+    const security = await this.prismaService.securitySettings.upsert({
+      where: { id: 'default' },
+      create: { id: 'default' },
+      update: {},
+    });
+
+    if (newPassword.length < security.minimumPasswordLength) {
+      throw new UnauthorizedException(
+        `Password must be at least ${security.minimumPasswordLength} characters long.`,
+      );
+    }
+
     const passwordHash = await hashPassword(
       newPassword,
       this.configService.getOrThrow<number>('bcrypt.saltRounds'),
@@ -51,6 +63,8 @@ export class ResetPasswordService {
 
         data: {
           password: passwordHash,
+          failedLoginAttempts: 0,
+          lockedUntil: null,
         },
       }),
 

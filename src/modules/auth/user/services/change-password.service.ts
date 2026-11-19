@@ -54,6 +54,18 @@ export class ChangePasswordService {
       throw new UnauthorizedException('Current password is incorrect.');
     }
 
+    const security = await this.prismaService.securitySettings.upsert({
+      where: { id: 'default' },
+      create: { id: 'default' },
+      update: {},
+    });
+
+    if (newPassword.length < security.minimumPasswordLength) {
+      throw new BadRequestException(
+        `Password must be at least ${security.minimumPasswordLength} characters long.`,
+      );
+    }
+
     const isSamePassword = await comparePassword(newPassword, user.password);
 
     if (isSamePassword) {
@@ -73,6 +85,8 @@ export class ChangePasswordService {
       },
       data: {
         password,
+        failedLoginAttempts: 0,
+        lockedUntil: null,
       },
     });
 

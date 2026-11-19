@@ -7,6 +7,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import ms, { type StringValue } from 'ms';
 
 import { UserJwtPayload } from '@/common/interfaces/user-jwt-payload.interface';
+import { PrismaService } from '@/common/prisma/prisma.service';
 import { AuthTokensPayload } from '../interfaces/auth-tokens.interface';
 
 @Injectable()
@@ -14,12 +15,12 @@ export class TokenService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly prisma: PrismaService,
   ) {}
 
   async generateAccessToken(payload: UserJwtPayload): Promise<string> {
-    const expiresIn = this.configService.getOrThrow<StringValue>(
-      'auth.user.accessExpiresIn',
-    );
+    const security = await this.getSecuritySettings();
+    const expiresIn = `${security.accessTokenLifetimeMinutes}m` as StringValue;
 
     return this.jwtService.signAsync(payload, {
       secret: this.getAccessSecret(),
@@ -34,16 +35,19 @@ export class TokenService {
     token: string;
     expiresAt: Date;
   }> {
-    const expiresIn = this.configService.getOrThrow<StringValue>(
-      remember
-        ? 'auth.user.rememberRefreshExpiresIn'
-        : 'auth.user.refreshExpiresIn',
-    );
+    const security = await this.getSecuritySettings();
+    const lifetimeDays = remember
+      ? security.rememberMeRefreshLifetimeDays
+      : security.refreshTokenLifetimeDays;
+    const expiresIn = `${lifetimeDays}d` as StringValue;
 
-    const token = await this.jwtService.signAsync(payload, {
-      secret: this.getRefreshSecret(),
-      expiresIn,
-    });
+    const token = await this.jwtService.signAsync(
+      { ...payload, remember },
+      {
+        secret: this.getRefreshSecret(),
+        expiresIn,
+      },
+    );
 
     return {
       token,
@@ -89,6 +93,14 @@ export class TokenService {
   ): Promise<UserJwtPayload> {
     return this.jwtService.verifyAsync<UserJwtPayload>(token, {
       secret,
+    });
+  }
+
+  private async getSecuritySettings() {
+    return this.prisma.securitySettings.upsert({
+      where: { id: 'default' },
+      create: { id: 'default' },
+      update: {},
     });
   }
 

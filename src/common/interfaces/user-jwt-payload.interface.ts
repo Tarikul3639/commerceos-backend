@@ -5,4 +5,5 @@ export interface UserJwtPayload {
   email: string;
   name: string;
   role: Role;
+  remember?: boolean;
 }

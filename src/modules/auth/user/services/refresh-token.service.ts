@@ -117,12 +117,15 @@ export class RefreshTokenService {
 
     await this.revoke(storedToken.id);
 
-    const tokens = await this.tokenService.generateAuthTokens({
-      id: payload.id,
-      email: payload.email,
-      name: payload.name,
-      role: payload.role,
-    });
+    const tokens = await this.tokenService.generateAuthTokens(
+      {
+        id: payload.id,
+        email: payload.email,
+        name: payload.name,
+        role: payload.role,
+      },
+      payload.remember ?? false,
+    );
 
     await this.save(
       payload.id,

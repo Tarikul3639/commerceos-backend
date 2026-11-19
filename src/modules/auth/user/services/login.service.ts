@@ -45,6 +45,8 @@ export class LoginService {
         status: true,
         isVerified: true,
         role: true,
+        failedLoginAttempts: true,
+        lockedUntil: true,
       },
     });
 
@@ -54,11 +56,54 @@ export class LoginService {
       );
     }
 
+    const security = await this.prismaService.securitySettings.upsert({
+      where: { id: 'default' },
+      create: { id: 'default' },
+      update: {},
+    });
+
+    if (user.lockedUntil && user.lockedUntil > new Date()) {
+      throw new UnauthorizedException(
+        `Account temporarily locked. Try again after ${user.lockedUntil.toISOString()}.`,
+      );
+    }
+
+    if (user.lockedUntil && user.lockedUntil <= new Date()) {
+      await this.prismaService.user.update({
+        where: { id: user.id },
+        data: { failedLoginAttempts: 0, lockedUntil: null },
+      });
+    }
+
     const isPasswordValid = await comparePassword(password, user.password);
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid password. Please try again.');
+      const failed = await this.prismaService.user.update({
+        where: { id: user.id },
+        data: { failedLoginAttempts: { increment: 1 } },
+        select: { failedLoginAttempts: true },
+      });
+
+      if (failed.failedLoginAttempts >= security.maximumFailedLoginAttempts) {
+        const lockedUntil = new Date(
+          Date.now() + security.accountLockoutDurationMinutes * 60 * 1000,
+        );
+        await this.prismaService.user.update({
+          where: { id: user.id },
+          data: { lockedUntil },
+        });
+        throw new UnauthorizedException(
+          `Too many failed attempts. Account locked until ${lockedUntil.toISOString()}.`,
+        );
+      }
+
+      throw new UnauthorizedException('Invalid email or password.');
     }
+
+    await this.prismaService.user.update({
+      where: { id: user.id },
+      data: { failedLoginAttempts: 0, lockedUntil: null },
+    });
 
     if (!user.isVerified) {
       throw new UnauthorizedException(
