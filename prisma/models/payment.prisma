@@ -1,4 +1,3 @@
-
 enum PaymentMethod {
   CASH
   CARD
@@ -74,11 +73,11 @@ model Payment {
   @@map("payments")
 }
 
-model PaymentGatewayConfig {
-  id          String            @id @default(uuid())
-  provider    PaymentProvider   @unique
+model PaymentGateway {
+  id          String             @id @default(uuid())
+  provider    PaymentProvider    @unique
   displayName String
-  isEnabled   Boolean           @default(false)
+  isEnabled   Boolean            @default(false)
   mode        PaymentGatewayMode @default(TEST)
 
   // Non-secret settings only; keep credentials in environment variables.

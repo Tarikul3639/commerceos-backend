@@ -140,15 +140,15 @@ model OrderReturn {
   createdBy   User   @relation("OrderReturnCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
 
   approvedById String?
-  approvedBy   User?   @relation("OrderReturnApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
+  approvedBy   User?     @relation("OrderReturnApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
   approvedAt   DateTime?
 
   rejectedById String?
-  rejectedBy   User?   @relation("OrderReturnRejectedBy", fields: [rejectedById], references: [id], onDelete: SetNull)
+  rejectedBy   User?     @relation("OrderReturnRejectedBy", fields: [rejectedById], references: [id], onDelete: SetNull)
   rejectedAt   DateTime?
 
   completedById String?
-  completedBy   User?   @relation("OrderReturnCompletedBy", fields: [completedById], references: [id], onDelete: SetNull)
+  completedBy   User?     @relation("OrderReturnCompletedBy", fields: [completedById], references: [id], onDelete: SetNull)
   completedAt   DateTime?
 
   createdAt DateTime @default(now())

@@ -87,7 +87,7 @@ export class CreatePaymentService {
 
       // Check whether the selected payment provider is enabled.
       if (provider !== PaymentProvider.MANUAL) {
-        const config = await tx.paymentGatewayConfig.findUnique({
+        const config = await tx.paymentGateway.findUnique({
           where: { provider },
         });
 

@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { PaymentGatewayMode, PaymentProvider } from '@/lib/prisma/enums';
 
-export class CreatePaymentGatewayConfigDto {
+export class CreatePaymentGatewayDto {
   @ApiProperty({ enum: PaymentProvider, example: PaymentProvider.SSL_COMMERZ })
   @IsEnum(PaymentProvider)
   provider!: PaymentProvider;

@@ -92,6 +92,24 @@ enum BannerPosition {
   SIDEBAR
 }
 
+model NotificationPreferences {
+  id String @id @default("default")
+
+  ordersInApp    Boolean @default(true)
+  ordersEmail    Boolean @default(true)
+  returnsInApp   Boolean @default(true)
+  returnsEmail   Boolean @default(true)
+  inventoryInApp Boolean @default(true)
+  inventoryEmail Boolean @default(true)
+  paymentsInApp  Boolean @default(true)
+  paymentsEmail  Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("notification_preferences")
+}
+
 model Settings {
   id String @id @default(uuid())
 
@@ -166,7 +184,7 @@ model Notification {
   link String?
 
   // The related entity type
-  entityType String?
+  entityType ActivityModule?
 
   // The related entity ID
   entityId String?

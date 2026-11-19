@@ -42,8 +42,8 @@ model Customer {
   passwordResetTokens     CustomerPasswordResetToken[]
   emailVerificationTokens CustomerEmailVerificationToken[]
 
-  orders         Order[]
-  cart           Cart?
+  orders Order[]
+  cart   Cart?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

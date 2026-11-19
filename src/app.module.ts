@@ -47,7 +47,6 @@ import { DashboardModule } from '@/modules/dashboard/dashboard.module';
 import { AnalyticsModule } from '@/modules/analytics/analytics.module';
 import { StockModule } from '@/modules/inventory/stocks/stock.module';
 import { PaymentModule } from '@/modules/payments/payment.module';
-import { PaymentGatewayConfigModule } from './modules/payment-gateway-config/payment-gateway-config.module';
 
 @Module({
   imports: [
@@ -83,7 +82,6 @@ import { PaymentGatewayConfigModule } from './modules/payment-gateway-config/pay
     AnalyticsModule,
     StockModule,
     PaymentModule,
-    PaymentGatewayConfigModule,
 
     AuthModule,
     UsersModule,

@@ -1,0 +1,26 @@
+model ShippingSettings {
+  id String @id @default("default")
+
+  freeShippingThreshold Decimal? @db.Decimal(12, 2)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("shipping_settings")
+}
+
+model ShippingZone {
+  id String @id @default(uuid())
+
+  // Display name and normalized key prevent duplicate district/city entries.
+  districtCity    String
+  districtCityKey String  @unique
+  rate            Decimal @db.Decimal(12, 2)
+  isActive        Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+  @@map("shipping_zones")
+}

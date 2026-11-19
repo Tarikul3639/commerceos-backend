@@ -97,7 +97,7 @@ model User {
   // Stores email verification token records for this user
   emailVerificationTokens UserEmailVerificationToken[]
 
-  orders           Order[]
+  orders Order[]
 
   createdDiscounts Discount[] @relation("DiscountCreatedBy")
   updatedDiscounts Discount[] @relation("DiscountUpdatedBy")

@@ -128,7 +128,22 @@ export class MailService {
   async sendNotification(
     to: string,
     context: NotificationTemplate,
+    category?: 'orders' | 'returns' | 'inventory' | 'payments',
   ): Promise<void> {
+    if (category) {
+      const preferences = await this.prisma.notificationPreferences.findUnique({
+        where: { id: 'default' },
+      });
+      const emailPreference = {
+        orders: 'ordersEmail',
+        returns: 'returnsEmail',
+        inventory: 'inventoryEmail',
+        payments: 'paymentsEmail',
+      }[category] as
+        'ordersEmail' | 'returnsEmail' | 'inventoryEmail' | 'paymentsEmail';
+      if (preferences && !preferences[emailPreference]) return;
+    }
+
     await this.sendMail({
       to,
       subject: context.title,
@@ -146,6 +161,11 @@ export class MailService {
     to: string,
     context: NewOrderNotificationTemplate,
   ): Promise<void> {
+    const preferences = await this.prisma.notificationPreferences.findUnique({
+      where: { id: 'default' },
+    });
+    if (preferences && !preferences.ordersEmail) return;
+
     await this.sendMail({
       to,
       subject: `New order #${context.orderNumber}`,
