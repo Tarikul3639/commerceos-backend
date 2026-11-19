@@ -4,10 +4,15 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { Permissions } from '@/common/decorators/permissions.decorator';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { Permission } from '@/lib/prisma/enums';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -27,6 +32,7 @@ import { UpdateProductImageService } from '../services/update-product-image.serv
 
 @ApiTags('Product Images')
 @Controller('admin/product-images')
+@UseGuards(UserJwtAuthGuard, PermissionsGuard)
 export class ProductImagesController {
   constructor(
     private readonly addProductImageService: AddProductImageService,
@@ -36,17 +42,20 @@ export class ProductImagesController {
   ) {}
 
   @Post(':productId')
+  @Permissions(Permission.PRODUCT_UPDATE)
   @ApiOperation({ summary: 'Add multiple images to a product' })
   @ApiParam({ name: 'productId', type: String })
   @ApiCreatedResponse({ type: [ProductImageResponseDto] })
   async add(
     @Param('productId') productId: string,
     @Body() dto: AddProductImageDto,
+    @CurrentUser('id') userId: string,
   ): Promise<ProductImageResponseDto[]> {
-    return this.addProductImageService.execute(productId, dto);
+    return this.addProductImageService.execute(productId, dto, userId);
   }
 
   @Get(':productId')
+  @Permissions(Permission.PRODUCT_READ)
   @ApiOperation({ summary: 'Get all images of a product' })
   @ApiOkResponse({
     type: ProductImageResponseDto,
@@ -59,21 +68,25 @@ export class ProductImagesController {
   }
 
   @Patch(':imageId')
+  @Permissions(Permission.PRODUCT_UPDATE)
   @ApiOperation({ summary: 'Update a product image' })
   @ApiOkResponse({ type: ProductImageResponseDto })
   async update(
-    @Param('imageId', ParseUUIDPipe) imageId: string,
+    @Param('imageId') imageId: string,
     @Body() dto: UpdateProductImageDto,
+    @CurrentUser('id') userId: string,
   ): Promise<ProductImageResponseDto> {
-    return this.updateProductImageService.execute(imageId, dto);
+    return this.updateProductImageService.execute(imageId, dto, userId);
   }
 
   @Delete(':imageId')
+  @Permissions(Permission.PRODUCT_UPDATE)
   @ApiOperation({ summary: 'Delete a product image' })
   @ApiOkResponse({ description: 'Product image deleted successfully' })
   async remove(
-    @Param('imageId', ParseUUIDPipe) imageId: string,
+    @Param('imageId') imageId: string,
+    @CurrentUser('id') userId: string,
   ): Promise<ProductImageResponseDto> {
-    return this.deleteProductImageService.execute(imageId);
+    return this.deleteProductImageService.execute(imageId, userId);
   }
 }

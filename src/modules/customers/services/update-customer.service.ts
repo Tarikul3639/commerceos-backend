@@ -1,10 +1,12 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CloudinaryService } from '@/common/cloudinary/cloudinary.service';
 import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
 import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 
@@ -15,12 +17,14 @@ import { CustomerResponseDto } from '../dto/responses/customer-response.dto';
 export class UpdateCustomerService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly cloudinaryService: CloudinaryService,
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
   async execute(
     customerId: string,
     updateCustomerDto: UpdateCustomerDto,
+    userId: string,
   ): Promise<CustomerResponseDto> {
     const customer = await this.prisma.customer.findFirst({
       where: {
@@ -30,8 +34,13 @@ export class UpdateCustomerService {
 
       select: {
         id: true,
+        name: true,
         email: true,
         phone: true,
+        avatarUrl: true,
+        publicId: true,
+        address: true,
+        status: true,
         isVerified: true,
       },
     });
@@ -42,6 +51,18 @@ export class UpdateCustomerService {
 
     const { name, email, phone, avatarUrl, publicId, address } =
       updateCustomerDto;
+
+    if ((avatarUrl !== undefined) !== (publicId !== undefined)) {
+      throw new BadRequestException(
+        'Avatar URL and Cloudinary public ID must be updated together',
+      );
+    }
+
+    if ((avatarUrl === null) !== (publicId === null)) {
+      throw new BadRequestException(
+        'Avatar URL and Cloudinary public ID must both be removed together',
+      );
+    }
 
     // Verified customer email cannot be changed.
     if (
@@ -86,51 +107,81 @@ export class UpdateCustomerService {
       }
     }
 
-    return this.prisma.customer.update({
-      where: {
-        id: customerId,
+    const updatedCustomer = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.customer.update({
+        where: { id: customerId },
+        data: {
+          ...(name !== undefined && { name }),
+          ...(email !== undefined && { email }),
+          ...(phone !== undefined && { phone }),
+          ...(avatarUrl !== undefined && { avatarUrl }),
+          ...(publicId !== undefined && { publicId }),
+          ...(address !== undefined && { address }),
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          avatarUrl: true,
+          publicId: true,
+          address: true,
+          status: true,
+          isVerified: true,
+          lastLoginAt: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+
+      if (email !== undefined && email !== customer.email) {
+        await tx.customerEmailVerificationToken.deleteMany({
+          where: { customerId },
+        });
+
+        await tx.customerPasswordResetToken.deleteMany({
+          where: { customerId },
+        });
+      }
+
+      return updated;
+    });
+
+    await this.createActivityLogService.execute({
+      type: ActivityType.UPDATE,
+      module: ActivityModule.CUSTOMER,
+      action: 'UPDATE_CUSTOMER',
+      entityType: 'Customer',
+      entityId: updatedCustomer.id,
+      userId,
+      oldValue: {
+        name: customer.name,
+        email: customer.email,
+        phone: customer.phone,
+        avatarUrl: customer.avatarUrl,
+        publicId: customer.publicId,
+        address: customer.address,
+        status: customer.status,
       },
-
-      data: {
-        ...(name !== undefined && {
-          name,
-        }),
-
-        ...(email !== undefined && {
-          email,
-        }),
-
-        ...(phone !== undefined && {
-          phone,
-        }),
-
-        ...(avatarUrl !== undefined && {
-          avatarUrl,
-        }),
-
-        ...(publicId !== undefined && {
-          publicId,
-        }),
-
-        ...(address !== undefined && {
-          address,
-        }),
-      },
-
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        phone: true,
-        avatarUrl: true,
-        publicId: true,
-        address: true,
-        status: true,
-        isVerified: true,
-        lastLoginAt: true,
-        createdAt: true,
-        updatedAt: true,
+      newValue: {
+        name: updatedCustomer.name,
+        email: updatedCustomer.email,
+        phone: updatedCustomer.phone,
+        avatarUrl: updatedCustomer.avatarUrl,
+        publicId: updatedCustomer.publicId,
+        address: updatedCustomer.address,
+        status: updatedCustomer.status,
       },
     });
+
+    if (
+      publicId !== undefined &&
+      publicId !== customer.publicId &&
+      customer.publicId
+    ) {
+      await this.cloudinaryService.delete(customer.publicId, 'image');
+    }
+
+    return updatedCustomer;
   }
 }

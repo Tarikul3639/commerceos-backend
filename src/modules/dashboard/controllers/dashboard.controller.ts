@@ -1,10 +1,21 @@
-import { Controller, Get, Query, ValidationPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Query,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { Permissions } from '@/common/decorators/permissions.decorator';
+import { Permission } from '@/lib/prisma/enums';
 
 import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto';
 
@@ -30,6 +41,8 @@ import { GetRecentOrdersService } from '../services/get-recent-orders.service';
 @ApiTags('Dashboard')
 @ApiBearerAuth()
 @Controller('dashboard')
+@UseGuards(UserJwtAuthGuard, PermissionsGuard)
+@Permissions(Permission.DASHBOARD_READ)
 export class DashboardController {
   constructor(
     private readonly getDashboardOverviewService: GetDashboardOverviewService,

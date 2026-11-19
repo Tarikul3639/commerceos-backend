@@ -1,10 +1,18 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'crypto';
+import ms, { type StringValue } from 'ms';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
 import { ActivityModule, ActivityType } from '@/lib/prisma/client';
+import { Role } from '@/lib/prisma/enums';
+import { TokenService } from '@/modules/auth/user/services/token.service';
 
 import { CreateUserDto } from '../dto/requests/create-user.dto';
 import { UserResponseDto } from '../dto/responses/user-response.dto';
@@ -18,12 +26,30 @@ export class CreateUserService {
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
     private readonly mailService: MailService,
+    private readonly tokenService: TokenService,
 
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
-  async execute(createUserDto: CreateUserDto): Promise<UserResponseDto> {
-    const { name, email, phone, avatar, role } = createUserDto;
+  /** Create a staff account and record the acting staff member. */
+  async execute(
+    createUserDto: CreateUserDto,
+    requesterId: string,
+    requesterRole: Role,
+  ): Promise<UserResponseDto> {
+    const { name, email, phone, avatar, publicId, role } = createUserDto;
+
+    if ((avatar !== undefined) !== (publicId !== undefined)) {
+      throw new BadRequestException(
+        'Avatar URL and Cloudinary public ID must be provided together',
+      );
+    }
+
+    if (role === Role.ADMIN && requesterRole !== Role.SUPER_ADMIN) {
+      throw new ForbiddenException(
+        'Only SUPER_ADMIN can create ADMIN accounts.',
+      );
+    }
 
     const existingUser = await this.prisma.user.findUnique({
       where: {
@@ -58,15 +84,35 @@ export class CreateUserService {
       this.configService.getOrThrow<number>('bcrypt.saltRounds'),
     );
 
-    const user = await this.prisma.user.create({
-      data: {
-        name,
-        email,
-        password: passwordHash,
-        role,
-        ...(phone && { phone }),
-        ...(avatar && { avatar }),
-      },
+    const setupToken = this.tokenService.generateRandomToken();
+    const tokenHash = this.tokenService.hashToken(setupToken);
+    const expireIn = this.configService.getOrThrow<StringValue>(
+      'auth.user.passwordResetExpiresIn',
+    );
+    const expiresAt = new Date(Date.now() + ms(expireIn));
+
+    const user = await this.prisma.$transaction(async (tx) => {
+      const createdUser = await tx.user.create({
+        data: {
+          name,
+          email,
+          password: passwordHash,
+          role,
+          ...(phone && { phone }),
+          ...(avatar !== undefined && { avatar }),
+          ...(publicId !== undefined && { publicId }),
+        },
+      });
+
+      await tx.userPasswordResetToken.create({
+        data: {
+          tokenHash,
+          expiresAt,
+          userId: createdUser.id,
+        },
+      });
+
+      return createdUser;
     });
 
     const frontendUrl =
@@ -76,6 +122,8 @@ export class CreateUserService {
       appName: this.configService.getOrThrow<string>('app.name'),
       name: user.name,
       loginUrl: `${frontendUrl}/login`,
+      passwordSetupUrl: `${frontendUrl}/reset-password?token=${setupToken}`,
+      expireIn,
       year: new Date().getFullYear(),
     });
 
@@ -86,6 +134,7 @@ export class CreateUserService {
       description: `User "${user.name}" was created with role ${user.role}`,
       entityType: 'User',
       entityId: user.id,
+      userId: requesterId,
       newValue: {
         id: user.id,
         name: user.name,
@@ -95,6 +144,7 @@ export class CreateUserService {
         role: user.role,
         status: user.status,
         isVerified: user.isVerified,
+        publicId: user.publicId,
       },
     });
 
@@ -104,6 +154,7 @@ export class CreateUserService {
       email: user.email,
       phone: user.phone,
       avatar: user.avatar,
+      publicId: user.publicId,
       role: user.role,
       status: user.status,
       isVerified: user.isVerified,

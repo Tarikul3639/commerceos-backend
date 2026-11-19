@@ -2,6 +2,7 @@ import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
 
 import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
 import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Permissions } from '@/common/decorators/permissions.decorator';
 import { Permission } from '@/lib/prisma/enums';
 
@@ -50,7 +51,8 @@ export class SettingsController {
   })
   async update(
     @Body() updateSettingsDto: UpdateSettingsDto,
+    @CurrentUser('id') userId: string,
   ): Promise<SettingsResponseDto> {
-    return this.updateSettingsService.execute(updateSettingsDto);
+    return this.updateSettingsService.execute(updateSettingsDto, userId);
   }
 }

@@ -54,6 +54,8 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
   @ApiPropertyOptional({
     description: "The public ID of the user's avatar image in Cloudinary",
     example: 'avatar_public_id',

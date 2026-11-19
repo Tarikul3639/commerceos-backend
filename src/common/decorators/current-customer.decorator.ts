@@ -9,7 +9,7 @@ export const CurrentCustomer = createParamDecorator(
     // Get the request object from the execution context
     const request = context.switchToHttp().getRequest();
     // Get the customer object from the request and cast it to CurrentCustomerPayload
-    const customer = request.customer as CurrentCustomerPayload;
+    const customer = request.user as CurrentCustomerPayload;
 
     return data ? customer?.[data] : customer;
   },

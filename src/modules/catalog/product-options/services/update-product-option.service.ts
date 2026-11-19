@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -21,6 +22,7 @@ export class UpdateProductOptionService {
   async execute(
     optionId: string,
     dto: UpdateProductOptionDto,
+    userId: string,
   ): Promise<ProductOptionResponseDto> {
     const option = await this.prisma.productOption.findUnique({
       where: { id: optionId },
@@ -52,6 +54,21 @@ export class UpdateProductOptionService {
       }
     }
 
+    if (dto.type !== undefined && dto.type !== option.type) {
+      const variantsUsingOption = await this.prisma.productVariant.count({
+        where: {
+          productId: option.productId,
+          options: { some: { optionId: option.id } },
+        },
+      });
+
+      if (variantsUsingOption > 0) {
+        throw new BadRequestException(
+          'Option type cannot change while product variants use this option',
+        );
+      }
+    }
+
     const updatedOption = await this.prisma.productOption.update({
       where: { id: option.id },
       data: {
@@ -76,6 +93,7 @@ export class UpdateProductOptionService {
       description: `Product option "${updatedOption.name}" was updated`,
       entityType: 'ProductOption',
       entityId: updatedOption.id,
+      userId,
       oldValue: {
         productId: option.productId,
         name: option.name,

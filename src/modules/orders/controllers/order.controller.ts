@@ -8,7 +8,6 @@ import {
   Patch,
   Post,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 
@@ -30,6 +29,7 @@ import { GetOrdersService } from '../services/get-orders.service';
 import { CancelOrderService } from '../services/cancel-order.service';
 import { UpdateOrderStatusService } from '../services/update-order-status.service';
 
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Permissions } from '@/common/decorators/permissions.decorator';
 import { PermissionsGuard } from '@/common/guards/permissions.guard';
 import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
@@ -54,8 +54,11 @@ export class OrderController {
   @ApiOperation({
     summary: 'Create a new order',
   })
-  async create(@Body() createOrderDto: CreateOrderDto, @Req() req: any) {
-    return this.createOrderService.execute(createOrderDto, req.user.id);
+  async create(
+    @Body() createOrderDto: CreateOrderDto,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.createOrderService.execute(createOrderDto, userId);
   }
 
   @Get()
@@ -92,8 +95,13 @@ export class OrderController {
   async updateStatus(
     @Param('id') orderId: string,
     @Body() updateOrderStatusDto: UpdateOrderStatusDto,
+    @CurrentUser('id') userId: string,
   ) {
-    return this.updateOrderStatusService.execute(orderId, updateOrderStatusDto);
+    return this.updateOrderStatusService.execute(
+      orderId,
+      updateOrderStatusDto,
+      userId,
+    );
   }
 
   @Patch(':id/cancel')
@@ -108,7 +116,8 @@ export class OrderController {
   async cancel(
     @Param('id') orderId: string,
     @Body() cancelOrderDto: CancelOrderDto,
+    @CurrentUser('id') userId: string,
   ) {
-    return this.cancelOrderService.execute(orderId, cancelOrderDto);
+    return this.cancelOrderService.execute(orderId, cancelOrderDto, userId);
   }
 }

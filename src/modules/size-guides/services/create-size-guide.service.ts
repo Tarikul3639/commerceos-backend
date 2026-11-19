@@ -14,7 +14,10 @@ export class CreateSizeGuideService {
   ) {}
 
   /** Create a size guide */
-  async execute(dto: CreateSizeGuideDto): Promise<SizeGuideResponseDto> {
+  async execute(
+    dto: CreateSizeGuideDto,
+    userId: string,
+  ): Promise<SizeGuideResponseDto> {
     const existing = await this.prisma.sizeGuide.findFirst({
       where: { name: { equals: dto.name, mode: 'insensitive' } },
       select: { id: true },
@@ -44,6 +47,7 @@ export class CreateSizeGuideService {
       description: `Size guide "${sizeGuide.name}" was created`,
       entityType: 'SizeGuide',
       entityId: sizeGuide.id,
+      userId,
       newValue: {
         name: sizeGuide.name,
         description: sizeGuide.description,

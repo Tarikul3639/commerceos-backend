@@ -14,7 +14,7 @@ export class DeleteCategoryService {
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
-  async execute(categoryId: string): Promise<void> {
+  async execute(categoryId: string, userId: string): Promise<void> {
     const category = await this.prisma.category.findFirst({
       where: {
         id: categoryId,
@@ -53,6 +53,7 @@ export class DeleteCategoryService {
         description: `Category "${category.name}" was soft deleted`,
         entityType: 'CATEGORY',
         entityId: category.id,
+        userId,
         oldValue,
         newValue: {
           deletedAt: deletedCategory.deletedAt,
@@ -73,6 +74,7 @@ export class DeleteCategoryService {
       description: `Category "${category.name}" was permanently deleted`,
       entityType: 'CATEGORY',
       entityId: category.id,
+      userId,
       oldValue,
       newValue: 'Category permanently deleted',
     });

@@ -9,7 +9,13 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { Permissions } from '@/common/decorators/permissions.decorator';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { Permission } from '@/lib/prisma/enums';
 
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -30,6 +36,7 @@ import { RestoreCustomerService } from '../services/restore-customer.service';
 
 @ApiTags('Customers')
 @Controller('customers')
+@UseGuards(UserJwtAuthGuard, PermissionsGuard)
 export class CustomerController {
   constructor(
     private readonly createCustomerService: CreateCustomerService,
@@ -44,13 +51,19 @@ export class CustomerController {
    * Create customer
    */
   @Post()
+  @Permissions(Permission.CUSTOMER_CREATE)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create a new customer',
   })
-  async create(@Body() createCustomerDto: CreateCustomerDto) {
-    const customer =
-      await this.createCustomerService.execute(createCustomerDto);
+  async create(
+    @Body() createCustomerDto: CreateCustomerDto,
+    @CurrentUser('id') userId: string,
+  ) {
+    const customer = await this.createCustomerService.execute(
+      createCustomerDto,
+      userId,
+    );
 
     return {
       message: 'Customer created successfully',
@@ -62,6 +75,7 @@ export class CustomerController {
    * Get all customers
    */
   @Get()
+  @Permissions(Permission.CUSTOMER_READ)
   @HttpCode(HttpStatus.OK)
   @ApiResponse({
     status: HttpStatus.OK,
@@ -76,6 +90,7 @@ export class CustomerController {
    * Get customer by ID
    */
   @Get(':id')
+  @Permissions(Permission.CUSTOMER_READ)
   @HttpCode(HttpStatus.OK)
   @ApiResponse({
     status: HttpStatus.OK,
@@ -101,6 +116,7 @@ export class CustomerController {
    * Update customer
    */
   @Patch(':id')
+  @Permissions(Permission.CUSTOMER_UPDATE)
   @HttpCode(HttpStatus.OK)
   @ApiResponse({
     status: HttpStatus.OK,
@@ -118,14 +134,20 @@ export class CustomerController {
     @Param('id') customerId: string,
     @Body()
     updateCustomerDto: UpdateCustomerDto,
+    @CurrentUser('id') userId: string,
   ) {
-    return this.updateCustomerService.execute(customerId, updateCustomerDto);
+    return this.updateCustomerService.execute(
+      customerId,
+      updateCustomerDto,
+      userId,
+    );
   }
 
   /**
    * Restore customer
    */
   @Patch(':id/restore')
+  @Permissions(Permission.CUSTOMER_UPDATE)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Restore deleted customer',
@@ -139,8 +161,11 @@ export class CustomerController {
     description: 'Customer restored successfully',
     type: CustomerResponseDto,
   })
-  async restore(@Param('id') customerId: string) {
-    await this.restoreCustomerService.execute(customerId);
+  async restore(
+    @Param('id') customerId: string,
+    @CurrentUser('id') userId: string,
+  ) {
+    await this.restoreCustomerService.execute(customerId, userId);
 
     return {
       message: 'Customer restored successfully',
@@ -151,6 +176,7 @@ export class CustomerController {
    * Delete customer
    */
   @Delete(':id')
+  @Permissions(Permission.CUSTOMER_DELETE)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Delete customer',
@@ -159,7 +185,10 @@ export class CustomerController {
     name: 'id',
     description: 'Customer ID',
   })
-  async remove(@Param('id') customerId: string): Promise<void> {
-    await this.deleteCustomerService.execute(customerId);
+  async remove(
+    @Param('id') customerId: string,
+    @CurrentUser('id') userId: string,
+  ): Promise<void> {
+    await this.deleteCustomerService.execute(customerId, userId);
   }
 }

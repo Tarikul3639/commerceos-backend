@@ -13,7 +13,7 @@ export class DeleteBrandService {
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
-  async execute(brandId: string): Promise<void> {
+  async execute(brandId: string, userId: string): Promise<void> {
     const brand = await this.prisma.brand.findFirst({
       where: {
         id: brandId,
@@ -62,6 +62,7 @@ export class DeleteBrandService {
         description: `Brand "${brand.name}" was soft deleted`,
         entityType: 'BRAND',
         entityId: brand.id,
+        userId,
         oldValue,
         newValue: {
           deletedAt: deletedBrand.deletedAt,
@@ -91,6 +92,7 @@ export class DeleteBrandService {
       description: `Brand "${brand.name}" was permanently deleted`,
       entityType: 'BRAND',
       entityId: brand.id,
+      userId,
       oldValue,
       newValue: 'Brand permanently deleted',
     });

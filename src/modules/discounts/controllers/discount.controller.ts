@@ -73,7 +73,7 @@ export class DiscountController {
   @Permissions(Permission.DISCOUNT_DELETE)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a discount code' })
-  remove(@Param('id') id: string) {
-    return this.discounts.remove(id);
+  remove(@Param('id') id: string, @CurrentUser('id') userId: string) {
+    return this.discounts.remove(id, userId);
   }
 }

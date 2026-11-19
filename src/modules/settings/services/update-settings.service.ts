@@ -11,6 +11,7 @@ export class UpdateSettingsService {
 
   async execute(
     updateSettingsDto: UpdateSettingsDto,
+    userId: string,
   ): Promise<SettingsResponseDto> {
     const existingSettings = await this.prisma.settings.findFirst({
       orderBy: {

@@ -54,8 +54,16 @@ export class UserController {
   @Permissions(Permission.USER_CREATE)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a manager or employee account' })
-  async createEmployee(@Body() createEmployeeDto: CreateEmployeeDto) {
-    const user = await this.createUserService.execute(createEmployeeDto);
+  async createEmployee(
+    @Body() createEmployeeDto: CreateEmployeeDto,
+    @CurrentUser('id') requesterId: string,
+    @CurrentUser('role') requesterRole: Role,
+  ) {
+    const user = await this.createUserService.execute(
+      createEmployeeDto,
+      requesterId,
+      requesterRole,
+    );
     return { message: 'Employee created successfully', data: user };
   }
 
@@ -63,8 +71,16 @@ export class UserController {
   @Permissions(Permission.USER_CREATE)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a new user' })
-  async create(@Body() createUserDto: CreateUserDto) {
-    const user = await this.createUserService.execute(createUserDto);
+  async create(
+    @Body() createUserDto: CreateUserDto,
+    @CurrentUser('id') requesterId: string,
+    @CurrentUser('role') requesterRole: Role,
+  ) {
+    const user = await this.createUserService.execute(
+      createUserDto,
+      requesterId,
+      requesterRole,
+    );
     return { message: 'User created successfully', data: user };
   }
 
@@ -90,8 +106,11 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get user by ID' })
   @ApiParam({ name: 'id', description: 'User ID' })
-  async findOne(@Param('id') userId: string) {
-    const user = await this.getUserService.execute(userId);
+  async findOne(
+    @Param('id') userId: string,
+    @CurrentUser('role') requesterRole: Role,
+  ) {
+    const user = await this.getUserService.execute(userId, requesterRole);
     return { data: user };
   }
 
@@ -102,8 +121,15 @@ export class UserController {
   async update(
     @Param('id') userId: string,
     @Body() updateUserDto: UpdateUserDto,
+    @CurrentUser('id') requesterId: string,
+    @CurrentUser('role') requesterRole: Role,
   ) {
-    const user = await this.updateUserService.execute(userId, updateUserDto);
+    const user = await this.updateUserService.execute(
+      userId,
+      requesterId,
+      requesterRole,
+      updateUserDto,
+    );
     return { message: 'User updated successfully', data: user };
   }
 
@@ -144,7 +170,11 @@ export class UserController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete user' })
   @ApiParam({ name: 'id', description: 'User ID' })
-  async remove(@Param('id') userId: string): Promise<void> {
-    await this.deleteUserService.execute(userId);
+  async remove(
+    @Param('id') userId: string,
+    @CurrentUser('id') requesterId: string,
+    @CurrentUser('role') requesterRole: Role,
+  ): Promise<void> {
+    await this.deleteUserService.execute(userId, requesterId, requesterRole);
   }
 }

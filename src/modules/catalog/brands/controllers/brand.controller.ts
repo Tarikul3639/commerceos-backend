@@ -9,7 +9,13 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { Permissions } from '@/common/decorators/permissions.decorator';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { Permission } from '@/lib/prisma/enums';
 
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 
@@ -39,13 +45,18 @@ export class BrandController {
   /**
    * Create a new brand
    */
+  @UseGuards(UserJwtAuthGuard, PermissionsGuard)
+  @Permissions(Permission.BRAND_CREATE)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create a new brand',
   })
-  async create(@Body() createBrandDto: CreateBrandDto) {
-    return await this.createBrandService.execute(createBrandDto);
+  async create(
+    @Body() createBrandDto: CreateBrandDto,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.createBrandService.execute(createBrandDto, userId);
   }
 
   /**
@@ -79,6 +90,8 @@ export class BrandController {
   /**
    * Update brand
    */
+  @UseGuards(UserJwtAuthGuard, PermissionsGuard)
+  @Permissions(Permission.BRAND_UPDATE)
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -91,8 +104,9 @@ export class BrandController {
   async update(
     @Param('id') brandId: string,
     @Body() updateBrandDto: UpdateBrandDto,
+    @CurrentUser('id') userId: string,
   ) {
-    return await this.updateBrandService.execute(brandId, updateBrandDto);
+    return this.updateBrandService.execute(brandId, updateBrandDto, userId);
   }
 
   /**
@@ -101,6 +115,8 @@ export class BrandController {
    * Soft deletes the brand if it has associated products.
    * Otherwise, permanently deletes the brand.
    */
+  @UseGuards(UserJwtAuthGuard, PermissionsGuard)
+  @Permissions(Permission.BRAND_DELETE)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
@@ -110,7 +126,10 @@ export class BrandController {
     name: 'id',
     description: 'Brand ID',
   })
-  async remove(@Param('id') brandId: string): Promise<void> {
-    await this.deleteBrandService.execute(brandId);
+  async remove(
+    @Param('id') brandId: string,
+    @CurrentUser('id') userId: string,
+  ): Promise<void> {
+    await this.deleteBrandService.execute(brandId, userId);
   }
 }

@@ -7,7 +7,13 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { Permissions } from '@/common/decorators/permissions.decorator';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { Permission } from '@/lib/prisma/enums';
 import {
   ApiOperation,
   ApiParam,
@@ -29,6 +35,7 @@ import { DeleteSizeGuideService } from '../services/delete-size-guide.service';
 
 @ApiTags('Admin Size Guides')
 @Controller('admin/size-guides')
+@UseGuards(UserJwtAuthGuard, PermissionsGuard)
 export class AdminSizeGuidesController {
   constructor(
     private readonly createSizeGuideService: CreateSizeGuideService,
@@ -40,14 +47,19 @@ export class AdminSizeGuidesController {
 
   /** Create a size guide */
   @Post()
+  @Permissions(Permission.PRODUCT_CREATE)
   @ApiOperation({ summary: 'Create a size guide' })
   @ApiResponse({ status: 201, type: SizeGuideResponseDto })
-  create(@Body() dto: CreateSizeGuideDto): Promise<SizeGuideResponseDto> {
-    return this.createSizeGuideService.execute(dto);
+  create(
+    @Body() dto: CreateSizeGuideDto,
+    @CurrentUser('id') userId: string,
+  ): Promise<SizeGuideResponseDto> {
+    return this.createSizeGuideService.execute(dto, userId);
   }
 
   /** Get all size guides */
   @Get()
+  @Permissions(Permission.PRODUCT_READ)
   @ApiOperation({ summary: 'Get paginated size guides' })
   @ApiQuery({ name: 'search', required: false })
   @ApiQuery({ name: 'page', required: false, type: Number })
@@ -58,6 +70,7 @@ export class AdminSizeGuidesController {
 
   /** Get size guide details */
   @Get(':id')
+  @Permissions(Permission.PRODUCT_READ)
   @ApiOperation({ summary: 'Get size guide details' })
   @ApiParam({ name: 'id', description: 'Size guide ID' })
   @ApiResponse({ status: 200, type: SizeGuideResponseDto })
@@ -67,21 +80,27 @@ export class AdminSizeGuidesController {
 
   /** Update a size guide */
   @Patch(':id')
+  @Permissions(Permission.PRODUCT_UPDATE)
   @ApiOperation({ summary: 'Update a size guide' })
   @ApiParam({ name: 'id', description: 'Size guide ID' })
   @ApiResponse({ status: 200, type: SizeGuideResponseDto })
   update(
     @Param('id') id: string,
     @Body() dto: UpdateSizeGuideDto,
+    @CurrentUser('id') userId: string,
   ): Promise<SizeGuideResponseDto> {
-    return this.updateSizeGuideService.execute(id, dto);
+    return this.updateSizeGuideService.execute(id, dto, userId);
   }
 
   /** Delete a size guide */
   @Delete(':id')
+  @Permissions(Permission.PRODUCT_DELETE)
   @ApiOperation({ summary: 'Delete an unused size guide' })
   @ApiParam({ name: 'id', description: 'Size guide ID' })
-  delete(@Param('id') id: string): Promise<{ message: string }> {
-    return this.deleteSizeGuideService.execute(id);
+  delete(
+    @Param('id') id: string,
+    @CurrentUser('id') userId: string,
+  ): Promise<{ message: string }> {
+    return this.deleteSizeGuideService.execute(id, userId);
   }
 }

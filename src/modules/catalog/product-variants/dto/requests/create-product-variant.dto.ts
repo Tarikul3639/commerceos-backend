@@ -2,11 +2,9 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   ArrayUnique,
   IsArray,
-  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
-  Min,
 } from 'class-validator';
 
 export class CreateProductVariantDto {
@@ -42,17 +40,6 @@ export class CreateProductVariantDto {
   @IsString()
   @IsNotEmpty()
   barcode?: string;
-
-  @ApiPropertyOptional({
-    example: 25,
-    minimum: 0,
-    default: 0,
-    description: 'Available stock quantity',
-  })
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  stock?: number;
 
   @ApiPropertyOptional({
     type: [String],

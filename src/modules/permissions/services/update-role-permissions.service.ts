@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { Permission, Role } from '@/lib/prisma/enums';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
@@ -7,7 +11,22 @@ import { PrismaService } from '@/common/prisma/prisma.service';
 export class UpdateRolePermissionsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(role: Role, permissions: Permission[]) {
+  /**
+   * Replace the permissions assigned to a role without allowing the SUPER_ADMIN role to be modified.
+   */
+  async execute(role: Role, permissions: Permission[], actorRole: Role) {
+    if (actorRole !== Role.SUPER_ADMIN) {
+      throw new ForbiddenException(
+        'Only SUPER_ADMIN can manage role permission assignments.',
+      );
+    }
+
+    if (role === Role.SUPER_ADMIN) {
+      throw new BadRequestException(
+        'The SUPER_ADMIN role permissions cannot be modified.',
+      );
+    }
+
     const uniquePermissions = [...new Set(permissions)];
 
     return this.prisma.$transaction(async (tx) => {

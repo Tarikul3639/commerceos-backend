@@ -24,7 +24,9 @@ export class GetCustomersService {
     const skip = (page - 1) * limit;
 
     const where = {
-      deletedAt: null,
+      ...(status === 'DELETED'
+        ? { deletedAt: { not: null } }
+        : { deletedAt: null }),
 
       ...(status !== undefined && {
         status,

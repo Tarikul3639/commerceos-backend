@@ -9,7 +9,13 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { Permissions } from '@/common/decorators/permissions.decorator';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { Permission } from '@/lib/prisma/enums';
 
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 
@@ -39,14 +45,21 @@ export class CategoryController {
   /**
    * Create category
    */
+  @UseGuards(UserJwtAuthGuard, PermissionsGuard)
+  @Permissions(Permission.CATEGORY_CREATE)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create a new category',
   })
-  async create(@Body() createCategoryDto: CreateCategoryDto) {
-    const category =
-      await this.createCategoryService.execute(createCategoryDto);
+  async create(
+    @Body() createCategoryDto: CreateCategoryDto,
+    @CurrentUser('id') userId: string,
+  ) {
+    const category = await this.createCategoryService.execute(
+      createCategoryDto,
+      userId,
+    );
 
     return {
       message: 'Category created successfully',
@@ -89,6 +102,8 @@ export class CategoryController {
   /**
    * Update category
    */
+  @UseGuards(UserJwtAuthGuard, PermissionsGuard)
+  @Permissions(Permission.CATEGORY_UPDATE)
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -103,10 +118,12 @@ export class CategoryController {
 
     @Body()
     updateCategoryDto: UpdateCategoryDto,
+    @CurrentUser('id') userId: string,
   ) {
     const category = await this.updateCategoryService.execute(
       categoryId,
       updateCategoryDto,
+      userId,
     );
 
     return {
@@ -118,6 +135,8 @@ export class CategoryController {
   /**
    * Delete category
    */
+  @UseGuards(UserJwtAuthGuard, PermissionsGuard)
+  @Permissions(Permission.CATEGORY_DELETE)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
@@ -127,7 +146,10 @@ export class CategoryController {
     name: 'id',
     description: 'Category ID',
   })
-  async remove(@Param('id') categoryId: string): Promise<void> {
-    await this.deleteCategoryService.execute(categoryId);
+  async remove(
+    @Param('id') categoryId: string,
+    @CurrentUser('id') userId: string,
+  ): Promise<void> {
+    await this.deleteCategoryService.execute(categoryId, userId);
   }
 }

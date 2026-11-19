@@ -21,6 +21,7 @@ export class CreateProductVariantService {
 
   async execute(
     dto: CreateProductVariantDto,
+    userId: string,
   ): Promise<ProductVariantResponseDto> {
     const product = await this.prisma.product.findFirst({
       where: {
@@ -86,7 +87,6 @@ export class CreateProductVariantService {
         ...(dto.barcode !== undefined && {
           barcode: dto.barcode,
         }),
-        stock: dto.stock ?? 0,
         ...(optionValueIds.length > 0 && {
           options: {
             connect: optionValueIds.map((id) => ({ id })),
@@ -110,6 +110,7 @@ export class CreateProductVariantService {
       description: `Product variant "${variant.title ?? variant.sku}" was created`,
       entityType: 'ProductVariant',
       entityId: variant.id,
+      userId,
       newValue: {
         productId: variant.productId,
         title: variant.title,

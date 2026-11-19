@@ -1,13 +1,19 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { UserResponseDto } from '../dto/responses/user-response.dto';
+import { Role } from '@/lib/prisma/enums';
 
 @Injectable()
 export class GetUserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(userId: string): Promise<UserResponseDto> {
+  /** Return a user record without exposing SUPER_ADMIN details to lower roles. */
+  async execute(userId: string, requesterRole: Role): Promise<UserResponseDto> {
     const user = await this.prisma.user.findFirst({
       where: {
         id: userId,
@@ -17,6 +23,10 @@ export class GetUserService {
 
     if (!user) {
       throw new NotFoundException('User not found');
+    }
+
+    if (user.role === Role.SUPER_ADMIN && requesterRole !== Role.SUPER_ADMIN) {
+      throw new ForbiddenException('You cannot view the SUPER_ADMIN account.');
     }
 
     return {

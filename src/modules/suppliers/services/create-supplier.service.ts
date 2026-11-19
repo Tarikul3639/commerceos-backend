@@ -16,6 +16,7 @@ export class CreateSupplierService {
 
   async execute(
     createSupplierDto: CreateSupplierDto,
+    userId: string,
   ): Promise<SupplierResponseDto> {
     const { name, email, phone, address, contactPerson } = createSupplierDto;
 
@@ -84,6 +85,7 @@ export class CreateSupplierService {
       description: `Supplier "${supplier.name}" was created`,
       entityType: 'Supplier',
       entityId: supplier.id,
+      userId,
       newValue: {
         name: supplier.name,
         email: supplier.email,

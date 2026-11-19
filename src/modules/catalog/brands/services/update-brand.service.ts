@@ -1,10 +1,12 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CloudinaryService } from '@/common/cloudinary/cloudinary.service';
 import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
 import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 
@@ -15,12 +17,14 @@ import { BrandResponseDto } from '../dto/responses/brand-response.dto';
 export class UpdateBrandService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly cloudinaryService: CloudinaryService,
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
   async execute(
     brandId: string,
     updateBrandDto: UpdateBrandDto,
+    userId: string,
   ): Promise<BrandResponseDto> {
     const brand = await this.prisma.brand.findUnique({
       where: {
@@ -40,6 +44,24 @@ export class UpdateBrandService {
 
     if (!brand || brand.deletedAt) {
       throw new NotFoundException('Brand not found');
+    }
+
+    if (
+      (updateBrandDto.image !== undefined) !==
+      (updateBrandDto.publicId !== undefined)
+    ) {
+      throw new BadRequestException(
+        'Brand image URL and Cloudinary public ID must be updated together',
+      );
+    }
+
+    if (
+      (updateBrandDto.image === null) !==
+      (updateBrandDto.publicId === null)
+    ) {
+      throw new BadRequestException(
+        'Brand image URL and Cloudinary public ID must both be removed together',
+      );
     }
 
     const normalizedName =
@@ -142,6 +164,7 @@ export class UpdateBrandService {
       description: `Brand "${updatedBrand.name}" was updated`,
       entityType: 'BRAND',
       entityId: updatedBrand.id,
+      userId,
       oldValue: {
         name: brand.name,
         slug: brand.slug,
@@ -159,6 +182,14 @@ export class UpdateBrandService {
         isActive: updatedBrand.isActive,
       },
     });
+
+    if (
+      updateBrandDto.publicId !== undefined &&
+      updateBrandDto.publicId !== brand.publicId &&
+      brand.publicId
+    ) {
+      await this.cloudinaryService.delete(brand.publicId);
+    }
 
     return {
       id: updatedBrand.id,

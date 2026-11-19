@@ -21,6 +21,7 @@ export class UpdateProductService {
   async execute(
     productId: string,
     dto: UpdateProductDto,
+    userId: string,
   ): Promise<AdminProductDetailResponseDto> {
     const product = await this.prisma.product.findFirst({
       where: {
@@ -46,9 +47,10 @@ export class UpdateProductService {
     }
 
     if (dto.categoryId !== undefined) {
-      const category = await this.prisma.category.findUnique({
+      const category = await this.prisma.category.findFirst({
         where: {
           id: dto.categoryId,
+          deletedAt: null,
         },
         select: {
           id: true,
@@ -61,9 +63,10 @@ export class UpdateProductService {
     }
 
     if (dto.brandId) {
-      const brand = await this.prisma.brand.findUnique({
+      const brand = await this.prisma.brand.findFirst({
         where: {
           id: dto.brandId,
+          deletedAt: null,
         },
         select: {
           id: true,
@@ -143,6 +146,7 @@ export class UpdateProductService {
       description: `Product "${updatedProduct.name}" was updated`,
       entityType: 'Product',
       entityId: updatedProduct.id,
+      userId,
       oldValue: {
         name: product.name,
         subDescription: product.subDescription,

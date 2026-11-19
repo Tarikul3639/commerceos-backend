@@ -15,7 +15,7 @@ export class RestoreCustomerService {
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
-  async execute(customerId: string): Promise<void> {
+  async execute(customerId: string, userId: string): Promise<void> {
     const customer = await this.prisma.customer.findUnique({
       where: {
         id: customerId,
@@ -34,7 +34,7 @@ export class RestoreCustomerService {
       throw new BadRequestException('Customer is not deleted');
     }
 
-    await this.prisma.customer.update({
+    const restoredCustomer = await this.prisma.customer.update({
       where: {
         id: customerId,
       },
@@ -42,6 +42,22 @@ export class RestoreCustomerService {
       data: {
         status: 'ACTIVE',
         deletedAt: null,
+      },
+    });
+
+    await this.createActivityLogService.execute({
+      type: ActivityType.UPDATE,
+      module: ActivityModule.CUSTOMER,
+      action: 'RESTORE_CUSTOMER',
+      entityType: 'Customer',
+      entityId: restoredCustomer.id,
+      userId,
+      oldValue: {
+        status: customer.status,
+      },
+      newValue: {
+        status: restoredCustomer.status,
+        deletedAt: restoredCustomer.deletedAt,
       },
     });
   }

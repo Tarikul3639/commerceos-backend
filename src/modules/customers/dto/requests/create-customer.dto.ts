@@ -49,6 +49,7 @@ export class CreateCustomerDto {
 
   @IsOptional()
   @IsString()
+  @IsNotEmpty()
   @MaxLength(255)
   @ApiPropertyOptional({
     description: 'The public ID of the customer avatar',

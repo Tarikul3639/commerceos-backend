@@ -12,7 +12,10 @@ export class RestoreProductService {
   ) {}
 
   /** Restore a soft-deleted product. */
-  async execute(productId: string): Promise<{ message: string }> {
+  async execute(
+    productId: string,
+    userId: string,
+  ): Promise<{ message: string }> {
     const product = await this.prisma.product.findFirst({
       where: {
         id: productId,
@@ -56,6 +59,7 @@ export class RestoreProductService {
       description: `Product "${product.name}" was restored`,
       entityType: 'Product',
       entityId: product.id,
+      userId,
       oldValue: {
         name: product.name,
         subDescription: product.subDescription,

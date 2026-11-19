@@ -22,6 +22,7 @@ export class UpdateProductVariantService {
   async execute(
     variantId: string,
     dto: UpdateProductVariantDto,
+    userId: string,
   ): Promise<ProductVariantResponseDto> {
     const variant = await this.prisma.productVariant.findFirst({
       where: {
@@ -104,7 +105,6 @@ export class UpdateProductVariantService {
         ...(dto.title !== undefined && { title: dto.title }),
         ...(dto.sku !== undefined && { sku: dto.sku }),
         ...(dto.barcode !== undefined && { barcode: dto.barcode }),
-        ...(dto.stock !== undefined && { stock: dto.stock }),
         ...(dto.optionValueIds !== undefined && {
           options: {
             set: dto.optionValueIds.map((id) => ({ id })),
@@ -128,6 +128,7 @@ export class UpdateProductVariantService {
       description: `Product variant "${updatedVariant.title ?? updatedVariant.sku}" was updated`,
       entityType: 'ProductVariant',
       entityId: updatedVariant.id,
+      userId,
       oldValue: {
         title: variant.title,
         sku: variant.sku,

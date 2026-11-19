@@ -5,6 +5,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Permissions } from '@/common/decorators/permissions.decorator';
 import { PermissionsGuard } from '@/common/guards/permissions.guard';
 import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
@@ -32,7 +33,10 @@ export class SecuritySettingsController {
   @Permissions(Permission.SETTING_UPDATE)
   @ApiOperation({ summary: 'Update security policy settings' })
   @ApiOkResponse({ type: SecuritySettingsResponseDto })
-  update(@Body() dto: UpdateSecuritySettingsDto) {
-    return this.securitySettings.update(dto);
+  update(
+    @Body() dto: UpdateSecuritySettingsDto,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.securitySettings.update(dto, userId);
   }
 }

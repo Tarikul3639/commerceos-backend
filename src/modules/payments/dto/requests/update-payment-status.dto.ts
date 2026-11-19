@@ -1,10 +1,16 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsIn, IsOptional, IsString, MaxLength } from 'class-validator';
 import { PaymentStatus } from '@/lib/prisma/enums';
 
+export const EditablePaymentStatus = [
+  PaymentStatus.PAID,
+  PaymentStatus.FAILED,
+  PaymentStatus.CANCELLED,
+] as const;
+
 export class UpdatePaymentStatusDto {
-  @ApiProperty({ enum: PaymentStatus })
-  @IsEnum(PaymentStatus)
+  @ApiProperty({ enum: EditablePaymentStatus })
+  @IsIn(EditablePaymentStatus)
   status!: PaymentStatus;
 
   @ApiPropertyOptional()

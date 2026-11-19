@@ -6,7 +6,13 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { Permissions } from '@/common/decorators/permissions.decorator';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { Permission } from '@/lib/prisma/enums';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -28,6 +34,7 @@ import { UpdateProductOptionService } from '../services/update-product-option.se
 
 @ApiTags('Admin - Product Options')
 @Controller('admin/product-options')
+@UseGuards(UserJwtAuthGuard, PermissionsGuard)
 export class ProductOptionsController {
   constructor(
     private readonly createProductOptionService: CreateProductOptionService,
@@ -38,15 +45,18 @@ export class ProductOptionsController {
   ) {}
 
   @Post()
+  @Permissions(Permission.PRODUCT_UPDATE)
   @ApiOperation({ summary: 'Create a product option with values' })
   @ApiCreatedResponse({ type: ProductOptionResponseDto })
   async create(
     @Body() dto: CreateProductOptionDto,
+    @CurrentUser('id') userId: string,
   ): Promise<ProductOptionResponseDto> {
-    return this.createProductOptionService.execute(dto);
+    return this.createProductOptionService.execute(dto, userId);
   }
 
   @Get(':productId')
+  @Permissions(Permission.PRODUCT_READ)
   @ApiOperation({ summary: 'Get all options for a product' })
   @ApiParam({ name: 'productId', example: 'cm123product456' })
   @ApiOkResponse({ type: ProductOptionResponseDto, isArray: true })
@@ -57,17 +67,20 @@ export class ProductOptionsController {
   }
 
   @Patch(':optionId')
+  @Permissions(Permission.PRODUCT_UPDATE)
   @ApiOperation({ summary: 'Update a product option' })
   @ApiParam({ name: 'optionId', example: 'cm123coloroption' })
   @ApiOkResponse({ type: ProductOptionResponseDto })
   async update(
     @Param('optionId') optionId: string,
     @Body() dto: UpdateProductOptionDto,
+    @CurrentUser('id') userId: string,
   ): Promise<ProductOptionResponseDto> {
-    return this.updateProductOptionService.execute(optionId, dto);
+    return this.updateProductOptionService.execute(optionId, dto, userId);
   }
 
   @Delete(':optionId')
+  @Permissions(Permission.PRODUCT_UPDATE)
   @ApiOperation({ summary: 'Delete a product option' })
   @ApiParam({ name: 'optionId', example: 'cm123coloroption' })
   @ApiOkResponse({
@@ -79,11 +92,13 @@ export class ProductOptionsController {
   })
   async remove(
     @Param('optionId') optionId: string,
+    @CurrentUser('id') userId: string,
   ): Promise<{ message: string }> {
-    return this.deleteProductOptionService.execute(optionId);
+    return this.deleteProductOptionService.execute(optionId, userId);
   }
 
   @Post(':productId/generate-variants')
+  @Permissions(Permission.PRODUCT_UPDATE)
   @ApiOperation({
     summary: 'Generate product variants from all option combinations',
   })
@@ -91,7 +106,8 @@ export class ProductOptionsController {
   @ApiCreatedResponse({ type: ProductVariantResponseDto, isArray: true })
   async generateVariants(
     @Param('productId') productId: string,
+    @CurrentUser('id') userId: string,
   ): Promise<ProductVariantResponseDto[]> {
-    return this.generateProductVariantsService.execute(productId);
+    return this.generateProductVariantsService.execute(productId, userId);
   }
 }

@@ -10,18 +10,25 @@ export class DeleteCustomerService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cloudinaryService: CloudinaryService,
-
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
-  async execute(customerId: string): Promise<void> {
-    const customer = await this.prisma.customer.findUnique({
+  /**
+   * Delete a customer, revoke active sessions for soft-deleted accounts and attribute the action.
+   */
+  async execute(customerId: string, userId: string): Promise<void> {
+    const customer = await this.prisma.customer.findFirst({
       where: {
         id: customerId,
+        deletedAt: null,
       },
-
       select: {
+        id: true,
+        name: true,
+        email: true,
         publicId: true,
+        status: true,
+        deletedAt: true,
         _count: {
           select: {
             orders: true,
@@ -34,44 +41,81 @@ export class DeleteCustomerService {
       throw new NotFoundException('Customer not found');
     }
 
-    // Customer has orders → Soft delete
     if (customer._count.orders > 0) {
-      await this.prisma.customer.update({
-        where: {
-          id: customerId,
-        },
+      const deletedCustomer = await this.prisma.$transaction(async (tx) => {
+        const updated = await tx.customer.update({
+          where: { id: customerId },
+          data: {
+            status: 'DELETED',
+            deletedAt: new Date(),
+          },
+        });
 
-        data: {
-          status: 'DELETED',
-          deletedAt: new Date(),
+        await tx.customerRefreshToken.updateMany({
+          where: {
+            customerId,
+            revokedAt: null,
+          },
+          data: { revokedAt: new Date() },
+        });
+
+        await tx.customerPasswordResetToken.deleteMany({
+          where: { customerId },
+        });
+
+        await tx.customerEmailVerificationToken.deleteMany({
+          where: { customerId },
+        });
+
+        return updated;
+      });
+
+      await this.createActivityLogService.execute({
+        type: ActivityType.DELETE,
+        module: ActivityModule.CUSTOMER,
+        action: 'SOFT_DELETE_CUSTOMER',
+        entityType: 'Customer',
+        entityId: customerId,
+        userId,
+        oldValue: {
+          status: customer.status,
+          deletedAt: customer.deletedAt,
+          orderCount: customer._count.orders,
+        },
+        newValue: {
+          status: deletedCustomer.status,
+          deletedAt: deletedCustomer.deletedAt,
+          activeSessionsRevoked: true,
         },
       });
 
       return;
     }
 
-    // No orders → Hard delete
-    // Delete avatar from Cloudinary before deleting the customer.
     if (customer.publicId) {
       await this.cloudinaryService.delete(customer.publicId, 'image');
     }
 
-    // Cart will be deleted automatically because of onDelete: Cascade
     await this.prisma.customer.delete({
       where: {
         id: customerId,
       },
     });
+
     await this.createActivityLogService.execute({
       type: ActivityType.DELETE,
       module: ActivityModule.CUSTOMER,
       action: 'DELETE_CUSTOMER',
       entityType: 'Customer',
       entityId: customerId,
+      userId,
       oldValue: {
+        name: customer.name,
+        email: customer.email,
         publicId: customer.publicId,
         orderCount: customer._count.orders,
       },
+      newValue: 'Customer permanently deleted',
     });
   }
 }

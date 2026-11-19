@@ -26,7 +26,10 @@ export class GetUsersService {
     const isSuperAdmin = requesterRole === Role.SUPER_ADMIN;
 
     const where: Prisma.UserWhereInput = {
-      ...(!isSuperAdmin && { deletedAt: null }),
+      ...(!isSuperAdmin && {
+        deletedAt: null,
+        NOT: { role: Role.SUPER_ADMIN },
+      }),
       ...(status && { status }),
       ...(role && { role }),
       ...(staffOnly && { role: { in: [Role.MANAGER, Role.EMPLOYEE] } }),

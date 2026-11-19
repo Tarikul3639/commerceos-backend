@@ -6,7 +6,13 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { Permissions } from '@/common/decorators/permissions.decorator';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { Permission } from '@/lib/prisma/enums';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -25,6 +31,7 @@ import { UpdateProductVariantService } from '../services/update-product-variant.
 
 @ApiTags('Product Variants')
 @Controller('admin/product-variants')
+@UseGuards(UserJwtAuthGuard, PermissionsGuard)
 export class ProductVariantsController {
   constructor(
     private readonly createProductVariantService: CreateProductVariantService,
@@ -34,15 +41,18 @@ export class ProductVariantsController {
   ) {}
 
   @Post()
+  @Permissions(Permission.PRODUCT_UPDATE)
   @ApiOperation({ summary: 'Create a product variant' })
   @ApiCreatedResponse({ type: ProductVariantResponseDto })
   async create(
     @Body() dto: CreateProductVariantDto,
+    @CurrentUser('id') userId: string,
   ): Promise<ProductVariantResponseDto> {
-    return this.createProductVariantService.execute(dto);
+    return this.createProductVariantService.execute(dto, userId);
   }
 
   @Get(':productId')
+  @Permissions(Permission.PRODUCT_READ)
   @ApiOperation({ summary: 'Get all variants for a product' })
   @ApiOkResponse({
     type: ProductVariantResponseDto,
@@ -55,21 +65,25 @@ export class ProductVariantsController {
   }
 
   @Patch(':variantId')
+  @Permissions(Permission.PRODUCT_UPDATE)
   @ApiOperation({ summary: 'Update a product variant' })
   @ApiOkResponse({ type: ProductVariantResponseDto })
   async update(
     @Param('variantId') variantId: string,
     @Body() dto: UpdateProductVariantDto,
+    @CurrentUser('id') userId: string,
   ): Promise<ProductVariantResponseDto> {
-    return this.updateProductVariantService.execute(variantId, dto);
+    return this.updateProductVariantService.execute(variantId, dto, userId);
   }
 
   @Delete(':variantId')
+  @Permissions(Permission.PRODUCT_UPDATE)
   @ApiOperation({ summary: 'Soft delete a product variant' })
   @ApiOkResponse({ type: ProductVariantResponseDto })
   async remove(
     @Param('variantId') variantId: string,
+    @CurrentUser('id') userId: string,
   ): Promise<ProductVariantResponseDto> {
-    return this.deleteProductVariantService.execute(variantId);
+    return this.deleteProductVariantService.execute(variantId, userId);
   }
 }

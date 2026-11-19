@@ -1,9 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+import { Prisma, UserStatus } from '@/lib/prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { TokenService } from './token.service';
-
 import { hashPassword } from '@/common/utils/password.util';
 
 @Injectable()
@@ -14,28 +14,36 @@ export class ResetPasswordService {
     private readonly tokenService: TokenService,
   ) {}
 
+  /**
+   * Consume a password setup/reset token once, verify the email and revoke all existing sessions.
+   */
   async execute(token: string, newPassword: string): Promise<void> {
     const tokenHash = this.tokenService.hashToken(token);
+    const now = new Date();
 
     const passwordResetToken =
       await this.prismaService.userPasswordResetToken.findUnique({
-        where: {
-          tokenHash,
+        where: { tokenHash },
+        include: {
+          user: {
+            select: {
+              status: true,
+              deletedAt: true,
+            },
+          },
         },
       });
 
-    if (!passwordResetToken) {
-      throw new UnauthorizedException('Invalid password reset token.');
-    }
-
-    if (passwordResetToken.usedAt) {
+    if (
+      !passwordResetToken ||
+      passwordResetToken.usedAt ||
+      passwordResetToken.expiresAt <= now ||
+      passwordResetToken.user.status !== UserStatus.ACTIVE ||
+      passwordResetToken.user.deletedAt
+    ) {
       throw new UnauthorizedException(
-        'Password reset token has already been used.',
+        'Invalid or expired password reset token.',
       );
-    }
-
-    if (passwordResetToken.expiresAt <= new Date()) {
-      throw new UnauthorizedException('Password reset token has expired.');
     }
 
     const security = await this.prismaService.securitySettings.upsert({
@@ -55,50 +63,58 @@ export class ResetPasswordService {
       this.configService.getOrThrow<number>('bcrypt.saltRounds'),
     );
 
-    await this.prismaService.$transaction([
-      this.prismaService.user.update({
-        where: {
-          id: passwordResetToken.userId,
-        },
+    await this.prismaService.$transaction(
+      async (tx) => {
+        const tokenUpdate = await tx.userPasswordResetToken.updateMany({
+          where: {
+            id: passwordResetToken.id,
+            usedAt: null,
+            expiresAt: { gt: now },
+          },
+          data: { usedAt: now },
+        });
 
-        data: {
-          password: passwordHash,
-          failedLoginAttempts: 0,
-          lockedUntil: null,
-        },
-      }),
+        if (tokenUpdate.count === 0) {
+          throw new UnauthorizedException(
+            'Invalid or expired password reset token.',
+          );
+        }
 
-      this.prismaService.userPasswordResetToken.update({
-        where: {
-          id: passwordResetToken.id,
-        },
+        const userUpdate = await tx.user.updateMany({
+          where: {
+            id: passwordResetToken.userId,
+            status: UserStatus.ACTIVE,
+            deletedAt: null,
+          },
+          data: {
+            password: passwordHash,
+            isVerified: true,
+            failedLoginAttempts: 0,
+            lockedUntil: null,
+          },
+        });
 
-        data: {
-          usedAt: new Date(),
-        },
-      }),
+        if (userUpdate.count === 0) {
+          throw new UnauthorizedException('User account is not active.');
+        }
 
-      this.prismaService.userPasswordResetToken.updateMany({
-        where: {
-          userId: passwordResetToken.userId,
-          usedAt: null,
-        },
+        await tx.userPasswordResetToken.updateMany({
+          where: {
+            userId: passwordResetToken.userId,
+            usedAt: null,
+          },
+          data: { usedAt: now },
+        });
 
-        data: {
-          usedAt: new Date(),
-        },
-      }),
-
-      this.prismaService.userRefreshToken.updateMany({
-        where: {
-          userId: passwordResetToken.userId,
-          revokedAt: null,
-        },
-
-        data: {
-          revokedAt: new Date(),
-        },
-      }),
-    ]);
+        await tx.userRefreshToken.updateMany({
+          where: {
+            userId: passwordResetToken.userId,
+            revokedAt: null,
+          },
+          data: { revokedAt: now },
+        });
+      },
+      { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+    );
   }
 }

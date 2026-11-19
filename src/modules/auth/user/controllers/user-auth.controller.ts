@@ -148,6 +148,7 @@ export class UserAuthController {
   /**
    * Logout from current device
    */
+  @UseGuards(UserJwtAuthGuard)
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
   async logout(
@@ -172,6 +173,7 @@ export class UserAuthController {
   /**
    * Logout from all devices
    */
+  @UseGuards(UserJwtAuthGuard)
   @Post('logout-all')
   @HttpCode(HttpStatus.NO_CONTENT)
   async logoutAll(
@@ -189,6 +191,7 @@ export class UserAuthController {
   /**
    * Change password
    */
+  @UseGuards(UserJwtAuthGuard)
   @Post('change-password')
   @HttpCode(HttpStatus.OK)
   async changePassword(

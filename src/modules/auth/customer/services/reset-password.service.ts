@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+import { Prisma, CustomerStatus } from '@/lib/prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { hashPassword } from '@/common/utils/password.util';
 
@@ -15,28 +16,33 @@ export class CustomerResetPasswordService {
     private readonly configService: ConfigService,
   ) {}
 
+  /**
+   * Reset an active customer's password once and revoke all existing refresh sessions.
+   */
   async execute(dto: ResetPasswordDto): Promise<void> {
     const { token, password } = dto;
-
     const tokenHash = this.tokenService.hashToken(token);
+    const now = new Date();
 
     const resetTokenRecord =
       await this.prismaService.customerPasswordResetToken.findFirst({
-        where: {
-          tokenHash,
+        where: { tokenHash },
+        include: {
+          customer: {
+            select: { status: true },
+          },
         },
       });
 
-    if (!resetTokenRecord) {
-      throw new Error('Invalid or expired password reset token.');
-    }
-
-    if (resetTokenRecord.usedAt) {
-      throw new Error('Password reset token has already been used.');
-    }
-
-    if (resetTokenRecord.expiresAt <= new Date()) {
-      throw new Error('Password reset token has expired.');
+    if (
+      !resetTokenRecord ||
+      resetTokenRecord.usedAt ||
+      resetTokenRecord.expiresAt <= now ||
+      resetTokenRecord.customer.status !== CustomerStatus.ACTIVE
+    ) {
+      throw new UnauthorizedException(
+        'Invalid or expired password reset token.',
+      );
     }
 
     const hashedPassword = await hashPassword(
@@ -44,41 +50,53 @@ export class CustomerResetPasswordService {
       this.configService.getOrThrow<number>('bcrypt.saltRounds'),
     );
 
-    /**
-     *  Transaction to update the customer's password and mark the reset token as used.
-     *  This ensures that both operations are atomic, preventing any inconsistencies.
-     *  If either operation fails, the entire transaction will be rolled back.
-     */
-    await this.prismaService.$transaction([
-      this.prismaService.customer.update({
-        where: {
-          id: resetTokenRecord.customerId,
-        },
-        data: {
-          password: hashedPassword,
-        },
-      }),
+    await this.prismaService.$transaction(
+      async (tx) => {
+        const tokenUpdate = await tx.customerPasswordResetToken.updateMany({
+          where: {
+            id: resetTokenRecord.id,
+            usedAt: null,
+            expiresAt: { gt: now },
+          },
+          data: { usedAt: now },
+        });
 
-      // Mark the reset token as used
-      this.prismaService.customerPasswordResetToken.update({
-        where: {
-          id: resetTokenRecord.id,
-        },
-        data: {
-          usedAt: new Date(),
-        },
-      }),
+        if (tokenUpdate.count === 0) {
+          throw new UnauthorizedException(
+            'Invalid or expired password reset token.',
+          );
+        }
 
-      // Invalidate any other unused tokens for the same customer
-      this.prismaService.customerPasswordResetToken.updateMany({
-        where: {
-          customerId: resetTokenRecord.customerId,
-          usedAt: null,
-        },
-        data: {
-          usedAt: new Date(),
-        },
-      }),
-    ]);
+        const customerUpdate = await tx.customer.updateMany({
+          where: {
+            id: resetTokenRecord.customerId,
+            status: CustomerStatus.ACTIVE,
+            deletedAt: null,
+          },
+          data: { password: hashedPassword },
+        });
+
+        if (customerUpdate.count === 0) {
+          throw new UnauthorizedException('Customer account is not active.');
+        }
+
+        await tx.customerPasswordResetToken.updateMany({
+          where: {
+            customerId: resetTokenRecord.customerId,
+            usedAt: null,
+          },
+          data: { usedAt: now },
+        });
+
+        await tx.customerRefreshToken.updateMany({
+          where: {
+            customerId: resetTokenRecord.customerId,
+            revokedAt: null,
+          },
+          data: { revokedAt: now },
+        });
+      },
+      { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+    );
   }
 }

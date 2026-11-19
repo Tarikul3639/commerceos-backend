@@ -22,6 +22,7 @@ export class UpdateCategoryService {
   async execute(
     categoryId: string,
     updateCategoryDto: UpdateCategoryDto,
+    userId: string,
   ): Promise<CategoryResponseDto> {
     const category = await this.prisma.category.findFirst({
       where: {
@@ -100,6 +101,7 @@ export class UpdateCategoryService {
       description: `Category "${updatedCategory.name}" was updated`,
       entityType: 'CATEGORY',
       entityId: updatedCategory.id,
+      userId,
       oldValue: {
         name: category.name,
         slug: category.slug,

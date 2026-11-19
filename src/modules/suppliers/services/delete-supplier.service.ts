@@ -10,7 +10,7 @@ export class DeleteSupplierService {
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
-  async execute(supplierId: string): Promise<void> {
+  async execute(supplierId: string, userId: string): Promise<void> {
     const supplier = await this.prisma.supplier.findFirst({
       where: {
         id: supplierId,
@@ -48,6 +48,7 @@ export class DeleteSupplierService {
         description: `Supplier "${supplier.name}" was soft deleted`,
         entityType: 'Supplier',
         entityId: supplier.id,
+        userId,
         oldValue: {
           name: supplier.name,
           email: supplier.email,
@@ -82,6 +83,7 @@ export class DeleteSupplierService {
       description: `Supplier "${supplier.name}" was permanently deleted`,
       entityType: 'Supplier',
       entityId: supplier.id,
+      userId,
       oldValue: {
         name: supplier.name,
         email: supplier.email,

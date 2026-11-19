@@ -10,7 +10,6 @@ export class GetCustomerService {
     const customer = await this.prisma.customer.findFirst({
       where: {
         id: customerId,
-        deletedAt: null,
       },
 
       select: {

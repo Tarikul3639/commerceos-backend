@@ -11,11 +11,6 @@ export class CustomerLogoutService {
   ) {}
 
   async execute(customerId: string, refreshToken: string): Promise<void> {
-    const token = await this.refreshTokenService.validate(
-      customerId,
-      refreshToken,
-    );
-    // Revoke the specific refresh token
-    await this.refreshTokenService.revoke(token.id);
+    await this.refreshTokenService.consume(customerId, refreshToken);
   }
 }

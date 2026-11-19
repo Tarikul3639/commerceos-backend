@@ -1,5 +1,12 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsInt, IsOptional, IsString, IsUrl, Min } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+  Min,
+} from 'class-validator';
 
 export class UpdateProductImageDto {
   @ApiPropertyOptional({
@@ -16,6 +23,7 @@ export class UpdateProductImageDto {
   })
   @IsOptional()
   @IsString()
+  @IsNotEmpty()
   publicId?: string;
 
   @ApiPropertyOptional({

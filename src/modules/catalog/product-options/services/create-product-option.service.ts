@@ -20,6 +20,7 @@ export class CreateProductOptionService {
 
   async execute(
     dto: CreateProductOptionDto,
+    userId: string,
   ): Promise<ProductOptionResponseDto> {
     const product = await this.prisma.product.findFirst({
       where: {
@@ -84,6 +85,7 @@ export class CreateProductOptionService {
       description: `Product option "${option.name}" was created`,
       entityType: 'ProductOption',
       entityId: option.id,
+      userId,
       newValue: {
         productId: option.productId,
         name: option.name,

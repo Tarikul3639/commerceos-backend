@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { Prisma } from '@/lib/prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 import { CreateDiscountDto } from '../dto/requests/create-discount.dto';
 import { UpdateDiscountDto } from '../dto/requests/update-discount.dto';
 import { DiscountQueryDto } from '../dto/requests/discount-query.dto';
@@ -14,7 +16,10 @@ import { DiscountResponseDto } from '../dto/responses/discount-response.dto';
 
 @Injectable()
 export class DiscountService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly createActivityLogService: CreateActivityLogService,
+  ) {}
 
   private validateRules(input: {
     type?: string;
@@ -205,12 +210,28 @@ export class DiscountService {
     }
   }
 
-  async remove(id: string): Promise<void> {
-    const existing = await this.prisma.discount.findUnique({
-      where: { id },
-      select: { id: true },
-    });
+  async remove(id: string, userId: string): Promise<void> {
+    const existing = await this.prisma.discount.findUnique({ where: { id } });
     if (!existing) throw new NotFoundException('Discount not found');
-    await this.prisma.discount.delete({ where: { id } });
+    await this.prisma.$transaction(async (tx) => {
+      await tx.discount.delete({ where: { id } });
+      await this.createActivityLogService.execute(
+        {
+          type: ActivityType.DELETE,
+          module: ActivityModule.DISCOUNT,
+          action: 'DELETE_DISCOUNT',
+          entityType: 'Discount',
+          entityId: id,
+          userId,
+          oldValue: {
+            code: existing.code,
+            type: existing.type,
+            value: existing.value.toString(),
+            isActive: existing.isActive,
+          },
+        },
+        tx,
+      );
+    });
   }
 }

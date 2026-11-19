@@ -12,6 +12,9 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { Permissions } from '@/common/decorators/permissions.decorator';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { Permission } from '@/lib/prisma/enums';
 
 import { NotificationQueryDto } from '../dto/requests/notification-query.dto';
 
@@ -23,7 +26,7 @@ import { MarkNotificationReadService } from '../services/mark-notification-read.
 
 @ApiTags('Notifications')
 @ApiBearerAuth()
-@UseGuards(UserJwtAuthGuard)
+@UseGuards(UserJwtAuthGuard, PermissionsGuard)
 @Controller('notifications')
 export class NotificationController {
   constructor(
@@ -35,6 +38,7 @@ export class NotificationController {
   ) {}
 
   @Get()
+  @Permissions(Permission.NOTIFICATION_READ)
   @ApiOperation({
     summary: 'Get user notifications',
   })
@@ -46,6 +50,7 @@ export class NotificationController {
   }
 
   @Get(':id')
+  @Permissions(Permission.NOTIFICATION_READ)
   @ApiOperation({
     summary: 'Get notification',
   })
@@ -54,6 +59,7 @@ export class NotificationController {
   }
 
   @Patch('read-all')
+  @Permissions(Permission.NOTIFICATION_UPDATE)
   @ApiOperation({
     summary: 'Mark all notifications as read',
   })
@@ -62,6 +68,7 @@ export class NotificationController {
   }
 
   @Patch(':id/read')
+  @Permissions(Permission.NOTIFICATION_UPDATE)
   @ApiOperation({
     summary: 'Mark notification as read',
   })
@@ -70,6 +77,7 @@ export class NotificationController {
   }
 
   @Delete(':id')
+  @Permissions(Permission.NOTIFICATION_DELETE)
   @ApiOperation({
     summary: 'Delete notification',
   })

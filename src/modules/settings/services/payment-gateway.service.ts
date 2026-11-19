@@ -26,6 +26,7 @@ export class PaymentGatewayService {
    */
   async create(
     createPaymentGatewayDto: CreatePaymentGatewayDto,
+    userId: string,
   ): Promise<PaymentGatewayResponseDto> {
     assertNoGatewaySecrets(createPaymentGatewayDto.settings);
 
@@ -92,6 +93,7 @@ export class PaymentGatewayService {
   async update(
     id: string,
     updatePaymentGatewayDto: UpdatePaymentGatewayDto,
+    userId: string,
   ): Promise<PaymentGatewayResponseDto> {
     assertNoGatewaySecrets(updatePaymentGatewayDto.settings);
 

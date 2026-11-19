@@ -41,6 +41,18 @@ export class CreatePurchaseService {
       throw new NotFoundException('Supplier not found or inactive');
     }
 
+    if (!dto.items.length) {
+      throw new BadRequestException('At least one purchase item is required');
+    }
+
+    const invalidPrice = dto.items.some((item) =>
+      new Prisma.Decimal(item.unitPrice).lessThan(0),
+    );
+
+    if (invalidPrice) {
+      throw new BadRequestException('Purchase item prices cannot be negative');
+    }
+
     const productIds = dto.items.map(({ productId }) => productId);
 
     if (new Set(productIds).size !== productIds.length) {
@@ -75,11 +87,19 @@ export class CreatePurchaseService {
 
     const tax = new Prisma.Decimal(dto.tax ?? '0');
 
+    if (discount.lessThan(0) || tax.lessThan(0)) {
+      throw new BadRequestException('Discount and tax cannot be negative');
+    }
+
     if (discount.greaterThan(subtotal)) {
       throw new BadRequestException('Discount cannot exceed subtotal');
     }
 
     const total = subtotal.minus(discount).plus(tax);
+
+    if (total.lessThan(0)) {
+      throw new BadRequestException('Purchase total cannot be negative');
+    }
 
     const prefix = getDocumentPrefix('PUR');
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { Prisma } from '@/lib/prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { AuditContextService } from '@/common/audit/audit-context.service';
 import { CreateActivityLogInput } from '../interfaces/activity-log.interface';
@@ -11,10 +12,16 @@ export class CreateActivityLogService {
     private readonly auditContext: AuditContextService,
   ) {}
 
-  async execute(data: CreateActivityLogInput) {
+  /** Persist an activity log, optionally inside the caller's database transaction. */
+  async execute(
+    data: CreateActivityLogInput,
+    transaction?: Prisma.TransactionClient,
+  ) {
     const context = this.auditContext.get();
 
-    return this.prisma.activityLog.create({
+    const client = transaction ?? this.prisma;
+
+    return client.activityLog.create({
       data: {
         type: data.type,
         module: data.module,

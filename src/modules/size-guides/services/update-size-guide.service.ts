@@ -21,6 +21,7 @@ export class UpdateSizeGuideService {
   async execute(
     id: string,
     dto: UpdateSizeGuideDto,
+    userId: string,
   ): Promise<SizeGuideResponseDto> {
     const existing = await this.prisma.sizeGuide.findUnique({
       where: { id },
@@ -76,6 +77,7 @@ export class UpdateSizeGuideService {
       description: `Size guide "${existing.name}" was updated`,
       entityType: 'SizeGuide',
       entityId: sizeGuide.id,
+      userId,
       oldValue: {
         name: existing.name,
         description: existing.description,

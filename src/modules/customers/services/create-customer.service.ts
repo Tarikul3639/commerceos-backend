@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
@@ -16,9 +20,15 @@ export class CreateCustomerService {
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
-  async execute(createCustomerDto: CreateCustomerDto) {
+  async execute(createCustomerDto: CreateCustomerDto, userId: string) {
     const { name, email, phone, avatarUrl, publicId, address } =
       createCustomerDto;
+
+    if ((avatarUrl !== undefined) !== (publicId !== undefined)) {
+      throw new BadRequestException(
+        'Avatar URL and Cloudinary public ID must be provided together',
+      );
+    }
 
     const existingCustomer = await this.prisma.customer.findFirst({
       where: {
@@ -77,6 +87,7 @@ export class CreateCustomerService {
       action: 'CREATE_CUSTOMER',
       entityType: 'Customer',
       entityId: customer.id,
+      userId,
       newValue: { id: customer.id },
     });
 

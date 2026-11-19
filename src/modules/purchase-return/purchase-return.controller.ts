@@ -49,7 +49,8 @@ export class PurchaseReturnController {
   ) {}
 
   @Post()
-  @UseGuards(UserJwtAuthGuard, RolesGuard)
+  @UseGuards(UserJwtAuthGuard, RolesGuard, PermissionsGuard)
+  @Permissions(Permission.PURCHASE_CREATE)
   @ApiOperation({
     summary: 'Create a purchase return',
   })
@@ -68,6 +69,8 @@ export class PurchaseReturnController {
   }
 
   @Get()
+  @UseGuards(UserJwtAuthGuard, PermissionsGuard)
+  @Permissions(Permission.PURCHASE_READ)
   @ApiOperation({
     summary: 'Get all purchase returns',
   })
@@ -76,6 +79,8 @@ export class PurchaseReturnController {
   }
 
   @Get(':id')
+  @UseGuards(UserJwtAuthGuard, PermissionsGuard)
+  @Permissions(Permission.PURCHASE_READ)
   @ApiOperation({
     summary: 'Get purchase return by ID',
   })
@@ -107,8 +112,8 @@ export class PurchaseReturnController {
   @ApiOperation({ summary: 'Reject a pending purchase return' })
   @ApiParam({ name: 'id', type: String })
   @ApiResponse({ status: 200, description: 'Purchase return rejected' })
-  async reject(@Param('id') id: string) {
-    return this.purchaseReturnActionsService.reject(id);
+  async reject(@Param('id') id: string, @CurrentUser('id') userId: string) {
+    return this.purchaseReturnActionsService.reject(id, userId);
   }
 
   @Patch(':id/complete')
@@ -117,8 +122,8 @@ export class PurchaseReturnController {
   @ApiOperation({ summary: 'Complete an approved purchase return' })
   @ApiParam({ name: 'id', type: String })
   @ApiResponse({ status: 200, description: 'Purchase return completed' })
-  async complete(@Param('id') id: string) {
-    return this.purchaseReturnActionsService.complete(id);
+  async complete(@Param('id') id: string, @CurrentUser('id') userId: string) {
+    return this.purchaseReturnActionsService.complete(id, userId);
   }
 
   @Delete(':id')
@@ -128,7 +133,10 @@ export class PurchaseReturnController {
   @ApiOperation({ summary: 'Delete a pending or rejected purchase return' })
   @ApiParam({ name: 'id', type: String })
   @ApiResponse({ status: 204, description: 'Purchase return deleted' })
-  async remove(@Param('id') id: string): Promise<void> {
-    return this.purchaseReturnActionsService.delete(id);
+  async remove(
+    @Param('id') id: string,
+    @CurrentUser('id') userId: string,
+  ): Promise<void> {
+    return this.purchaseReturnActionsService.delete(id, userId);
   }
 }

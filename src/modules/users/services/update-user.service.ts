@@ -1,5 +1,7 @@
 import {
+  BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,6 +10,7 @@ import { CloudinaryService } from '@/common/cloudinary/cloudinary.service';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
 import { ActivityModule, ActivityType } from '@/lib/prisma/client';
+import { Role } from '@/lib/prisma/enums';
 
 import { UpdateUserDto } from '../dto/requests/update-user.dto';
 import { UserResponseDto } from '../dto/responses/user-response.dto';
@@ -25,8 +28,13 @@ export class UpdateUserService {
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
+  /**
+   * Update a staff account while recording the requester and protecting self-role changes.
+   */
   async execute(
     userId: string,
+    requesterId: string,
+    requesterRole: Role,
     updateUserDto: UpdateUserDto,
   ): Promise<UserResponseDto> {
     // ------------------------------------------------------------------------
@@ -47,11 +55,42 @@ export class UpdateUserService {
     /**
      * Prevent updates to SUPER_ADMIN account.
      */
-    if (user.role === 'SUPER_ADMIN') {
+    if (user.role === Role.SUPER_ADMIN) {
       throw new ConflictException('SUPER_ADMIN user cannot be updated');
     }
 
+    if (user.role === Role.ADMIN && requesterRole !== Role.SUPER_ADMIN) {
+      throw new ForbiddenException(
+        'Only SUPER_ADMIN can update ADMIN accounts.',
+      );
+    }
+
     const { name, email, phone, avatar, publicId, role } = updateUserDto;
+
+    if ((avatar !== undefined) !== (publicId !== undefined)) {
+      throw new BadRequestException(
+        'Avatar URL and Cloudinary public ID must be updated together',
+      );
+    }
+
+    if (
+      (avatar === null) !== (publicId === null) &&
+      (avatar === null || publicId === null)
+    ) {
+      throw new BadRequestException(
+        'Avatar URL and Cloudinary public ID must both be removed together',
+      );
+    }
+
+    if (role === Role.ADMIN && requesterRole !== Role.SUPER_ADMIN) {
+      throw new ForbiddenException(
+        'Only SUPER_ADMIN can assign the ADMIN role.',
+      );
+    }
+
+    if (userId === requesterId && role !== undefined && role !== user.role) {
+      throw new BadRequestException('You cannot change your own role.');
+    }
 
     // ------------------------------------------------------------------------
     // 2. Uniqueness & Related Entity Validation
@@ -102,26 +141,35 @@ export class UpdateUserService {
     /**
      * Delete old avatar from Cloudinary if removed or replaced.
      */
-    if ((isAvatarRemoved || isAvatarReplaced) && user.publicId) {
-      await this.cloudinaryService.delete(user.publicId);
-    }
 
     // ------------------------------------------------------------------------
     // 4. Update Database
     // ------------------------------------------------------------------------
 
-    const updatedUser = await this.prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        ...(name !== undefined && { name }),
-        ...(email !== undefined && { email }),
-        ...(phone !== undefined && { phone }),
-        ...(avatar !== undefined && { avatar }),
-        ...(publicId !== undefined && { publicId }),
-        ...(role !== undefined && { role }),
-      },
+    const updatedUser = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.user.update({
+        where: { id: userId },
+        data: {
+          ...(name !== undefined && { name }),
+          ...(email !== undefined && { email }),
+          ...(phone !== undefined && { phone }),
+          ...(avatar !== undefined && { avatar }),
+          ...(publicId !== undefined && { publicId }),
+          ...(role !== undefined && { role }),
+        },
+      });
+
+      if (email !== undefined && email !== user.email) {
+        await tx.userEmailVerificationToken.deleteMany({
+          where: { userId },
+        });
+
+        await tx.userPasswordResetToken.deleteMany({
+          where: { userId },
+        });
+      }
+
+      return updated;
     });
 
     // ------------------------------------------------------------------------
@@ -134,10 +182,28 @@ export class UpdateUserService {
       action: 'UPDATE_USER',
       entityType: 'User',
       entityId: updatedUser.id,
-      userId: userId,
-      oldValue: { id: user.id },
-      newValue: { id: updatedUser.id },
+      userId: requesterId,
+      oldValue: {
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        avatar: user.avatar,
+        publicId: user.publicId,
+        role: user.role,
+      },
+      newValue: {
+        name: updatedUser.name,
+        email: updatedUser.email,
+        phone: updatedUser.phone,
+        avatar: updatedUser.avatar,
+        publicId: updatedUser.publicId,
+        role: updatedUser.role,
+      },
     });
+
+    if ((isAvatarRemoved || isAvatarReplaced) && user.publicId) {
+      await this.cloudinaryService.delete(user.publicId);
+    }
 
     // ------------------------------------------------------------------------
     // 5. Response Transformation

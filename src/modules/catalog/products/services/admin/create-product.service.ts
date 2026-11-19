@@ -18,9 +18,12 @@ export class CreateProductService {
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
-  async execute(dto: CreateProductDto): Promise<AdminProductDetailResponseDto> {
-    const category = await this.prisma.category.findUnique({
-      where: { id: dto.categoryId },
+  async execute(
+    dto: CreateProductDto,
+    userId: string,
+  ): Promise<AdminProductDetailResponseDto> {
+    const category = await this.prisma.category.findFirst({
+      where: { id: dto.categoryId, deletedAt: null },
       select: { id: true },
     });
 
@@ -29,8 +32,8 @@ export class CreateProductService {
     }
 
     if (dto.brandId) {
-      const brand = await this.prisma.brand.findUnique({
-        where: { id: dto.brandId },
+      const brand = await this.prisma.brand.findFirst({
+        where: { id: dto.brandId, deletedAt: null },
         select: { id: true },
       });
 
@@ -85,6 +88,7 @@ export class CreateProductService {
       description: `Product "${dto.name}" was created`,
       entityType: 'Product',
       entityId: product.id,
+      userId,
       newValue: {
         name: dto.name,
         subDescription: dto.subDescription ?? null,

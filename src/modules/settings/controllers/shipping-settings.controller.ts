@@ -16,6 +16,7 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Permissions } from '@/common/decorators/permissions.decorator';
 import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
 import { PermissionsGuard } from '@/common/guards/permissions.guard';
@@ -46,29 +47,39 @@ export class ShippingSettingsController {
   @Patch()
   @Permissions(Permission.SETTING_UPDATE)
   @ApiOkResponse({ description: 'Updated free-shipping threshold' })
-  updateSettings(@Body() dto: UpdateShippingSettingsDto) {
-    return this.shipping.updateSettings(dto);
+  updateSettings(
+    @Body() dto: UpdateShippingSettingsDto,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.shipping.updateSettings(dto, userId);
   }
 
   @Post('zones')
   @Permissions(Permission.SETTING_UPDATE)
   @ApiOkResponse({ type: ShippingZoneResponseDto })
-  createZone(@Body() dto: CreateShippingZoneDto) {
-    return this.shipping.createZone(dto);
+  createZone(
+    @Body() dto: CreateShippingZoneDto,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.shipping.createZone(dto, userId);
   }
 
   @Patch('zones/:id')
   @Permissions(Permission.SETTING_UPDATE)
   @ApiOkResponse({ type: ShippingZoneResponseDto })
-  updateZone(@Param('id') id: string, @Body() dto: UpdateShippingZoneDto) {
-    return this.shipping.updateZone(id, dto);
+  updateZone(
+    @Param('id') id: string,
+    @Body() dto: UpdateShippingZoneDto,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.shipping.updateZone(id, dto, userId);
   }
 
   @Delete('zones/:id')
   @Permissions(Permission.SETTING_UPDATE)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse()
-  deleteZone(@Param('id') id: string) {
-    return this.shipping.deleteZone(id);
+  deleteZone(@Param('id') id: string, @CurrentUser('id') userId: string) {
+    return this.shipping.deleteZone(id, userId);
   }
 }

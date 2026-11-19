@@ -22,6 +22,7 @@ export class UpdateSupplierService {
     supplierId: string,
 
     updateSupplierDto: UpdateSupplierDto,
+    userId: string,
   ): Promise<SupplierResponseDto> {
     const supplier = await this.prisma.supplier.findFirst({
       where: {
@@ -105,6 +106,7 @@ export class UpdateSupplierService {
       description: `Supplier "${supplier.name}" was updated`,
       entityType: 'Supplier',
       entityId: updatedSupplier.id,
+      userId,
 
       oldValue: {
         name: supplier.name,

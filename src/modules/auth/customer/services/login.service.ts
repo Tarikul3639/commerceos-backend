@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CustomerStatus } from '@/lib/prisma/enums';
 import { LoginDto } from '../dto/requests/login.dto';
 
 import { comparePassword } from '@/common/utils/password.util';
@@ -48,15 +49,9 @@ export class CustomerLoginService {
       throw new UnauthorizedException('Invalid email or password.');
     }
 
-    if (customer.status == 'INACTIVE') {
+    if (customer.status !== CustomerStatus.ACTIVE) {
       throw new UnauthorizedException(
-        'Your account is inactive. Please contact support.',
-      );
-    }
-
-    if (customer.status == 'SUSPENDED') {
-      throw new UnauthorizedException(
-        'Your account is suspended. Please contact support.',
+        'Your account is not active. Please contact support.',
       );
     }
 
@@ -77,6 +72,7 @@ export class CustomerLoginService {
       refreshTokenExpiresAt,
       userAgent,
       ipAddress,
+      customer.password,
     );
 
     return {

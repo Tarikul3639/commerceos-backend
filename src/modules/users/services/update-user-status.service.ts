@@ -56,14 +56,31 @@ export class UpdateUserStatusService {
       throw new BadRequestException('SUPER_ADMIN status cannot be changed');
     }
 
-    const updatedUser = await this.prisma.user.update({
-      where: {
-        id: userId,
-      },
+    const updatedUser = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.user.update({
+        where: { id: userId },
+        data: { status: updateUserStatusDto.status },
+      });
 
-      data: {
-        status: updateUserStatusDto.status,
-      },
+      if (updateUserStatusDto.status !== 'ACTIVE') {
+        await tx.userRefreshToken.updateMany({
+          where: {
+            userId,
+            revokedAt: null,
+          },
+          data: { revokedAt: new Date() },
+        });
+
+        await tx.userPasswordResetToken.deleteMany({
+          where: { userId },
+        });
+
+        await tx.userEmailVerificationToken.deleteMany({
+          where: { userId },
+        });
+      }
+
+      return updated;
     });
 
     await this.createActivityLogService.execute({

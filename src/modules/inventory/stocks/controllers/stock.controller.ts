@@ -7,7 +7,12 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { Permissions } from '@/common/decorators/permissions.decorator';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { Permission } from '@/lib/prisma/enums';
 
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
@@ -27,6 +32,7 @@ import { GetStocksService } from '../services/get-stocks.service';
 
 @ApiTags('Stocks')
 @Controller('stocks')
+@UseGuards(UserJwtAuthGuard, PermissionsGuard)
 export class StockController {
   constructor(
     private readonly adjustStockService: AdjustStockService,
@@ -38,6 +44,7 @@ export class StockController {
    * Adjust stock quantity
    */
   @Post('adjust')
+  @Permissions(Permission.STOCK_UPDATE)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Adjust stock quantity',
@@ -58,6 +65,7 @@ export class StockController {
    * Get all stocks
    */
   @Get()
+  @Permissions(Permission.STOCK_READ)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Get all stocks',
@@ -75,6 +83,7 @@ export class StockController {
    * Get stock by ID
    */
   @Get(':id')
+  @Permissions(Permission.STOCK_READ)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Get stock by ID',

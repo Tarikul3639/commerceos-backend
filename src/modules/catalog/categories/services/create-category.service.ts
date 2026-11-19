@@ -14,6 +14,7 @@ export class CreateCategoryService {
 
   async execute(
     createCategoryDto: CreateCategoryDto,
+    userId: string,
   ): Promise<CategoryResponseDto> {
     const { name, slug, description, isActive } = createCategoryDto;
 
@@ -55,6 +56,7 @@ export class CreateCategoryService {
       description: `Category "${newCategory.name}" was created`,
       entityType: 'CATEGORY',
       entityId: newCategory.id,
+      userId,
       newValue: {
         name: newCategory.name,
         slug: newCategory.slug,

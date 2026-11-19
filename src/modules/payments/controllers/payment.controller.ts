@@ -16,11 +16,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CurrentCustomer } from '@/common/decorators/current-customer.decorator';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Permissions } from '@/common/decorators/permissions.decorator';
 import { CustomerJwtAuthGuard } from '@/common/guards/customer-jwt-auth.guard';
 import { PermissionsGuard } from '@/common/guards/permissions.guard';
 import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permission, PaymentStatus } from '@/lib/prisma/enums';
+import { Permission } from '@/lib/prisma/enums';
 import { CreatePaymentDto } from '../dto/requests/create-payment.dto';
 import { PaymentQueryDto } from '../dto/requests/payment-query.dto';
 import { UpdatePaymentStatusDto } from '../dto/requests/update-payment-status.dto';
@@ -121,7 +122,7 @@ export class PaymentController {
   @ApiOperation({
     summary: 'Update payment status',
     description:
-      'Updates payment status according to the backend payment workflow.',
+      'Allows manual cash settlement or marking a pending payment failed/cancelled. Gateway settlement and refund completion require verified provider workflows and are not available here.',
   })
   @ApiParam({
     name: 'id',
@@ -140,11 +141,11 @@ export class PaymentController {
   @ApiResponse({ status: 401, description: 'Authentication required.' })
   @ApiResponse({ status: 403, description: 'Insufficient permissions.' })
   @ApiResponse({ status: 404, description: 'Payment not found.' })
-  updateStatus(@Param('id') id: string, @Body() dto: UpdatePaymentStatusDto) {
-    if (dto.status === PaymentStatus.PAID && !dto.transactionId) {
-      // The service permits CASH payments without a gateway transaction.
-    }
-
-    return this.updatePaymentStatusService.execute(id, dto);
+  updateStatus(
+    @Param('id') id: string,
+    @Body() dto: UpdatePaymentStatusDto,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.updatePaymentStatusService.execute(id, dto, userId);
   }
 }

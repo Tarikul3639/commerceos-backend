@@ -15,7 +15,7 @@ export class DeleteSizeGuideService {
   ) {}
 
   /** Delete an unused size guide */
-  async execute(id: string): Promise<{ message: string }> {
+  async execute(id: string, userId: string): Promise<{ message: string }> {
     const sizeGuide = await this.prisma.sizeGuide.findUnique({
       where: { id },
       select: {
@@ -54,6 +54,7 @@ export class DeleteSizeGuideService {
       description: `Size guide "${sizeGuide.name}" was deleted`,
       entityType: 'SizeGuide',
       entityId: sizeGuide.id,
+      userId,
       oldValue: {
         name: sizeGuide.name,
         description: sizeGuide.description,

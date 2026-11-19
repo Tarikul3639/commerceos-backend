@@ -51,9 +51,7 @@ export class LoginService {
     });
 
     if (!user) {
-      throw new UnauthorizedException(
-        'This email is not registered. Please contact support team.',
-      );
+      throw new UnauthorizedException('Invalid email or password.');
     }
 
     const security = await this.prismaService.securitySettings.upsert({
@@ -128,6 +126,7 @@ export class LoginService {
       tokens.refreshTokenExpiresAt,
       userAgent,
       ipAddress,
+      user.password,
     );
 
     await this.prismaService.user.update({

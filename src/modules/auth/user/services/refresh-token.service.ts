@@ -2,11 +2,12 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { UserRefreshToken } from '@/lib/prisma/client';
+import { Prisma, UserRefreshToken } from '@/lib/prisma/client';
 
 import { comparePassword, hashPassword } from '@/common/utils/password.util';
 
 import { UserJwtPayload } from '@/common/interfaces/user-jwt-payload.interface';
+import { UserStatus } from '@/lib/prisma/enums';
 import { AuthTokensPayload } from '../interfaces/auth-tokens.interface';
 
 import { TokenService } from './token.service';
@@ -31,22 +32,44 @@ export class RefreshTokenService {
     expiresAt: Date,
     userAgent?: string,
     ipAddress?: string,
+    expectedPasswordHash?: string,
   ): Promise<void> {
     const tokenHash = await hashPassword(
       refreshToken,
       this.configService.getOrThrow<number>('bcrypt.saltRounds'),
     );
 
-    await this.prismaService.userRefreshToken.create({
-      data: {
-        tokenHash,
-        expiresAt,
-        userId,
+    await this.prismaService.$transaction(
+      async (tx) => {
+        const user = await tx.user.findFirst({
+          where: {
+            id: userId,
+            status: UserStatus.ACTIVE,
+            deletedAt: null,
+            isVerified: true,
+            ...(expectedPasswordHash && { password: expectedPasswordHash }),
+          },
+          select: { id: true },
+        });
 
-        ...(userAgent ? { userAgent } : {}),
-        ...(ipAddress ? { ipAddress } : {}),
+        if (!user) {
+          throw new UnauthorizedException(
+            'User account is not active or verified.',
+          );
+        }
+
+        await tx.userRefreshToken.create({
+          data: {
+            tokenHash,
+            expiresAt,
+            userId,
+            ...(userAgent ? { userAgent } : {}),
+            ...(ipAddress ? { ipAddress } : {}),
+          },
+        });
       },
-    });
+      { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+    );
   }
 
   /**
@@ -91,6 +114,52 @@ export class RefreshTokenService {
   }
 
   /**
+   * Atomically consume a refresh token so concurrent refresh/logout requests cannot reuse it.
+   */
+  async consume(
+    userId: string,
+    refreshToken: string,
+  ): Promise<UserRefreshToken> {
+    const now = new Date();
+    const tokens = await this.prismaService.userRefreshToken.findMany({
+      where: {
+        userId,
+        revokedAt: null,
+        expiresAt: { gt: now },
+      },
+    });
+
+    for (const token of tokens) {
+      const isMatch = await comparePassword(refreshToken, token.tokenHash);
+
+      if (!isMatch) {
+        continue;
+      }
+
+      const consumed = await this.prismaService.userRefreshToken.updateMany({
+        where: {
+          id: token.id,
+          userId,
+          revokedAt: null,
+          expiresAt: { gt: now },
+        },
+        data: {
+          revokedAt: now,
+          lastUsedAt: now,
+        },
+      });
+
+      if (consumed.count === 0) {
+        throw new UnauthorizedException('Refresh token has already been used.');
+      }
+
+      return token;
+    }
+
+    throw new UnauthorizedException('Invalid refresh token.');
+  }
+
+  /**
    * Rotate a refresh token.
    *
    * The old refresh token is revoked and
@@ -113,27 +182,126 @@ export class RefreshTokenService {
       throw new UnauthorizedException('Invalid or expired refresh token.');
     }
 
-    const storedToken = await this.validate(payload.id, refreshToken);
+    const user = await this.prismaService.user.findFirst({
+      where: {
+        id: payload.id,
+        status: UserStatus.ACTIVE,
+        deletedAt: null,
+        isVerified: true,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+      },
+    });
 
-    await this.revoke(storedToken.id);
+    if (!user) {
+      throw new UnauthorizedException(
+        'User account is not active or verified.',
+      );
+    }
+
+    const now = new Date();
+    const storedTokens = await this.prismaService.userRefreshToken.findMany({
+      where: {
+        userId: user.id,
+        revokedAt: null,
+        expiresAt: { gt: now },
+      },
+    });
+
+    let matchedToken: UserRefreshToken | null = null;
+
+    for (const storedToken of storedTokens) {
+      if (await comparePassword(refreshToken, storedToken.tokenHash)) {
+        matchedToken = storedToken;
+        break;
+      }
+    }
+
+    if (!matchedToken) {
+      throw new UnauthorizedException('Invalid refresh token.');
+    }
 
     const tokens = await this.tokenService.generateAuthTokens(
       {
-        id: payload.id,
-        email: payload.email,
-        name: payload.name,
-        role: payload.role,
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
       },
       payload.remember ?? false,
     );
 
-    await this.save(
-      payload.id,
+    const tokenHash = await hashPassword(
       tokens.refreshToken,
-      tokens.refreshTokenExpiresAt,
-      userAgent,
-      ipAddress,
+      this.configService.getOrThrow<number>('bcrypt.saltRounds'),
     );
+
+    try {
+      await this.prismaService.$transaction(
+        async (tx) => {
+          const activeUser = await tx.user.findFirst({
+            where: {
+              id: user.id,
+              status: UserStatus.ACTIVE,
+              deletedAt: null,
+              isVerified: true,
+            },
+            select: { id: true },
+          });
+
+          if (!activeUser) {
+            throw new UnauthorizedException(
+              'User account is not active or verified.',
+            );
+          }
+
+          const consumed = await tx.userRefreshToken.updateMany({
+            where: {
+              id: matchedToken.id,
+              userId: user.id,
+              revokedAt: null,
+              expiresAt: { gt: now },
+            },
+            data: {
+              revokedAt: now,
+              lastUsedAt: now,
+            },
+          });
+
+          if (consumed.count === 0) {
+            throw new UnauthorizedException(
+              'Refresh token has already been used.',
+            );
+          }
+
+          await tx.userRefreshToken.create({
+            data: {
+              tokenHash,
+              expiresAt: tokens.refreshTokenExpiresAt,
+              userId: user.id,
+              ...(userAgent ? { userAgent } : {}),
+              ...(ipAddress ? { ipAddress } : {}),
+            },
+          });
+        },
+        { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+      );
+    } catch (error) {
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        error.code === 'P2034'
+      ) {
+        throw new UnauthorizedException('Refresh token is no longer valid.');
+      }
+
+      throw error;
+    }
 
     return {
       accessToken: tokens.accessToken,

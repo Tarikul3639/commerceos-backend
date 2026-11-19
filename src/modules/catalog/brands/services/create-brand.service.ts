@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
@@ -14,9 +18,18 @@ export class CreateBrandService {
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
-  async execute(createBrandDto: CreateBrandDto): Promise<BrandResponseDto> {
+  async execute(
+    createBrandDto: CreateBrandDto,
+    userId: string,
+  ): Promise<BrandResponseDto> {
     const { name, slug, description, image, publicId, isActive } =
       createBrandDto;
+
+    if ((image !== undefined) !== (publicId !== undefined)) {
+      throw new BadRequestException(
+        'Brand image URL and Cloudinary public ID must be provided together',
+      );
+    }
 
     const normalizedName = name.trim();
 
@@ -90,6 +103,7 @@ export class CreateBrandService {
       description: `Brand "${brand.name}" was created`,
       entityType: 'BRAND',
       entityId: brand.id,
+      userId,
       newValue: {
         name: brand.name,
         slug: brand.slug,

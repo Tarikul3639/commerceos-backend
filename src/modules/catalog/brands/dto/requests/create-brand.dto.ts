@@ -49,6 +49,7 @@ export class CreateBrandDto {
 
   @IsOptional()
   @IsString()
+  @IsNotEmpty()
   @MaxLength(100)
   @ApiPropertyOptional({
     description: 'Public ID of the brand for external references',

@@ -123,7 +123,10 @@ export class BannerController {
   @ApiOperation({
     summary: 'Delete a banner',
   })
-  async remove(@Param('id') id: string): Promise<void> {
-    return this.deleteBannerService.execute(id);
+  async remove(
+    @Param('id') id: string,
+    @CurrentUser('id') userId: string,
+  ): Promise<void> {
+    return this.deleteBannerService.execute(id, userId);
   }
 }

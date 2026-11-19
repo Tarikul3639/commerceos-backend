@@ -14,7 +14,7 @@ export class DeleteBannerService {
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
-  async execute(bannerId: string): Promise<void> {
+  async execute(bannerId: string, userId: string): Promise<void> {
     const banner = await this.prisma.banner.findUnique({
       where: {
         id: bannerId,
@@ -47,6 +47,7 @@ export class DeleteBannerService {
       action: 'DELETE_BANNER',
       entityType: 'Banner',
       entityId: bannerId,
+      userId,
       oldValue: {
         imagePublicId: banner.imagePublicId,
         mobileImagePublicId: banner.mobileImagePublicId,

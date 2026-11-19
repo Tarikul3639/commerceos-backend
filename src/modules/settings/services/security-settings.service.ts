@@ -16,7 +16,7 @@ export class SecuritySettingsService {
   }
 
   /** Persist policy changes after validating dependent lifetime settings. */
-  async update(dto: UpdateSecuritySettingsDto) {
+  async update(dto: UpdateSecuritySettingsDto, userId: string) {
     if (
       dto.refreshTokenLifetimeDays !== undefined &&
       dto.rememberMeRefreshLifetimeDays !== undefined &&

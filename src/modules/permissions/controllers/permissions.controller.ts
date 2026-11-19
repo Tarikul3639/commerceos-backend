@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseEnumPipe,
   Patch,
   Request,
   UseGuards,
@@ -17,6 +18,7 @@ import {
 } from '@nestjs/swagger';
 import { Permission, Role } from '@/lib/prisma/enums';
 
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Permissions } from '@/common/decorators/permissions.decorator';
 import { PermissionsGuard } from '@/common/guards/permissions.guard';
 // import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
@@ -41,7 +43,6 @@ export class PermissionsController {
   ) {}
 
   @Get('me')
-  @Permissions(Permission.PERMISSION_READ)
   @ApiOperation({
     summary: 'Get current user permissions',
     description:
@@ -122,7 +123,7 @@ export class PermissionsController {
     status: 403,
     description: 'Permission denied.',
   })
-  async getRolePermissions(@Param('role') role: Role) {
+  async getRolePermissions(@Param('role', new ParseEnumPipe(Role)) role: Role) {
     return this.getPermissionsService.getRolePermissions(role);
   }
 
@@ -172,9 +173,14 @@ export class PermissionsController {
     description: 'Permission denied.',
   })
   async updateRolePermissions(
-    @Param('role') role: Role,
+    @Param('role', new ParseEnumPipe(Role)) role: Role,
     @Body() dto: UpdateRolePermissionsDto,
+    @CurrentUser('role') actorRole: Role,
   ) {
-    return this.updateRolePermissionsService.execute(role, dto.permissions);
+    return this.updateRolePermissionsService.execute(
+      role,
+      dto.permissions,
+      actorRole,
+    );
   }
 }

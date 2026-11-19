@@ -1,9 +1,11 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 
+import { Prisma } from '@/lib/prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
 import { ActivityModule, ActivityType } from '@/lib/prisma/client';
@@ -18,85 +20,129 @@ export class AdjustStockService {
     private readonly createActivityLog: CreateActivityLogService,
   ) {}
 
+  /**
+   * Apply an atomic stock adjustment and prevent concurrent adjustments from making stock negative.
+   */
   async execute(
-    _userId: string,
+    userId: string,
     dto: AdjustStockDto,
   ): Promise<StockResponseDto> {
-    const variant = await this.prisma.productVariant.findFirst({
-      where: {
-        id: dto.variantId,
-        deletedAt: null,
-      },
-      select: {
-        id: true,
-        stock: true,
-      },
-    });
-
-    if (!variant) {
-      throw new NotFoundException('Product variant not found');
+    if (dto.quantity === 0) {
+      throw new BadRequestException('Stock adjustment quantity cannot be zero');
     }
 
-    const stock = variant.stock + dto.quantity;
+    let adjustment: {
+      previousStock: number;
+      updated: {
+        id: string;
+        productId: string;
+        stock: number;
+        sku: string;
+        updatedAt: Date;
+        product: {
+          name: string;
+          images: Array<{ imageUrl: string }>;
+        };
+      };
+    };
 
-    if (stock < 0) {
-      throw new BadRequestException('Stock cannot be negative');
+    try {
+      adjustment = await this.prisma.$transaction(
+        async (tx) => {
+          const variant = await tx.productVariant.findFirst({
+            where: {
+              id: dto.variantId,
+              deletedAt: null,
+            },
+            select: {
+              id: true,
+              stock: true,
+            },
+          });
+
+          if (!variant) {
+            throw new NotFoundException('Product variant not found');
+          }
+
+          const minimumStock = dto.quantity < 0 ? -dto.quantity : 0;
+          const updatedCount = await tx.productVariant.updateMany({
+            where: {
+              id: variant.id,
+              deletedAt: null,
+              stock: { gte: minimumStock },
+            },
+            data: {
+              stock: { increment: dto.quantity },
+            },
+          });
+
+          if (updatedCount.count === 0) {
+            throw new BadRequestException('Stock cannot be negative');
+          }
+
+          const updated = await tx.productVariant.findUniqueOrThrow({
+            where: { id: variant.id },
+            include: {
+              product: {
+                include: {
+                  images: {
+                    orderBy: { sortOrder: 'asc' },
+                    take: 1,
+                  },
+                },
+              },
+            },
+          });
+
+          return {
+            previousStock: variant.stock,
+            updated,
+          };
+        },
+        { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+      );
+    } catch (error) {
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        error.code === 'P2034'
+      ) {
+        throw new ConflictException(
+          'Stock changed during this adjustment. Please retry.',
+        );
+      }
+
+      throw error;
     }
 
-    await this.prisma.productVariant.update({
-      where: {
-        id: variant.id,
-      },
-      data: {
-        stock,
-      },
-    });
-
-    // Activity Log Creation
     await this.createActivityLog.execute({
       type: ActivityType.UPDATE,
       module: ActivityModule.STOCK_MOVEMENT,
       action: 'ADJUST_STOCK',
-      description: `Stock adjusted by ${dto.quantity} for variant ${variant.id}`,
+      description: `Stock adjusted by ${dto.quantity} for variant ${adjustment.updated.id}`,
       entityType: 'ProductVariant',
-      entityId: variant.id,
+      entityId: adjustment.updated.id,
       oldValue: {
-        quantity: variant.stock,
+        quantity: adjustment.previousStock,
       },
       newValue: {
-        quantity: stock,
+        quantity: adjustment.updated.stock,
+        adjustment: dto.quantity,
         reason: dto.reason ?? null,
       },
-      userId: _userId,
+      userId,
     });
 
-    return this.prisma.productVariant
-      .findUniqueOrThrow({
-        where: {
-          id: variant.id,
-        },
-        include: {
-          product: {
-            include: {
-              images: {
-                orderBy: {
-                  sortOrder: 'asc',
-                },
-                take: 1,
-              },
-            },
-          },
-        },
-      })
-      .then((updated) => ({
-        id: updated.id,
-        variantId: updated.id,
-        productId: updated.productId,
-        quantity: updated.stock,
-        sku: updated.sku,
-        productName: updated.product.name,
-        productImage: updated.product.images[0]?.imageUrl ?? null,
-        updatedAt: updated.updatedAt,
-      }));
+    return {
+      id: adjustment.updated.id,
+      variantId: adjustment.updated.id,
+      productId: adjustment.updated.productId,
+      quantity: adjustment.updated.stock,
+      sku: adjustment.updated.sku,
+      productName: adjustment.updated.product.name,
+      productImage: adjustment.updated.product.images[0]?.imageUrl ?? null,
+      updatedAt: adjustment.updated.updatedAt,
+    };
   }
 }

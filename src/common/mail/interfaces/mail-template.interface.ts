@@ -19,6 +19,8 @@ export interface ResetPasswordTemplate extends BaseMailTemplate {
 export interface WelcomeTemplate extends BaseMailTemplate {
   name: string;
   loginUrl: string;
+  passwordSetupUrl: string;
+  expireIn: string;
 }
 
 export interface NotificationTemplate extends BaseMailTemplate {

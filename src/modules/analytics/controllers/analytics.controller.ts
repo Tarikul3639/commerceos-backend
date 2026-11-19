@@ -1,10 +1,15 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { Permissions } from '@/common/decorators/permissions.decorator';
+import { Permission } from '@/lib/prisma/enums';
 
 import { AnalyticsQueryDto } from '../dto/requests/analytics-query.dto';
 
@@ -23,6 +28,8 @@ import { GetPurchaseSummaryService } from '../services/get-purchase-summary.serv
 @ApiTags('Analytics')
 @ApiBearerAuth()
 @Controller('analytics')
+@UseGuards(UserJwtAuthGuard, PermissionsGuard)
+@Permissions(Permission.ANALYTICS_READ)
 export class AnalyticsController {
   constructor(
     private readonly getRevenueChartService: GetRevenueChartService,

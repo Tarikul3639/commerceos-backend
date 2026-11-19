@@ -6,12 +6,17 @@ import {
 
 import { PurchaseStatus } from '@/lib/prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 import { CreatePurchaseReturnDto } from '../dto/requests/create-purchase-return.dto';
 import { PurchaseReturnResponseDto } from '../dto/responses/purchase-return-response.dto';
 
 @Injectable()
 export class CreatePurchaseReturnService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly createActivityLogService: CreateActivityLogService,
+  ) {}
 
   async execute(
     userId: string,
@@ -188,6 +193,21 @@ export class CreatePurchaseReturnService {
             email: true,
           },
         },
+      },
+    });
+
+    await this.createActivityLogService.execute({
+      type: ActivityType.CREATE,
+      module: ActivityModule.PURCHASE_RETURN,
+      action: 'CREATE_PURCHASE_RETURN',
+      description: `Purchase return ${purchaseReturn.returnNo} was created`,
+      entityType: 'PurchaseReturn',
+      entityId: purchaseReturn.id,
+      userId,
+      newValue: {
+        purchaseId,
+        itemCount: purchaseReturn.items.length,
+        status: purchaseReturn.status,
       },
     });
 

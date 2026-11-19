@@ -19,6 +19,7 @@ import {
 
 import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
 import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Permissions } from '@/common/decorators/permissions.decorator';
 import { Permission } from '@/lib/prisma/enums';
 
@@ -43,8 +44,11 @@ export class PaymentGatewayController {
     description: 'Payment gateway configuration created successfully',
     type: PaymentGatewayResponseDto,
   })
-  create(@Body() createPaymentGatewayDto: CreatePaymentGatewayDto) {
-    return this.paymentGatewayService.create(createPaymentGatewayDto);
+  create(
+    @Body() createPaymentGatewayDto: CreatePaymentGatewayDto,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.paymentGatewayService.create(createPaymentGatewayDto, userId);
   }
 
   /** Returns all configured payment gateways. */
@@ -89,7 +93,12 @@ export class PaymentGatewayController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePaymentGatewayDto: UpdatePaymentGatewayDto,
+    @CurrentUser('id') userId: string,
   ) {
-    return this.paymentGatewayService.update(id, updatePaymentGatewayDto);
+    return this.paymentGatewayService.update(
+      id,
+      updatePaymentGatewayDto,
+      userId,
+    );
   }
 }

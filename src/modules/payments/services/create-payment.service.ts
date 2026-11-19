@@ -21,7 +21,20 @@ export class CreatePaymentService {
   ): Promise<PaymentResponseDto> {
     const amount = new Prisma.Decimal(dto.amount);
 
-    // Return existing payment for an idempotent request.
+    // Verify order ownership before returning any idempotent payment response.
+    const ownedOrder = await this.prisma.order.findFirst({
+      where: {
+        id: dto.orderId,
+        customerId,
+      },
+      select: { id: true },
+    });
+
+    if (!ownedOrder) {
+      throw new NotFoundException('Order not found');
+    }
+
+    // Return an existing payment only when the key and order belong to this customer.
     if (dto.idempotencyKey) {
       const existing = await this.prisma.payment.findUnique({
         where: { idempotencyKey: dto.idempotencyKey },
@@ -99,7 +112,6 @@ export class CreatePaymentService {
       return tx.payment.create({
         data: {
           orderId: order.id,
-          userId: customerId,
           amount,
           method: dto.method,
           provider,

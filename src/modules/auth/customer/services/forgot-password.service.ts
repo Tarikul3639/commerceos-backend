@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CustomerStatus } from '@/lib/prisma/enums';
 import { MailService } from '@/common/mail/mail.service';
 
 import { ForgotPasswordDto } from '../dto/requests/forgot-password.dto';
@@ -29,13 +30,13 @@ export class CustomerForgotPasswordService {
         id: true,
         name: true,
         email: true,
+        status: true,
       },
     });
 
-    if (!customer) {
-      throw new NotFoundException(
-        'Customer with the provided email does not exist.',
-      );
+    if (!customer || customer.status !== CustomerStatus.ACTIVE) {
+      // Keep the response identical for unknown, inactive and unverified accounts.
+      return;
     }
 
     const token = this.tokenService.generateRandomToken();
@@ -58,12 +59,22 @@ export class CustomerForgotPasswordService {
     });
 
     // Create a new password reset token for the customer
-    await this.prismaService.customerPasswordResetToken.create({
-      data: {
-        tokenHash,
-        expiresAt,
-        customerId: customer.id,
-      },
+    await this.prismaService.$transaction(async (tx) => {
+      await tx.customerPasswordResetToken.updateMany({
+        where: {
+          customerId: customer.id,
+          usedAt: null,
+        },
+        data: { usedAt: new Date() },
+      });
+
+      await tx.customerPasswordResetToken.create({
+        data: {
+          tokenHash,
+          expiresAt,
+          customerId: customer.id,
+        },
+      });
     });
 
     // Construct the reset password URL

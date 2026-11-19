@@ -59,7 +59,8 @@ export class PurchaseController {
   ) {}
 
   @Post()
-  @UseGuards(UserJwtAuthGuard, RolesGuard)
+  @UseGuards(UserJwtAuthGuard, RolesGuard, PermissionsGuard)
+  @Permissions(Permission.PURCHASE_CREATE)
   @ApiOperation({
     summary: 'Create a new purchase',
   })
@@ -75,6 +76,8 @@ export class PurchaseController {
   }
 
   @Get()
+  @UseGuards(UserJwtAuthGuard, PermissionsGuard)
+  @Permissions(Permission.PURCHASE_READ)
   @ApiOperation({
     summary: 'Get all purchases',
   })
@@ -83,6 +86,8 @@ export class PurchaseController {
   }
 
   @Get(':id')
+  @UseGuards(UserJwtAuthGuard, PermissionsGuard)
+  @Permissions(Permission.PURCHASE_READ)
   @ApiOperation({
     summary: 'Get purchase by ID',
   })
@@ -99,6 +104,8 @@ export class PurchaseController {
   }
 
   @Put(':id')
+  @UseGuards(UserJwtAuthGuard, PermissionsGuard)
+  @Permissions(Permission.PURCHASE_UPDATE)
   @ApiOperation({
     summary: 'Update a pending purchase',
   })
@@ -113,11 +120,14 @@ export class PurchaseController {
   async update(
     @Param('id') id: string,
     @Body() updatePurchaseDto: UpdatePurchaseDto,
+    @CurrentUser('id') userId: string,
   ) {
-    return this.updatePurchaseService.execute(id, updatePurchaseDto);
+    return this.updatePurchaseService.execute(id, updatePurchaseDto, userId);
   }
 
   @Patch(':id/receive')
+  @UseGuards(UserJwtAuthGuard, PermissionsGuard)
+  @Permissions(Permission.PURCHASE_UPDATE)
   @ApiOperation({
     summary: 'Receive a purchase and add stock',
   })
@@ -134,6 +144,8 @@ export class PurchaseController {
   }
 
   @Patch(':id/cancel')
+  @UseGuards(UserJwtAuthGuard, PermissionsGuard)
+  @Permissions(Permission.PURCHASE_UPDATE)
   @ApiOperation({
     summary: 'Cancel a pending purchase',
   })
@@ -145,12 +157,9 @@ export class PurchaseController {
     @Param('id') id: string,
 
     @Body() cancelPurchaseDto: CancelPurchaseDto,
+    @CurrentUser('id') userId: string,
   ) {
-    return this.cancelPurchaseService.execute(
-      id,
-
-      cancelPurchaseDto,
-    );
+    return this.cancelPurchaseService.execute(id, cancelPurchaseDto, userId);
   }
 
   @Delete(':id')
@@ -162,7 +171,10 @@ export class PurchaseController {
   })
   @ApiParam({ name: 'id', type: String })
   @ApiResponse({ status: 204, description: 'Purchase deleted' })
-  async remove(@Param('id') id: string): Promise<void> {
-    return this.deletePurchaseService.execute(id);
+  async remove(
+    @Param('id') id: string,
+    @CurrentUser('id') userId: string,
+  ): Promise<void> {
+    return this.deletePurchaseService.execute(id, userId);
   }
 }

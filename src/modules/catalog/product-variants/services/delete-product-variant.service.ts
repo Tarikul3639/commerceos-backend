@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
@@ -13,11 +17,18 @@ export class DeleteProductVariantService {
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
-  async execute(variantId: string): Promise<ProductVariantResponseDto> {
+  /**
+   * Delete only unused zero-stock variants; referenced variants must be deactivated instead.
+   */
+  async execute(
+    variantId: string,
+    userId: string,
+  ): Promise<ProductVariantResponseDto> {
     return this.prisma.$transaction(async (tx) => {
       const variant = await tx.productVariant.findFirst({
         where: {
           id: variantId,
+          deletedAt: null,
         },
         include: {
           options: {
@@ -26,20 +37,28 @@ export class DeleteProductVariantService {
             },
           },
           cartItems: {
-            select: {
-              id: true,
-            },
+            select: { id: true },
           },
           orderItems: {
-            select: {
-              id: true,
-            },
+            select: { id: true },
           },
         },
       });
 
       if (!variant) {
         throw new NotFoundException('Product variant not found');
+      }
+
+      if (variant.stock > 0) {
+        throw new BadRequestException(
+          'Adjust variant stock to zero before deleting this variant',
+        );
+      }
+
+      if (variant.cartItems.length > 0 || variant.orderItems.length > 0) {
+        throw new BadRequestException(
+          'Variants referenced by carts or order history cannot be deleted; deactivate the variant instead',
+        );
       }
 
       const oldValue = {
@@ -60,92 +79,37 @@ export class DeleteProductVariantService {
         })),
       };
 
-      const hasRelations =
-        variant.cartItems.length > 0 || variant.orderItems.length > 0;
+      await tx.productVariant.delete({
+        where: { id: variant.id },
+      });
 
-      if (!hasRelations) {
-        await tx.productVariant.delete({
-          where: {
-            id: variant.id,
-          },
-        });
-
-        await this.createActivityLogService.execute({
+      await this.createActivityLogService.execute(
+        {
           type: ActivityType.DELETE,
           module: ActivityModule.PRODUCT,
           action: 'DELETE_PRODUCT_VARIANT',
           description: `Product variant "${variant.title ?? variant.sku}" was permanently deleted`,
           entityType: 'ProductVariant',
           entityId: variant.id,
+          userId,
           oldValue,
           newValue: 'Variant permanently deleted',
-        });
-
-        return {
-          id: variant.id,
-          productId: variant.productId,
-          title: variant.title,
-          sku: variant.sku,
-          barcode: variant.barcode,
-          stock: variant.stock,
-          isActive: false,
-          deletedAt: null,
-          createdAt: variant.createdAt,
-          updatedAt: new Date(),
-          options: [],
-        };
-      }
-
-      const deletedVariant = await tx.productVariant.update({
-        where: {
-          id: variant.id,
         },
-        data: {
-          isActive: false,
-          deletedAt: new Date(),
-        },
-        include: {
-          options: {
-            include: {
-              option: true,
-            },
-          },
-        },
-      });
-
-      await this.createActivityLogService.execute({
-        type: ActivityType.DELETE,
-        module: ActivityModule.PRODUCT,
-        action: 'SOFT_DELETE_PRODUCT_VARIANT',
-        description: `Product variant "${variant.title ?? variant.sku}" was soft deleted`,
-        entityType: 'ProductVariant',
-        entityId: variant.id,
-        oldValue,
-        newValue: {
-          isActive: deletedVariant.isActive,
-          deletedAt: deletedVariant.deletedAt,
-        },
-      });
+        tx,
+      );
 
       return {
-        id: deletedVariant.id,
-        productId: deletedVariant.productId,
-        title: deletedVariant.title,
-        sku: deletedVariant.sku,
-        barcode: deletedVariant.barcode,
-        stock: deletedVariant.stock,
-        isActive: deletedVariant.isActive,
-        deletedAt: deletedVariant.deletedAt,
-        createdAt: deletedVariant.createdAt,
-        updatedAt: deletedVariant.updatedAt,
-        options: deletedVariant.options.map((value) => ({
-          id: value.id,
-          value: value.value,
-          colorHex: value.colorHex,
-          optionId: value.optionId,
-          optionName: value.option.name,
-          optionType: value.option.type,
-        })),
+        id: variant.id,
+        productId: variant.productId,
+        title: variant.title,
+        sku: variant.sku,
+        barcode: variant.barcode,
+        stock: variant.stock,
+        isActive: false,
+        deletedAt: null,
+        createdAt: variant.createdAt,
+        updatedAt: new Date(),
+        options: [],
       };
     });
   }

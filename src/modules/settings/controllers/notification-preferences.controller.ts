@@ -5,6 +5,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Permissions } from '@/common/decorators/permissions.decorator';
 import { PermissionsGuard } from '@/common/guards/permissions.guard';
 import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
@@ -32,7 +33,10 @@ export class NotificationPreferencesController {
   @Permissions(Permission.SETTING_UPDATE)
   @ApiOperation({ summary: 'Update store notification preferences' })
   @ApiOkResponse({ type: NotificationPreferencesResponseDto })
-  update(@Body() dto: UpdateNotificationPreferencesDto) {
-    return this.preferences.update(dto);
+  update(
+    @Body() dto: UpdateNotificationPreferencesDto,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.preferences.update(dto, userId);
   }
 }

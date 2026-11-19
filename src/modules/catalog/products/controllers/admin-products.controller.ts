@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -15,6 +16,12 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { Permissions } from '@/common/decorators/permissions.decorator';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { Permission } from '@/lib/prisma/enums';
 
 import { CreateProductDto } from '../dto/requests/create-product.dto';
 import { ProductQueryDto } from '../dto/requests/product-query.dto';
@@ -32,6 +39,7 @@ import { UpdateProductService } from '../services/admin/update-product.service';
 
 @ApiTags('Admin - Products')
 @Controller('admin/products')
+@UseGuards(UserJwtAuthGuard, PermissionsGuard)
 export class AdminProductsController {
   constructor(
     private readonly createProductService: CreateProductService,
@@ -43,15 +51,18 @@ export class AdminProductsController {
   ) {}
 
   @Post()
+  @Permissions(Permission.PRODUCT_CREATE)
   @ApiOperation({ summary: 'Create a product' })
   @ApiCreatedResponse({ type: AdminProductDetailResponseDto })
   async create(
     @Body() dto: CreateProductDto,
+    @CurrentUser('id') userId: string,
   ): Promise<AdminProductDetailResponseDto> {
-    return this.createProductService.execute(dto);
+    return this.createProductService.execute(dto, userId);
   }
 
   @Get()
+  @Permissions(Permission.PRODUCT_READ)
   @ApiOperation({ summary: 'Get paginated admin products' })
   @ApiOkResponse({ type: AdminProductListResponseDto })
   async findAll(
@@ -61,6 +72,7 @@ export class AdminProductsController {
   }
 
   @Get(':productId/details')
+  @Permissions(Permission.PRODUCT_READ)
   @ApiOperation({ summary: 'Get admin product details' })
   @ApiParam({
     name: 'productId',
@@ -74,6 +86,7 @@ export class AdminProductsController {
   }
 
   @Patch(':productId')
+  @Permissions(Permission.PRODUCT_UPDATE)
   @ApiOperation({ summary: 'Update a product' })
   @ApiParam({
     name: 'productId',
@@ -83,11 +96,13 @@ export class AdminProductsController {
   async update(
     @Param('productId') productId: string,
     @Body() dto: UpdateProductDto,
+    @CurrentUser('id') userId: string,
   ): Promise<AdminProductDetailResponseDto> {
-    return this.updateProductService.execute(productId, dto);
+    return this.updateProductService.execute(productId, dto, userId);
   }
 
   @Delete(':productId')
+  @Permissions(Permission.PRODUCT_DELETE)
   @ApiOperation({ summary: 'Soft delete a product' })
   @ApiParam({
     name: 'productId',
@@ -102,11 +117,13 @@ export class AdminProductsController {
   })
   async remove(
     @Param('productId') productId: string,
+    @CurrentUser('id') userId: string,
   ): Promise<{ message: string }> {
-    return this.deleteProductService.execute(productId);
+    return this.deleteProductService.execute(productId, userId);
   }
 
   @Patch(':productId/restore')
+  @Permissions(Permission.PRODUCT_RESTORE)
   @ApiOperation({ summary: 'Restore a soft-deleted product' })
   @ApiParam({
     name: 'productId',
@@ -121,7 +138,8 @@ export class AdminProductsController {
   })
   async restore(
     @Param('productId') productId: string,
+    @CurrentUser('id') userId: string,
   ): Promise<{ message: string }> {
-    return this.restoreProductService.execute(productId);
+    return this.restoreProductService.execute(productId, userId);
   }
 }

@@ -25,7 +25,7 @@ export class ShippingSettingsService {
     };
   }
 
-  async updateSettings(dto: UpdateShippingSettingsDto) {
+  async updateSettings(dto: UpdateShippingSettingsDto, userId: string) {
     const existing = await this.prisma.shippingSettings.findUnique({
       where: { id: 'default' },
     });
@@ -45,7 +45,7 @@ export class ShippingSettingsService {
     };
   }
 
-  async createZone(dto: CreateShippingZoneDto) {
+  async createZone(dto: CreateShippingZoneDto, userId: string) {
     const districtCity = this.normalizeName(dto.districtCity);
     const districtCityKey = this.normalizeKey(districtCity);
 
@@ -68,7 +68,7 @@ export class ShippingSettingsService {
     return this.mapZone(zone);
   }
 
-  async updateZone(id: string, dto: UpdateShippingZoneDto) {
+  async updateZone(id: string, dto: UpdateShippingZoneDto, userId: string) {
     const existing = await this.prisma.shippingZone.findUnique({
       where: { id },
     });
@@ -103,7 +103,7 @@ export class ShippingSettingsService {
     return this.mapZone(zone);
   }
 
-  async deleteZone(id: string) {
+  async deleteZone(id: string, userId: string) {
     const existing = await this.prisma.shippingZone.findUnique({
       where: { id },
     });

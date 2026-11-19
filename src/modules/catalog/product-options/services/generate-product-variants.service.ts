@@ -5,14 +5,22 @@ import {
 } from '@nestjs/common';
 
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
+import { ActivityModule, ActivityType } from '@/lib/prisma/client';
 
 import { ProductVariantResponseDto } from '@/modules/catalog/product-variants/dto/responses/product-variant-response.dto';
 
 @Injectable()
 export class GenerateProductVariantsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly createActivityLogService: CreateActivityLogService,
+  ) {}
 
-  async execute(productId: string): Promise<ProductVariantResponseDto[]> {
+  async execute(
+    productId: string,
+    userId: string,
+  ): Promise<ProductVariantResponseDto[]> {
     const product = await this.prisma.product.findFirst({
       where: {
         id: productId,
@@ -41,6 +49,18 @@ export class GenerateProductVariantsService {
     ) {
       throw new BadRequestException(
         'Every product option must have at least one value',
+      );
+    }
+
+    // Cap combinations to prevent a single request from generating unbounded records.
+    const combinationCount = options.reduce(
+      (count, option) => count * option.values.length,
+      1,
+    );
+
+    if (!Number.isSafeInteger(combinationCount) || combinationCount > 500) {
+      throw new BadRequestException(
+        'Product options exceed the 500-variant generation limit',
       );
     }
 
@@ -113,6 +133,22 @@ export class GenerateProductVariantsService {
         deletedAt: variant.deletedAt,
         createdAt: variant.createdAt,
         updatedAt: variant.updatedAt,
+      });
+    }
+
+    if (variants.length > 0) {
+      await this.createActivityLogService.execute({
+        type: ActivityType.CREATE,
+        module: ActivityModule.PRODUCT,
+        action: 'GENERATE_PRODUCT_VARIANTS',
+        description: `${variants.length} product variants were generated`,
+        entityType: 'Product',
+        entityId: product.id,
+        userId,
+        newValue: {
+          variantIds: variants.map((variant) => variant.id),
+          count: variants.length,
+        },
       });
     }
 
