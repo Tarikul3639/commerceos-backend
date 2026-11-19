@@ -1,5 +1,7 @@
 import {
   Body,
+  Delete,
+  Param,
   UnauthorizedException,
   Controller,
   HttpCode,
@@ -196,6 +198,69 @@ export class UserAuthController {
     }
 
     CookieUtil.clearUserAuthCookies(response, this.configService);
+  }
+
+  /**
+   * List active sessions for the authenticated user.
+   */
+  @UseGuards(UserJwtAuthGuard)
+  @Get('sessions')
+  @HttpCode(HttpStatus.OK)
+  async getActiveSessions(
+    @CurrentUser('id') userId: string,
+    @Req() request: Request,
+  ) {
+    const refreshToken = request.cookies?.[USER_REFRESH_TOKEN_COOKIE] as
+      string | undefined;
+    const sessions = await this.refreshTokenService.listActiveSessions(
+      userId,
+      refreshToken,
+    );
+
+    return { data: sessions };
+  }
+
+  /** Revoke a specific session belonging to the authenticated user. */
+  @UseGuards(UserJwtAuthGuard)
+  @Delete('sessions/:sessionId')
+  @HttpCode(HttpStatus.OK)
+  async revokeSession(
+    @CurrentUser('id') userId: string,
+    @Param('sessionId') sessionId: string,
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const refreshToken = request.cookies?.[USER_REFRESH_TOKEN_COOKIE] as
+      string | undefined;
+    const result = await this.refreshTokenService.revokeSession(
+      userId,
+      sessionId,
+      refreshToken,
+    );
+
+    if (result.isCurrent) {
+      CookieUtil.clearUserAuthCookies(response, this.configService);
+    }
+
+    return { message: 'Session revoked successfully', ...result };
+  }
+
+  /** Revoke all sessions except the current browser session. */
+  @UseGuards(UserJwtAuthGuard)
+  @Post('logout-other-sessions')
+  @HttpCode(HttpStatus.OK)
+  async logoutOtherSessions(
+    @CurrentUser('id') userId: string,
+    @Req() request: Request,
+  ) {
+    const refreshToken = request.cookies?.[USER_REFRESH_TOKEN_COOKIE] as
+      string | undefined;
+    const revokedCount = await this.refreshTokenService.revokeOtherSessions(
+      userId,
+      refreshToken,
+    );
+
+    return { message: 'Other sessions revoked successfully', revokedCount };
   }
 
   /**

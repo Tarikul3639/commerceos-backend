@@ -68,6 +68,7 @@ export class RefreshTokenService {
           data: {
             tokenHash,
             expiresAt,
+            lastUsedAt: new Date(),
             userId,
             ...(userAgent ? { userAgent } : {}),
             ...(ipAddress ? { ipAddress } : {}),
@@ -288,6 +289,7 @@ export class RefreshTokenService {
             data: {
               tokenHash,
               expiresAt: tokens.refreshTokenExpiresAt,
+              lastUsedAt: now,
               userId: user.id,
               ...(userAgent ? { userAgent } : {}),
               ...(ipAddress ? { ipAddress } : {}),
@@ -314,6 +316,122 @@ export class RefreshTokenService {
       refreshToken: tokens.refreshToken,
       refreshTokenExpiresAt: tokens.refreshTokenExpiresAt,
     };
+  }
+
+  /**
+   * List non-expired active sessions and identify the current browser session.
+   */
+  async listActiveSessions(userId: string, refreshToken?: string) {
+    const sessions = await this.prismaService.userRefreshToken.findMany({
+      where: {
+        userId,
+        revokedAt: null,
+        expiresAt: { gt: new Date() },
+      },
+      orderBy: { lastUsedAt: 'desc' },
+      select: {
+        id: true,
+        userAgent: true,
+        ipAddress: true,
+        createdAt: true,
+        lastUsedAt: true,
+        expiresAt: true,
+        tokenHash: true,
+      },
+    });
+
+    let currentSessionId: string | null = null;
+    if (refreshToken) {
+      for (const session of sessions) {
+        if (await comparePassword(refreshToken, session.tokenHash)) {
+          currentSessionId = session.id;
+          break;
+        }
+      }
+    }
+
+    return sessions.map((session) => ({
+      id: session.id,
+      userAgent: session.userAgent,
+      ipAddress: session.ipAddress,
+      createdAt: session.createdAt,
+      lastUsedAt: session.lastUsedAt,
+      expiresAt: session.expiresAt,
+      isCurrent: session.id === currentSessionId,
+    }));
+  }
+
+  /** Revoke one active session belonging to the authenticated user. */
+  async revokeSession(
+    userId: string,
+    sessionId: string,
+    refreshToken?: string,
+  ): Promise<{ isCurrent: boolean }> {
+    const session = await this.prismaService.userRefreshToken.findFirst({
+      where: { id: sessionId, userId, revokedAt: null },
+      select: { id: true, tokenHash: true },
+    });
+
+    if (!session) {
+      throw new UnauthorizedException('Session not found or already revoked.');
+    }
+
+    const isCurrent = refreshToken
+      ? await comparePassword(refreshToken, session.tokenHash)
+      : false;
+
+    await this.prismaService.userRefreshToken.updateMany({
+      where: { id: sessionId, userId, revokedAt: null },
+      data: { revokedAt: new Date() },
+    });
+
+    return { isCurrent };
+  }
+
+  /** Revoke every active session except the current browser session. */
+  async revokeOtherSessions(
+    userId: string,
+    refreshToken?: string,
+  ): Promise<number> {
+    if (!refreshToken) {
+      throw new UnauthorizedException(
+        'Current session could not be identified.',
+      );
+    }
+
+    const sessions = await this.prismaService.userRefreshToken.findMany({
+      where: {
+        userId,
+        revokedAt: null,
+        expiresAt: { gt: new Date() },
+      },
+      select: { id: true, tokenHash: true },
+    });
+
+    let currentSessionId: string | null = null;
+    for (const session of sessions) {
+      if (await comparePassword(refreshToken, session.tokenHash)) {
+        currentSessionId = session.id;
+        break;
+      }
+    }
+
+    if (!currentSessionId) {
+      throw new UnauthorizedException(
+        'Current session could not be identified.',
+      );
+    }
+
+    const result = await this.prismaService.userRefreshToken.updateMany({
+      where: {
+        userId,
+        revokedAt: null,
+        id: { not: currentSessionId },
+      },
+      data: { revokedAt: new Date() },
+    });
+
+    return result.count;
   }
 
   /**
