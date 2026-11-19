@@ -12,6 +12,7 @@ import {
   loggerConfig,
   mailConfig,
   swaggerConfig,
+  stripeConfig,
   envValidationSchema,
 } from './config/index.js';
 
@@ -72,6 +73,7 @@ import { PaymentModule } from './modules/payments/payment.module.js';
         loggerConfig,
         mailConfig,
         swaggerConfig,
+        stripeConfig,
       ],
     }),
     EmailModule,

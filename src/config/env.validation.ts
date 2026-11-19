@@ -82,6 +82,11 @@ const envValidationSchema = Joi.object({
   SMTP_USER: Joi.string().required(),
   SMTP_PASS: Joi.string().required(),
   SMTP_FROM: Joi.string().required(),
+
+  // Stripe credentials are optional until the Stripe gateway is enabled.
+  STRIPE_PUBLISHABLE_KEY: Joi.string().allow('').default(''),
+  STRIPE_SECRET_KEY: Joi.string().allow('').default(''),
+  STRIPE_WEBHOOK_SECRET: Joi.string().allow('').default(''),
 });
 
 export default envValidationSchema;

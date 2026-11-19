@@ -42,6 +42,9 @@ export class PaymentResponseDto {
   @ApiPropertyOptional({ nullable: true })
   notes!: string | null;
 
+  @ApiPropertyOptional({ description: 'Stripe-hosted Checkout URL.' })
+  checkoutUrl?: string;
+
   @ApiProperty()
   createdAt!: Date;
 

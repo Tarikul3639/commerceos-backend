@@ -8,3 +8,4 @@ export { default as envValidationSchema } from './env.validation.js';
 export { default as loggerConfig } from './logger.config.js';
 export { default as mailConfig } from './mail.config.js';
 export { default as swaggerConfig } from './swagger.config.js';
+export { default as stripeConfig } from './stripe.config.js';
