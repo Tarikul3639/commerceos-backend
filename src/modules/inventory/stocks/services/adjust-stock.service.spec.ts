@@ -1,111 +1,133 @@
-import { vi } from 'vitest';
-vi.mock('../../../../common/prisma/prisma.service.js', () => ({
-  PrismaService: class PrismaService {},
-}));
-vi.mock(
-  '../../../activity-logs/services/create-activity-log.service.js',
-  () => ({
-    CreateActivityLogService: class CreateActivityLogService {},
-  }),
-);
-vi.mock('../../../../lib/prisma/client.js', () => ({
-  Prisma: {
-    TransactionIsolationLevel: { Serializable: 'Serializable' },
-  },
-  ActivityModule: { STOCK_MOVEMENT: 'STOCK_MOVEMENT' },
-  ActivityType: { UPDATE: 'UPDATE' },
-}));
+import { Test, type TestingModule } from '@nestjs/testing';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { BadRequestException, ConflictException } from '@nestjs/common';
 
 import { PrismaService } from '../../../../common/prisma/prisma.service.js';
 import { CreateActivityLogService } from '../../../activity-logs/services/create-activity-log.service.js';
+import { Prisma } from '../../../../lib/prisma/client.js';
 import { AdjustStockService } from './adjust-stock.service.js';
 
 describe('AdjustStockService', () => {
-  it('rejects zero-quantity adjustments', async () => {
-    const prisma = { $transaction: vi.fn() };
-    const activityLog = { execute: vi.fn() };
-    const service = new AdjustStockService(
-      prisma as unknown as PrismaService,
-      activityLog as unknown as CreateActivityLogService,
-    );
+  let module: TestingModule;
+  let service: AdjustStockService;
 
+  let prisma: {
+    $transaction: ReturnType<typeof vi.fn>;
+  };
+
+  let transaction: {
+    productVariant: {
+      findFirst: ReturnType<typeof vi.fn>;
+      updateMany: ReturnType<typeof vi.fn>;
+      findUniqueOrThrow: ReturnType<typeof vi.fn>;
+    };
+  };
+
+  let createActivityLog: {
+    execute: ReturnType<typeof vi.fn>;
+  };
+
+  beforeEach(async () => {
+    transaction = {
+      productVariant: {
+        findFirst: vi.fn(),
+        updateMany: vi.fn(),
+        findUniqueOrThrow: vi.fn(),
+      },
+    };
+
+    prisma = {
+      $transaction: vi.fn((callback: (tx: never) => unknown) =>
+        Promise.resolve(callback(transaction as never)),
+      ),
+    };
+
+    createActivityLog = {
+      execute: vi.fn().mockResolvedValue(undefined),
+    };
+
+    module = await Test.createTestingModule({
+      providers: [
+        AdjustStockService,
+        {
+          provide: PrismaService,
+          useValue: prisma,
+        },
+        {
+          provide: CreateActivityLogService,
+          useValue: createActivityLog,
+        },
+      ],
+    }).compile();
+
+    service = module.get(AdjustStockService);
+  });
+
+  afterEach(async () => {
+    await module.close();
+  });
+
+  it('rejects an adjustment when the quantity is zero', async () => {
     await expect(
-      service.execute('staff-1', { variantId: 'variant-1', quantity: 0 }),
+      service.execute('staff-1', {
+        variantId: 'variant-1',
+        quantity: 0,
+      }),
     ).rejects.toThrow(BadRequestException);
 
     expect(prisma.$transaction).not.toHaveBeenCalled();
+    expect(createActivityLog.execute).not.toHaveBeenCalled();
   });
 
-  it('prevents a decrement that would make stock negative', async () => {
-    const tx = {
-      productVariant: {
-        findFirst: vi.fn().mockResolvedValue({
-          id: 'variant-1',
-          stock: 2,
-        }),
-        updateMany: vi.fn().mockResolvedValue({ count: 0 }),
-      },
-    };
-    const prisma = {
-      $transaction: vi.fn((callback: (transaction: never) => unknown) =>
-        callback(tx as never),
-      ),
-    };
-    const activityLog = { execute: vi.fn() };
-    const service = new AdjustStockService(
-      prisma as unknown as PrismaService,
-      activityLog as unknown as CreateActivityLogService,
-    );
+  it('does not allow a decrement that would make stock negative', async () => {
+    transaction.productVariant.findFirst.mockResolvedValue({
+      id: 'variant-1',
+      stock: 2,
+    });
+    transaction.productVariant.updateMany.mockResolvedValue({ count: 0 });
 
     await expect(
-      service.execute('staff-1', { variantId: 'variant-1', quantity: -3 }),
+      service.execute('staff-1', {
+        variantId: 'variant-1',
+        quantity: -3,
+      }),
     ).rejects.toThrow(BadRequestException);
 
-    expect(tx.productVariant.updateMany).toHaveBeenCalledWith(
+    expect(transaction.productVariant.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({
           id: 'variant-1',
           stock: { gte: 3 },
-        }) as unknown as Record<string, unknown>,
-        data: { stock: { increment: -3 } },
+        }) as Record<string, unknown>,
+        data: {
+          stock: { increment: -3 },
+        },
       }),
     );
-    expect(activityLog.execute).not.toHaveBeenCalled();
+    expect(transaction.productVariant.findUniqueOrThrow).not.toHaveBeenCalled();
+    expect(createActivityLog.execute).not.toHaveBeenCalled();
   });
 
-  it('records an atomic stock adjustment with the acting staff member', async () => {
-    const tx = {
-      productVariant: {
-        findFirst: vi.fn().mockResolvedValue({
-          id: 'variant-1',
-          stock: 5,
-        }),
-        updateMany: vi.fn().mockResolvedValue({ count: 1 }),
-        findUniqueOrThrow: vi.fn().mockResolvedValue({
-          id: 'variant-1',
-          productId: 'product-1',
-          stock: 2,
-          sku: 'SKU-1',
-          updatedAt: new Date('2026-11-19T00:00:00.000Z'),
-          product: {
-            name: 'Test product',
-            images: [{ imageUrl: 'https://example.com/image.jpg' }],
-          },
-        }),
+  it('adjusts stock atomically and records the acting staff member', async () => {
+    const updatedAt = new Date('2026-11-19T00:00:00.000Z');
+
+    transaction.productVariant.findFirst.mockResolvedValue({
+      id: 'variant-1',
+      stock: 5,
+    });
+    transaction.productVariant.updateMany.mockResolvedValue({ count: 1 });
+    transaction.productVariant.findUniqueOrThrow.mockResolvedValue({
+      id: 'variant-1',
+      productId: 'product-1',
+      stock: 2,
+      sku: 'SKU-1',
+      updatedAt,
+      product: {
+        name: 'Test product',
+        images: [{ imageUrl: 'https://example.com/image.jpg' }],
       },
-    };
-    const prisma = {
-      $transaction: vi.fn((callback: (transaction: never) => unknown) =>
-        callback(tx as never),
-      ),
-    };
-    const activityLog = { execute: vi.fn() };
-    const service = new AdjustStockService(
-      prisma as unknown as PrismaService,
-      activityLog as unknown as CreateActivityLogService,
-    );
+    });
 
     await expect(
       service.execute('staff-1', {
@@ -114,12 +136,20 @@ describe('AdjustStockService', () => {
         reason: 'Stock count correction',
       }),
     ).resolves.toMatchObject({
+      id: 'variant-1',
       variantId: 'variant-1',
-      quantity: 2,
       productId: 'product-1',
+      quantity: 2,
+      sku: 'SKU-1',
+      productName: 'Test product',
+      productImage: 'https://example.com/image.jpg',
+      updatedAt,
     });
 
-    expect(activityLog.execute).toHaveBeenCalledWith(
+    expect(prisma.$transaction).toHaveBeenCalledWith(expect.any(Function), {
+      isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+    });
+    expect(createActivityLog.execute).toHaveBeenCalledWith(
       expect.objectContaining({
         userId: 'staff-1',
         oldValue: { quantity: 5 },
@@ -132,17 +162,16 @@ describe('AdjustStockService', () => {
     );
   });
 
-  it('translates serializable transaction conflicts into a retryable conflict response', async () => {
-    const prisma = {
-      $transaction: vi.fn().mockRejectedValue({ code: 'P2034' }),
-    };
-    const service = new AdjustStockService(
-      prisma as unknown as PrismaService,
-      { execute: vi.fn() } as unknown as CreateActivityLogService,
-    );
+  it('translates a serializable transaction conflict into a retryable conflict response', async () => {
+    prisma.$transaction.mockRejectedValue({ code: 'P2034' });
 
     await expect(
-      service.execute('staff-1', { variantId: 'variant-1', quantity: 1 }),
+      service.execute('staff-1', {
+        variantId: 'variant-1',
+        quantity: 1,
+      }),
     ).rejects.toThrow(ConflictException);
+
+    expect(createActivityLog.execute).not.toHaveBeenCalled();
   });
 });
