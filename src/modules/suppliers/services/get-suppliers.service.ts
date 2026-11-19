@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { Prisma } from '../../../lib/prisma/client.js';
+import { Prisma } from '../../../infrastructure/database/generated/prisma/client.js';
 
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 
 import { SupplierQueryDto } from '../dto/requests/supplier-query.dto.js';
 import { SupplierResponseDto } from '../dto/responses/supplier-response.dto.js';

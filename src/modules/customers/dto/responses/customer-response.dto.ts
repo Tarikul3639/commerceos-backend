@@ -1,5 +1,5 @@
 import { PaginationMetaDto } from '../../../../common/dto/responses/pagination-meta.dto.js';
-import { CustomerStatus } from '../../../../lib/prisma/client.js';
+import { CustomerStatus } from '../../../../infrastructure/database/generated/prisma/client.js';
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 

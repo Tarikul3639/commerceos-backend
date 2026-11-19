@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { Prisma, Role } from '../../../lib/prisma/client.js';
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { Prisma, Role } from '../../../infrastructure/database/generated/prisma/client.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 
 import { UserQueryDto } from '../dto/requests/user-query.dto.js';
 import { UserResponseDto } from '../dto/responses/user-response.dto.js';

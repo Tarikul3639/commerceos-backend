@@ -9,7 +9,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { EmailStatus } from '../../../../lib/prisma/client.js';
+import { EmailStatus } from '../../../../infrastructure/database/generated/prisma/client.js';
 
 export class EmailLogQueryDto {
   @ApiPropertyOptional({ example: 'customer@example.com' })

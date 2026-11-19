@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 
-import { PrismaModule } from '../../common/prisma/prisma.module.js';
+import { DatabaseModule } from '../../infrastructure/database/database.module.js';
 import { AuthModule } from '../auth/auth.module.js';
-import { MailModule } from '../../common/mail/mail.module.js';
+import { EmailModule } from '../../infrastructure/messaging/email/email.module.js';
 
 // Controller
 import { UserController } from './controllers/user.controller.js';
@@ -17,7 +17,7 @@ import { DeleteUserService } from './services/delete-user.service.js';
 import { RestoreUserService } from './services/restore-user.service.js';
 
 @Module({
-  imports: [PrismaModule, AuthModule, MailModule],
+  imports: [DatabaseModule, AuthModule, EmailModule],
 
   controllers: [UserController],
 

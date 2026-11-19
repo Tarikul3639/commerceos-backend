@@ -10,7 +10,7 @@ import {
 import {
   PaymentGatewayMode,
   PaymentProvider,
-} from '../../../../lib/prisma/enums.js';
+} from '../../../../infrastructure/database/generated/prisma/enums.js';
 
 export class CreatePaymentGatewayDto {
   @ApiProperty({ enum: PaymentProvider, example: PaymentProvider.SSL_COMMERZ })

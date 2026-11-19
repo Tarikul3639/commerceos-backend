@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
-import { CloudinaryService } from './cloudinary.service.js';
-import { CloudinaryController } from './cloudinary.controller.js';
-import { CloudinaryUploadGuard } from './cloudinary-upload.guard.js';
+import { CloudinaryService } from './services/cloudinary.service.js';
+import { CloudinaryController } from './controllers/cloudinary.controller.js';
+import { CloudinaryUploadGuard } from './guards/cloudinary-upload.guard.js';
 
 @Global()
 @Module({

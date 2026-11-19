@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 
-vi.mock('../prisma/prisma.service.js', () => ({
+vi.mock('../../infrastructure/database/prisma.service.js', () => ({
   PrismaService: class PrismaService {},
 }));
 
@@ -8,7 +8,7 @@ import { ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
 import { PermissionsGuard } from './permissions.guard.js';
-import { Permission, Role } from '../../lib/prisma/enums.js';
+import { Permission, Role } from '../../infrastructure/database/generated/prisma/enums.js';
 
 describe('PermissionsGuard', () => {
   const handler = () => undefined;
@@ -92,6 +92,20 @@ describe('PermissionsGuard', () => {
 
     await expect(
       guard.canActivate(createContext({ role: Role.EMPLOYEE })),
+    ).rejects.toThrow(ForbiddenException);
+  });
+
+  it('requires every permission when a route declares multiple permissions', async () => {
+    reflector.getAllAndOverride.mockReturnValue([
+      Permission.CUSTOMER_READ,
+      Permission.CUSTOMER_UPDATE,
+    ]);
+    prisma.rolePermission.findMany.mockResolvedValue([
+      { permission: Permission.CUSTOMER_READ },
+    ]);
+
+    await expect(
+      guard.canActivate(createContext({ role: Role.MANAGER })),
     ).rejects.toThrow(ForbiddenException);
   });
 });

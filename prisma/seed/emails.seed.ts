@@ -1,4 +1,4 @@
-import { EmailStatus } from '../../src/lib/prisma/client.js';
+import { EmailStatus } from '../../src/infrastructure/database/generated/prisma/client.js';
 
 import { prisma } from './client.js';
 

@@ -1,8 +1,8 @@
 import { vi } from 'vitest';
-vi.mock('../../../../common/prisma/prisma.service.js', () => ({
+vi.mock('../../../../infrastructure/database/prisma.service.js', () => ({
   PrismaService: class PrismaService {},
 }));
-vi.mock('../../../../lib/prisma/client.js', () => ({
+vi.mock('../../../../infrastructure/database/generated/prisma/client.js', () => ({
   Prisma: {
     TransactionIsolationLevel: { Serializable: 'Serializable' },
   },
@@ -14,7 +14,7 @@ vi.mock('../../../../common/utils/password.util.js', () => ({
 
 import { UnauthorizedException } from '@nestjs/common';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../../infrastructure/database/prisma.service.js';
 import { RefreshTokenService } from './refresh-token.service.js';
 
 describe('RefreshTokenService.consume', () => {

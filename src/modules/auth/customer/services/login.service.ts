@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service.js';
-import { CustomerStatus } from '../../../../lib/prisma/enums.js';
+import { PrismaService } from '../../../../infrastructure/database/prisma.service.js';
+import { CustomerStatus } from '../../../../infrastructure/database/generated/prisma/enums.js';
 import { LoginDto } from '../dto/requests/login.dto.js';
 
 import { comparePassword } from '../../../../common/utils/password.util.js';

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { SizeGuideQueryDto } from '../dto/requests/size-guide-query.dto.js';
 import { SizeGuideResponseDto } from '../dto/responses/size-guide-response.dto.js';
 

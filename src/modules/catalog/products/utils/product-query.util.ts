@@ -1,4 +1,4 @@
-import { Prisma } from '../../../../lib/prisma/client.js';
+import { Prisma } from '../../../../infrastructure/database/generated/prisma/client.js';
 
 import { ProductQueryDto } from '../dto/requests/product-query.dto.js';
 

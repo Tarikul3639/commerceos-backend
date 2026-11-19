@@ -1,4 +1,4 @@
-import { Role } from "../../src/lib/prisma/client.js"
+import { Role } from "../../src/infrastructure/database/generated/prisma/client.js"
 
 export async function seedRoles() {
   console.log("Seeding roles...")

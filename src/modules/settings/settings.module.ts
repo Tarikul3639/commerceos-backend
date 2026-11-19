@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { PrismaModule } from '../../common/prisma/prisma.module.js';
+import { DatabaseModule } from '../../infrastructure/database/database.module.js';
 
 import { SettingsController } from './controllers/settings.controller.js';
 import { ShippingSettingsController } from './controllers/shipping-settings.controller.js';
@@ -17,7 +17,7 @@ import { PaymentGatewayService } from './services/payment-gateway.service.js';
 import { SecuritySettingsService } from './services/security-settings.service.js';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [DatabaseModule],
 
   controllers: [
     SettingsController,

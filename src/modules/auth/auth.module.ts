@@ -7,8 +7,8 @@ import { PassportModule } from '@nestjs/passport';
 import type { StringValue } from 'ms';
 
 // Common Modules
-import { PrismaModule } from '../../common/prisma/prisma.module.js';
-import { MailModule } from '../../common/mail/mail.module.js';
+import { DatabaseModule } from '../../infrastructure/database/database.module.js';
+import { EmailModule } from '../../infrastructure/messaging/email/email.module.js';
 
 // Customer Authentication
 import { CustomerJwtStrategy } from '../../common/strategies/customer-jwt.strategy.js';
@@ -50,8 +50,8 @@ import { CustomerVerifyEmailService } from './customer/services/verify-email.ser
 
 @Module({
   imports: [
-    MailModule,
-    PrismaModule,
+    EmailModule,
+    DatabaseModule,
     PassportModule,
 
     JwtModule.registerAsync({

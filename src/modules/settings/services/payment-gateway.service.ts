@@ -4,14 +4,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../lib/prisma/enums.js';
-import { Prisma } from '../../../lib/prisma/client.js';
+import { ActivityModule, ActivityType } from '../../../infrastructure/database/generated/prisma/enums.js';
+import { Prisma } from '../../../infrastructure/database/generated/prisma/client.js';
 import {
   PaymentGatewayMode,
   PaymentProvider,
-} from '../../../lib/prisma/enums.js';
+} from '../../../infrastructure/database/generated/prisma/enums.js';
 
 import { CreatePaymentGatewayDto } from '../dto/requests/create-payment-gateway.dto.js';
 import { UpdatePaymentGatewayDto } from '../dto/requests/update-payment-gateway.dto.js';

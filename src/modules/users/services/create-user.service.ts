@@ -8,16 +8,16 @@ import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'crypto';
 import ms, { type StringValue } from 'ms';
 
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../lib/prisma/client.js';
-import { Role } from '../../../lib/prisma/enums.js';
+import { ActivityModule, ActivityType } from '../../../infrastructure/database/generated/prisma/client.js';
+import { Role } from '../../../infrastructure/database/generated/prisma/enums.js';
 import { TokenService } from '../../auth/user/services/token.service.js';
 
 import { CreateUserDto } from '../dto/requests/create-user.dto.js';
 import { UserResponseDto } from '../dto/responses/user-response.dto.js';
 
-import { MailService } from '../../../common/mail/mail.service.js';
+import { EmailService } from '../../../infrastructure/messaging/email/email.service.js';
 import { hashPassword } from '../../../common/utils/password.util.js';
 
 @Injectable()
@@ -25,7 +25,7 @@ export class CreateUserService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
-    private readonly mailService: MailService,
+    private readonly mailService: EmailService,
     private readonly tokenService: TokenService,
 
     private readonly createActivityLogService: CreateActivityLogService,

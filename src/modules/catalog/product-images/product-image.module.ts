@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
-import { CloudinaryModule } from '../../../common/cloudinary/cloudinary.module.js';
-import { PrismaModule } from '../../../common/prisma/prisma.module.js';
+import { CloudinaryModule } from '../../../infrastructure/storage/cloudinary/cloudinary.module.js';
+import { DatabaseModule } from '../../../infrastructure/database/database.module.js';
 
 import { ProductImagesController } from './controllers/product-images.controller.js';
 
@@ -11,7 +11,7 @@ import { GetProductImagesService } from './services/get-product-images.service.j
 import { UpdateProductImageService } from './services/update-product-image.service.js';
 
 @Module({
-  imports: [PrismaModule, CloudinaryModule],
+  imports: [DatabaseModule, CloudinaryModule],
   controllers: [ProductImagesController],
   providers: [
     AddProductImageService,

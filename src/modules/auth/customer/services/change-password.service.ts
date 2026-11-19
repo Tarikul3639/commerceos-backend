@@ -6,7 +6,7 @@ import {
 
 import { ConfigService } from '@nestjs/config';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../../infrastructure/database/prisma.service.js';
 
 import {
   comparePassword,

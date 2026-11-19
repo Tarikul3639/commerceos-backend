@@ -10,7 +10,7 @@ import {
   Min,
 } from 'class-validator';
 
-import { ActivityModule, ActivityType } from '../../../../lib/prisma/client.js';
+import { ActivityModule, ActivityType } from '../../../../infrastructure/database/generated/prisma/client.js';
 
 export class ActivityLogQueryDto {
   @ApiPropertyOptional({

@@ -4,7 +4,7 @@ import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js'
 import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
 import { CurrentUser } from '../../../common/decorators/current-user.decorator.js';
 import { Permissions } from '../../../common/decorators/permissions.decorator.js';
-import { Permission } from '../../../lib/prisma/enums.js';
+import { Permission } from '../../../infrastructure/database/generated/prisma/enums.js';
 
 import {
   ApiBearerAuth,

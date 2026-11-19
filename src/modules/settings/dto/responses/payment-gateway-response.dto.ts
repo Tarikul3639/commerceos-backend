@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   PaymentGatewayMode,
   PaymentProvider,
-} from '../../../../lib/prisma/enums.js';
+} from '../../../../infrastructure/database/generated/prisma/enums.js';
 
 export class PaymentGatewayResponseDto {
   @ApiProperty()

@@ -7,9 +7,9 @@ import {
 import { ConfigService } from '@nestjs/config';
 import ms, { type StringValue } from 'ms';
 
-import { Prisma, CustomerStatus } from '../../../../lib/prisma/client.js';
-import { PrismaService } from '../../../../common/prisma/prisma.service.js';
-import { MailService } from '../../../../common/mail/mail.service.js';
+import { Prisma, CustomerStatus } from '../../../../infrastructure/database/generated/prisma/client.js';
+import { PrismaService } from '../../../../infrastructure/database/prisma.service.js';
+import { EmailService } from '../../../../infrastructure/messaging/email/email.service.js';
 
 import { CustomerTokenService } from './token.service.js';
 
@@ -19,7 +19,7 @@ export class CustomerVerifyEmailService {
     private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,
     private readonly tokenService: CustomerTokenService,
-    private readonly mailService: MailService,
+    private readonly mailService: EmailService,
   ) {}
 
   /**

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ProductOptionType } from '../../../../../lib/prisma/enums.js';
+import { ProductOptionType } from '../../../../../infrastructure/database/generated/prisma/enums.js';
 import { ProductOptionValueResponseDto } from './product-option-value-response.dto.js';
 
 export class ProductOptionResponseDto {

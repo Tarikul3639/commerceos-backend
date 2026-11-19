@@ -1,13 +1,13 @@
 import { vi } from 'vitest';
-vi.mock('../prisma/prisma.service.js', () => ({
+vi.mock('../../infrastructure/database/prisma.service.js', () => ({
   PrismaService: class PrismaService {},
 }));
 
 import { UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { CustomerStatus } from '../../lib/prisma/enums.js';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { CustomerStatus } from '../../infrastructure/database/generated/prisma/enums.js';
+import { PrismaService } from '../../infrastructure/database/prisma.service.js';
 import { CustomerJwtStrategy } from './customer-jwt.strategy.js';
 
 describe('CustomerJwtStrategy', () => {

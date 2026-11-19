@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '../../../lib/prisma/client.js';
+import { Prisma } from '../../../infrastructure/database/generated/prisma/client.js';
 
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto.js';
 import { CustomerSummaryResponseDto } from '../dto/responses/customer-summary-response.dto.js';
 import { getDashboardDateRange } from '../utils/dashboard-date-range.util.js';

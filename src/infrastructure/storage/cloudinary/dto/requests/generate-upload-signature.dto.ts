@@ -5,7 +5,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   CloudinaryFolder,
   type CloudinaryFolderType,
-} from '../../cloudinary.types.js';
+} from '../../types/cloudinary.types.js';
 
 export class GenerateUploadSignatureDto {
   @ApiProperty({

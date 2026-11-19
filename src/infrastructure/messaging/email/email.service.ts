@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 
 import { MailOptions } from './interfaces/mail-options.interface.js';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { EmailStatus } from '../../lib/prisma/client.js';
+import { PrismaService } from '../../database/prisma.service.js';
+import { EmailStatus } from '../../../infrastructure/database/generated/prisma/client.js';
 
 import {
   NewOrderNotificationTemplate,
@@ -19,8 +19,8 @@ import {
 } from './interfaces/mail-template.interface.js';
 
 @Injectable()
-export class MailService {
-  private readonly logger = new Logger(MailService.name);
+export class EmailService {
+  private readonly logger = new Logger(EmailService.name);
 
   constructor(
     private readonly mailerService: MailerService,

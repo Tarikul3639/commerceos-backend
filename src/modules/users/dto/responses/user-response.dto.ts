@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-import { UserStatus, Role } from '../../../../lib/prisma/enums.js';
+import { UserStatus, Role } from '../../../../infrastructure/database/generated/prisma/enums.js';
 
 export class UserResponseDto {
   @ApiProperty({

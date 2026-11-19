@@ -6,7 +6,6 @@ import { CreateRefundService } from './services/create-refund.service.js';
 import { GetPaymentService } from './services/get-payment.service.js';
 import { GetPaymentsService } from './services/get-payments.service.js';
 import { UpdatePaymentStatusService } from './services/update-payment-status.service.js';
-import { PaymentProviderFactory } from '../../integrations/payments/factories/payment.factory.js';
 
 @Module({
   controllers: [PaymentController, RefundController],
@@ -16,7 +15,6 @@ import { PaymentProviderFactory } from '../../integrations/payments/factories/pa
     GetPaymentService,
     GetPaymentsService,
     UpdatePaymentStatusService,
-    PaymentProviderFactory,
   ],
   exports: [CreatePaymentService, GetPaymentService],
 })

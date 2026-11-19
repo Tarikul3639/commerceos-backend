@@ -16,9 +16,9 @@ import {
 } from './config/index.js';
 
 // Modules
-import { PrismaModule } from './common/prisma/prisma.module.js';
-import { CloudinaryModule } from './common/cloudinary/cloudinary.module.js';
-import { MailModule } from './common/mail/mail.module.js';
+import { DatabaseModule } from './infrastructure/database/database.module.js';
+import { CloudinaryModule } from './infrastructure/storage/cloudinary/cloudinary.module.js';
+import { EmailModule } from './infrastructure/messaging/email/email.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { UsersModule } from './modules/users/user.module.js';
 import { CustomerModule } from './modules/customers/customer.module.js';
@@ -38,7 +38,7 @@ import { DiscountModule } from './modules/discounts/discount.module.js';
 import { ActivityLogModule } from './modules/activity-logs/activity-log.module.js';
 import { SettingsModule } from './modules/settings/settings.module.js';
 import { NotificationModule } from './modules/notifications/notification.module.js';
-import { EmailModule } from './modules/emails/email.module.js';
+import { EmailModule as EmailLogsModule } from './modules/emails/email.module.js';
 import { AuditModule } from './common/audit/audit.module.js';
 import { AuditContextInterceptor } from './common/audit/audit-context.interceptor.js';
 import { APP_INTERCEPTOR } from '@nestjs/core';
@@ -74,8 +74,8 @@ import { PaymentModule } from './modules/payments/payment.module.js';
         swaggerConfig,
       ],
     }),
-    MailModule,
-    PrismaModule,
+    EmailModule,
+    DatabaseModule,
     CloudinaryModule,
 
     DashboardModule,
@@ -104,7 +104,7 @@ import { PaymentModule } from './modules/payments/payment.module.js';
     ActivityLogModule,
     SettingsModule,
     NotificationModule,
-    EmailModule,
+    EmailLogsModule,
     AuditModule,
   ],
   controllers: [],

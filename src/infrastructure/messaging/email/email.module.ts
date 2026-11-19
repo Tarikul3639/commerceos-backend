@@ -5,45 +5,35 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.ad
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { MailService } from './mail.service.js';
-import { PrismaModule } from '../prisma/prisma.module.js';
+import { EmailService } from './email.service.js';
+import { DatabaseModule } from '../../database/database.module.js';
 
 @Module({
   imports: [
     ConfigModule,
-    PrismaModule,
-
+    DatabaseModule,
     MailerModule.forRootAsync({
       inject: [ConfigService],
-
       useFactory: (configService: ConfigService) => ({
         transport: {
           host: configService.getOrThrow<string>('mail.host'),
           port: configService.getOrThrow<number>('mail.port'),
           secure: configService.getOrThrow<boolean>('mail.secure'),
-
           auth: {
             user: configService.getOrThrow<string>('mail.user'),
             pass: configService.getOrThrow<string>('mail.pass'),
           },
         },
-
-        defaults: {
-          from: configService.getOrThrow<string>('mail.from'),
-        },
-
+        defaults: { from: configService.getOrThrow<string>('mail.from') },
         template: {
           dir: join(dirname(fileURLToPath(import.meta.url)), 'templates'),
           adapter: new HandlebarsAdapter(),
-          options: {
-            strict: true,
-          },
+          options: { strict: true },
         },
       }),
     }),
   ],
-
-  providers: [MailService],
-  exports: [MailService],
+  providers: [EmailService],
+  exports: [EmailService],
 })
-export class MailModule {}
+export class EmailModule {}

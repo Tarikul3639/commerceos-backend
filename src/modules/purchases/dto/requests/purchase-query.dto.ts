@@ -4,7 +4,7 @@ import { Type } from 'class-transformer';
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { PurchaseStatus } from '../../../../lib/prisma/client.js';
+import { PurchaseStatus } from '../../../../infrastructure/database/generated/prisma/client.js';
 
 export class PurchaseQueryDto {
   @ApiPropertyOptional({

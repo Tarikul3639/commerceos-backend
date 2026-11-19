@@ -1,7 +1,7 @@
 import {
   ActivityModule,
   NotificationType,
-} from '../../../../lib/prisma/client.js';
+} from '../../../../infrastructure/database/generated/prisma/client.js';
 
 export class CreateNotificationDto {
   userId!: string;

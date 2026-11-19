@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { ProductOptionType } from '../../../../../lib/prisma/enums.js';
+import { ProductOptionType } from '../../../../../infrastructure/database/generated/prisma/enums.js';
 
 /* ============================================================================
  * PRODUCT IMAGE

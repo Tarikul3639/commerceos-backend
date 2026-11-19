@@ -6,8 +6,8 @@ import { ConfigService } from '@nestjs/config';
 
 import type { UserJwtPayload } from '../interfaces/user-jwt-payload.interface.js';
 import { USER_ACCESS_TOKEN_COOKIE } from '../constants/cookie.constants.js';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { UserStatus } from '../../lib/prisma/enums.js';
+import { PrismaService } from '../../infrastructure/database/prisma.service.js';
+import { UserStatus } from '../../infrastructure/database/generated/prisma/enums.js';
 
 @Injectable()
 export class UserJwtStrategy extends PassportStrategy(Strategy, 'user-jwt') {

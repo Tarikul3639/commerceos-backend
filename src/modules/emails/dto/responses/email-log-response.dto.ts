@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { EmailStatus } from '../../../../lib/prisma/client.js';
+import { EmailStatus } from '../../../../infrastructure/database/generated/prisma/client.js';
 
 export class EmailLogResponseDto {
   @ApiProperty() id!: string;

@@ -8,7 +8,6 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common';
-
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -16,17 +15,14 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { UserJwtAuthGuard } from '../guards/user-jwt-auth.guard.js';
-import { CloudinaryUploadGuard } from './cloudinary-upload.guard.js';
-
+import { UserJwtAuthGuard } from '../../../../common/guards/user-jwt-auth.guard.js';
+import { CloudinaryUploadGuard } from '../guards/cloudinary-upload.guard.js';
 import {
   CloudinaryFolder,
   type CloudinaryFolderType,
-} from './cloudinary.types.js';
-
-import { CloudinaryService } from './cloudinary.service.js';
-
-import { CloudinaryUploadSignatureDto } from './dto/responses/cloudinary-upload-signature.dto.js';
+} from '../types/cloudinary.types.js';
+import { CloudinaryService } from '../services/cloudinary.service.js';
+import { CloudinaryUploadSignatureDto } from '../dto/responses/cloudinary-upload-signature.dto.js';
 
 @ApiTags('Cloudinary')
 @ApiBearerAuth()
@@ -55,15 +51,12 @@ export class CloudinaryController {
     description: 'Cloudinary upload folder',
   })
   generateSignature(
-    @Param('folder')
-    folder: CloudinaryFolderType,
+    @Param('folder') folder: CloudinaryFolderType,
   ): CloudinaryUploadSignatureDto {
     const validFolders = Object.values(CloudinaryFolder);
-
     if (!validFolders.includes(folder)) {
       throw new BadRequestException('Invalid upload folder');
     }
-
     return this.cloudinaryService.generateUploadSignature(folder);
   }
 }

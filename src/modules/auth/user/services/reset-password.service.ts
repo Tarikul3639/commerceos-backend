@@ -1,8 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { Prisma, UserStatus } from '../../../../lib/prisma/client.js';
-import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { Prisma, UserStatus } from '../../../../infrastructure/database/generated/prisma/client.js';
+import { PrismaService } from '../../../../infrastructure/database/prisma.service.js';
 import { TokenService } from './token.service.js';
 import { hashPassword } from '../../../../common/utils/password.util.js';
 

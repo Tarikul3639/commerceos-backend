@@ -4,9 +4,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PurchaseStatus } from '../../../lib/prisma/client.js';
+import { PurchaseStatus } from '../../../infrastructure/database/generated/prisma/client.js';
 
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 
 import { ReceivePurchaseDto } from '../dto/requests/receive-purchase.dto.js';
 

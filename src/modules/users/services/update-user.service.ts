@@ -6,11 +6,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { CloudinaryService } from '../../../common/cloudinary/cloudinary.service.js';
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { CloudinaryService } from '../../../infrastructure/storage/cloudinary/services/cloudinary.service.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../lib/prisma/client.js';
-import { Role } from '../../../lib/prisma/enums.js';
+import { ActivityModule, ActivityType } from '../../../infrastructure/database/generated/prisma/client.js';
+import { Role } from '../../../infrastructure/database/generated/prisma/enums.js';
 
 import { UpdateUserDto } from '../dto/requests/update-user.dto.js';
 import { UserResponseDto } from '../dto/responses/user-response.dto.js';

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { AnalyticsQueryDto } from '../dto/requests/analytics-query.dto.js';
 import { SalesPurchaseChartItemDto } from '../dto/responses/sales-purchase-chart-response.dto.js';
 import { getAnalyticsDateRange } from '../utils/analytics-date-range.util.js';

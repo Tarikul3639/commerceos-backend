@@ -21,7 +21,7 @@ import { CurrentUser } from '../../../../common/decorators/current-user.decorato
 import { Permissions } from '../../../../common/decorators/permissions.decorator.js';
 import { PermissionsGuard } from '../../../../common/guards/permissions.guard.js';
 import { UserJwtAuthGuard } from '../../../../common/guards/user-jwt-auth.guard.js';
-import { Permission } from '../../../../lib/prisma/enums.js';
+import { Permission } from '../../../../infrastructure/database/generated/prisma/enums.js';
 
 import { CreateProductDto } from '../dto/requests/create-product.dto.js';
 import { ProductQueryDto } from '../dto/requests/product-query.dto.js';

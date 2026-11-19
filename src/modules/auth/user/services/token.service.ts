@@ -7,7 +7,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import ms, { type StringValue } from 'ms';
 
 import { UserJwtPayload } from '../../../../common/interfaces/user-jwt-payload.interface.js';
-import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../../infrastructure/database/prisma.service.js';
 import { AuthTokensPayload } from '../interfaces/auth-tokens.interface.js';
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 
 import { NotificationQueryDto } from '../dto/requests/notification-query.dto.js';
 import { NotificationPaginationResponseDto } from '../dto/responses/notification-response.dto.js';

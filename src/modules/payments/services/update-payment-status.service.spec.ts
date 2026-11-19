@@ -1,8 +1,8 @@
 import { vi } from 'vitest';
-vi.mock('../../../common/prisma/prisma.service.js', () => ({
+vi.mock('../../../infrastructure/database/prisma.service.js', () => ({
   PrismaService: class PrismaService {},
 }));
-vi.mock('../../../lib/prisma/client.js', () => ({
+vi.mock('../../../infrastructure/database/generated/prisma/client.js', () => ({
   Prisma: { TransactionIsolationLevel: { Serializable: 'Serializable' } },
   ActivityModule: { PAYMENT: 'PAYMENT' },
   ActivityType: { STATUS_CHANGE: 'STATUS_CHANGE' },
@@ -21,8 +21,8 @@ vi.mock('../../../lib/prisma/client.js', () => ({
 
 import { BadRequestException } from '@nestjs/common';
 
-import { PaymentMethod, PaymentStatus } from '../../../lib/prisma/enums.js';
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { PaymentMethod, PaymentStatus } from '../../../infrastructure/database/generated/prisma/enums.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { UpdatePaymentStatusService } from './update-payment-status.service.js';
 
 describe('UpdatePaymentStatusService', () => {

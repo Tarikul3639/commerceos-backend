@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ProductStatus } from '../../../../../lib/prisma/enums.js';
+import { ProductStatus } from '../../../../../infrastructure/database/generated/prisma/enums.js';
 import { PaginationMetaDto } from '../../../../../common/dto/responses/pagination-meta.dto.js';
 
 /** Common relation summary */

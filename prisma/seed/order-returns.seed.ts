@@ -4,7 +4,7 @@ import {
   PaymentStatus,
   Prisma,
   ProductStatus,
-} from '../../src/lib/prisma/client.js';
+} from '../../src/infrastructure/database/generated/prisma/client.js';
 
 import { prisma } from './client.js';
 

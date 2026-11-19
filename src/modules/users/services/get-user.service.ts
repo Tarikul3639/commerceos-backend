@@ -4,9 +4,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { UserResponseDto } from '../dto/responses/user-response.dto.js';
-import { Role } from '../../../lib/prisma/enums.js';
+import { Role } from '../../../infrastructure/database/generated/prisma/enums.js';
 
 @Injectable()
 export class GetUserService {

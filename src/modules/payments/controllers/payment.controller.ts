@@ -21,7 +21,7 @@ import { Permissions } from '../../../common/decorators/permissions.decorator.js
 import { CustomerJwtAuthGuard } from '../../../common/guards/customer-jwt-auth.guard.js';
 import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
 import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
-import { Permission } from '../../../lib/prisma/enums.js';
+import { Permission } from '../../../infrastructure/database/generated/prisma/enums.js';
 import { CreatePaymentDto } from '../dto/requests/create-payment.dto.js';
 import { PaymentQueryDto } from '../dto/requests/payment-query.dto.js';
 import { UpdatePaymentStatusDto } from '../dto/requests/update-payment-status.dto.js';

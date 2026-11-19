@@ -1,16 +1,16 @@
 import { vi } from 'vitest';
-vi.mock('../../../lib/prisma/client.js', () => ({
+vi.mock('../../../infrastructure/database/generated/prisma/client.js', () => ({
   ActivityModule: { USER: 'USER' },
   ActivityType: { CREATE: 'CREATE', UPDATE: 'UPDATE', DELETE: 'DELETE' },
 }));
-vi.mock('../../../common/prisma/prisma.service.js', () => ({
+vi.mock('../../../infrastructure/database/prisma.service.js', () => ({
   PrismaService: class PrismaService {},
 }));
 vi.mock('../../../common/utils/password.util.js', () => ({
   hashPassword: vi.fn().mockResolvedValue('hashed-password'),
 }));
-vi.mock('../../../common/mail/mail.service.js', () => ({
-  MailService: class MailService {},
+vi.mock('../../../infrastructure/messaging/email/email.service.js', () => ({
+  EmailService: class EmailService {},
 }));
 vi.mock('../../activity-logs/services/create-activity-log.service.js', () => ({
   CreateActivityLogService: class CreateActivityLogService {},
@@ -19,9 +19,9 @@ vi.mock('../../activity-logs/services/create-activity-log.service.js', () => ({
 import { ForbiddenException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { Role } from '../../../lib/prisma/enums.js';
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
-import { MailService } from '../../../common/mail/mail.service.js';
+import { Role } from '../../../infrastructure/database/generated/prisma/enums.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
+import { EmailService } from '../../../infrastructure/messaging/email/email.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
 import { CreateUserService } from './create-user.service.js';
 import { CreateUserDto } from '../dto/requests/create-user.dto.js';
@@ -32,7 +32,7 @@ describe('CreateUserService', () => {
     const service = new CreateUserService(
       prisma as unknown as PrismaService,
       { getOrThrow: vi.fn() } as unknown as ConfigService,
-      {} as MailService,
+      {} as EmailService,
       {} as never,
       {} as CreateActivityLogService,
     );
@@ -93,7 +93,7 @@ describe('CreateUserService', () => {
     const service = new CreateUserService(
       prisma as unknown as PrismaService,
       config as unknown as ConfigService,
-      mail as unknown as MailService,
+      mail as unknown as EmailService,
       token as never,
       activity as unknown as CreateActivityLogService,
     );

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { Prisma } from '../../../lib/prisma/client.js';
+import { Prisma } from '../../../infrastructure/database/generated/prisma/client.js';
 
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { PurchaseReturnQueryDto } from '../dto/requests/purchase-return-query.dto.js';
 import { PurchaseReturnResponseDto } from '../dto/responses/purchase-return-response.dto.js';
 import { PaginatedResponse } from '../../../common/interfaces/paginated-response.interface.js';

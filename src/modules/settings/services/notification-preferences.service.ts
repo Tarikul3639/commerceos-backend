@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../lib/prisma/enums.js';
+import { ActivityModule, ActivityType } from '../../../infrastructure/database/generated/prisma/enums.js';
 import { UpdateNotificationPreferencesDto } from '../dto/requests/update-notification-preferences.dto.js';
 
 @Injectable()

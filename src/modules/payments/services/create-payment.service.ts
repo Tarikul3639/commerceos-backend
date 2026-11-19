@@ -8,9 +8,9 @@ import {
   Prisma,
   PaymentStatus,
   PaymentType,
-} from '../../../lib/prisma/client.js';
-import { PaymentProvider } from '../../../lib/prisma/enums.js';
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+} from '../../../infrastructure/database/generated/prisma/client.js';
+import { PaymentProvider } from '../../../infrastructure/database/generated/prisma/enums.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 
 import { CreatePaymentDto } from '../dto/requests/create-payment.dto.js';
 import { PaymentResponseDto } from '../dto/responses/payment-response.dto.js';

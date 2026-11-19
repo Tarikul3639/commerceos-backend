@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { PrismaModule } from '../../../common/prisma/prisma.module.js';
+import { DatabaseModule } from '../../../infrastructure/database/database.module.js';
 
 import { AdminProductsController } from './controllers/admin-products.controller.js';
 import { StoreProductsController } from './controllers/store-products.controller.js';
@@ -16,7 +16,7 @@ import { GetStoreProductDetailsService } from './services/store/get-store-produc
 import { GetStoreProductsService } from './services/store/get-store-products.service.js';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [DatabaseModule],
   controllers: [AdminProductsController, StoreProductsController],
   providers: [
     CreateProductService,

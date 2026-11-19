@@ -1,9 +1,9 @@
 import { vi } from 'vitest';
-vi.mock('../../../lib/prisma/client.js', () => ({
+vi.mock('../../../infrastructure/database/generated/prisma/client.js', () => ({
   ActivityModule: { USER: 'USER' },
   ActivityType: { CREATE: 'CREATE', UPDATE: 'UPDATE', DELETE: 'DELETE' },
 }));
-vi.mock('../../../common/prisma/prisma.service.js', () => ({
+vi.mock('../../../infrastructure/database/prisma.service.js', () => ({
   PrismaService: class PrismaService {},
 }));
 vi.mock('../../activity-logs/services/create-activity-log.service.js', () => ({
@@ -12,8 +12,8 @@ vi.mock('../../activity-logs/services/create-activity-log.service.js', () => ({
 
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 
-import { Role, UserStatus } from '../../../lib/prisma/enums.js';
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { Role, UserStatus } from '../../../infrastructure/database/generated/prisma/enums.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
 import { DeleteUserService } from './delete-user.service.js';
 

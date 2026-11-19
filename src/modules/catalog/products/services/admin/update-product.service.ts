@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { PrismaService } from '../../../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../../../activity-logs/services/create-activity-log.service.js';
 import {
   ActivityModule,
   ActivityType,
-} from '../../../../../lib/prisma/client.js';
+} from '../../../../../infrastructure/database/generated/prisma/client.js';
 
 import { UpdateProductDto } from '../../dto/requests/update-product.dto.js';
 import { AdminProductDetailResponseDto } from '../../dto/responses/admin-product-detail-response.dto.js';

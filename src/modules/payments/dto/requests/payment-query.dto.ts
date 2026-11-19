@@ -4,7 +4,7 @@ import {
   PaymentMethod,
   PaymentStatus,
   PaymentType,
-} from '../../../../lib/prisma/enums.js';
+} from '../../../../infrastructure/database/generated/prisma/enums.js';
 
 export class PaymentQueryDto {
   @ApiPropertyOptional({ example: '1' })

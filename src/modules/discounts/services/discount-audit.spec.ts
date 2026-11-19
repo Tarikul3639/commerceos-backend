@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
 import {
   ActivityModule,
   ActivityType,
   Prisma,
-} from '../../../lib/prisma/client.js';
+} from '../../../infrastructure/database/generated/prisma/client.js';
 import { DiscountService } from './discount.service.js';
 
 function dependencies(tx: Record<string, unknown>) {

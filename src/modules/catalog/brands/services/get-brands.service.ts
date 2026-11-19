@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../../infrastructure/database/prisma.service.js';
 
 import { BrandQueryDto } from '../dto/requests/brand-query.dto.js';
 import { PaginatedResponse } from '../../../../common/interfaces/paginated-response.interface.js';

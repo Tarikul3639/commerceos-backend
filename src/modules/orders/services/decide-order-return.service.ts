@@ -3,9 +3,9 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { OrderReturnStatus, Prisma } from '../../../lib/prisma/client.js';
+import { OrderReturnStatus, Prisma } from '../../../infrastructure/database/generated/prisma/client.js';
 
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 
 @Injectable()
 export class DecideOrderReturnService {

@@ -4,10 +4,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PurchaseStatus } from '../../../lib/prisma/client.js';
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { PurchaseStatus } from '../../../infrastructure/database/generated/prisma/client.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../lib/prisma/client.js';
+import { ActivityModule, ActivityType } from '../../../infrastructure/database/generated/prisma/client.js';
 import { CreatePurchaseReturnDto } from '../dto/requests/create-purchase-return.dto.js';
 import { PurchaseReturnResponseDto } from '../dto/responses/purchase-return-response.dto.js';
 

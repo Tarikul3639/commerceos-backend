@@ -1,4 +1,4 @@
-import type { Prisma } from '../../../../lib/prisma/client.js';
+import type { Prisma } from '../../../../infrastructure/database/generated/prisma/client.js';
 import { BannerResponseDto } from './banner-response.dto.js';
 
 export const bannerWithUsers = {

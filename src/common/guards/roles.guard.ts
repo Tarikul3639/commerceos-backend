@@ -7,7 +7,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import type { Request } from 'express';
 
-import { Role } from '../../lib/prisma/client.js';
+import { Role } from '../../infrastructure/database/generated/prisma/client.js';
 import { ROLES_KEY } from '../decorators/roles.decorator.js';
 import type { UserJwtPayload } from '../interfaces/user-jwt-payload.interface.js';
 

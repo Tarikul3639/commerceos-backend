@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { PrismaModule } from '../../common/prisma/prisma.module.js';
+import { DatabaseModule } from '../../infrastructure/database/database.module.js';
 
 import { AdminSizeGuidesController } from './controllers/admin-size-guides.controller.js';
 
@@ -11,7 +11,7 @@ import { UpdateSizeGuideService } from './services/update-size-guide.service.js'
 import { DeleteSizeGuideService } from './services/delete-size-guide.service.js';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [DatabaseModule],
   controllers: [AdminSizeGuidesController],
   providers: [
     CreateSizeGuideService,

@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../../infrastructure/database/prisma.service.js';
 import { RegisterDto } from '../dto/requests/register.dto.js';
 
 import { hashPassword } from '../../../../common/utils/password.util.js';

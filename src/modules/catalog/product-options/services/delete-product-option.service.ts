@@ -4,9 +4,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../../lib/prisma/client.js';
+import { ActivityModule, ActivityType } from '../../../../infrastructure/database/generated/prisma/client.js';
 
 @Injectable()
 export class DeleteProductOptionService {

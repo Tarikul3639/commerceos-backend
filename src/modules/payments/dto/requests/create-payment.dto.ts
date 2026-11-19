@@ -7,7 +7,7 @@ import {
   IsUUID,
   Length,
 } from 'class-validator';
-import { PaymentMethod } from '../../../../lib/prisma/enums.js';
+import { PaymentMethod } from '../../../../infrastructure/database/generated/prisma/enums.js';
 
 export class CreatePaymentDto {
   @ApiProperty({ example: '2f0a2d50-ef62-4d63-b5bd-4e3c8b7a8dd0' })

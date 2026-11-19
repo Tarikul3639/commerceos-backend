@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { PrismaModule } from '../../../common/prisma/prisma.module.js';
+import { DatabaseModule } from '../../../infrastructure/database/database.module.js';
 
 import { ProductOptionsController } from './controllers/product-options.controller.js';
 
@@ -11,7 +11,7 @@ import { GetProductOptionsService } from './services/get-product-options.service
 import { UpdateProductOptionService } from './services/update-product-option.service.js';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [DatabaseModule],
   controllers: [ProductOptionsController],
   providers: [
     CreateProductOptionService,

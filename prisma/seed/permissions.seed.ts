@@ -1,4 +1,4 @@
-import { Permission, Role } from '../../src/lib/prisma/client.js';
+import { Permission, Role } from '../../src/infrastructure/database/generated/prisma/client.js';
 
 import { prisma } from './client.js';
 

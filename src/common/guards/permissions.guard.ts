@@ -9,8 +9,8 @@ import type { Request } from 'express';
 
 import type { UserJwtPayload } from '../interfaces/user-jwt-payload.interface.js';
 import { PERMISSIONS_KEY } from '../decorators/permissions.decorator.js';
-import { Permission, Role } from '../../lib/prisma/enums.js';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { Permission, Role } from '../../infrastructure/database/generated/prisma/enums.js';
+import { PrismaService } from '../../infrastructure/database/prisma.service.js';
 
 type AuthenticatedRequest = Request & { user?: UserJwtPayload };
 

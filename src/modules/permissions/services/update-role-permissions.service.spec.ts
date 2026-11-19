@@ -1,12 +1,12 @@
 import { vi } from 'vitest';
-vi.mock('../../../common/prisma/prisma.service.js', () => ({
+vi.mock('../../../infrastructure/database/prisma.service.js', () => ({
   PrismaService: class PrismaService {},
 }));
 
 import { ForbiddenException } from '@nestjs/common';
 
-import { Permission, Role } from '../../../lib/prisma/enums.js';
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { Permission, Role } from '../../../infrastructure/database/generated/prisma/enums.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { UpdateRolePermissionsService } from './update-role-permissions.service.js';
 
 describe('UpdateRolePermissionsService', () => {

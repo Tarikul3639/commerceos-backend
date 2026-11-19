@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { ProductStatus } from '../../../../../lib/prisma/enums.js';
+import { ProductStatus } from '../../../../../infrastructure/database/generated/prisma/enums.js';
 
 export class CreateProductDto {
   @ApiProperty({

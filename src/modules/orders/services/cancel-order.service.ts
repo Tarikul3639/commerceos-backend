@@ -10,10 +10,10 @@ import {
   OrderStatus,
   PaymentStatus,
   PaymentType,
-} from '../../../lib/prisma/client.js';
-import { PrismaService } from '../../../common/prisma/prisma.service.js';
+} from '../../../infrastructure/database/generated/prisma/client.js';
+import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../lib/prisma/client.js';
+import { ActivityModule, ActivityType } from '../../../infrastructure/database/generated/prisma/client.js';
 
 import { CancelOrderDto } from '../dto/requests/cancel-order.dto.js';
 

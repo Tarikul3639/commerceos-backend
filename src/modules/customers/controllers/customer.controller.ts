@@ -15,7 +15,7 @@ import { CurrentUser } from '../../../common/decorators/current-user.decorator.j
 import { Permissions } from '../../../common/decorators/permissions.decorator.js';
 import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
 import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
-import { Permission } from '../../../lib/prisma/enums.js';
+import { Permission } from '../../../infrastructure/database/generated/prisma/enums.js';
 
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 

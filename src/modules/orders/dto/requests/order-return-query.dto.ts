@@ -1,6 +1,6 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { OrderReturnStatus } from '../../../../lib/prisma/client.js';
+import { OrderReturnStatus } from '../../../../infrastructure/database/generated/prisma/client.js';
 
 export class OrderReturnQueryDto {
   @ApiPropertyOptional({ example: '1', default: '1' })

@@ -3,9 +3,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { BadRequestException, ConflictException } from '@nestjs/common';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { PrismaService } from '../../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../../activity-logs/services/create-activity-log.service.js';
-import { Prisma } from '../../../../lib/prisma/client.js';
+import { Prisma } from '../../../../infrastructure/database/generated/prisma/client.js';
 import { AdjustStockService } from './adjust-stock.service.js';
 
 describe('AdjustStockService', () => {
