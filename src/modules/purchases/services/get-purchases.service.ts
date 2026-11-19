@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@/lib/prisma/client';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { PurchaseQueryDto } from '../dto/requests/purchase-query.dto';
-import { PurchaseResponseDto } from '../dto/responses/purchase-response.dto';
-import { PaginatedResponse } from '@/common/interfaces/paginated-response.interface';
+import { Prisma } from '../../../lib/prisma/client.js';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { PurchaseQueryDto } from '../dto/requests/purchase-query.dto.js';
+import { PurchaseResponseDto } from '../dto/responses/purchase-response.dto.js';
+import { PaginatedResponse } from '../../../common/interfaces/paginated-response.interface.js';
 
 @Injectable()
 export class GetPurchasesService {

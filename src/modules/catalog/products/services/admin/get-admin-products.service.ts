@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '../../../../../common/prisma/prisma.service.js';
 
-import { ProductQueryDto } from '../../dto/requests/product-query.dto';
+import { ProductQueryDto } from '../../dto/requests/product-query.dto.js';
 import {
   AdminProductListItemDto,
   AdminProductListResponseDto,
-} from '../../dto/responses/admin-product-list-response.dto';
-import { buildAdminProductWhere } from '../../utils/product-query.util';
+} from '../../dto/responses/admin-product-list-response.dto.js';
+import { buildAdminProductWhere } from '../../utils/product-query.util.js';
 
 @Injectable()
 export class GetAdminProductsService {

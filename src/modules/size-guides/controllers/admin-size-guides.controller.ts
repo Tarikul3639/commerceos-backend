@@ -9,11 +9,11 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permission } from '@/lib/prisma/enums';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { Permission } from '../../../lib/prisma/enums.js';
 import {
   ApiOperation,
   ApiParam,
@@ -22,16 +22,16 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CreateSizeGuideDto } from '../dto/requests/create-size-guide.dto';
-import { UpdateSizeGuideDto } from '../dto/requests/update-size-guide.dto';
-import { SizeGuideQueryDto } from '../dto/requests/size-guide-query.dto';
-import { SizeGuideResponseDto } from '../dto/responses/size-guide-response.dto';
+import { CreateSizeGuideDto } from '../dto/requests/create-size-guide.dto.js';
+import { UpdateSizeGuideDto } from '../dto/requests/update-size-guide.dto.js';
+import { SizeGuideQueryDto } from '../dto/requests/size-guide-query.dto.js';
+import { SizeGuideResponseDto } from '../dto/responses/size-guide-response.dto.js';
 
-import { CreateSizeGuideService } from '../services/create-size-guide.service';
-import { GetSizeGuidesService } from '../services/get-size-guides.service';
-import { GetSizeGuideDetailsService } from '../services/get-size-guide-details.service';
-import { UpdateSizeGuideService } from '../services/update-size-guide.service';
-import { DeleteSizeGuideService } from '../services/delete-size-guide.service';
+import { CreateSizeGuideService } from '../services/create-size-guide.service.js';
+import { GetSizeGuidesService } from '../services/get-size-guides.service.js';
+import { GetSizeGuideDetailsService } from '../services/get-size-guide-details.service.js';
+import { UpdateSizeGuideService } from '../services/update-size-guide.service.js';
+import { DeleteSizeGuideService } from '../services/delete-size-guide.service.js';
 
 @ApiTags('Admin Size Guides')
 @Controller('admin/size-guides')

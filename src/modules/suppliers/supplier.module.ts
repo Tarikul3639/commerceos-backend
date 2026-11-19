@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { SupplierController } from './controllers/supplier.controller';
+import { SupplierController } from './controllers/supplier.controller.js';
 
-import { CreateSupplierService } from './services/create-supplier.service';
-import { DeleteSupplierService } from './services/delete-supplier.service';
-import { GetSupplierService } from './services/get-supplier.service';
-import { GetSuppliersService } from './services/get-suppliers.service';
-import { UpdateSupplierService } from './services/update-supplier.service';
+import { CreateSupplierService } from './services/create-supplier.service.js';
+import { DeleteSupplierService } from './services/delete-supplier.service.js';
+import { GetSupplierService } from './services/get-supplier.service.js';
+import { GetSuppliersService } from './services/get-suppliers.service.js';
+import { UpdateSupplierService } from './services/update-supplier.service.js';
 
 @Module({
   controllers: [SupplierController],

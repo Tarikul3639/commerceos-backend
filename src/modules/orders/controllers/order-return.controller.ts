@@ -17,19 +17,19 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permission } from '@/lib/prisma/enums';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { Permission } from '../../../lib/prisma/enums.js';
 
-import { CreateOrderReturnDto } from '../dto/requests/create-order-return.dto';
-import { OrderReturnQueryDto } from '../dto/requests/order-return-query.dto';
-import { RejectOrderReturnDto } from '../dto/requests/reject-order-return.dto';
-import { CreateOrderReturnService } from '../services/create-order-return.service';
-import { DecideOrderReturnService } from '../services/decide-order-return.service';
-import { GetOrderReturnService } from '../services/get-order-return.service';
-import { GetOrderReturnsService } from '../services/get-order-returns.service';
+import { CreateOrderReturnDto } from '../dto/requests/create-order-return.dto.js';
+import { OrderReturnQueryDto } from '../dto/requests/order-return-query.dto.js';
+import { RejectOrderReturnDto } from '../dto/requests/reject-order-return.dto.js';
+import { CreateOrderReturnService } from '../services/create-order-return.service.js';
+import { DecideOrderReturnService } from '../services/decide-order-return.service.js';
+import { GetOrderReturnService } from '../services/get-order-return.service.js';
+import { GetOrderReturnsService } from '../services/get-order-returns.service.js';
 
 @ApiTags('Order Returns')
 @ApiBearerAuth()

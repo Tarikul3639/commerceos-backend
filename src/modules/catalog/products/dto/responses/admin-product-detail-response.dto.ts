@@ -1,5 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ProductOptionType, ProductStatus } from '@/lib/prisma/enums';
+import {
+  ProductOptionType,
+  ProductStatus,
+} from '../../../../../lib/prisma/enums.js';
 
 /* ============================================================================
  * RELATION DTO

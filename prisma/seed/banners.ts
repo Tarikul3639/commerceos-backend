@@ -1,6 +1,6 @@
-import { prisma } from './client';
-import { BannerType, BannerPosition } from '@/lib/prisma/client';
-import type { Prisma } from '@/lib/prisma/client';
+import { prisma } from './client.js';
+import { BannerType, BannerPosition } from '../../src/lib/prisma/client.js';
+import type { Prisma } from '../../src/lib/prisma/client.js';
 
 const banners: Prisma.BannerCreateInput[] = [
     {

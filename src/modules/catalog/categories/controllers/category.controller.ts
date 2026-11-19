@@ -11,25 +11,25 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permission } from '@/lib/prisma/enums';
+import { CurrentUser } from '../../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../../common/decorators/permissions.decorator.js';
+import { PermissionsGuard } from '../../../../common/guards/permissions.guard.js';
+import { UserJwtAuthGuard } from '../../../../common/guards/user-jwt-auth.guard.js';
+import { Permission } from '../../../../lib/prisma/enums.js';
 
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 
 // DTOs
-import { CreateCategoryDto } from '../dto/requests/create-category.dto';
-import { UpdateCategoryDto } from '../dto/requests/update-category.dto';
-import { CategoryQueryDto } from '../dto/requests/category-query.dto';
+import { CreateCategoryDto } from '../dto/requests/create-category.dto.js';
+import { UpdateCategoryDto } from '../dto/requests/update-category.dto.js';
+import { CategoryQueryDto } from '../dto/requests/category-query.dto.js';
 
 // Services
-import { CreateCategoryService } from '../services/create-category.service';
-import { GetCategoriesService } from '../services/get-categories.service';
-import { GetCategoryService } from '../services/get-category.service';
-import { UpdateCategoryService } from '../services/update-category.service';
-import { DeleteCategoryService } from '../services/delete-category.service';
+import { CreateCategoryService } from '../services/create-category.service.js';
+import { GetCategoriesService } from '../services/get-categories.service.js';
+import { GetCategoryService } from '../services/get-category.service.js';
+import { UpdateCategoryService } from '../services/update-category.service.js';
+import { DeleteCategoryService } from '../services/delete-category.service.js';
 
 @ApiTags('Categories')
 @Controller('categories')

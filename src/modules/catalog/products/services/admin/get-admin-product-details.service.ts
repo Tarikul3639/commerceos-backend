@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '../../../../../common/prisma/prisma.service.js';
 
 import {
   AdminProductDetailResponseDto,
@@ -10,7 +10,7 @@ import {
   AdminProductSizeGuideDto,
   AdminProductVariantDto,
   AdminProductVariantOptionDto,
-} from '../../dto/responses/admin-product-detail-response.dto';
+} from '../../dto/responses/admin-product-detail-response.dto.js';
 
 /**
  * Retrieves complete admin product details.

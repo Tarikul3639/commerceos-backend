@@ -4,12 +4,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { ActivityModule, ActivityType } from '@/lib/prisma/client';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { CreateActivityLogService } from '../../../activity-logs/services/create-activity-log.service.js';
+import { ActivityModule, ActivityType } from '../../../../lib/prisma/client.js';
 
-import { CreateProductOptionDto } from '../dto/requests/create-product-option.dto';
-import { ProductOptionResponseDto } from '../dto/responses/product-option-response.dto';
+import { CreateProductOptionDto } from '../dto/requests/create-product-option.dto.js';
+import { ProductOptionResponseDto } from '../dto/responses/product-option-response.dto.js';
 
 @Injectable()
 export class CreateProductOptionService {

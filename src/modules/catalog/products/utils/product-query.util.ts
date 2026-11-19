@@ -1,6 +1,6 @@
-import { Prisma } from '@/lib/prisma/client';
+import { Prisma } from '../../../../lib/prisma/client.js';
 
-import { ProductQueryDto } from '../dto/requests/product-query.dto';
+import { ProductQueryDto } from '../dto/requests/product-query.dto.js';
 
 export function buildAdminProductWhere(
   query: ProductQueryDto,

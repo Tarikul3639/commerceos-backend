@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
 
-import { UpdateSettingsDto } from '../dto/requests/update-settings.dto';
-import { SettingsResponseDto } from '../dto/responses/settings-response.dto';
+import { UpdateSettingsDto } from '../dto/requests/update-settings.dto.js';
+import { SettingsResponseDto } from '../dto/responses/settings-response.dto.js';
 
 @Injectable()
 export class UpdateSettingsService {
@@ -13,6 +13,7 @@ export class UpdateSettingsService {
     updateSettingsDto: UpdateSettingsDto,
     userId: string,
   ): Promise<SettingsResponseDto> {
+    void userId;
     const existingSettings = await this.prisma.settings.findFirst({
       orderBy: {
         createdAt: 'asc',

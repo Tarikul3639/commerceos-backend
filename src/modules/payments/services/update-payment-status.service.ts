@@ -4,13 +4,17 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { Prisma, PaymentStatus, PaymentType } from '@/lib/prisma/client';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { ActivityModule, ActivityType } from '@/lib/prisma/client';
-import { PaymentMethod } from '@/lib/prisma/enums';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import {
+  Prisma,
+  PaymentStatus,
+  PaymentType,
+} from '../../../lib/prisma/client.js';
+import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
+import { ActivityModule, ActivityType } from '../../../lib/prisma/client.js';
+import { PaymentMethod } from '../../../lib/prisma/enums.js';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
 
-import { UpdatePaymentStatusDto } from '../dto/requests/update-payment-status.dto';
+import { UpdatePaymentStatusDto } from '../dto/requests/update-payment-status.dto.js';
 
 @Injectable()
 export class UpdatePaymentStatusService {

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { ActivityLogQueryDto } from '../dto/requests/activity-log-query.dto';
-import { ActivityLogResponseDto } from '../dto/responses/activity-log-response.dto';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { ActivityLogQueryDto } from '../dto/requests/activity-log-query.dto.js';
+import { ActivityLogResponseDto } from '../dto/responses/activity-log-response.dto.js';
 
 @Injectable()
 export class GetActivityLogsService {

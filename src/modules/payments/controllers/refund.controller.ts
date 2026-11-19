@@ -6,14 +6,14 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permission } from '@/lib/prisma/enums';
-import { CreateRefundDto } from '../dto/requests/create-refund.dto';
-import { RefundResponseDto } from '../dto/responses/refund-response.dto';
-import { CreateRefundService } from '../services/create-refund.service';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { Permission } from '../../../lib/prisma/enums.js';
+import { CreateRefundDto } from '../dto/requests/create-refund.dto.js';
+import { RefundResponseDto } from '../dto/responses/refund-response.dto.js';
+import { CreateRefundService } from '../services/create-refund.service.js';
 
 @ApiTags('Refunds')
 @ApiBearerAuth()

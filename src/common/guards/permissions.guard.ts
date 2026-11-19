@@ -5,11 +5,14 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import type { Request } from 'express';
 
-import { UserJwtPayload } from '@/common/interfaces/user-jwt-payload.interface';
-import { PERMISSIONS_KEY } from '@/common/decorators/permissions.decorator';
-import { Permission, Role } from '@/lib/prisma/enums';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import type { UserJwtPayload } from '../interfaces/user-jwt-payload.interface.js';
+import { PERMISSIONS_KEY } from '../decorators/permissions.decorator.js';
+import { Permission, Role } from '../../lib/prisma/enums.js';
+import { PrismaService } from '../prisma/prisma.service.js';
+
+type AuthenticatedRequest = Request & { user?: UserJwtPayload };
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -24,13 +27,12 @@ export class PermissionsGuard implements CanActivate {
       [context.getHandler(), context.getClass()],
     );
 
-    // No @()PermissionsGuard → allow authenticated user
     if (!requiredPermissions || requiredPermissions.length === 0) {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest();
-    const user: UserJwtPayload = request.user;
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+    const user = request.user;
 
     if (!user) {
       throw new ForbiddenException('User not found');
@@ -41,18 +43,13 @@ export class PermissionsGuard implements CanActivate {
     }
 
     const rolePermissions = await this.prisma.rolePermission.findMany({
-      where: {
-        role: user.role,
-      },
-      select: {
-        permission: true,
-      },
+      where: { role: user.role },
+      select: { permission: true },
     });
 
     const allowedPermissions = new Set(
       rolePermissions.map((item) => item.permission),
     );
-
     const hasAllPermissions = requiredPermissions.every((permission) =>
       allowedPermissions.has(permission),
     );

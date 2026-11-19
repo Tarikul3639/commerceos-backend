@@ -1,18 +1,18 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { UserStatus } from '@/lib/prisma/client';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { UserStatus } from '../../../../lib/prisma/client.js';
 
-import { comparePassword } from '@/common/utils/password.util';
-import { UserJwtPayload } from '@/common/interfaces/user-jwt-payload.interface';
+import { comparePassword } from '../../../../common/utils/password.util.js';
+import { UserJwtPayload } from '../../../../common/interfaces/user-jwt-payload.interface.js';
 
-import { LoginDto } from '../dto/requests/login.dto';
-import { AuthTokensPayload } from '../interfaces/auth-tokens.interface';
+import { LoginDto } from '../dto/requests/login.dto.js';
+import { AuthTokensPayload } from '../interfaces/auth-tokens.interface.js';
 
-import { TokenService } from './token.service';
-import { RefreshTokenService } from './refresh-token.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { ActivityModule, ActivityType } from '@/lib/prisma/client';
+import { TokenService } from './token.service.js';
+import { RefreshTokenService } from './refresh-token.service.js';
+import { CreateActivityLogService } from '../../../activity-logs/services/create-activity-log.service.js';
+import { ActivityModule, ActivityType } from '../../../../lib/prisma/client.js';
 
 @Injectable()
 export class LoginService {

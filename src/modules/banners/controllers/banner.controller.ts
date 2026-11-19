@@ -19,25 +19,25 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
 
-import { Permission } from '@/lib/prisma/enums';
+import { Permission } from '../../../lib/prisma/enums.js';
 
-import { CreateBannerDto } from '../dto/requests/create-banner.dto';
-import { UpdateBannerDto } from '../dto/requests/update-banner.dto';
-import { BannerQueryDto } from '../dto/requests/banner-query.dto';
+import { CreateBannerDto } from '../dto/requests/create-banner.dto.js';
+import { UpdateBannerDto } from '../dto/requests/update-banner.dto.js';
+import { BannerQueryDto } from '../dto/requests/banner-query.dto.js';
 
-import { BannerResponseDto } from '../dto/responses/banner-response.dto';
-import { BannerListResponseDto } from '../dto/responses/banner-list-response.dto';
+import { BannerResponseDto } from '../dto/responses/banner-response.dto.js';
+import { BannerListResponseDto } from '../dto/responses/banner-list-response.dto.js';
 
-import { CreateBannerService } from '../services/create-banner.service';
-import { DeleteBannerService } from '../services/delete-banner.service';
-import { GetBannerService } from '../services/get-banner.service';
-import { GetBannersService } from '../services/get-banners.service';
-import { UpdateBannerService } from '../services/update-banner.service';
+import { CreateBannerService } from '../services/create-banner.service.js';
+import { DeleteBannerService } from '../services/delete-banner.service.js';
+import { GetBannerService } from '../services/get-banner.service.js';
+import { GetBannersService } from '../services/get-banners.service.js';
+import { UpdateBannerService } from '../services/update-banner.service.js';
 
 @ApiTags('Banners')
 @Controller('banners')

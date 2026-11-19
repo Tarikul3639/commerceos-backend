@@ -17,25 +17,25 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permission } from '@/lib/prisma/enums';
+import { CurrentUser } from '../../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../../common/decorators/permissions.decorator.js';
+import { PermissionsGuard } from '../../../../common/guards/permissions.guard.js';
+import { UserJwtAuthGuard } from '../../../../common/guards/user-jwt-auth.guard.js';
+import { Permission } from '../../../../lib/prisma/enums.js';
 
-import { CreateProductDto } from '../dto/requests/create-product.dto';
-import { ProductQueryDto } from '../dto/requests/product-query.dto';
-import { UpdateProductDto } from '../dto/requests/update-product.dto';
+import { CreateProductDto } from '../dto/requests/create-product.dto.js';
+import { ProductQueryDto } from '../dto/requests/product-query.dto.js';
+import { UpdateProductDto } from '../dto/requests/update-product.dto.js';
 
-import { AdminProductDetailResponseDto } from '../dto/responses/admin-product-detail-response.dto';
-import { AdminProductListResponseDto } from '../dto/responses/admin-product-list-response.dto';
+import { AdminProductDetailResponseDto } from '../dto/responses/admin-product-detail-response.dto.js';
+import { AdminProductListResponseDto } from '../dto/responses/admin-product-list-response.dto.js';
 
-import { CreateProductService } from '../services/admin/create-product.service';
-import { DeleteProductService } from '../services/admin/delete-product.service';
-import { GetAdminProductDetailsService } from '../services/admin/get-admin-product-details.service';
-import { GetAdminProductsService } from '../services/admin/get-admin-products.service';
-import { RestoreProductService } from '../services/admin/restore-product.service';
-import { UpdateProductService } from '../services/admin/update-product.service';
+import { CreateProductService } from '../services/admin/create-product.service.js';
+import { DeleteProductService } from '../services/admin/delete-product.service.js';
+import { GetAdminProductDetailsService } from '../services/admin/get-admin-product-details.service.js';
+import { GetAdminProductsService } from '../services/admin/get-admin-products.service.js';
+import { RestoreProductService } from '../services/admin/restore-product.service.js';
+import { UpdateProductService } from '../services/admin/update-product.service.js';
 
 @ApiTags('Admin - Products')
 @Controller('admin/products')

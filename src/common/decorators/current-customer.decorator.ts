@@ -1,15 +1,16 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { CurrentCustomerPayload } from '@/common/interfaces/current-customer.interface';
+import type { Request } from 'express';
+import type { CurrentCustomerPayload } from '../interfaces/current-customer.interface.js';
+
+type CustomerRequest = Request & { user?: CurrentCustomerPayload };
 
 export const CurrentCustomer = createParamDecorator(
   (
     data: keyof CurrentCustomerPayload | undefined,
     context: ExecutionContext,
   ) => {
-    // Get the request object from the execution context
-    const request = context.switchToHttp().getRequest();
-    // Get the customer object from the request and cast it to CurrentCustomerPayload
-    const customer = request.user as CurrentCustomerPayload;
+    const request = context.switchToHttp().getRequest<CustomerRequest>();
+    const customer = request.user;
 
     return data ? customer?.[data] : customer;
   },

@@ -1,3 +1,3 @@
-import { ISendMailOptions } from '@nestjs-modules/mailer';
+import type { ISendMailOptions } from '@nestjs-modules/mailer';
 
-export interface MailOptions extends ISendMailOptions {}
+export type MailOptions = ISendMailOptions;

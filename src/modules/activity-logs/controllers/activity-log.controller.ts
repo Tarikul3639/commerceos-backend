@@ -1,14 +1,14 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { Permission } from '@/lib/prisma/enums';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { Permission } from '../../../lib/prisma/enums.js';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
 
-import { ActivityLogQueryDto } from '../dto/requests/activity-log-query.dto';
-import { GetActivityLogService } from '../services/get-activity-log.service';
-import { GetActivityLogsService } from '../services/get-activity-logs.service';
+import { ActivityLogQueryDto } from '../dto/requests/activity-log-query.dto.js';
+import { GetActivityLogService } from '../services/get-activity-log.service.js';
+import { GetActivityLogsService } from '../services/get-activity-logs.service.js';
 
 @ApiTags('Activity Logs')
 @ApiBearerAuth()

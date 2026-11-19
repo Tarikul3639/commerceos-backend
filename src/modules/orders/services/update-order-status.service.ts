@@ -5,12 +5,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { Prisma, OrderStatus } from '@/lib/prisma/client';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { ActivityModule, ActivityType } from '@/lib/prisma/client';
+import { Prisma, OrderStatus } from '../../../lib/prisma/client.js';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
+import { ActivityModule, ActivityType } from '../../../lib/prisma/client.js';
 
-import { UpdateOrderStatusDto } from '../dto/requests/update-order-status.dto';
+import { UpdateOrderStatusDto } from '../dto/requests/update-order-status.dto.js';
 
 const allowedTransitions: Record<OrderStatus, OrderStatus[]> = {
   [OrderStatus.PENDING]: [OrderStatus.CONFIRMED],

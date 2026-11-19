@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
 
-import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto';
-import { StockSummaryResponseDto } from '../dto/responses/stock-summary-response.dto';
+import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto.js';
+import { StockSummaryResponseDto } from '../dto/responses/stock-summary-response.dto.js';
 
 @Injectable()
 export class GetStockSummaryService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(_query: DashboardQueryDto): Promise<StockSummaryResponseDto> {
+  async execute(query: DashboardQueryDto): Promise<StockSummaryResponseDto> {
+    void query;
     // Fetch product count and active inventory records in parallel.
     const [productCount, variants] = await Promise.all([
       this.prisma.product.count({

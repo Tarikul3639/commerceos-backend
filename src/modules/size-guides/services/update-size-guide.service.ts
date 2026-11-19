@@ -3,12 +3,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma } from '@/lib/prisma/client';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { ActivityModule, ActivityType } from '@/lib/prisma/client';
-import { UpdateSizeGuideDto } from '../dto/requests/update-size-guide.dto';
-import { SizeGuideResponseDto } from '../dto/responses/size-guide-response.dto';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
+import { ActivityModule, ActivityType } from '../../../lib/prisma/client.js';
+import { UpdateSizeGuideDto } from '../dto/requests/update-size-guide.dto.js';
+import { SizeGuideResponseDto } from '../dto/responses/size-guide-response.dto.js';
 
 @Injectable()
 export class UpdateSizeGuideService {
@@ -62,10 +61,10 @@ export class UpdateSizeGuideService {
         }),
         ...(dto.unit !== undefined && { unit: dto.unit }),
         ...(dto.columns !== undefined && {
-          columns: dto.columns as unknown as Prisma.InputJsonValue,
+          columns: dto.columns,
         }),
         ...(dto.rows !== undefined && {
-          rows: dto.rows as unknown as Prisma.InputJsonValue,
+          rows: dto.rows,
         }),
       },
     });

@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { PaymentController } from './controllers/payment.controller';
-import { RefundController } from './controllers/refund.controller';
-import { CreatePaymentService } from './services/create-payment.service';
-import { CreateRefundService } from './services/create-refund.service';
-import { GetPaymentService } from './services/get-payment.service';
-import { GetPaymentsService } from './services/get-payments.service';
-import { UpdatePaymentStatusService } from './services/update-payment-status.service';
-import { PaymentProviderFactory } from '@/integrations/payments/factories/payment.factory';
+import { PaymentController } from './controllers/payment.controller.js';
+import { RefundController } from './controllers/refund.controller.js';
+import { CreatePaymentService } from './services/create-payment.service.js';
+import { CreateRefundService } from './services/create-refund.service.js';
+import { GetPaymentService } from './services/get-payment.service.js';
+import { GetPaymentsService } from './services/get-payments.service.js';
+import { UpdatePaymentStatusService } from './services/update-payment-status.service.js';
+import { PaymentProviderFactory } from '../../integrations/payments/factories/payment.factory.js';
 
 @Module({
   controllers: [PaymentController, RefundController],

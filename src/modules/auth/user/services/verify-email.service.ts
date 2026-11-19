@@ -3,11 +3,11 @@ import { ConfigService } from '@nestjs/config';
 
 import ms, { type StringValue } from 'ms';
 
-import { Prisma, UserStatus } from '@/lib/prisma/client';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { MailService } from '@/common/mail/mail.service';
+import { Prisma, UserStatus } from '../../../../lib/prisma/client.js';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { MailService } from '../../../../common/mail/mail.service.js';
 
-import { TokenService } from './token.service';
+import { TokenService } from './token.service.js';
 
 @Injectable()
 export class VerifyEmailService {

@@ -1,26 +1,27 @@
-jest.mock('@/common/prisma/prisma.service', () => ({
+import { vi } from 'vitest';
+vi.mock('../prisma/prisma.service.js', () => ({
   PrismaService: class PrismaService {},
 }));
 
 import { UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { CustomerStatus } from '@/lib/prisma/enums';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CustomerJwtStrategy } from './customer-jwt.strategy';
+import { CustomerStatus } from '../../lib/prisma/enums.js';
+import { PrismaService } from '../prisma/prisma.service.js';
+import { CustomerJwtStrategy } from './customer-jwt.strategy.js';
 
 describe('CustomerJwtStrategy', () => {
-  let prisma: { customer: { findUnique: jest.Mock } };
+  let prisma: { customer: { findUnique: ReturnType<typeof vi.fn> } };
   let strategy: CustomerJwtStrategy;
 
   beforeEach(() => {
     prisma = {
       customer: {
-        findUnique: jest.fn(),
+        findUnique: vi.fn(),
       },
     };
     strategy = new CustomerJwtStrategy(
-      { getOrThrow: jest.fn(() => 'test-secret') } as unknown as ConfigService,
+      { getOrThrow: vi.fn(() => 'test-secret') } as unknown as ConfigService,
       prisma as unknown as PrismaService,
     );
   });

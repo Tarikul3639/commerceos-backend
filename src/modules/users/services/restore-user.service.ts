@@ -3,11 +3,11 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { ActivityModule, ActivityType } from '@/lib/prisma/client';
-import { UserResponseDto } from '../dto/responses/user-response.dto';
-import { Role, UserStatus } from '@/lib/prisma/enums';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
+import { ActivityModule, ActivityType } from '../../../lib/prisma/client.js';
+import { UserResponseDto } from '../dto/responses/user-response.dto.js';
+import { Role, UserStatus } from '../../../lib/prisma/enums.js';
 
 @Injectable()
 export class RestoreUserService {

@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 
-import { MailOptions } from '@/common/mail/interfaces/mail-options.interface';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { EmailStatus } from '@/lib/prisma/client';
+import { MailOptions } from './interfaces/mail-options.interface.js';
+import { PrismaService } from '../prisma/prisma.service.js';
+import { EmailStatus } from '../../lib/prisma/client.js';
 
 import {
   NewOrderNotificationTemplate,
@@ -16,7 +16,7 @@ import {
   ResetPasswordTemplate,
   VerifyEmailTemplate,
   WelcomeTemplate,
-} from '@/common/mail/interfaces/mail-template.interface';
+} from './interfaces/mail-template.interface.js';
 
 @Injectable()
 export class MailService {
@@ -32,9 +32,14 @@ export class MailService {
    * template context are intentionally never stored in the email log.
    */
   async sendMail(mailOptions: MailOptions): Promise<void> {
-    const recipient = Array.isArray(mailOptions.to)
-      ? mailOptions.to.map((item) => String(item)).join(', ')
-      : String(mailOptions.to ?? '');
+    const recipients = Array.isArray(mailOptions.to)
+      ? mailOptions.to
+      : mailOptions.to
+        ? [mailOptions.to]
+        : [];
+    const recipient = recipients
+      .map((item) => (typeof item === 'string' ? item : item.address))
+      .join(', ');
     const subject = String(mailOptions.subject ?? '');
     const preview =
       typeof mailOptions.template === 'string'

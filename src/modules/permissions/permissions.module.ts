@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 
-import { PermissionsController } from './controllers/permissions.controller';
+import { PermissionsController } from './controllers/permissions.controller.js';
 
-import { GetPermissionsService } from './services/get-permissions.service';
-import { GetRolesPermissionsService } from './services/get-roles-permissions.service';
-import { UpdateRolePermissionsService } from './services/update-role-permissions.service';
+import { GetPermissionsService } from './services/get-permissions.service.js';
+import { GetRolesPermissionsService } from './services/get-roles-permissions.service.js';
+import { UpdateRolePermissionsService } from './services/update-role-permissions.service.js';
 
 @Module({
   controllers: [PermissionsController],

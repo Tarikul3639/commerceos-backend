@@ -4,17 +4,20 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { Prisma } from '@/lib/prisma/client';
-import { PaymentGatewayMode, PaymentProvider } from '@/lib/prisma/enums';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { Prisma } from '../../../lib/prisma/client.js';
+import {
+  PaymentGatewayMode,
+  PaymentProvider,
+} from '../../../lib/prisma/enums.js';
 
-import { CreatePaymentGatewayDto } from '../dto/requests/create-payment-gateway.dto';
-import { UpdatePaymentGatewayDto } from '../dto/requests/update-payment-gateway.dto';
-import { PaymentGatewayResponseDto } from '../dto/responses/payment-gateway-response.dto';
+import { CreatePaymentGatewayDto } from '../dto/requests/create-payment-gateway.dto.js';
+import { UpdatePaymentGatewayDto } from '../dto/requests/update-payment-gateway.dto.js';
+import { PaymentGatewayResponseDto } from '../dto/responses/payment-gateway-response.dto.js';
 import {
   assertNoGatewaySecrets,
   sanitizeGatewaySettings,
-} from '../utils/gateway-settings-safety';
+} from '../utils/gateway-settings-safety.js';
 
 @Injectable()
 export class PaymentGatewayService {
@@ -28,6 +31,7 @@ export class PaymentGatewayService {
     createPaymentGatewayDto: CreatePaymentGatewayDto,
     userId: string,
   ): Promise<PaymentGatewayResponseDto> {
+    void userId;
     assertNoGatewaySecrets(createPaymentGatewayDto.settings);
 
     const existing = await this.prisma.paymentGateway.findUnique({
@@ -95,6 +99,7 @@ export class PaymentGatewayService {
     updatePaymentGatewayDto: UpdatePaymentGatewayDto,
     userId: string,
   ): Promise<PaymentGatewayResponseDto> {
+    void userId;
     assertNoGatewaySecrets(updatePaymentGatewayDto.settings);
 
     const existing = await this.prisma.paymentGateway.findUnique({

@@ -8,11 +8,11 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permission } from '@/lib/prisma/enums';
+import { CurrentUser } from '../../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../../common/decorators/permissions.decorator.js';
+import { PermissionsGuard } from '../../../../common/guards/permissions.guard.js';
+import { UserJwtAuthGuard } from '../../../../common/guards/user-jwt-auth.guard.js';
+import { Permission } from '../../../../lib/prisma/enums.js';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -21,16 +21,16 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CreateProductOptionDto } from '../dto/requests/create-product-option.dto';
-import { UpdateProductOptionDto } from '../dto/requests/update-product-option.dto';
-import { ProductOptionResponseDto } from '../dto/responses/product-option-response.dto';
-import { ProductVariantResponseDto } from '@/modules/catalog/product-variants/dto/responses/product-variant-response.dto';
+import { CreateProductOptionDto } from '../dto/requests/create-product-option.dto.js';
+import { UpdateProductOptionDto } from '../dto/requests/update-product-option.dto.js';
+import { ProductOptionResponseDto } from '../dto/responses/product-option-response.dto.js';
+import { ProductVariantResponseDto } from '../../product-variants/dto/responses/product-variant-response.dto.js';
 
-import { CreateProductOptionService } from '../services/create-product-option.service';
-import { DeleteProductOptionService } from '../services/delete-product-option.service';
-import { GenerateProductVariantsService } from '../services/generate-product-variants.service';
-import { GetProductOptionsService } from '../services/get-product-options.service';
-import { UpdateProductOptionService } from '../services/update-product-option.service';
+import { CreateProductOptionService } from '../services/create-product-option.service.js';
+import { DeleteProductOptionService } from '../services/delete-product-option.service.js';
+import { GenerateProductVariantsService } from '../services/generate-product-variants.service.js';
+import { GetProductOptionsService } from '../services/get-product-options.service.js';
+import { UpdateProductOptionService } from '../services/update-product-option.service.js';
 
 @ApiTags('Admin - Product Options')
 @Controller('admin/product-options')

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
 
-import { ProductImageResponseDto } from '../dto/responses/product-image-response.dto';
+import { ProductImageResponseDto } from '../dto/responses/product-image-response.dto.js';
 
 @Injectable()
 export class GetProductImagesService {

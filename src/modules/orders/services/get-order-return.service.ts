@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { Prisma } from '@/lib/prisma/client';
-import { OrderReturnResponseDto } from '../dto/responses/order-return-response.dto';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { Prisma } from '../../../lib/prisma/client.js';
+import { OrderReturnResponseDto } from '../dto/responses/order-return-response.dto.js';
 
 const orderReturnInclude = {
   order: {

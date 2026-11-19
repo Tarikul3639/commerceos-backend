@@ -6,12 +6,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { ProductQueryDto } from '../dto/requests/product-query.dto';
-import { StoreProductDetailResponseDto } from '../dto/responses/store-product-detail-response.dto';
-import { StoreProductListResponseDto } from '../dto/responses/store-product-list-response.dto';
+import { ProductQueryDto } from '../dto/requests/product-query.dto.js';
+import { StoreProductDetailResponseDto } from '../dto/responses/store-product-detail-response.dto.js';
+import { StoreProductListResponseDto } from '../dto/responses/store-product-list-response.dto.js';
 
-import { GetStoreProductDetailsService } from '../services/store/get-store-product-details.service';
-import { GetStoreProductsService } from '../services/store/get-store-products.service';
+import { GetStoreProductDetailsService } from '../services/store/get-store-product-details.service.js';
+import { GetStoreProductsService } from '../services/store/get-store-products.service.js';
 
 @ApiTags('Store - Products')
 @Controller('store/products')

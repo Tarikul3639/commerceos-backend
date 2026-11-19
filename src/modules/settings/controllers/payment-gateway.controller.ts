@@ -17,17 +17,17 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { Permission } from '@/lib/prisma/enums';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { Permission } from '../../../lib/prisma/enums.js';
 
-import { CreatePaymentGatewayDto } from '../dto/requests/create-payment-gateway.dto';
-import { UpdatePaymentGatewayDto } from '../dto/requests/update-payment-gateway.dto';
-import { PaymentGatewayResponseDto } from '../dto/responses/payment-gateway-response.dto';
+import { CreatePaymentGatewayDto } from '../dto/requests/create-payment-gateway.dto.js';
+import { UpdatePaymentGatewayDto } from '../dto/requests/update-payment-gateway.dto.js';
+import { PaymentGatewayResponseDto } from '../dto/responses/payment-gateway-response.dto.js';
 
-import { PaymentGatewayService } from '../services/payment-gateway.service';
+import { PaymentGatewayService } from '../services/payment-gateway.service.js';
 
 @ApiTags('Payment Gateway')
 @ApiBearerAuth()

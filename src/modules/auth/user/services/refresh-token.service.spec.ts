@@ -1,20 +1,21 @@
-jest.mock('@/common/prisma/prisma.service', () => ({
+import { vi } from 'vitest';
+vi.mock('../../../../common/prisma/prisma.service.js', () => ({
   PrismaService: class PrismaService {},
 }));
-jest.mock('@/lib/prisma/client', () => ({
+vi.mock('../../../../lib/prisma/client.js', () => ({
   Prisma: {
     TransactionIsolationLevel: { Serializable: 'Serializable' },
   },
 }));
-jest.mock('@/common/utils/password.util', () => ({
-  comparePassword: jest.fn().mockResolvedValue(true),
-  hashPassword: jest.fn(),
+vi.mock('../../../../common/utils/password.util.js', () => ({
+  comparePassword: vi.fn().mockResolvedValue(true),
+  hashPassword: vi.fn(),
 }));
 
 import { UnauthorizedException } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { RefreshTokenService } from './refresh-token.service';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { RefreshTokenService } from './refresh-token.service.js';
 
 describe('RefreshTokenService.consume', () => {
   it('atomically revokes the matching session before it can be reused', async () => {
@@ -27,8 +28,8 @@ describe('RefreshTokenService.consume', () => {
     };
     const prisma = {
       userRefreshToken: {
-        findMany: jest.fn().mockResolvedValue([token]),
-        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+        findMany: vi.fn().mockResolvedValue([token]),
+        updateMany: vi.fn().mockResolvedValue({ count: 1 }),
       },
     };
     const service = new RefreshTokenService(
@@ -47,7 +48,7 @@ describe('RefreshTokenService.consume', () => {
           id: 'session-1',
           userId: 'user-1',
           revokedAt: null,
-        }),
+        }) as unknown as Record<string, unknown>,
       }),
     );
   });
@@ -55,13 +56,13 @@ describe('RefreshTokenService.consume', () => {
   it('rejects a refresh token already consumed by another request', async () => {
     const prisma = {
       userRefreshToken: {
-        findMany: jest.fn().mockResolvedValue([
+        findMany: vi.fn().mockResolvedValue([
           {
             id: 'session-1',
             tokenHash: 'hashed-refresh-token',
           },
         ]),
-        updateMany: jest.fn().mockResolvedValue({ count: 0 }),
+        updateMany: vi.fn().mockResolvedValue({ count: 0 }),
       },
     };
     const service = new RefreshTokenService(

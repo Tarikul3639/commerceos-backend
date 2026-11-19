@@ -1,13 +1,14 @@
-jest.mock('@/common/prisma/prisma.service', () => ({
+import { vi } from 'vitest';
+vi.mock('../../../../common/prisma/prisma.service.js', () => ({
   PrismaService: class PrismaService {},
 }));
-jest.mock(
-  '@/modules/activity-logs/services/create-activity-log.service',
+vi.mock(
+  '../../../activity-logs/services/create-activity-log.service.js',
   () => ({
     CreateActivityLogService: class CreateActivityLogService {},
   }),
 );
-jest.mock('@/lib/prisma/client', () => ({
+vi.mock('../../../../lib/prisma/client.js', () => ({
   Prisma: {
     TransactionIsolationLevel: { Serializable: 'Serializable' },
   },
@@ -17,14 +18,14 @@ jest.mock('@/lib/prisma/client', () => ({
 
 import { BadRequestException, ConflictException } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { AdjustStockService } from './adjust-stock.service';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { CreateActivityLogService } from '../../../activity-logs/services/create-activity-log.service.js';
+import { AdjustStockService } from './adjust-stock.service.js';
 
 describe('AdjustStockService', () => {
   it('rejects zero-quantity adjustments', async () => {
-    const prisma = { $transaction: jest.fn() };
-    const activityLog = { execute: jest.fn() };
+    const prisma = { $transaction: vi.fn() };
+    const activityLog = { execute: vi.fn() };
     const service = new AdjustStockService(
       prisma as unknown as PrismaService,
       activityLog as unknown as CreateActivityLogService,
@@ -40,17 +41,19 @@ describe('AdjustStockService', () => {
   it('prevents a decrement that would make stock negative', async () => {
     const tx = {
       productVariant: {
-        findFirst: jest.fn().mockResolvedValue({
+        findFirst: vi.fn().mockResolvedValue({
           id: 'variant-1',
           stock: 2,
         }),
-        updateMany: jest.fn().mockResolvedValue({ count: 0 }),
+        updateMany: vi.fn().mockResolvedValue({ count: 0 }),
       },
     };
     const prisma = {
-      $transaction: jest.fn((callback) => callback(tx)),
+      $transaction: vi.fn((callback: (transaction: never) => unknown) =>
+        callback(tx as never),
+      ),
     };
-    const activityLog = { execute: jest.fn() };
+    const activityLog = { execute: vi.fn() };
     const service = new AdjustStockService(
       prisma as unknown as PrismaService,
       activityLog as unknown as CreateActivityLogService,
@@ -65,7 +68,7 @@ describe('AdjustStockService', () => {
         where: expect.objectContaining({
           id: 'variant-1',
           stock: { gte: 3 },
-        }),
+        }) as unknown as Record<string, unknown>,
         data: { stock: { increment: -3 } },
       }),
     );
@@ -75,12 +78,12 @@ describe('AdjustStockService', () => {
   it('records an atomic stock adjustment with the acting staff member', async () => {
     const tx = {
       productVariant: {
-        findFirst: jest.fn().mockResolvedValue({
+        findFirst: vi.fn().mockResolvedValue({
           id: 'variant-1',
           stock: 5,
         }),
-        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
-        findUniqueOrThrow: jest.fn().mockResolvedValue({
+        updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+        findUniqueOrThrow: vi.fn().mockResolvedValue({
           id: 'variant-1',
           productId: 'product-1',
           stock: 2,
@@ -94,9 +97,11 @@ describe('AdjustStockService', () => {
       },
     };
     const prisma = {
-      $transaction: jest.fn((callback) => callback(tx)),
+      $transaction: vi.fn((callback: (transaction: never) => unknown) =>
+        callback(tx as never),
+      ),
     };
-    const activityLog = { execute: jest.fn() };
+    const activityLog = { execute: vi.fn() };
     const service = new AdjustStockService(
       prisma as unknown as PrismaService,
       activityLog as unknown as CreateActivityLogService,
@@ -129,11 +134,11 @@ describe('AdjustStockService', () => {
 
   it('translates serializable transaction conflicts into a retryable conflict response', async () => {
     const prisma = {
-      $transaction: jest.fn().mockRejectedValue({ code: 'P2034' }),
+      $transaction: vi.fn().mockRejectedValue({ code: 'P2034' }),
     };
     const service = new AdjustStockService(
       prisma as unknown as PrismaService,
-      { execute: jest.fn() } as unknown as CreateActivityLogService,
+      { execute: vi.fn() } as unknown as CreateActivityLogService,
     );
 
     await expect(

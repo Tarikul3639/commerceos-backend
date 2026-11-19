@@ -1,7 +1,8 @@
-jest.mock('@/common/prisma/prisma.service', () => ({
+import { vi } from 'vitest';
+vi.mock('../../../common/prisma/prisma.service.js', () => ({
   PrismaService: class PrismaService {},
 }));
-jest.mock('@/lib/prisma/client', () => ({
+vi.mock('../../../lib/prisma/client.js', () => ({
   Prisma: { TransactionIsolationLevel: { Serializable: 'Serializable' } },
   ActivityModule: { PAYMENT: 'PAYMENT' },
   ActivityType: { STATUS_CHANGE: 'STATUS_CHANGE' },
@@ -20,10 +21,9 @@ jest.mock('@/lib/prisma/client', () => ({
 
 import { BadRequestException } from '@nestjs/common';
 
-import { PaymentMethod, PaymentStatus } from '@/lib/prisma/enums';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { UpdatePaymentStatusService } from './update-payment-status.service';
-import { UpdatePaymentStatusDto } from '../dto/requests/update-payment-status.dto';
+import { PaymentMethod, PaymentStatus } from '../../../lib/prisma/enums.js';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { UpdatePaymentStatusService } from './update-payment-status.service.js';
 
 describe('UpdatePaymentStatusService', () => {
   const createService = (payment: Record<string, unknown>) => {
@@ -34,25 +34,27 @@ describe('UpdatePaymentStatusService', () => {
     };
     const tx = {
       payment: {
-        findUnique: jest
+        findUnique: vi
           .fn()
           .mockResolvedValueOnce(payment)
           .mockResolvedValueOnce(updatedPayment),
-        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
-        findFirst: jest.fn().mockResolvedValue(null),
+        updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+        findFirst: vi.fn().mockResolvedValue(null),
       },
       order: {
-        update: jest.fn().mockResolvedValue({}),
+        update: vi.fn().mockResolvedValue({}),
       },
     };
     const prisma = {
-      $transaction: jest.fn((callback) => callback(tx)),
+      $transaction: vi.fn((callback: (transaction: never) => unknown) =>
+        callback(tx as never),
+      ),
     };
 
     return {
       service: new UpdatePaymentStatusService(
         prisma as unknown as PrismaService,
-        { execute: jest.fn() } as never,
+        { execute: vi.fn() } as never,
       ),
       tx,
     };
@@ -76,7 +78,7 @@ describe('UpdatePaymentStatusService', () => {
         {
           status: PaymentStatus.PAID,
           transactionId: 'unverified-reference',
-        } as UpdatePaymentStatusDto,
+        },
         'admin-1',
       ),
     ).rejects.toThrow(BadRequestException);
@@ -97,11 +99,7 @@ describe('UpdatePaymentStatusService', () => {
     });
 
     await expect(
-      service.execute(
-        'payment-1',
-        { status: PaymentStatus.PAID } as UpdatePaymentStatusDto,
-        'admin-1',
-      ),
+      service.execute('payment-1', { status: PaymentStatus.PAID }, 'admin-1'),
     ).resolves.toMatchObject({ status: PaymentStatus.PAID });
 
     expect(tx.payment.updateMany).toHaveBeenCalledWith(
@@ -130,7 +128,7 @@ describe('UpdatePaymentStatusService', () => {
     await expect(
       service.execute(
         'payment-1',
-        { status: PaymentStatus.REFUNDED } as UpdatePaymentStatusDto,
+        { status: PaymentStatus.REFUNDED },
         'admin-1',
       ),
     ).rejects.toThrow(BadRequestException);
@@ -152,11 +150,7 @@ describe('UpdatePaymentStatusService', () => {
     tx.payment.findFirst.mockResolvedValueOnce({ id: 'payment-1' });
 
     await expect(
-      service.execute(
-        'payment-2',
-        { status: PaymentStatus.PAID } as UpdatePaymentStatusDto,
-        'admin-1',
-      ),
+      service.execute('payment-2', { status: PaymentStatus.PAID }, 'admin-1'),
     ).rejects.toThrow(BadRequestException);
 
     expect(tx.payment.updateMany).not.toHaveBeenCalled();
@@ -177,7 +171,7 @@ describe('UpdatePaymentStatusService', () => {
 
     await service.execute(
       'payment-2',
-      { status: PaymentStatus.FAILED } as UpdatePaymentStatusDto,
+      { status: PaymentStatus.FAILED },
       'admin-1',
     );
 

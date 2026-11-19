@@ -4,7 +4,7 @@ loadEnv({ path: [".env.local", ".env.prod", '.env'] });
 loadEnv();
 
 import { PrismaPg } from "@prisma/adapter-pg"
-import { PrismaClient } from "../../src/lib/prisma/client"
+import { PrismaClient } from "../../src/lib/prisma/client.js"
 
 const connectionString = process.env.DATABASE_URL
 

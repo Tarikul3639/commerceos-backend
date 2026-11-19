@@ -13,28 +13,28 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { CreateUserDto } from '../dto/requests/create-user.dto';
-import { CreateEmployeeDto } from '../dto/requests/create-employee.dto';
-import { UpdateUserDto } from '../dto/requests/update-user.dto';
-import { UpdateUserStatusDto } from '../dto/requests/update-user-status.dto';
-import { UserQueryDto } from '../dto/requests/user-query.dto';
-import { UserListResponseDto } from '../dto/responses/user-list-response.dto';
+import { CreateUserDto } from '../dto/requests/create-user.dto.js';
+import { CreateEmployeeDto } from '../dto/requests/create-employee.dto.js';
+import { UpdateUserDto } from '../dto/requests/update-user.dto.js';
+import { UpdateUserStatusDto } from '../dto/requests/update-user-status.dto.js';
+import { UserQueryDto } from '../dto/requests/user-query.dto.js';
+import { UserListResponseDto } from '../dto/responses/user-list-response.dto.js';
 
-import { CreateUserService } from '../services/create-user.service';
-import { DeleteUserService } from '../services/delete-user.service';
-import { GetUserService } from '../services/get-user.service';
-import { GetUsersService } from '../services/get-users.service';
-import { RestoreUserService } from '../services/restore-user.service';
-import { UpdateUserService } from '../services/update-user.service';
-import { UpdateUserStatusService } from '../services/update-user-status.service';
+import { CreateUserService } from '../services/create-user.service.js';
+import { DeleteUserService } from '../services/delete-user.service.js';
+import { GetUserService } from '../services/get-user.service.js';
+import { GetUsersService } from '../services/get-users.service.js';
+import { RestoreUserService } from '../services/restore-user.service.js';
+import { UpdateUserService } from '../services/update-user.service.js';
+import { UpdateUserStatusService } from '../services/update-user-status.service.js';
 
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { Roles } from '@/common/decorators/roles.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { RolesGuard } from '@/common/guards/roles.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permission, Role } from '@/lib/prisma/enums';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { Roles } from '../../../common/decorators/roles.decorator.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
+import { RolesGuard } from '../../../common/guards/roles.guard.js';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { Permission, Role } from '../../../lib/prisma/enums.js';
 
 @ApiTags('Users')
 @Controller('users')

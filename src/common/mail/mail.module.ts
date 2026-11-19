@@ -2,10 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.adapter';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-import { MailService } from '@/common/mail/mail.service';
-import { PrismaModule } from '@/common/prisma/prisma.module';
+import { MailService } from './mail.service.js';
+import { PrismaModule } from '../prisma/prisma.module.js';
 
 @Module({
   imports: [
@@ -32,7 +33,7 @@ import { PrismaModule } from '@/common/prisma/prisma.module';
         },
 
         template: {
-          dir: join(__dirname, 'templates'),
+          dir: join(dirname(fileURLToPath(import.meta.url)), 'templates'),
           adapter: new HandlebarsAdapter(),
           options: {
             strict: true,

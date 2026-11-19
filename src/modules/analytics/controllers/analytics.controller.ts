@@ -6,24 +6,24 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { Permission } from '@/lib/prisma/enums';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { Permission } from '../../../lib/prisma/enums.js';
 
-import { AnalyticsQueryDto } from '../dto/requests/analytics-query.dto';
+import { AnalyticsQueryDto } from '../dto/requests/analytics-query.dto.js';
 
-import { RevenueChartItemDto } from '../dto/responses/revenue-chart-response.dto';
-import { SalesPurchaseChartItemDto } from '../dto/responses/sales-purchase-chart-response.dto';
-import { TopProductItemDto } from '../dto/responses/top-products-response.dto';
-import { TopCustomerItemDto } from '../dto/responses/top-customers-response.dto';
-import { PurchaseSummaryResponseDto } from '../dto/responses/purchase-summary-response.dto';
+import { RevenueChartItemDto } from '../dto/responses/revenue-chart-response.dto.js';
+import { SalesPurchaseChartItemDto } from '../dto/responses/sales-purchase-chart-response.dto.js';
+import { TopProductItemDto } from '../dto/responses/top-products-response.dto.js';
+import { TopCustomerItemDto } from '../dto/responses/top-customers-response.dto.js';
+import { PurchaseSummaryResponseDto } from '../dto/responses/purchase-summary-response.dto.js';
 
-import { GetRevenueChartService } from '../services/get-revenue-chart.service';
-import { GetSalesPurchaseChartService } from '../services/get-sales-purchase-chart.service';
-import { GetTopProductsService } from '../services/get-top-products.service';
-import { GetTopCustomersService } from '../services/get-top-customers.service';
-import { GetPurchaseSummaryService } from '../services/get-purchase-summary.service';
+import { GetRevenueChartService } from '../services/get-revenue-chart.service.js';
+import { GetSalesPurchaseChartService } from '../services/get-sales-purchase-chart.service.js';
+import { GetTopProductsService } from '../services/get-top-products.service.js';
+import { GetTopCustomersService } from '../services/get-top-customers.service.js';
+import { GetPurchaseSummaryService } from '../services/get-purchase-summary.service.js';
 
 @ApiTags('Analytics')
 @ApiBearerAuth()

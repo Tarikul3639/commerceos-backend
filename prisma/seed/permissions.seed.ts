@@ -1,6 +1,6 @@
-import { Permission, Role } from '../../src/lib/prisma/client';
+import { Permission, Role } from '../../src/lib/prisma/client.js';
 
-import { prisma } from './client';
+import { prisma } from './client.js';
 
 const rolePermissions: Record<Role, Permission[]> = {
   [Role.SUPER_ADMIN]: Object.values(Permission) as Permission[],

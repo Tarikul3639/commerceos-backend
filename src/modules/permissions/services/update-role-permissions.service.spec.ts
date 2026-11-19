@@ -1,16 +1,17 @@
-jest.mock('@/common/prisma/prisma.service', () => ({
+import { vi } from 'vitest';
+vi.mock('../../../common/prisma/prisma.service.js', () => ({
   PrismaService: class PrismaService {},
 }));
 
 import { ForbiddenException } from '@nestjs/common';
 
-import { Permission, Role } from '@/lib/prisma/enums';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { UpdateRolePermissionsService } from './update-role-permissions.service';
+import { Permission, Role } from '../../../lib/prisma/enums.js';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { UpdateRolePermissionsService } from './update-role-permissions.service.js';
 
 describe('UpdateRolePermissionsService', () => {
   it('rejects role permission changes by non-SUPER_ADMIN actors', async () => {
-    const prisma = { $transaction: jest.fn() };
+    const prisma = { $transaction: vi.fn() };
     const service = new UpdateRolePermissionsService(
       prisma as unknown as PrismaService,
     );
@@ -25,15 +26,17 @@ describe('UpdateRolePermissionsService', () => {
   it('allows SUPER_ADMIN to update non-SUPER_ADMIN role permissions', async () => {
     const tx = {
       rolePermission: {
-        deleteMany: jest.fn().mockResolvedValue({ count: 1 }),
-        createMany: jest.fn().mockResolvedValue({ count: 1 }),
-        findMany: jest
+        deleteMany: vi.fn().mockResolvedValue({ count: 1 }),
+        createMany: vi.fn().mockResolvedValue({ count: 1 }),
+        findMany: vi
           .fn()
           .mockResolvedValue([{ permission: Permission.PRODUCT_READ }]),
       },
     };
     const prisma = {
-      $transaction: jest.fn((callback) => callback(tx)),
+      $transaction: vi.fn((callback: (transaction: never) => unknown) =>
+        callback(tx as never),
+      ),
     };
     const service = new UpdateRolePermissionsService(
       prisma as unknown as PrismaService,

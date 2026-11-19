@@ -1,29 +1,24 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import { describe, it } from 'vitest';
 import request from 'supertest';
-import { App } from 'supertest/types';
-import { AppModule } from './../src/app.module';
+import { AppModule } from '../src/app.module.js';
 
-describe('AppController (e2e)', () => {
-  let app: INestApplication<App>;
-
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
+describe('Application', () => {
+  it('returns Not Found for the unregistered root route', async () => {
+    const testingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
-    await app.init();
-  });
+    const app = testingModule.createNestApplication();
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
-  });
+    try {
+      await app.init();
 
-  afterEach(async () => {
-    await app.close();
+      await request(app.getHttpServer() as never)
+        .get('/')
+        .expect(404);
+    } finally {
+      await app.close();
+    }
   });
 });

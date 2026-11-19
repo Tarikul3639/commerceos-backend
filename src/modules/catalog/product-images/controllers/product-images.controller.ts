@@ -8,11 +8,11 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permission } from '@/lib/prisma/enums';
+import { CurrentUser } from '../../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../../common/decorators/permissions.decorator.js';
+import { PermissionsGuard } from '../../../../common/guards/permissions.guard.js';
+import { UserJwtAuthGuard } from '../../../../common/guards/user-jwt-auth.guard.js';
+import { Permission } from '../../../../lib/prisma/enums.js';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -21,14 +21,14 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { AddProductImageDto } from '../dto/requests/add-product-image.dto';
-import { UpdateProductImageDto } from '../dto/requests/update-product-image.dto';
-import { ProductImageResponseDto } from '../dto/responses/product-image-response.dto';
+import { AddProductImageDto } from '../dto/requests/add-product-image.dto.js';
+import { UpdateProductImageDto } from '../dto/requests/update-product-image.dto.js';
+import { ProductImageResponseDto } from '../dto/responses/product-image-response.dto.js';
 
-import { AddProductImageService } from '../services/add-product-image.service';
-import { DeleteProductImageService } from '../services/delete-product-image.service';
-import { GetProductImagesService } from '../services/get-product-images.service';
-import { UpdateProductImageService } from '../services/update-product-image.service';
+import { AddProductImageService } from '../services/add-product-image.service.js';
+import { DeleteProductImageService } from '../services/delete-product-image.service.js';
+import { GetProductImagesService } from '../services/get-product-images.service.js';
+import { UpdateProductImageService } from '../services/update-product-image.service.js';
 
 @ApiTags('Product Images')
 @Controller('admin/product-images')

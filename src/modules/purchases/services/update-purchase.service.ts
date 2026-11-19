@@ -4,13 +4,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { Prisma, PurchaseStatus } from '@/lib/prisma/client';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { ActivityModule, ActivityType } from '@/lib/prisma/client';
+import { Prisma, PurchaseStatus } from '../../../lib/prisma/client.js';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
+import { ActivityModule, ActivityType } from '../../../lib/prisma/client.js';
 
-import { UpdatePurchaseDto } from '../dto/requests/update-purchase.dto';
-import { PurchaseResponseDto } from '../dto/responses/purchase-response.dto';
+import { UpdatePurchaseDto } from '../dto/requests/update-purchase.dto.js';
+import { PurchaseResponseDto } from '../dto/responses/purchase-response.dto.js';
 
 @Injectable()
 export class UpdatePurchaseService {

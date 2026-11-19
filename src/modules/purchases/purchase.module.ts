@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { RolesGuard } from '@/common/guards/roles.guard';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { PurchaseController } from './purchase.controller';
-import { CancelPurchaseService } from './services/cancel-purchase.service';
-import { CreatePurchaseService } from './services/create-purchase.service';
-import { DeletePurchaseService } from './services/delete-purchase.service';
-import { GetPurchaseService } from './services/get-purchase.service';
-import { GetPurchasesService } from './services/get-purchases.service';
-import { ReceivePurchaseService } from './services/receive-purchase.service';
-import { UpdatePurchaseService } from './services/update-purchase.service';
+import { UserJwtAuthGuard } from '../../common/guards/user-jwt-auth.guard.js';
+import { RolesGuard } from '../../common/guards/roles.guard.js';
+import { PermissionsGuard } from '../../common/guards/permissions.guard.js';
+import { PurchaseController } from './purchase.controller.js';
+import { CancelPurchaseService } from './services/cancel-purchase.service.js';
+import { CreatePurchaseService } from './services/create-purchase.service.js';
+import { DeletePurchaseService } from './services/delete-purchase.service.js';
+import { GetPurchaseService } from './services/get-purchase.service.js';
+import { GetPurchasesService } from './services/get-purchases.service.js';
+import { ReceivePurchaseService } from './services/receive-purchase.service.js';
+import { UpdatePurchaseService } from './services/update-purchase.service.js';
 
 @Module({
   controllers: [PurchaseController],

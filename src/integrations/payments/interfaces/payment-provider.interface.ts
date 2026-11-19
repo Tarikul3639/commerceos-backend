@@ -1,4 +1,4 @@
-import { PaymentMethod } from '@/lib/prisma/enums';
+import { PaymentMethod } from '../../../lib/prisma/enums.js';
 
 export interface PaymentSession {
   paymentId: string;

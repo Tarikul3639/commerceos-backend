@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { SizeGuideResponseDto } from '../dto/responses/size-guide-response.dto';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { SizeGuideResponseDto } from '../dto/responses/size-guide-response.dto.js';
 
 @Injectable()
 export class GetSizeGuideDetailsService {

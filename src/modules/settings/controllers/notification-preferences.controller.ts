@@ -5,14 +5,14 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permission } from '@/lib/prisma/enums';
-import { UpdateNotificationPreferencesDto } from '../dto/requests/update-notification-preferences.dto';
-import { NotificationPreferencesResponseDto } from '../dto/responses/notification-preferences-response.dto';
-import { NotificationPreferencesService } from '../services/notification-preferences.service';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { Permission } from '../../../lib/prisma/enums.js';
+import { UpdateNotificationPreferencesDto } from '../dto/requests/update-notification-preferences.dto.js';
+import { NotificationPreferencesResponseDto } from '../dto/responses/notification-preferences-response.dto.js';
+import { NotificationPreferencesService } from '../services/notification-preferences.service.js';
 
 @ApiTags('Notification Preferences')
 @ApiBearerAuth()

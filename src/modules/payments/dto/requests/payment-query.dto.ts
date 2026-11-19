@@ -1,6 +1,10 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { PaymentMethod, PaymentStatus, PaymentType } from '@/lib/prisma/enums';
+import {
+  PaymentMethod,
+  PaymentStatus,
+  PaymentType,
+} from '../../../../lib/prisma/enums.js';
 
 export class PaymentQueryDto {
   @ApiPropertyOptional({ example: '1' })

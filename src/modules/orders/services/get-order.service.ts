@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { OrderResponseDto } from '../dto/responses/order-response.dto';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { OrderResponseDto } from '../dto/responses/order-response.dto.js';
 
 /*
  * SERVICE: GetOrderService

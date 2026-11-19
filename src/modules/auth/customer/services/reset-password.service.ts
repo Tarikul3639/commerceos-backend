@@ -1,12 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { Prisma, CustomerStatus } from '@/lib/prisma/client';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { hashPassword } from '@/common/utils/password.util';
+import { Prisma, CustomerStatus } from '../../../../lib/prisma/client.js';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { hashPassword } from '../../../../common/utils/password.util.js';
 
-import { CustomerTokenService } from './token.service';
-import { ResetPasswordDto } from '../dto/requests/reset-password.dto';
+import { CustomerTokenService } from './token.service.js';
+import { ResetPasswordDto } from '../dto/requests/reset-password.dto.js';
 
 @Injectable()
 export class CustomerResetPasswordService {

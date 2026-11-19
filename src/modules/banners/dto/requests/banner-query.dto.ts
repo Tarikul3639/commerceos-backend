@@ -6,10 +6,10 @@ import {
   MaxLength,
 } from 'class-validator';
 
-import { Transform, Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { BannerPosition, BannerType } from '@/lib/prisma/client';
+import { BannerPosition, BannerType } from '../../../../lib/prisma/client.js';
 
 export class BannerQueryDto {
   @ApiPropertyOptional({ description: 'Search banners by title' })
@@ -50,7 +50,7 @@ export class BannerQueryDto {
     example: true,
   })
   @IsOptional()
-  @Transform(({ value }) => {
+  @Transform(({ value }: { value: unknown }) => {
     if (value === 'true') return true;
     if (value === 'false') return false;
 

@@ -4,12 +4,16 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { Prisma, PaymentStatus, PaymentType } from '@/lib/prisma/client';
-import { PaymentProvider } from '@/lib/prisma/enums';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import {
+  Prisma,
+  PaymentStatus,
+  PaymentType,
+} from '../../../lib/prisma/client.js';
+import { PaymentProvider } from '../../../lib/prisma/enums.js';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
 
-import { CreatePaymentDto } from '../dto/requests/create-payment.dto';
-import { PaymentResponseDto } from '../dto/responses/payment-response.dto';
+import { CreatePaymentDto } from '../dto/requests/create-payment.dto.js';
+import { PaymentResponseDto } from '../dto/responses/payment-response.dto.js';
 
 @Injectable()
 export class CreatePaymentService {

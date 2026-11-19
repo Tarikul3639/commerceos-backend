@@ -1,19 +1,21 @@
-jest.mock('@/common/prisma/prisma.service', () => ({
+import { vi } from 'vitest';
+
+vi.mock('../prisma/prisma.service.js', () => ({
   PrismaService: class PrismaService {},
 }));
 
 import { ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { PermissionsGuard } from './permissions.guard';
-import { Permission, Role } from '@/lib/prisma/enums';
+import { PermissionsGuard } from './permissions.guard.js';
+import { Permission, Role } from '../../lib/prisma/enums.js';
 
 describe('PermissionsGuard', () => {
   const handler = () => undefined;
   const controller = class TestController {};
 
-  let reflector: { getAllAndOverride: jest.Mock };
-  let prisma: { rolePermission: { findMany: jest.Mock } };
+  let reflector: { getAllAndOverride: ReturnType<typeof vi.fn> };
+  let prisma: { rolePermission: { findMany: ReturnType<typeof vi.fn> } };
   let guard: PermissionsGuard;
 
   const createContext = (user?: { role: Role }) =>
@@ -27,11 +29,11 @@ describe('PermissionsGuard', () => {
 
   beforeEach(() => {
     reflector = {
-      getAllAndOverride: jest.fn(),
+      getAllAndOverride: vi.fn(),
     };
     prisma = {
       rolePermission: {
-        findMany: jest.fn(),
+        findMany: vi.fn(),
       },
     };
     guard = new PermissionsGuard(

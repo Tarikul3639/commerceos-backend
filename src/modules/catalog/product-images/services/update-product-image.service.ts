@@ -4,13 +4,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { CloudinaryService } from '@/common/cloudinary/cloudinary.service';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { ActivityModule, ActivityType } from '@/lib/prisma/client';
+import { CloudinaryService } from '../../../../common/cloudinary/cloudinary.service.js';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { CreateActivityLogService } from '../../../activity-logs/services/create-activity-log.service.js';
+import { ActivityModule, ActivityType } from '../../../../lib/prisma/client.js';
 
-import { UpdateProductImageDto } from '../dto/requests/update-product-image.dto';
-import { ProductImageResponseDto } from '../dto/responses/product-image-response.dto';
+import { UpdateProductImageDto } from '../dto/requests/update-product-image.dto.js';
+import { ProductImageResponseDto } from '../dto/responses/product-image-response.dto.js';
 
 @Injectable()
 export class UpdateProductImageService {

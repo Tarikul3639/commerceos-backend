@@ -1,39 +1,37 @@
-jest.mock('@/lib/prisma/client', () => ({
+import { vi } from 'vitest';
+vi.mock('../../../lib/prisma/client.js', () => ({
   ActivityModule: { USER: 'USER' },
   ActivityType: { CREATE: 'CREATE', UPDATE: 'UPDATE', DELETE: 'DELETE' },
 }));
-jest.mock('@/common/prisma/prisma.service', () => ({
+vi.mock('../../../common/prisma/prisma.service.js', () => ({
   PrismaService: class PrismaService {},
 }));
-jest.mock('@/common/utils/password.util', () => ({
-  hashPassword: jest.fn().mockResolvedValue('hashed-password'),
+vi.mock('../../../common/utils/password.util.js', () => ({
+  hashPassword: vi.fn().mockResolvedValue('hashed-password'),
 }));
-jest.mock('@/common/mail/mail.service', () => ({
+vi.mock('../../../common/mail/mail.service.js', () => ({
   MailService: class MailService {},
 }));
-jest.mock(
-  '@/modules/activity-logs/services/create-activity-log.service',
-  () => ({
-    CreateActivityLogService: class CreateActivityLogService {},
-  }),
-);
+vi.mock('../../activity-logs/services/create-activity-log.service.js', () => ({
+  CreateActivityLogService: class CreateActivityLogService {},
+}));
 
 import { ForbiddenException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { Role } from '@/lib/prisma/enums';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { MailService } from '@/common/mail/mail.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { CreateUserService } from './create-user.service';
-import { CreateUserDto } from '../dto/requests/create-user.dto';
+import { Role } from '../../../lib/prisma/enums.js';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { MailService } from '../../../common/mail/mail.service.js';
+import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
+import { CreateUserService } from './create-user.service.js';
+import { CreateUserDto } from '../dto/requests/create-user.dto.js';
 
 describe('CreateUserService', () => {
   it('prevents ADMIN from creating another ADMIN account', async () => {
-    const prisma = { user: { findUnique: jest.fn() } };
+    const prisma = { user: { findUnique: vi.fn() } };
     const service = new CreateUserService(
       prisma as unknown as PrismaService,
-      { getOrThrow: jest.fn() } as unknown as ConfigService,
+      { getOrThrow: vi.fn() } as unknown as ConfigService,
       {} as MailService,
       {} as never,
       {} as CreateActivityLogService,
@@ -66,15 +64,17 @@ describe('CreateUserService', () => {
       updatedAt: new Date(),
     };
     const tx = {
-      user: { create: jest.fn().mockResolvedValue(user) },
-      userPasswordResetToken: { create: jest.fn().mockResolvedValue({}) },
+      user: { create: vi.fn().mockResolvedValue(user) },
+      userPasswordResetToken: { create: vi.fn().mockResolvedValue({}) },
     };
     const prisma = {
-      user: { findUnique: jest.fn().mockResolvedValue(null) },
-      $transaction: jest.fn((callback) => callback(tx)),
+      user: { findUnique: vi.fn().mockResolvedValue(null) },
+      $transaction: vi.fn((callback: (transaction: never) => unknown) =>
+        callback(tx as never),
+      ),
     };
     const config = {
-      getOrThrow: jest.fn((key: string) => {
+      getOrThrow: vi.fn((key: string) => {
         const values: Record<string, string | number> = {
           'bcrypt.saltRounds': 10,
           'auth.user.passwordResetExpiresIn': '30m',
@@ -84,12 +84,12 @@ describe('CreateUserService', () => {
         return values[key];
       }),
     };
-    const mail = { sendWelcomeEmail: jest.fn() };
+    const mail = { sendWelcomeEmail: vi.fn() };
     const token = {
-      generateRandomToken: jest.fn().mockReturnValue('setup-token'),
-      hashToken: jest.fn().mockReturnValue('hashed-setup-token'),
+      generateRandomToken: vi.fn().mockReturnValue('setup-token'),
+      hashToken: vi.fn().mockReturnValue('hashed-setup-token'),
     };
-    const activity = { execute: jest.fn() };
+    const activity = { execute: vi.fn() };
     const service = new CreateUserService(
       prisma as unknown as PrismaService,
       config as unknown as ConfigService,
@@ -104,7 +104,7 @@ describe('CreateUserService', () => {
           name: 'New Employee',
           email: 'employee@example.com',
           role: Role.EMPLOYEE,
-        } as CreateUserDto,
+        },
         'admin-actor',
         Role.ADMIN,
       ),
@@ -118,7 +118,7 @@ describe('CreateUserService', () => {
         data: expect.objectContaining({
           tokenHash: 'hashed-setup-token',
           userId: 'employee-1',
-        }),
+        }) as unknown as Record<string, unknown>,
       }),
     );
     expect(mail.sendWelcomeEmail).toHaveBeenCalledWith(

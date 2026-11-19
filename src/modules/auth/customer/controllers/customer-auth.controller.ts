@@ -14,28 +14,28 @@ import { ApiTags } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
 
-import { CurrentCustomer } from '@/common/decorators/current-customer.decorator';
-import { CUSTOMER_REFRESH_TOKEN_COOKIE } from '@/common/constants/cookie.constants';
-import { CustomerJwtAuthGuard } from '@/common/guards/customer-jwt-auth.guard';
-import { CookieUtil } from '@/common/utils/cookie.util';
+import { CurrentCustomer } from '../../../../common/decorators/current-customer.decorator.js';
+import { CUSTOMER_REFRESH_TOKEN_COOKIE } from '../../../../common/constants/cookie.constants.js';
+import { CustomerJwtAuthGuard } from '../../../../common/guards/customer-jwt-auth.guard.js';
+import { CookieUtil } from '../../../../common/utils/cookie.util.js';
 
 // DTOs
-import { LoginDto } from '../dto/requests/login.dto';
-import { RegisterDto } from '../dto/requests/register.dto';
-import { ChangePasswordDto } from '../dto/requests/change-password.dto';
-import { ForgotPasswordDto } from '../dto/requests/forgot-password.dto';
-import { ResetPasswordDto } from '../dto/requests/reset-password.dto';
-import { VerifyEmailDto } from '../dto/requests/verify-email.dto';
+import { LoginDto } from '../dto/requests/login.dto.js';
+import { RegisterDto } from '../dto/requests/register.dto.js';
+import { ChangePasswordDto } from '../dto/requests/change-password.dto.js';
+import { ForgotPasswordDto } from '../dto/requests/forgot-password.dto.js';
+import { ResetPasswordDto } from '../dto/requests/reset-password.dto.js';
+import { VerifyEmailDto } from '../dto/requests/verify-email.dto.js';
 
 // Services
-import { CustomerRegisterService } from '../services/register.service';
-import { CustomerLoginService } from '../services/login.service';
-import { CustomerLogoutService } from '../services/logout.service';
-import { CustomerLogoutAllService } from '../services/logout-all.service';
-import { CustomerChangePasswordService } from '../services/change-password.service';
-import { CustomerForgotPasswordService } from '../services/forgot-password.service';
-import { CustomerResetPasswordService } from '../services/reset-password.service';
-import { CustomerVerifyEmailService } from '../services/verify-email.service';
+import { CustomerRegisterService } from '../services/register.service.js';
+import { CustomerLoginService } from '../services/login.service.js';
+import { CustomerLogoutService } from '../services/logout.service.js';
+import { CustomerLogoutAllService } from '../services/logout-all.service.js';
+import { CustomerChangePasswordService } from '../services/change-password.service.js';
+import { CustomerForgotPasswordService } from '../services/forgot-password.service.js';
+import { CustomerResetPasswordService } from '../services/reset-password.service.js';
+import { CustomerVerifyEmailService } from '../services/verify-email.service.js';
 
 @ApiTags('Customer Authentication')
 @Controller('auth/customer')
@@ -123,7 +123,8 @@ export class CustomerAuthController {
     @Res({ passthrough: true })
     response: Response,
   ): Promise<void> {
-    const refreshToken = request.cookies?.[CUSTOMER_REFRESH_TOKEN_COOKIE];
+    const refreshToken = request.cookies?.[CUSTOMER_REFRESH_TOKEN_COOKIE] as
+      string | undefined;
 
     if (refreshToken) {
       await this.logoutService.execute(customerId, refreshToken);

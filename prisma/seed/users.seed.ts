@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
 
-import { Role, UserStatus } from '../../src/lib/prisma/client';
+import { Role, UserStatus } from '../../src/lib/prisma/client.js';
 
-import { prisma } from './client';
+import { prisma } from './client.js';
 
 const users = [
     {

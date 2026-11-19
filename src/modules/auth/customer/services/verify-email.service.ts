@@ -7,11 +7,11 @@ import {
 import { ConfigService } from '@nestjs/config';
 import ms, { type StringValue } from 'ms';
 
-import { Prisma, CustomerStatus } from '@/lib/prisma/client';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { MailService } from '@/common/mail/mail.service';
+import { Prisma, CustomerStatus } from '../../../../lib/prisma/client.js';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { MailService } from '../../../../common/mail/mail.service.js';
 
-import { CustomerTokenService } from './token.service';
+import { CustomerTokenService } from './token.service.js';
 
 @Injectable()
 export class CustomerVerifyEmailService {

@@ -1,12 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { ActivityModule, ActivityType } from '@/lib/prisma/client';
+import { PrismaService } from '../../../../../common/prisma/prisma.service.js';
+import { CreateActivityLogService } from '../../../../activity-logs/services/create-activity-log.service.js';
+import {
+  ActivityModule,
+  ActivityType,
+} from '../../../../../lib/prisma/client.js';
 
-import { CreateProductDto } from '../../dto/requests/create-product.dto';
-import { AdminProductDetailResponseDto } from '../../dto/responses/admin-product-detail-response.dto';
-import { GetAdminProductDetailsService } from './get-admin-product-details.service';
+import { CreateProductDto } from '../../dto/requests/create-product.dto.js';
+import { AdminProductDetailResponseDto } from '../../dto/responses/admin-product-detail-response.dto.js';
+import { GetAdminProductDetailsService } from './get-admin-product-details.service.js';
 
 /** Creates a product and returns its complete details. */
 @Injectable()

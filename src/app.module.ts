@@ -13,40 +13,40 @@ import {
   mailConfig,
   swaggerConfig,
   envValidationSchema,
-} from '@/config';
+} from './config/index.js';
 
 // Modules
-import { PrismaModule } from '@/common/prisma/prisma.module';
-import { CloudinaryModule } from '@/common/cloudinary/cloudinary.module';
-import { MailModule } from '@/common/mail/mail.module';
-import { AuthModule } from '@/modules/auth/auth.module';
-import { UsersModule } from '@/modules/users/user.module';
-import { CustomerModule } from '@/modules/customers/customer.module';
-import { PermissionsModule } from '@/modules/permissions/permissions.module';
+import { PrismaModule } from './common/prisma/prisma.module.js';
+import { CloudinaryModule } from './common/cloudinary/cloudinary.module.js';
+import { MailModule } from './common/mail/mail.module.js';
+import { AuthModule } from './modules/auth/auth.module.js';
+import { UsersModule } from './modules/users/user.module.js';
+import { CustomerModule } from './modules/customers/customer.module.js';
+import { PermissionsModule } from './modules/permissions/permissions.module.js';
 
-import { CatalogModule } from '@/modules/catalog/catalog.module';
-import { SizeGuideModule } from '@/modules/size-guides/size-guide.module';
+import { CatalogModule } from './modules/catalog/catalog.module.js';
+import { SizeGuideModule } from './modules/size-guides/size-guide.module.js';
 
-import { PurchaseModule } from '@/modules/purchases/purchase.module';
-import { PurchaseReturnModule } from '@/modules/purchase-return/purchase-return.module';
-import { SupplierModule } from '@/modules/suppliers/supplier.module';
-import { OrderModule } from '@/modules/orders/order.module';
-import { CartModule } from '@/modules/carts/cart.module';
-import { BannerModule } from '@/modules/banners/banner.module';
-import { DiscountModule } from '@/modules/discounts/discount.module';
+import { PurchaseModule } from './modules/purchases/purchase.module.js';
+import { PurchaseReturnModule } from './modules/purchase-return/purchase-return.module.js';
+import { SupplierModule } from './modules/suppliers/supplier.module.js';
+import { OrderModule } from './modules/orders/order.module.js';
+import { CartModule } from './modules/carts/cart.module.js';
+import { BannerModule } from './modules/banners/banner.module.js';
+import { DiscountModule } from './modules/discounts/discount.module.js';
 
-import { ActivityLogModule } from '@/modules/activity-logs/activity-log.module';
-import { SettingsModule } from '@/modules/settings/settings.module';
-import { NotificationModule } from '@/modules/notifications/notification.module';
-import { EmailModule } from '@/modules/emails/email.module';
-import { AuditModule } from '@/common/audit/audit.module';
-import { AuditContextInterceptor } from '@/common/audit/audit-context.interceptor';
+import { ActivityLogModule } from './modules/activity-logs/activity-log.module.js';
+import { SettingsModule } from './modules/settings/settings.module.js';
+import { NotificationModule } from './modules/notifications/notification.module.js';
+import { EmailModule } from './modules/emails/email.module.js';
+import { AuditModule } from './common/audit/audit.module.js';
+import { AuditContextInterceptor } from './common/audit/audit-context.interceptor.js';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 
-import { DashboardModule } from '@/modules/dashboard/dashboard.module';
-import { AnalyticsModule } from '@/modules/analytics/analytics.module';
-import { StockModule } from '@/modules/inventory/stocks/stock.module';
-import { PaymentModule } from '@/modules/payments/payment.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module.js';
+import { AnalyticsModule } from './modules/analytics/analytics.module.js';
+import { StockModule } from './modules/inventory/stocks/stock.module.js';
+import { PaymentModule } from './modules/payments/payment.module.js';
 
 @Module({
   imports: [

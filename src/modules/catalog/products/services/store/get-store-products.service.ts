@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '../../../../../common/prisma/prisma.service.js';
 
-import { ProductQueryDto } from '../../dto/requests/product-query.dto';
+import { ProductQueryDto } from '../../dto/requests/product-query.dto.js';
 import {
   StoreProductListItemDto,
   StoreProductListResponseDto,
-} from '../../dto/responses/store-product-list-response.dto';
-import { buildStoreProductWhere } from '../../utils/product-query.util';
+} from '../../dto/responses/store-product-list-response.dto.js';
+import { buildStoreProductWhere } from '../../utils/product-query.util.js';
 
 @Injectable()
 export class GetStoreProductsService {

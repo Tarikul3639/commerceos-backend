@@ -4,17 +4,17 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { ActivityModule, ActivityType } from '@/lib/prisma/client';
-import { CloudinaryService } from '@/common/cloudinary/cloudinary.service';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
+import { ActivityModule, ActivityType } from '../../../lib/prisma/client.js';
+import { CloudinaryService } from '../../../common/cloudinary/cloudinary.service.js';
 
-import { UpdateBannerDto } from '../dto/requests/update-banner.dto';
-import { BannerResponseDto } from '../dto/responses/banner-response.dto';
+import { UpdateBannerDto } from '../dto/requests/update-banner.dto.js';
+import { BannerResponseDto } from '../dto/responses/banner-response.dto.js';
 import {
   bannerWithUsers,
   toBannerResponse,
-} from '../dto/responses/banner-response.mapper';
+} from '../dto/responses/banner-response.mapper.js';
 
 @Injectable()
 export class UpdateBannerService {

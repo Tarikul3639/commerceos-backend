@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto';
-import { DashboardOverviewResponseDto } from '../dto/responses/dashboard-overview-response.dto';
+import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto.js';
+import { DashboardOverviewResponseDto } from '../dto/responses/dashboard-overview-response.dto.js';
 
-import { GetSalesSummaryService } from './get-sales-summary.service';
-import { GetStockSummaryService } from './get-stock-summary.service';
-import { GetOrderSummaryService } from './get-order-summary.service';
-import { GetCustomerSummaryService } from './get-customer-summary.service';
-import { GetLowStockProductsService } from './get-low-stock-products.service';
-import { GetRecentActivitiesService } from './get-recent-activities.service';
-import { GetRecentOrdersService } from './get-recent-orders.service';
+import { GetSalesSummaryService } from './get-sales-summary.service.js';
+import { GetStockSummaryService } from './get-stock-summary.service.js';
+import { GetOrderSummaryService } from './get-order-summary.service.js';
+import { GetCustomerSummaryService } from './get-customer-summary.service.js';
+import { GetLowStockProductsService } from './get-low-stock-products.service.js';
+import { GetRecentActivitiesService } from './get-recent-activities.service.js';
+import { GetRecentOrdersService } from './get-recent-orders.service.js';
 
 @Injectable()
 export class GetDashboardOverviewService {

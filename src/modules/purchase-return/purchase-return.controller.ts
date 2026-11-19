@@ -20,22 +20,22 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { RolesGuard } from '@/common/guards/roles.guard';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { Permission } from '@/lib/prisma/enums';
+import { CurrentUser } from '../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../common/decorators/permissions.decorator.js';
+import { UserJwtAuthGuard } from '../../common/guards/user-jwt-auth.guard.js';
+import { RolesGuard } from '../../common/guards/roles.guard.js';
+import { PermissionsGuard } from '../../common/guards/permissions.guard.js';
+import { Permission } from '../../lib/prisma/enums.js';
 
-import { CreatePurchaseReturnDto } from './dto/requests/create-purchase-return.dto';
-import { PurchaseReturnQueryDto } from './dto/requests/purchase-return-query.dto';
+import { CreatePurchaseReturnDto } from './dto/requests/create-purchase-return.dto.js';
+import { PurchaseReturnQueryDto } from './dto/requests/purchase-return-query.dto.js';
 
-import { PurchaseReturnResponseDto } from './dto/responses/purchase-return-response.dto';
+import { PurchaseReturnResponseDto } from './dto/responses/purchase-return-response.dto.js';
 
-import { CreatePurchaseReturnService } from './services/create-purchase-return.service';
-import { GetPurchaseReturnService } from './services/get-purchase-return.service';
-import { GetPurchaseReturnsService } from './services/get-purchase-returns.service';
-import { PurchaseReturnActionsService } from './services/purchase-return-actions.service';
+import { CreatePurchaseReturnService } from './services/create-purchase-return.service.js';
+import { GetPurchaseReturnService } from './services/get-purchase-return.service.js';
+import { GetPurchaseReturnsService } from './services/get-purchase-returns.service.js';
+import { PurchaseReturnActionsService } from './services/purchase-return-actions.service.js';
 
 @ApiTags('Purchase Returns')
 @ApiBearerAuth()

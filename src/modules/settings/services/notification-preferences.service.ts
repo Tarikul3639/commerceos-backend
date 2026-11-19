@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { UpdateNotificationPreferencesDto } from '../dto/requests/update-notification-preferences.dto';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { UpdateNotificationPreferencesDto } from '../dto/requests/update-notification-preferences.dto.js';
 
 @Injectable()
 export class NotificationPreferencesService {
@@ -15,6 +15,7 @@ export class NotificationPreferencesService {
   }
 
   async update(dto: UpdateNotificationPreferencesDto, userId: string) {
+    void userId;
     return this.prisma.notificationPreferences.upsert({
       where: { id: 'default' },
       create: { id: 'default', ...dto },

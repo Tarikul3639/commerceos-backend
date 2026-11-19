@@ -7,46 +7,46 @@ import { PassportModule } from '@nestjs/passport';
 import type { StringValue } from 'ms';
 
 // Common Modules
-import { PrismaModule } from '@/common/prisma/prisma.module';
-import { MailModule } from '@/common/mail/mail.module';
+import { PrismaModule } from '../../common/prisma/prisma.module.js';
+import { MailModule } from '../../common/mail/mail.module.js';
 
 // Customer Authentication
-import { CustomerJwtStrategy } from '@/common/strategies/customer-jwt.strategy';
-import { CustomerJwtAuthGuard } from '@/common/guards/customer-jwt-auth.guard';
+import { CustomerJwtStrategy } from '../../common/strategies/customer-jwt.strategy.js';
+import { CustomerJwtAuthGuard } from '../../common/guards/customer-jwt-auth.guard.js';
 
 // User Authentication
-import { UserJwtStrategy } from '@/common/strategies/user-jwt.strategy';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { UserJwtStrategy } from '../../common/strategies/user-jwt.strategy.js';
+import { UserJwtAuthGuard } from '../../common/guards/user-jwt-auth.guard.js';
 
 // Controllers
-import { UserAuthController } from './user/controllers/user-auth.controller';
-import { CustomerAuthController } from './customer/controllers/customer-auth.controller';
+import { UserAuthController } from './user/controllers/user-auth.controller.js';
+import { CustomerAuthController } from './customer/controllers/customer-auth.controller.js';
 
 // User Auth Services
-import { TokenService } from './user/services/token.service';
-import { LoginService } from './user/services/login.service';
-import { LogoutService } from './user/services/logout.service';
-import { LogoutAllService } from './user/services/logout-all.service';
-import { RefreshTokenService } from './user/services/refresh-token.service';
+import { TokenService } from './user/services/token.service.js';
+import { LoginService } from './user/services/login.service.js';
+import { LogoutService } from './user/services/logout.service.js';
+import { LogoutAllService } from './user/services/logout-all.service.js';
+import { RefreshTokenService } from './user/services/refresh-token.service.js';
 
-import { GetCurrentUserService } from './user/services/get-current-user.service';
-import { ChangePasswordService } from './user/services/change-password.service';
-import { ForgotPasswordService } from './user/services/forgot-password.service';
-import { ResetPasswordService } from './user/services/reset-password.service';
-import { VerifyEmailService } from './user/services/verify-email.service';
+import { GetCurrentUserService } from './user/services/get-current-user.service.js';
+import { ChangePasswordService } from './user/services/change-password.service.js';
+import { ForgotPasswordService } from './user/services/forgot-password.service.js';
+import { ResetPasswordService } from './user/services/reset-password.service.js';
+import { VerifyEmailService } from './user/services/verify-email.service.js';
 
 // Customer Auth Services
-import { CustomerRegisterService } from './customer/services/register.service';
-import { CustomerTokenService } from './customer/services/token.service';
-import { CustomerLoginService } from './customer/services/login.service';
-import { CustomerLogoutService } from './customer/services/logout.service';
-import { CustomerLogoutAllService } from './customer/services/logout-all.service';
-import { CustomerRefreshTokenService } from './customer/services/refresh-token.service';
+import { CustomerRegisterService } from './customer/services/register.service.js';
+import { CustomerTokenService } from './customer/services/token.service.js';
+import { CustomerLoginService } from './customer/services/login.service.js';
+import { CustomerLogoutService } from './customer/services/logout.service.js';
+import { CustomerLogoutAllService } from './customer/services/logout-all.service.js';
+import { CustomerRefreshTokenService } from './customer/services/refresh-token.service.js';
 
-import { CustomerChangePasswordService } from './customer/services/change-password.service';
-import { CustomerForgotPasswordService } from './customer/services/forgot-password.service';
-import { CustomerResetPasswordService } from './customer/services/reset-password.service';
-import { CustomerVerifyEmailService } from './customer/services/verify-email.service';
+import { CustomerChangePasswordService } from './customer/services/change-password.service.js';
+import { CustomerForgotPasswordService } from './customer/services/forgot-password.service.js';
+import { CustomerResetPasswordService } from './customer/services/reset-password.service.js';
+import { CustomerVerifyEmailService } from './customer/services/verify-email.service.js';
 
 @Module({
   imports: [

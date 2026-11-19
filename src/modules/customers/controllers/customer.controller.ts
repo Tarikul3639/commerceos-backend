@@ -11,28 +11,28 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permission } from '@/lib/prisma/enums';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { Permission } from '../../../lib/prisma/enums.js';
 
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 // DTOs
-import { CreateCustomerDto } from '../dto/requests/create-customer.dto';
-import { UpdateCustomerDto } from '../dto/requests/update-customer.dto';
-import { CustomerQueryDto } from '../dto/requests/customer-query.dto';
+import { CreateCustomerDto } from '../dto/requests/create-customer.dto.js';
+import { UpdateCustomerDto } from '../dto/requests/update-customer.dto.js';
+import { CustomerQueryDto } from '../dto/requests/customer-query.dto.js';
 
-import { CustomerResponseDto } from '../dto/responses/customer-response.dto';
+import { CustomerResponseDto } from '../dto/responses/customer-response.dto.js';
 
 // Services
-import { CreateCustomerService } from '../services/create-customer.service';
-import { GetCustomersService } from '../services/get-customers.service';
-import { GetCustomerService } from '../services/get-customer.service';
-import { UpdateCustomerService } from '../services/update-customer.service';
-import { DeleteCustomerService } from '../services/delete-customer.service';
-import { RestoreCustomerService } from '../services/restore-customer.service';
+import { CreateCustomerService } from '../services/create-customer.service.js';
+import { GetCustomersService } from '../services/get-customers.service.js';
+import { GetCustomerService } from '../services/get-customer.service.js';
+import { UpdateCustomerService } from '../services/update-customer.service.js';
+import { DeleteCustomerService } from '../services/delete-customer.service.js';
+import { RestoreCustomerService } from '../services/restore-customer.service.js';
 
 @ApiTags('Customers')
 @Controller('customers')

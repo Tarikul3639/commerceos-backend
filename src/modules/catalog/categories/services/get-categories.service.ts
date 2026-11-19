@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
 
-import { CategoryQueryDto } from '../dto/requests/category-query.dto';
-import { CategoryResponseDto } from '../dto/responses/category-response.dto';
+import { CategoryQueryDto } from '../dto/requests/category-query.dto.js';
+import { CategoryResponseDto } from '../dto/responses/category-response.dto.js';
 
-import { PaginatedResponse } from '@/common/interfaces/paginated-response.interface';
+import { PaginatedResponse } from '../../../../common/interfaces/paginated-response.interface.js';
 
 @Injectable()
 export class GetCategoriesService {

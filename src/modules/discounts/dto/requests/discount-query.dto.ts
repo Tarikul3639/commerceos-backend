@@ -11,7 +11,7 @@ export class DiscountQueryDto {
 
   @ApiPropertyOptional({ example: 'true' })
   @IsOptional()
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: unknown }) =>
     value === 'true' ? true : value === 'false' ? false : value,
   )
   @IsBoolean()

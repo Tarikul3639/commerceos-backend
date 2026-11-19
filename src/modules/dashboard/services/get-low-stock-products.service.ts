@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto';
-import { LowStockProductItemDto } from '../dto/responses/low-stock-products-response.dto';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto.js';
+import { LowStockProductItemDto } from '../dto/responses/low-stock-products-response.dto.js';
 
 @Injectable()
 export class GetLowStockProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(_query: DashboardQueryDto): Promise<LowStockProductItemDto[]> {
+  async execute(query: DashboardQueryDto): Promise<LowStockProductItemDto[]> {
+    void query;
     const variants = await this.prisma.productVariant.findMany({
       where: {
         deletedAt: null,

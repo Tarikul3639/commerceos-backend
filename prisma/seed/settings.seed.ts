@@ -1,5 +1,5 @@
-import { prisma } from "./client"
-import type { Prisma } from "@/lib/prisma/client"
+import { prisma } from "./client.js"
+import type { Prisma } from "../../src/lib/prisma/client.js"
 
 const settingsId = "seed-general-settings"
 

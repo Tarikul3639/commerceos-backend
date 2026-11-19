@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Permission, Role } from '@/lib/prisma/enums';
+import { Permission, Role } from '../../../../lib/prisma/enums.js';
 
 export const UserRole = [Role.ADMIN, Role.MANAGER, Role.EMPLOYEE] as const;
 

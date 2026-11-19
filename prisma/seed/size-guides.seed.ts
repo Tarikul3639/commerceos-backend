@@ -1,5 +1,5 @@
-import { Prisma } from '../../src/lib/prisma/client';
-import { prisma } from './client';
+import { Prisma } from '../../src/lib/prisma/client.js';
+import { prisma } from './client.js';
 
 const sizeGuides = [
     {

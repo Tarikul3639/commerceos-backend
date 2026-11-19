@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { NotificationType } from '@/lib/prisma/client';
-import { NotificationPaginationMetaDto } from './notification-pagination-meta.dto';
+import { NotificationType } from '../../../../lib/prisma/client.js';
+import { NotificationPaginationMetaDto } from './notification-pagination-meta.dto.js';
 
 export class NotificationResponseDto {
   @ApiProperty()

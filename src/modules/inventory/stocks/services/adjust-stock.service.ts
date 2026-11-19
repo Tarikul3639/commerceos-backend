@@ -5,13 +5,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { Prisma } from '@/lib/prisma/client';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { ActivityModule, ActivityType } from '@/lib/prisma/client';
+import { Prisma } from '../../../../lib/prisma/client.js';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { CreateActivityLogService } from '../../../activity-logs/services/create-activity-log.service.js';
+import { ActivityModule, ActivityType } from '../../../../lib/prisma/client.js';
 
-import { AdjustStockDto } from '../dto/requests/adjust-stock.dto';
-import { StockResponseDto } from '../dto/responses/stock-response.dto';
+import { AdjustStockDto } from '../dto/requests/adjust-stock.dto.js';
+import { StockResponseDto } from '../dto/responses/stock-response.dto.js';
 
 @Injectable()
 export class AdjustStockService {

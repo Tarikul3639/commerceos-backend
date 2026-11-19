@@ -12,31 +12,31 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { Permission } from '@/lib/prisma/enums';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { Permission } from '../../../lib/prisma/enums.js';
 
-import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto';
+import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto.js';
 
-import { DashboardOverviewResponseDto } from '../dto/responses/dashboard-overview-response.dto';
-import { SalesSummaryResponseDto } from '../dto/responses/sales-summary-response.dto';
-import { StockSummaryResponseDto } from '../dto/responses/stock-summary-response.dto';
-import { OrderSummaryResponseDto } from '../dto/responses/order-summary-response.dto';
-import { CustomerSummaryResponseDto } from '../dto/responses/customer-summary-response.dto';
-import { LowStockProductItemDto } from '../dto/responses/low-stock-products-response.dto';
-import { RecentActivityItemDto } from '../dto/responses/recent-activities-response.dto';
-import { RecentOrderItemDto } from '../dto/responses/recent-orders-response.dto';
-import { RecentOrdersQueryDto } from '../dto/requests/recent-orders-query.dto';
+import { DashboardOverviewResponseDto } from '../dto/responses/dashboard-overview-response.dto.js';
+import { SalesSummaryResponseDto } from '../dto/responses/sales-summary-response.dto.js';
+import { StockSummaryResponseDto } from '../dto/responses/stock-summary-response.dto.js';
+import { OrderSummaryResponseDto } from '../dto/responses/order-summary-response.dto.js';
+import { CustomerSummaryResponseDto } from '../dto/responses/customer-summary-response.dto.js';
+import { LowStockProductItemDto } from '../dto/responses/low-stock-products-response.dto.js';
+import { RecentActivityItemDto } from '../dto/responses/recent-activities-response.dto.js';
+import { RecentOrderItemDto } from '../dto/responses/recent-orders-response.dto.js';
+import { RecentOrdersQueryDto } from '../dto/requests/recent-orders-query.dto.js';
 
-import { GetDashboardOverviewService } from '../services/get-dashboard-overview.service';
-import { GetSalesSummaryService } from '../services/get-sales-summary.service';
-import { GetStockSummaryService } from '../services/get-stock-summary.service';
-import { GetOrderSummaryService } from '../services/get-order-summary.service';
-import { GetCustomerSummaryService } from '../services/get-customer-summary.service';
-import { GetLowStockProductsService } from '../services/get-low-stock-products.service';
-import { GetRecentActivitiesService } from '../services/get-recent-activities.service';
-import { GetRecentOrdersService } from '../services/get-recent-orders.service';
+import { GetDashboardOverviewService } from '../services/get-dashboard-overview.service.js';
+import { GetSalesSummaryService } from '../services/get-sales-summary.service.js';
+import { GetStockSummaryService } from '../services/get-stock-summary.service.js';
+import { GetOrderSummaryService } from '../services/get-order-summary.service.js';
+import { GetCustomerSummaryService } from '../services/get-customer-summary.service.js';
+import { GetLowStockProductsService } from '../services/get-low-stock-products.service.js';
+import { GetRecentActivitiesService } from '../services/get-recent-activities.service.js';
+import { GetRecentOrdersService } from '../services/get-recent-orders.service.js';
 
 @ApiTags('Dashboard')
 @ApiBearerAuth()

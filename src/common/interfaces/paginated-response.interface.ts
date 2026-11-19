@@ -1,4 +1,4 @@
-import { PaginationMetaDto } from '@/common/dto/responses/pagination-meta.dto';
+import { PaginationMetaDto } from '../dto/responses/pagination-meta.dto.js';
 
 export interface PaginatedResponse<T> {
   data: T[];

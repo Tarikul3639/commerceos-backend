@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
 
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { Permission } from '@/lib/prisma/enums';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { Permission } from '../../../lib/prisma/enums.js';
 
 import {
   ApiBearerAuth,
@@ -13,11 +13,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { UpdateSettingsDto } from '../dto/requests/update-settings.dto';
-import { SettingsResponseDto } from '../dto/responses/settings-response.dto';
+import { UpdateSettingsDto } from '../dto/requests/update-settings.dto.js';
+import { SettingsResponseDto } from '../dto/responses/settings-response.dto.js';
 
-import { GetSettingsService } from '../services/get-settings.service';
-import { UpdateSettingsService } from '../services/update-settings.service';
+import { GetSettingsService } from '../services/get-settings.service.js';
+import { UpdateSettingsService } from '../services/update-settings.service.js';
 
 @ApiTags('Settings')
 @ApiBearerAuth()

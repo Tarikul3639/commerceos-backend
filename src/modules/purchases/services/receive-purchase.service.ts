@@ -4,17 +4,19 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PurchaseStatus } from '@/lib/prisma/client';
+import { PurchaseStatus } from '../../../lib/prisma/client.js';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
 
-import { ReceivePurchaseDto } from '../dto/requests/receive-purchase.dto';
+import { ReceivePurchaseDto } from '../dto/requests/receive-purchase.dto.js';
 
 @Injectable()
 export class ReceivePurchaseService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(purchaseId: string, _userId: string, _dto: ReceivePurchaseDto) {
+  async execute(purchaseId: string, userId: string, dto: ReceivePurchaseDto) {
+    void userId;
+    void dto;
     // Verify that the purchase exists before processing receipt.
     const purchase = await this.prisma.purchase.findUnique({
       where: {

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { NotificationResponseDto } from '../dto/responses/notification-response.dto';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { NotificationResponseDto } from '../dto/responses/notification-response.dto.js';
 
 @Injectable()
 export class GetNotificationService {

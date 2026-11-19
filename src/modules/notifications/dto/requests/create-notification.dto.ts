@@ -1,4 +1,7 @@
-import { ActivityModule, NotificationType } from '@/lib/prisma/client';
+import {
+  ActivityModule,
+  NotificationType,
+} from '../../../../lib/prisma/client.js';
 
 export class CreateNotificationDto {
   userId!: string;

@@ -21,23 +21,23 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permission } from '@/lib/prisma/enums';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { Permission } from '../../../lib/prisma/enums.js';
 
-import { CreateSupplierDto } from '../dto/requests/create-supplier.dto';
-import { SupplierQueryDto } from '../dto/requests/supplier-query.dto';
-import { UpdateSupplierDto } from '../dto/requests/update-supplier.dto';
+import { CreateSupplierDto } from '../dto/requests/create-supplier.dto.js';
+import { SupplierQueryDto } from '../dto/requests/supplier-query.dto.js';
+import { UpdateSupplierDto } from '../dto/requests/update-supplier.dto.js';
 
-import { SupplierResponseDto } from '../dto/responses/supplier-response.dto';
+import { SupplierResponseDto } from '../dto/responses/supplier-response.dto.js';
 
-import { CreateSupplierService } from '../services/create-supplier.service';
-import { DeleteSupplierService } from '../services/delete-supplier.service';
-import { GetSupplierService } from '../services/get-supplier.service';
-import { GetSuppliersService } from '../services/get-suppliers.service';
-import { UpdateSupplierService } from '../services/update-supplier.service';
+import { CreateSupplierService } from '../services/create-supplier.service.js';
+import { DeleteSupplierService } from '../services/delete-supplier.service.js';
+import { GetSupplierService } from '../services/get-supplier.service.js';
+import { GetSuppliersService } from '../services/get-suppliers.service.js';
+import { UpdateSupplierService } from '../services/update-supplier.service.js';
 
 @ApiTags('Suppliers')
 @Controller('suppliers')

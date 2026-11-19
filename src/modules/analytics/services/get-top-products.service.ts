@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@/lib/prisma/client';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { AnalyticsQueryDto } from '../dto/requests/analytics-query.dto';
-import { TopProductItemDto } from '../dto/responses/top-products-response.dto';
-import { getAnalyticsDateRange } from '../utils/analytics-date-range.util';
-import { getCreatedAtFilter } from '../utils/analytics-where.util';
+import { Prisma } from '../../../lib/prisma/client.js';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { AnalyticsQueryDto } from '../dto/requests/analytics-query.dto.js';
+import { TopProductItemDto } from '../dto/responses/top-products-response.dto.js';
+import { getAnalyticsDateRange } from '../utils/analytics-date-range.util.js';
+import { getCreatedAtFilter } from '../utils/analytics-where.util.js';
 
 /*
  * SERVICE: GetTopProductsService

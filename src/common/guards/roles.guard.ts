@@ -5,10 +5,13 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import type { Request } from 'express';
 
-import { Role } from '@/lib/prisma/client';
-import { ROLES_KEY } from '@/common/decorators/roles.decorator';
-import { UserJwtPayload } from '@/common/interfaces/user-jwt-payload.interface';
+import { Role } from '../../lib/prisma/client.js';
+import { ROLES_KEY } from '../decorators/roles.decorator.js';
+import type { UserJwtPayload } from '../interfaces/user-jwt-payload.interface.js';
+
+type AuthenticatedRequest = Request & { user?: UserJwtPayload };
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -20,21 +23,18 @@ export class RolesGuard implements CanActivate {
       context.getClass(),
     ]);
 
-    // No @Roles() → allow authenticated user
     if (!requiredRoles || requiredRoles.length === 0) {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest();
-    const user: UserJwtPayload = request.user;
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+    const user = request.user;
 
     if (!user) {
       throw new ForbiddenException('User not found');
     }
 
-    const hasRole = requiredRoles.includes(user.role);
-
-    if (!hasRole) {
+    if (!requiredRoles.includes(user.role)) {
       throw new ForbiddenException(
         'You do not have permission to access this resource',
       );

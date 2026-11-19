@@ -5,13 +5,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CloudinaryService } from '@/common/cloudinary/cloudinary.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { ActivityModule, ActivityType } from '@/lib/prisma/client';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { CloudinaryService } from '../../../../common/cloudinary/cloudinary.service.js';
+import { CreateActivityLogService } from '../../../activity-logs/services/create-activity-log.service.js';
+import { ActivityModule, ActivityType } from '../../../../lib/prisma/client.js';
 
-import { UpdateBrandDto } from '../dto/requests/update-brand.dto';
-import { BrandResponseDto } from '../dto/responses/brand-response.dto';
+import { UpdateBrandDto } from '../dto/requests/update-brand.dto.js';
+import { BrandResponseDto } from '../dto/responses/brand-response.dto.js';
 
 @Injectable()
 export class UpdateBrandService {

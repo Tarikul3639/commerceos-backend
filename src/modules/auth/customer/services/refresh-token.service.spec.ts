@@ -1,21 +1,22 @@
-jest.mock('@/common/prisma/prisma.service', () => ({
+import { vi } from 'vitest';
+vi.mock('../../../../common/prisma/prisma.service.js', () => ({
   PrismaService: class PrismaService {},
 }));
-jest.mock('@/lib/prisma/client', () => ({
+vi.mock('../../../../lib/prisma/client.js', () => ({
   Prisma: {
     TransactionIsolationLevel: { Serializable: 'Serializable' },
   },
   CustomerStatus: { ACTIVE: 'ACTIVE' },
 }));
-jest.mock('@/common/utils/password.util', () => ({
-  comparePassword: jest.fn().mockResolvedValue(true),
-  hashPassword: jest.fn(),
+vi.mock('../../../../common/utils/password.util.js', () => ({
+  comparePassword: vi.fn().mockResolvedValue(true),
+  hashPassword: vi.fn(),
 }));
 
 import { UnauthorizedException } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CustomerRefreshTokenService } from './refresh-token.service';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { CustomerRefreshTokenService } from './refresh-token.service.js';
 
 describe('CustomerRefreshTokenService.consume', () => {
   it('uses the refresh token as the plaintext password and atomically revokes the session', async () => {
@@ -28,8 +29,8 @@ describe('CustomerRefreshTokenService.consume', () => {
     };
     const prisma = {
       customerRefreshToken: {
-        findMany: jest.fn().mockResolvedValue([token]),
-        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+        findMany: vi.fn().mockResolvedValue([token]),
+        updateMany: vi.fn().mockResolvedValue({ count: 1 }),
       },
     };
     const service = new CustomerRefreshTokenService(
@@ -47,7 +48,7 @@ describe('CustomerRefreshTokenService.consume', () => {
           id: 'customer-session-1',
           customerId: 'customer-1',
           revokedAt: null,
-        }),
+        }) as unknown as Record<string, unknown>,
       }),
     );
   });
@@ -55,13 +56,13 @@ describe('CustomerRefreshTokenService.consume', () => {
   it('rejects a customer refresh token that was already consumed', async () => {
     const prisma = {
       customerRefreshToken: {
-        findMany: jest.fn().mockResolvedValue([
+        findMany: vi.fn().mockResolvedValue([
           {
             id: 'customer-session-1',
             tokenHash: 'hashed-refresh-token',
           },
         ]),
-        updateMany: jest.fn().mockResolvedValue({ count: 0 }),
+        updateMany: vi.fn().mockResolvedValue({ count: 0 }),
       },
     };
     const service = new CustomerRefreshTokenService(

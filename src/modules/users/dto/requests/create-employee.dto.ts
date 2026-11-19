@@ -2,8 +2,8 @@ import { IsEnum, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { OmitType } from '@nestjs/swagger';
 
-import { CreateUserDto } from './create-user.dto';
-import { Role } from '@/lib/prisma/enums';
+import { CreateUserDto } from './create-user.dto.js';
+import { Role } from '../../../../lib/prisma/enums.js';
 
 export const StaffRole = [Role.MANAGER, Role.EMPLOYEE] as const;
 

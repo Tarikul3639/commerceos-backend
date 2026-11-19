@@ -5,12 +5,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { ActivityModule, ActivityType } from '@/lib/prisma/client';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { CreateActivityLogService } from '../../../activity-logs/services/create-activity-log.service.js';
+import { ActivityModule, ActivityType } from '../../../../lib/prisma/client.js';
 
-import { UpdateProductVariantDto } from '../dto/requests/update-product-variant.dto';
-import { ProductVariantResponseDto } from '../dto/responses/product-variant-response.dto';
+import { UpdateProductVariantDto } from '../dto/requests/update-product-variant.dto.js';
+import { ProductVariantResponseDto } from '../dto/responses/product-variant-response.dto.js';
 
 @Injectable()
 export class UpdateProductVariantService {

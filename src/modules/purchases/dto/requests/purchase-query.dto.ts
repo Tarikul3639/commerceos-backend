@@ -1,10 +1,10 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 
-import { Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { PurchaseStatus } from '@/lib/prisma/client';
+import { PurchaseStatus } from '../../../../lib/prisma/client.js';
 
 export class PurchaseQueryDto {
   @ApiPropertyOptional({

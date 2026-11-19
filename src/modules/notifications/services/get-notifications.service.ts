@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
 
-import { NotificationQueryDto } from '../dto/requests/notification-query.dto';
-import { NotificationPaginationResponseDto } from '../dto/responses/notification-response.dto';
+import { NotificationQueryDto } from '../dto/requests/notification-query.dto.js';
+import { NotificationPaginationResponseDto } from '../dto/responses/notification-response.dto.js';
 
 @Injectable()
 export class GetNotificationsService {

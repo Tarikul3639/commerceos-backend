@@ -1,4 +1,4 @@
-import { prisma } from './client';
+import { prisma } from './client.js';
 
 const brands = [
     { name: 'Nike', slug: 'nike', website: 'https://www.nike.com' },

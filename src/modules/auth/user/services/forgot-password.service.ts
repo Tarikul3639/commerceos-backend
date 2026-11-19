@@ -3,11 +3,11 @@ import { ConfigService } from '@nestjs/config';
 
 import ms, { type StringValue } from 'ms';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { UserStatus } from '@/lib/prisma/client';
-import { MailService } from '@/common/mail/mail.service';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { UserStatus } from '../../../../lib/prisma/client.js';
+import { MailService } from '../../../../common/mail/mail.service.js';
 
-import { TokenService } from './token.service';
+import { TokenService } from './token.service.js';
 
 @Injectable()
 export class ForgotPasswordService {

@@ -11,25 +11,25 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permission } from '@/lib/prisma/enums';
+import { CurrentUser } from '../../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../../common/decorators/permissions.decorator.js';
+import { PermissionsGuard } from '../../../../common/guards/permissions.guard.js';
+import { UserJwtAuthGuard } from '../../../../common/guards/user-jwt-auth.guard.js';
+import { Permission } from '../../../../lib/prisma/enums.js';
 
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 
 // DTOs
-import { CreateBrandDto } from '../dto/requests/create-brand.dto';
-import { UpdateBrandDto } from '../dto/requests/update-brand.dto';
-import { BrandQueryDto } from '../dto/requests/brand-query.dto';
+import { CreateBrandDto } from '../dto/requests/create-brand.dto.js';
+import { UpdateBrandDto } from '../dto/requests/update-brand.dto.js';
+import { BrandQueryDto } from '../dto/requests/brand-query.dto.js';
 
 // Services
-import { CreateBrandService } from '../services/create-brand.service';
-import { GetBrandsService } from '../services/get-brands.service';
-import { GetBrandService } from '../services/get-brand.service';
-import { UpdateBrandService } from '../services/update-brand.service';
-import { DeleteBrandService } from '../services/delete-brand.service';
+import { CreateBrandService } from '../services/create-brand.service.js';
+import { GetBrandsService } from '../services/get-brands.service.js';
+import { GetBrandService } from '../services/get-brand.service.js';
+import { UpdateBrandService } from '../services/update-brand.service.js';
+import { DeleteBrandService } from '../services/delete-brand.service.js';
 
 @ApiTags('Brands')
 @Controller('brands')

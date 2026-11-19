@@ -7,7 +7,10 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { PaymentGatewayMode, PaymentProvider } from '@/lib/prisma/enums';
+import {
+  PaymentGatewayMode,
+  PaymentProvider,
+} from '../../../../lib/prisma/enums.js';
 
 export class CreatePaymentGatewayDto {
   @ApiProperty({ enum: PaymentProvider, example: PaymentProvider.SSL_COMMERZ })

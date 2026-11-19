@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { DiscountType } from '@/lib/prisma/client';
+import { DiscountType } from '../../../../lib/prisma/client.js';
 
 export class DiscountResponseDto {
   @ApiProperty() id!: string;

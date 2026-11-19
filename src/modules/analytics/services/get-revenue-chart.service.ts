@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@/lib/prisma/client';
+import { Prisma } from '../../../lib/prisma/client.js';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { AnalyticsQueryDto } from '../dto/requests/analytics-query.dto';
-import { RevenueChartItemDto } from '../dto/responses/revenue-chart-response.dto';
-import { getAnalyticsDateRange } from '../utils/analytics-date-range.util';
-import { getCreatedAtFilter } from '../utils/analytics-where.util';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { AnalyticsQueryDto } from '../dto/requests/analytics-query.dto.js';
+import { RevenueChartItemDto } from '../dto/responses/revenue-chart-response.dto.js';
+import { getAnalyticsDateRange } from '../utils/analytics-date-range.util.js';
+import { getCreatedAtFilter } from '../utils/analytics-where.util.js';
 
 @Injectable()
 export class GetRevenueChartService {

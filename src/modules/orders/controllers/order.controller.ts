@@ -18,22 +18,22 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CreateOrderDto } from '../dto/requests/create-order.dto';
-import { OrderQueryDto } from '../dto/requests/order-query.dto';
-import { CancelOrderDto } from '../dto/requests/cancel-order.dto';
-import { UpdateOrderStatusDto } from '../dto/requests/update-order-status.dto';
+import { CreateOrderDto } from '../dto/requests/create-order.dto.js';
+import { OrderQueryDto } from '../dto/requests/order-query.dto.js';
+import { CancelOrderDto } from '../dto/requests/cancel-order.dto.js';
+import { UpdateOrderStatusDto } from '../dto/requests/update-order-status.dto.js';
 
-import { CreateOrderService } from '../services/create-order.service';
-import { GetOrderService } from '../services/get-order.service';
-import { GetOrdersService } from '../services/get-orders.service';
-import { CancelOrderService } from '../services/cancel-order.service';
-import { UpdateOrderStatusService } from '../services/update-order-status.service';
+import { CreateOrderService } from '../services/create-order.service.js';
+import { GetOrderService } from '../services/get-order.service.js';
+import { GetOrdersService } from '../services/get-orders.service.js';
+import { CancelOrderService } from '../services/cancel-order.service.js';
+import { UpdateOrderStatusService } from '../services/update-order-status.service.js';
 
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permission } from '@/lib/prisma/enums';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { Permission } from '../../../lib/prisma/enums.js';
 
 @ApiTags('Orders')
 @ApiBearerAuth()

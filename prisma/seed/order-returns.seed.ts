@@ -4,9 +4,9 @@ import {
   PaymentStatus,
   Prisma,
   ProductStatus,
-} from '../../src/lib/prisma/client';
+} from '../../src/lib/prisma/client.js';
 
-import { prisma } from './client';
+import { prisma } from './client.js';
 
 const SEED_PREFIX = 'COMMERCEOS-RETURN-TEST';
 

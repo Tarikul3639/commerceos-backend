@@ -1,5 +1,6 @@
 import {
   Body,
+  UnauthorizedException,
   Controller,
   HttpCode,
   HttpStatus,
@@ -15,30 +16,30 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
 
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { USER_REFRESH_TOKEN_COOKIE } from '@/common/constants/cookie.constants';
-import { CookieUtil } from '@/common/utils/cookie.util';
+import { CurrentUser } from '../../../../common/decorators/current-user.decorator.js';
+import { UserJwtAuthGuard } from '../../../../common/guards/user-jwt-auth.guard.js';
+import { USER_REFRESH_TOKEN_COOKIE } from '../../../../common/constants/cookie.constants.js';
+import { CookieUtil } from '../../../../common/utils/cookie.util.js';
 
 import {
   VerifyEmailDto,
   ResendVerificationEmailDto,
-} from '../dto/requests/verify-email.dto';
-import { LoginDto } from '../dto/requests/login.dto';
-import { ForgotPasswordDto } from '../dto/requests/forgot-password.dto';
-import { ResetPasswordDto } from '../dto/requests/reset-password.dto';
-import { ChangePasswordDto } from '../dto/requests/change-password.dto';
-import { CurrentUserResponseDto } from '../dto/responses/current-user-response.dto';
+} from '../dto/requests/verify-email.dto.js';
+import { LoginDto } from '../dto/requests/login.dto.js';
+import { ForgotPasswordDto } from '../dto/requests/forgot-password.dto.js';
+import { ResetPasswordDto } from '../dto/requests/reset-password.dto.js';
+import { ChangePasswordDto } from '../dto/requests/change-password.dto.js';
+import { CurrentUserResponseDto } from '../dto/responses/current-user-response.dto.js';
 
-import { LoginService } from '../services/login.service';
-import { RefreshTokenService } from '../services/refresh-token.service';
-import { LogoutService } from '../services/logout.service';
-import { LogoutAllService } from '../services/logout-all.service';
-import { ChangePasswordService } from '../services/change-password.service';
-import { ForgotPasswordService } from '../services/forgot-password.service';
-import { ResetPasswordService } from '../services/reset-password.service';
-import { VerifyEmailService } from '../services/verify-email.service';
-import { GetCurrentUserService } from '../services/get-current-user.service';
+import { LoginService } from '../services/login.service.js';
+import { RefreshTokenService } from '../services/refresh-token.service.js';
+import { LogoutService } from '../services/logout.service.js';
+import { LogoutAllService } from '../services/logout-all.service.js';
+import { ChangePasswordService } from '../services/change-password.service.js';
+import { ForgotPasswordService } from '../services/forgot-password.service.js';
+import { ResetPasswordService } from '../services/reset-password.service.js';
+import { VerifyEmailService } from '../services/verify-email.service.js';
+import { GetCurrentUserService } from '../services/get-current-user.service.js';
 
 @ApiTags('User Authentication')
 @Controller('auth/user')
@@ -120,7 +121,12 @@ export class UserAuthController {
     @Res({ passthrough: true })
     response: Response,
   ) {
-    const refreshToken = request.cookies?.[USER_REFRESH_TOKEN_COOKIE];
+    const refreshToken = request.cookies?.[USER_REFRESH_TOKEN_COOKIE] as
+      string | undefined;
+
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token is missing.');
+    }
 
     const result = await this.refreshTokenService.rotate(
       refreshToken,
@@ -161,7 +167,8 @@ export class UserAuthController {
     @Res({ passthrough: true })
     response: Response,
   ): Promise<void> {
-    const refreshToken = request.cookies?.[USER_REFRESH_TOKEN_COOKIE];
+    const refreshToken = request.cookies?.[USER_REFRESH_TOKEN_COOKIE] as
+      string | undefined;
 
     if (refreshToken) {
       await this.logoutService.execute(userId, refreshToken);

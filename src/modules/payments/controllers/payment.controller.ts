@@ -15,21 +15,21 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { CurrentCustomer } from '@/common/decorators/current-customer.decorator';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { CustomerJwtAuthGuard } from '@/common/guards/customer-jwt-auth.guard';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permission } from '@/lib/prisma/enums';
-import { CreatePaymentDto } from '../dto/requests/create-payment.dto';
-import { PaymentQueryDto } from '../dto/requests/payment-query.dto';
-import { UpdatePaymentStatusDto } from '../dto/requests/update-payment-status.dto';
-import { PaymentResponseDto } from '../dto/responses/payment-response.dto';
-import { CreatePaymentService } from '../services/create-payment.service';
-import { GetPaymentService } from '../services/get-payment.service';
-import { GetPaymentsService } from '../services/get-payments.service';
-import { UpdatePaymentStatusService } from '../services/update-payment-status.service';
+import { CurrentCustomer } from '../../../common/decorators/current-customer.decorator.js';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { CustomerJwtAuthGuard } from '../../../common/guards/customer-jwt-auth.guard.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { Permission } from '../../../lib/prisma/enums.js';
+import { CreatePaymentDto } from '../dto/requests/create-payment.dto.js';
+import { PaymentQueryDto } from '../dto/requests/payment-query.dto.js';
+import { UpdatePaymentStatusDto } from '../dto/requests/update-payment-status.dto.js';
+import { PaymentResponseDto } from '../dto/responses/payment-response.dto.js';
+import { CreatePaymentService } from '../services/create-payment.service.js';
+import { GetPaymentService } from '../services/get-payment.service.js';
+import { GetPaymentsService } from '../services/get-payments.service.js';
+import { UpdatePaymentStatusService } from '../services/update-payment-status.service.js';
 
 @ApiTags('Payments')
 @Controller('payments')

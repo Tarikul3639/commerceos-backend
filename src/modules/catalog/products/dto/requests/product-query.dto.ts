@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
 
-import { ProductStatus } from '@/lib/prisma/enums';
+import { ProductStatus } from '../../../../../lib/prisma/enums.js';
 
 export class ProductQueryDto {
   @ApiPropertyOptional({

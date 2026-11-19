@@ -16,20 +16,20 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Permission, Role } from '@/lib/prisma/enums';
+import { Permission, Role } from '../../../lib/prisma/enums.js';
 
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-// import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
+// import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard.js';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
 
-import { GetPermissionsService } from '../services/get-permissions.service';
-import { GetRolesPermissionsService } from '../services/get-roles-permissions.service';
-import { UpdateRolePermissionsService } from '../services/update-role-permissions.service';
+import { GetPermissionsService } from '../services/get-permissions.service.js';
+import { GetRolesPermissionsService } from '../services/get-roles-permissions.service.js';
+import { UpdateRolePermissionsService } from '../services/update-role-permissions.service.js';
 
-import { RolePermissionsResponseDto } from '../dto/responses/role-permissions.response.dto';
-import { UpdateRolePermissionsDto } from '../dto/requests/update-role-permissions.dto';
+import { RolePermissionsResponseDto } from '../dto/responses/role-permissions.response.dto.js';
+import { UpdateRolePermissionsDto } from '../dto/requests/update-role-permissions.dto.js';
 
 @ApiTags('Permissions')
 @ApiBearerAuth()

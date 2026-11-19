@@ -1,14 +1,14 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CustomerStatus } from '@/lib/prisma/enums';
-import { LoginDto } from '../dto/requests/login.dto';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { CustomerStatus } from '../../../../lib/prisma/enums.js';
+import { LoginDto } from '../dto/requests/login.dto.js';
 
-import { comparePassword } from '@/common/utils/password.util';
-import { AuthTokens } from '../interfaces/auth-tokens.interface';
+import { comparePassword } from '../../../../common/utils/password.util.js';
+import { AuthTokens } from '../interfaces/auth-tokens.interface.js';
 
-import { CustomerTokenService } from './token.service';
-import { CustomerRefreshTokenService } from './refresh-token.service';
+import { CustomerTokenService } from './token.service.js';
+import { CustomerRefreshTokenService } from './refresh-token.service.js';
 
 @Injectable()
 export class CustomerLoginService {

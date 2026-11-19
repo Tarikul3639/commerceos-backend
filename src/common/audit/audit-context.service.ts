@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { AuditContext } from './audit-context.interface';
+import { AuditContext } from './audit-context.interface.js';
 
 @Injectable()
 export class AuditContextService {

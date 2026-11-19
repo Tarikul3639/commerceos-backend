@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsIn, IsOptional, IsString, MaxLength } from 'class-validator';
-import { PaymentStatus } from '@/lib/prisma/enums';
+import { PaymentStatus } from '../../../../lib/prisma/enums.js';
 
 export const EditablePaymentStatus = [
   PaymentStatus.PAID,

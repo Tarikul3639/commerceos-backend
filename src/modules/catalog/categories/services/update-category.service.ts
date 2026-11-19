@@ -2,15 +2,14 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
-  BadRequestException,
 } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { ActivityModule, ActivityType } from '@/lib/prisma/client';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { CreateActivityLogService } from '../../../activity-logs/services/create-activity-log.service.js';
+import { ActivityModule, ActivityType } from '../../../../lib/prisma/client.js';
 
-import { UpdateCategoryDto } from '../dto/requests/update-category.dto';
-import { CategoryResponseDto } from '../dto/responses/category-response.dto';
+import { UpdateCategoryDto } from '../dto/requests/update-category.dto.js';
+import { CategoryResponseDto } from '../dto/responses/category-response.dto.js';
 
 @Injectable()
 export class UpdateCategoryService {

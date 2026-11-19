@@ -3,11 +3,15 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma, PaymentStatus, PaymentType } from '@/lib/prisma/client';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { ActivityModule, ActivityType } from '@/lib/prisma/client';
-import { CreateRefundDto } from '../dto/requests/create-refund.dto';
+import {
+  Prisma,
+  PaymentStatus,
+  PaymentType,
+} from '../../../lib/prisma/client.js';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
+import { ActivityModule, ActivityType } from '../../../lib/prisma/client.js';
+import { CreateRefundDto } from '../dto/requests/create-refund.dto.js';
 
 @Injectable()
 export class CreateRefundService {

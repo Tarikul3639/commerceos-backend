@@ -4,10 +4,10 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 
-import type { UserJwtPayload } from '@/common/interfaces/user-jwt-payload.interface';
-import { USER_ACCESS_TOKEN_COOKIE } from '@/common/constants/cookie.constants';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { UserStatus } from '@/lib/prisma/enums';
+import type { UserJwtPayload } from '../interfaces/user-jwt-payload.interface.js';
+import { USER_ACCESS_TOKEN_COOKIE } from '../constants/cookie.constants.js';
+import { PrismaService } from '../prisma/prisma.service.js';
+import { UserStatus } from '../../lib/prisma/enums.js';
 
 @Injectable()
 export class UserJwtStrategy extends PassportStrategy(Strategy, 'user-jwt') {
@@ -18,15 +18,13 @@ export class UserJwtStrategy extends PassportStrategy(Strategy, 'user-jwt') {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) =>
-          request.cookies?.[USER_ACCESS_TOKEN_COOKIE] ?? null,
+          (request.cookies?.[USER_ACCESS_TOKEN_COOKIE] as string | undefined) ??
+          null,
       ]),
       secretOrKey: configService.getOrThrow<string>('auth.user.accessSecret'),
     });
   }
 
-  /**
-   * Resolve the current staff account and reject tokens for disabled or deleted users.
-   */
   async validate(payload: UserJwtPayload): Promise<UserJwtPayload> {
     const user = await this.prisma.user.findUnique({
       where: { id: payload.id },
@@ -50,12 +48,13 @@ export class UserJwtStrategy extends PassportStrategy(Strategy, 'user-jwt') {
       throw new UnauthorizedException('User account is not active.');
     }
 
-    return {
+    const validatedPayload: UserJwtPayload = {
       id: user.id,
       email: user.email,
       name: user.name,
       role: user.role,
       ...(payload.remember !== undefined ? { remember: payload.remember } : {}),
     };
+    return validatedPayload;
   }
 }

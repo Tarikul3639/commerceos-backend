@@ -1,4 +1,8 @@
-import { ActivityModule, ActivityType, Prisma } from '@/lib/prisma/client';
+import {
+  ActivityModule,
+  ActivityType,
+  Prisma,
+} from '../../../lib/prisma/client.js';
 
 export interface CreateActivityLogInput {
   type: ActivityType;

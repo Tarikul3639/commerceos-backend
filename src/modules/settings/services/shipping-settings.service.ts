@@ -3,10 +3,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateShippingZoneDto } from '../dto/requests/create-shipping-zone.dto';
-import { UpdateShippingZoneDto } from '../dto/requests/update-shipping-zone.dto';
-import { UpdateShippingSettingsDto } from '../dto/requests/update-shipping-settings.dto';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { CreateShippingZoneDto } from '../dto/requests/create-shipping-zone.dto.js';
+import { UpdateShippingZoneDto } from '../dto/requests/update-shipping-zone.dto.js';
+import { UpdateShippingSettingsDto } from '../dto/requests/update-shipping-settings.dto.js';
 
 @Injectable()
 export class ShippingSettingsService {
@@ -26,6 +26,7 @@ export class ShippingSettingsService {
   }
 
   async updateSettings(dto: UpdateShippingSettingsDto, userId: string) {
+    void userId;
     const existing = await this.prisma.shippingSettings.findUnique({
       where: { id: 'default' },
     });
@@ -46,6 +47,7 @@ export class ShippingSettingsService {
   }
 
   async createZone(dto: CreateShippingZoneDto, userId: string) {
+    void userId;
     const districtCity = this.normalizeName(dto.districtCity);
     const districtCityKey = this.normalizeKey(districtCity);
 
@@ -69,6 +71,7 @@ export class ShippingSettingsService {
   }
 
   async updateZone(id: string, dto: UpdateShippingZoneDto, userId: string) {
+    void userId;
     const existing = await this.prisma.shippingZone.findUnique({
       where: { id },
     });
@@ -104,6 +107,7 @@ export class ShippingSettingsService {
   }
 
   async deleteZone(id: string, userId: string) {
+    void userId;
     const existing = await this.prisma.shippingZone.findUnique({
       where: { id },
     });

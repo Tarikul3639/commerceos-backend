@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CustomerStatus } from '@/lib/prisma/enums';
-import { MailService } from '@/common/mail/mail.service';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
+import { CustomerStatus } from '../../../../lib/prisma/enums.js';
+import { MailService } from '../../../../common/mail/mail.service.js';
 
-import { ForgotPasswordDto } from '../dto/requests/forgot-password.dto';
-import { CustomerTokenService } from './token.service';
+import { ForgotPasswordDto } from '../dto/requests/forgot-password.dto.js';
+import { CustomerTokenService } from './token.service.js';
 import ms, { StringValue } from 'ms';
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PaymentMethod } from '@/lib/prisma/enums';
-import { PaymentProvider } from '../interfaces/payment-provider.interface';
+import { PaymentMethod } from '../../../lib/prisma/enums.js';
+import { PaymentProvider } from '../interfaces/payment-provider.interface.js';
 
 @Injectable()
 export class PaymentProviderFactory {

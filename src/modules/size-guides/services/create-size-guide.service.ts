@@ -1,10 +1,9 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { Prisma } from '@/lib/prisma/client';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { ActivityModule, ActivityType } from '@/lib/prisma/client';
-import { CreateSizeGuideDto } from '../dto/requests/create-size-guide.dto';
-import { SizeGuideResponseDto } from '../dto/responses/size-guide-response.dto';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
+import { ActivityModule, ActivityType } from '../../../lib/prisma/client.js';
+import { CreateSizeGuideDto } from '../dto/requests/create-size-guide.dto.js';
+import { SizeGuideResponseDto } from '../dto/responses/size-guide-response.dto.js';
 
 @Injectable()
 export class CreateSizeGuideService {
@@ -34,8 +33,8 @@ export class CreateSizeGuideService {
           description: dto.description,
         }),
         unit: dto.unit,
-        columns: dto.columns as unknown as Prisma.InputJsonValue,
-        rows: dto.rows as unknown as Prisma.InputJsonValue,
+        columns: dto.columns,
+        rows: dto.rows,
       },
     });
 

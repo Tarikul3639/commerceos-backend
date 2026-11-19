@@ -9,26 +9,26 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permission } from '@/lib/prisma/enums';
+import { Permissions } from '../../../../common/decorators/permissions.decorator.js';
+import { PermissionsGuard } from '../../../../common/guards/permissions.guard.js';
+import { UserJwtAuthGuard } from '../../../../common/guards/user-jwt-auth.guard.js';
+import { Permission } from '../../../../lib/prisma/enums.js';
 
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { CurrentUser } from '../../../../common/decorators/current-user.decorator.js';
 
 // DTOs
-import { AdjustStockDto } from '../dto/requests/adjust-stock.dto';
-import { StockQueryDto } from '../dto/requests/stock-query.dto';
+import { AdjustStockDto } from '../dto/requests/adjust-stock.dto.js';
+import { StockQueryDto } from '../dto/requests/stock-query.dto.js';
 import {
   StockListResponseDto,
   StockResponseDto,
-} from '../dto/responses/stock-response.dto';
+} from '../dto/responses/stock-response.dto.js';
 
 // Services
-import { AdjustStockService } from '../services/adjust-stock.service';
-import { GetStockService } from '../services/get-stock.service';
-import { GetStocksService } from '../services/get-stocks.service';
+import { AdjustStockService } from '../services/adjust-stock.service.js';
+import { GetStockService } from '../services/get-stock.service.js';
+import { GetStocksService } from '../services/get-stocks.service.js';
 
 @ApiTags('Stocks')
 @Controller('stocks')

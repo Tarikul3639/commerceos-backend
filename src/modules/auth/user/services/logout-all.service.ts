@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { RefreshTokenService } from './refresh-token.service';
+import { RefreshTokenService } from './refresh-token.service.js';
 
 @Injectable()
 export class LogoutAllService {

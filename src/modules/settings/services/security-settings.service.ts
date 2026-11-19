@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { UpdateSecuritySettingsDto } from '../dto/requests/update-security-settings.dto';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { UpdateSecuritySettingsDto } from '../dto/requests/update-security-settings.dto.js';
 
 @Injectable()
 export class SecuritySettingsService {
@@ -17,6 +17,7 @@ export class SecuritySettingsService {
 
   /** Persist policy changes after validating dependent lifetime settings. */
   async update(dto: UpdateSecuritySettingsDto, userId: string) {
+    void userId;
     if (
       dto.refreshTokenLifetimeDays !== undefined &&
       dto.rememberMeRefreshLifetimeDays !== undefined &&

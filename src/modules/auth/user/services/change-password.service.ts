@@ -5,14 +5,17 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
 
-import { comparePassword, hashPassword } from '@/common/utils/password.util';
+import {
+  comparePassword,
+  hashPassword,
+} from '../../../../common/utils/password.util.js';
 
-import { RefreshTokenService } from './refresh-token.service';
-import { ChangePasswordDto } from '../dto/requests/change-password.dto';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { ActivityModule, ActivityType } from '@/lib/prisma/client';
+import { RefreshTokenService } from './refresh-token.service.js';
+import { ChangePasswordDto } from '../dto/requests/change-password.dto.js';
+import { CreateActivityLogService } from '../../../activity-logs/services/create-activity-log.service.js';
+import { ActivityModule, ActivityType } from '../../../../lib/prisma/client.js';
 
 @Injectable()
 export class ChangePasswordService {

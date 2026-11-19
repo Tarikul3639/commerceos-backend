@@ -8,11 +8,11 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permission } from '@/lib/prisma/enums';
+import { CurrentUser } from '../../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../../common/decorators/permissions.decorator.js';
+import { PermissionsGuard } from '../../../../common/guards/permissions.guard.js';
+import { UserJwtAuthGuard } from '../../../../common/guards/user-jwt-auth.guard.js';
+import { Permission } from '../../../../lib/prisma/enums.js';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -20,14 +20,14 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CreateProductVariantDto } from '../dto/requests/create-product-variant.dto';
-import { UpdateProductVariantDto } from '../dto/requests/update-product-variant.dto';
-import { ProductVariantResponseDto } from '../dto/responses/product-variant-response.dto';
+import { CreateProductVariantDto } from '../dto/requests/create-product-variant.dto.js';
+import { UpdateProductVariantDto } from '../dto/requests/update-product-variant.dto.js';
+import { ProductVariantResponseDto } from '../dto/responses/product-variant-response.dto.js';
 
-import { CreateProductVariantService } from '../services/create-product-variant.service';
-import { DeleteProductVariantService } from '../services/delete-product-variant.service';
-import { GetProductVariantsService } from '../services/get-product-variants.service';
-import { UpdateProductVariantService } from '../services/update-product-variant.service';
+import { CreateProductVariantService } from '../services/create-product-variant.service.js';
+import { DeleteProductVariantService } from '../services/delete-product-variant.service.js';
+import { GetProductVariantsService } from '../services/get-product-variants.service.js';
+import { UpdateProductVariantService } from '../services/update-product-variant.service.js';
 
 @ApiTags('Product Variants')
 @Controller('admin/product-variants')

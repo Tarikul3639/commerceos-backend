@@ -4,10 +4,10 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 
-import { CustomerJwtPayload } from '@/common/interfaces/customer-jwt-payload.interface';
-import { CUSTOMER_ACCESS_TOKEN_COOKIE } from '@/common/constants/cookie.constants';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CustomerStatus } from '@/lib/prisma/enums';
+import type { CustomerJwtPayload } from '../interfaces/customer-jwt-payload.interface.js';
+import { CUSTOMER_ACCESS_TOKEN_COOKIE } from '../constants/cookie.constants.js';
+import { PrismaService } from '../prisma/prisma.service.js';
+import { CustomerStatus } from '../../lib/prisma/enums.js';
 
 @Injectable()
 export class CustomerJwtStrategy extends PassportStrategy(
@@ -21,7 +21,8 @@ export class CustomerJwtStrategy extends PassportStrategy(
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) =>
-          request?.cookies?.[CUSTOMER_ACCESS_TOKEN_COOKIE] ?? null,
+          (request?.cookies?.[CUSTOMER_ACCESS_TOKEN_COOKIE] as
+            string | undefined) ?? null,
       ]),
       secretOrKey: configService.getOrThrow<string>(
         'auth.customer.accessSecret',
@@ -29,9 +30,6 @@ export class CustomerJwtStrategy extends PassportStrategy(
     });
   }
 
-  /**
-   * Resolve the current customer account and reject disabled or deleted accounts.
-   */
   async validate(payload: CustomerJwtPayload): Promise<CustomerJwtPayload> {
     const customer = await this.prisma.customer.findUnique({
       where: { id: payload.id },
@@ -51,9 +49,10 @@ export class CustomerJwtStrategy extends PassportStrategy(
       throw new UnauthorizedException('Customer account is not active.');
     }
 
-    return {
+    const validatedPayload: CustomerJwtPayload = {
       id: customer.id,
       email: customer.email,
     };
+    return validatedPayload;
   }
 }

@@ -4,15 +4,16 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma } from '@/lib/prisma/client';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { ActivityModule, ActivityType } from '@/lib/prisma/client';
-import { CreateDiscountDto } from '../dto/requests/create-discount.dto';
-import { UpdateDiscountDto } from '../dto/requests/update-discount.dto';
-import { DiscountQueryDto } from '../dto/requests/discount-query.dto';
-import { DiscountListResponseDto } from '../dto/responses/discount-list-response.dto';
-import { DiscountResponseDto } from '../dto/responses/discount-response.dto';
+import { Prisma } from '../../../lib/prisma/client.js';
+import type { Discount } from '../../../lib/prisma/client.js';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
+import { ActivityModule, ActivityType } from '../../../lib/prisma/client.js';
+import { CreateDiscountDto } from '../dto/requests/create-discount.dto.js';
+import { UpdateDiscountDto } from '../dto/requests/update-discount.dto.js';
+import { DiscountQueryDto } from '../dto/requests/discount-query.dto.js';
+import { DiscountListResponseDto } from '../dto/responses/discount-list-response.dto.js';
+import { DiscountResponseDto } from '../dto/responses/discount-response.dto.js';
 
 @Injectable()
 export class DiscountService {
@@ -45,7 +46,7 @@ export class DiscountService {
     }
   }
 
-  private toResponse(discount: any): DiscountResponseDto {
+  private toResponse(discount: Discount): DiscountResponseDto {
     return {
       id: discount.id,
       code: discount.code,

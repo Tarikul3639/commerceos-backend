@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { Prisma } from '@/lib/prisma/client';
+import { Prisma } from '../../../../lib/prisma/client.js';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
 
-import { StockQueryDto } from '../dto/requests/stock-query.dto';
-import { StockListResponseDto } from '../dto/responses/stock-response.dto';
+import { StockQueryDto } from '../dto/requests/stock-query.dto.js';
+import { StockListResponseDto } from '../dto/responses/stock-response.dto.js';
 
 @Injectable()
 export class GetStocksService {

@@ -1,19 +1,19 @@
-import { prisma } from './client';
+import { prisma } from './client.js';
 
-import { seedRoles } from './roles.seed';
-import { seedPermissions } from './permissions.seed';
-import { seedUsers } from './users.seed';
-import { seedCategories } from './categories.seed';
-import { seedBrands } from './brands.seed';
-import { seedSizeGuides } from './size-guides.seed';
-import { seedCustomers } from './customers.seed';
-import { seedProducts } from './product.seed';
-import { seedBanners } from './banners';
-import { seedSuppliers } from './supplier.seed';
-import { seedSettings } from "./settings.seed"
-import { seedOrderReturns } from './order-returns.seed';
-import { seedEmails } from './emails.seed';
-import { seedCarts } from './carts.seed';
+import { seedRoles } from './roles.seed.js';
+import { seedPermissions } from './permissions.seed.js';
+import { seedUsers } from './users.seed.js';
+import { seedCategories } from './categories.seed.js';
+import { seedBrands } from './brands.seed.js';
+import { seedSizeGuides } from './size-guides.seed.js';
+import { seedCustomers } from './customers.seed.js';
+import { seedProducts } from './product.seed.js';
+import { seedBanners } from './banners.js';
+import { seedSuppliers } from './supplier.seed.js';
+import { seedSettings } from "./settings.seed.js"
+import { seedOrderReturns } from './order-returns.seed.js';
+import { seedEmails } from './emails.seed.js';
+import { seedCarts } from './carts.seed.js';
 
 async function main() {
     console.log('🌱 Database seeding started...\n');

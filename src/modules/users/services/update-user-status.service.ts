@@ -4,12 +4,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { ActivityModule, ActivityType } from '@/lib/prisma/client';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
+import { ActivityModule, ActivityType } from '../../../lib/prisma/client.js';
 
-import { UpdateUserStatusDto } from '../dto/requests/update-user-status.dto';
-import { UserResponseDto } from '../dto/responses/user-response.dto';
+import { UpdateUserStatusDto } from '../dto/requests/update-user-status.dto.js';
+import { UserResponseDto } from '../dto/responses/user-response.dto.js';
 
 @Injectable()
 export class UpdateUserStatusService {

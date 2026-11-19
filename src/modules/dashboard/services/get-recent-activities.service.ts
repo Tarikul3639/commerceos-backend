@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto';
-import { RecentActivityItemDto } from '../dto/responses/recent-activities-response.dto';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { DashboardQueryDto } from '../dto/requests/dashboard-query.dto.js';
+import { RecentActivityItemDto } from '../dto/responses/recent-activities-response.dto.js';
 
 @Injectable()
 export class GetRecentActivitiesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(_query: DashboardQueryDto): Promise<RecentActivityItemDto[]> {
+  async execute(query: DashboardQueryDto): Promise<RecentActivityItemDto[]> {
+    void query;
     /**
      * Get the latest activity logs.
      *

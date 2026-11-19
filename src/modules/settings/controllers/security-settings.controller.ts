@@ -5,14 +5,14 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permission } from '@/lib/prisma/enums';
-import { UpdateSecuritySettingsDto } from '../dto/requests/update-security-settings.dto';
-import { SecuritySettingsResponseDto } from '../dto/responses/security-settings-response.dto';
-import { SecuritySettingsService } from '../services/security-settings.service';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { Permission } from '../../../lib/prisma/enums.js';
+import { UpdateSecuritySettingsDto } from '../dto/requests/update-security-settings.dto.js';
+import { SecuritySettingsResponseDto } from '../dto/responses/security-settings-response.dto.js';
+import { SecuritySettingsService } from '../services/security-settings.service.js';
 
 @ApiTags('Security Settings')
 @ApiBearerAuth()

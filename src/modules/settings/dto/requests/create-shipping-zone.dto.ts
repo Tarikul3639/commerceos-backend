@@ -12,7 +12,7 @@ import {
 
 export class CreateShippingZoneDto {
   @ApiProperty({ example: 'Dhaka' })
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim().replace(/\s+/g, ' ') : value,
   )
   @IsString()

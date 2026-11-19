@@ -1,6 +1,6 @@
-import { EmailStatus } from '../../src/lib/prisma/client';
+import { EmailStatus } from '../../src/lib/prisma/client.js';
 
-import { prisma } from './client';
+import { prisma } from './client.js';
 
 const SEED_PREFIX = 'commerceos-email-test';
 

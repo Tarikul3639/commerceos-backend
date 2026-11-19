@@ -1,23 +1,21 @@
-jest.mock('@/lib/prisma/client', () => ({
+import { vi } from 'vitest';
+vi.mock('../../../lib/prisma/client.js', () => ({
   ActivityModule: { USER: 'USER' },
   ActivityType: { CREATE: 'CREATE', UPDATE: 'UPDATE', DELETE: 'DELETE' },
 }));
-jest.mock('@/common/prisma/prisma.service', () => ({
+vi.mock('../../../common/prisma/prisma.service.js', () => ({
   PrismaService: class PrismaService {},
 }));
-jest.mock(
-  '@/modules/activity-logs/services/create-activity-log.service',
-  () => ({
-    CreateActivityLogService: class CreateActivityLogService {},
-  }),
-);
+vi.mock('../../activity-logs/services/create-activity-log.service.js', () => ({
+  CreateActivityLogService: class CreateActivityLogService {},
+}));
 
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 
-import { Role, UserStatus } from '@/lib/prisma/enums';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { CreateActivityLogService } from '@/modules/activity-logs/services/create-activity-log.service';
-import { DeleteUserService } from './delete-user.service';
+import { Role, UserStatus } from '../../../lib/prisma/enums.js';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
+import { DeleteUserService } from './delete-user.service.js';
 
 describe('DeleteUserService', () => {
   const activeEmployee = {
@@ -30,7 +28,7 @@ describe('DeleteUserService', () => {
   it('prevents a user from deleting their own account', async () => {
     const prisma = {
       user: {
-        findUnique: jest.fn().mockResolvedValue(activeEmployee),
+        findUnique: vi.fn().mockResolvedValue(activeEmployee),
       },
     };
     const service = new DeleteUserService(
@@ -46,7 +44,7 @@ describe('DeleteUserService', () => {
   it('prevents ADMIN from deleting another ADMIN account', async () => {
     const prisma = {
       user: {
-        findUnique: jest.fn().mockResolvedValue({
+        findUnique: vi.fn().mockResolvedValue({
           ...activeEmployee,
           role: Role.ADMIN,
         }),

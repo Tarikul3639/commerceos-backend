@@ -1,11 +1,11 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permission } from '@/lib/prisma/client';
-import { EmailLogQueryDto } from '../dto/requests/email-log-query.dto';
-import { EmailLogService } from '../services/email-log.service';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { Permission } from '../../../lib/prisma/client.js';
+import { EmailLogQueryDto } from '../dto/requests/email-log-query.dto.js';
+import { EmailLogService } from '../services/email-log.service.js';
 
 @ApiTags('Emails')
 @ApiBearerAuth()

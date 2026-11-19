@@ -16,19 +16,19 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { AddCartItemDto } from '../dto/requests/add-cart-item.dto';
-import { UpdateCartItemDto } from '../dto/requests/update-cart-item.dto';
-import { CartResponseDto } from '../dto/responses/cart-response.dto';
+import { AddCartItemDto } from '../dto/requests/add-cart-item.dto.js';
+import { UpdateCartItemDto } from '../dto/requests/update-cart-item.dto.js';
+import { CartResponseDto } from '../dto/responses/cart-response.dto.js';
 
 // Services
-import { AddCartItemService } from '../services/add-cart-item.service';
-import { ClearCartService } from '../services/clear-cart.service';
-import { GetCartService } from '../services/get-cart.service';
-import { RemoveCartItemService } from '../services/remove-cart-item.service';
-import { UpdateCartItemService } from '../services/update-cart-item.service';
+import { AddCartItemService } from '../services/add-cart-item.service.js';
+import { ClearCartService } from '../services/clear-cart.service.js';
+import { GetCartService } from '../services/get-cart.service.js';
+import { RemoveCartItemService } from '../services/remove-cart-item.service.js';
+import { UpdateCartItemService } from '../services/update-cart-item.service.js';
 
-import { CurrentCustomer } from '@/common/decorators/current-customer.decorator';
-import { CustomerJwtAuthGuard } from '@/common/guards/customer-jwt-auth.guard';
+import { CurrentCustomer } from '../../../common/decorators/current-customer.decorator.js';
+import { CustomerJwtAuthGuard } from '../../../common/guards/customer-jwt-auth.guard.js';
 
 @ApiTags('Cart')
 @ApiBearerAuth()

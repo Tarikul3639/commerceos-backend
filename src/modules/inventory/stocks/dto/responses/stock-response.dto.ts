@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-import { PaginationMetaDto } from '@/common/dto/responses/pagination-meta.dto';
+import { PaginationMetaDto } from '../../../../../common/dto/responses/pagination-meta.dto.js';
 
 /* ============================================================================
  * DTO: StockResponseDto

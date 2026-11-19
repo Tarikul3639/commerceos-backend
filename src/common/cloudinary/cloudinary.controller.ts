@@ -12,11 +12,11 @@ import { ApiOperation, ApiResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import {
   CloudinaryFolder,
   type CloudinaryFolderType,
-} from '@/common/cloudinary/cloudinary.types';
+} from './cloudinary.types.js';
 
-import { CloudinaryService } from '@/common/cloudinary/cloudinary.service';
+import { CloudinaryService } from './cloudinary.service.js';
 
-import { CloudinaryUploadSignatureDto } from '@/common/cloudinary/dto/responses/cloudinary-upload-signature.dto';
+import { CloudinaryUploadSignatureDto } from './dto/responses/cloudinary-upload-signature.dto.js';
 
 @ApiTags('Cloudinary')
 @Controller('uploads')
@@ -40,10 +40,10 @@ export class CloudinaryController {
     enum: CloudinaryFolder,
     description: 'Cloudinary upload folder',
   })
-  async generateSignature(
+  generateSignature(
     @Param('folder')
     folder: CloudinaryFolderType,
-  ): Promise<CloudinaryUploadSignatureDto> {
+  ): CloudinaryUploadSignatureDto {
     const validFolders = Object.values(CloudinaryFolder);
 
     if (!validFolders.includes(folder)) {

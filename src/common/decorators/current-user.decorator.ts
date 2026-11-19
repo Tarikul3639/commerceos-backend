@@ -1,12 +1,13 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { UserJwtPayload } from '@/common/interfaces/user-jwt-payload.interface';
+import type { Request } from 'express';
+import type { UserJwtPayload } from '../interfaces/user-jwt-payload.interface.js';
+
+type UserRequest = Request & { user?: UserJwtPayload };
 
 export const CurrentUser = createParamDecorator(
   (data: keyof UserJwtPayload | undefined, context: ExecutionContext) => {
-    // Get the request object from the execution context
-    const request = context.switchToHttp().getRequest();
-    // Get the user object from the request and cast it to CurrentUserPayload
-    const user = request.user as UserJwtPayload;
+    const request = context.switchToHttp().getRequest<UserRequest>();
+    const user = request.user;
 
     return data ? user?.[data] : user;
   },

@@ -18,17 +18,17 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { Permission } from '@/lib/prisma/enums';
-import { CreateDiscountDto } from '../dto/requests/create-discount.dto';
-import { UpdateDiscountDto } from '../dto/requests/update-discount.dto';
-import { DiscountQueryDto } from '../dto/requests/discount-query.dto';
-import { DiscountResponseDto } from '../dto/responses/discount-response.dto';
-import { DiscountListResponseDto } from '../dto/responses/discount-list-response.dto';
-import { DiscountService } from '../services/discount.service';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
+import { Permission } from '../../../lib/prisma/enums.js';
+import { CreateDiscountDto } from '../dto/requests/create-discount.dto.js';
+import { UpdateDiscountDto } from '../dto/requests/update-discount.dto.js';
+import { DiscountQueryDto } from '../dto/requests/discount-query.dto.js';
+import { DiscountResponseDto } from '../dto/responses/discount-response.dto.js';
+import { DiscountListResponseDto } from '../dto/responses/discount-list-response.dto.js';
+import { DiscountService } from '../services/discount.service.js';
 
 @ApiTags('Discounts')
 @ApiBearerAuth()

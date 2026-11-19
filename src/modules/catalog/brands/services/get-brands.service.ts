@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
 
-import { BrandQueryDto } from '../dto/requests/brand-query.dto';
-import { PaginatedResponse } from '@/common/interfaces/paginated-response.interface';
-import { BrandResponseDto } from '../dto/responses/brand-response.dto';
+import { BrandQueryDto } from '../dto/requests/brand-query.dto.js';
+import { PaginatedResponse } from '../../../../common/interfaces/paginated-response.interface.js';
+import { BrandResponseDto } from '../dto/responses/brand-response.dto.js';
 
 @Injectable()
 export class GetBrandsService {

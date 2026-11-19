@@ -8,16 +8,15 @@ import {
   IsOptional,
   IsString,
   Matches,
-  Max,
   MaxLength,
   Min,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { DiscountType } from '@/lib/prisma/client';
+import { DiscountType } from '../../../../lib/prisma/client.js';
 
 export class CreateDiscountDto {
   @ApiProperty({ example: 'WELCOME10' })
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim().toUpperCase() : value,
   )
   @IsString()

@@ -16,19 +16,19 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { Permission } from '@/lib/prisma/enums';
-import { CreateShippingZoneDto } from '../dto/requests/create-shipping-zone.dto';
-import { UpdateShippingZoneDto } from '../dto/requests/update-shipping-zone.dto';
-import { UpdateShippingSettingsDto } from '../dto/requests/update-shipping-settings.dto';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator.js';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
+import { Permission } from '../../../lib/prisma/enums.js';
+import { CreateShippingZoneDto } from '../dto/requests/create-shipping-zone.dto.js';
+import { UpdateShippingZoneDto } from '../dto/requests/update-shipping-zone.dto.js';
+import { UpdateShippingSettingsDto } from '../dto/requests/update-shipping-settings.dto.js';
 import {
   ShippingSettingsResponseDto,
   ShippingZoneResponseDto,
-} from '../dto/responses/shipping-settings-response.dto';
-import { ShippingSettingsService } from '../services/shipping-settings.service';
+} from '../dto/responses/shipping-settings-response.dto.js';
+import { ShippingSettingsService } from '../services/shipping-settings.service.js';
 
 @ApiTags('Shipping Settings')
 @ApiBearerAuth()

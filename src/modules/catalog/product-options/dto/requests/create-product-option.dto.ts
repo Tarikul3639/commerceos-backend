@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { ProductOptionType } from '@/lib/prisma/enums';
+import { ProductOptionType } from '../../../../../lib/prisma/enums.js';
 
 export class CreateProductOptionValueDto {
   @ApiProperty({

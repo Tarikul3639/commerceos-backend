@@ -1,20 +1,20 @@
 import { Module } from '@nestjs/common';
 
-import { PrismaModule } from '@/common/prisma/prisma.module';
-import { AuthModule } from '@/modules/auth/auth.module';
-import { MailModule } from '@/common/mail/mail.module';
+import { PrismaModule } from '../../common/prisma/prisma.module.js';
+import { AuthModule } from '../auth/auth.module.js';
+import { MailModule } from '../../common/mail/mail.module.js';
 
 // Controller
-import { UserController } from './controllers/user.controller';
+import { UserController } from './controllers/user.controller.js';
 
 // Services
-import { CreateUserService } from './services/create-user.service';
-import { GetUsersService } from './services/get-users.service';
-import { GetUserService } from './services/get-user.service';
-import { UpdateUserService } from './services/update-user.service';
-import { UpdateUserStatusService } from './services/update-user-status.service';
-import { DeleteUserService } from './services/delete-user.service';
-import { RestoreUserService } from './services/restore-user.service';
+import { CreateUserService } from './services/create-user.service.js';
+import { GetUsersService } from './services/get-users.service.js';
+import { GetUserService } from './services/get-user.service.js';
+import { UpdateUserService } from './services/update-user.service.js';
+import { UpdateUserStatusService } from './services/update-user-status.service.js';
+import { DeleteUserService } from './services/delete-user.service.js';
+import { RestoreUserService } from './services/restore-user.service.js';
 
 @Module({
   imports: [PrismaModule, AuthModule, MailModule],

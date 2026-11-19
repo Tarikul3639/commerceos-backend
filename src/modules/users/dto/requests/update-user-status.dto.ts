@@ -1,7 +1,7 @@
 import { IsIn } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-import { UserStatus } from '@/lib/prisma/client';
+import { UserStatus } from '../../../../lib/prisma/client.js';
 
 export const EditableUserStatus = [
   UserStatus.ACTIVE,

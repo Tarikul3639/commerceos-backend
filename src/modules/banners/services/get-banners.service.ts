@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@/lib/prisma/client';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { Prisma } from '../../../lib/prisma/client.js';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
 
-import { BannerQueryDto } from '../dto/requests/banner-query.dto';
+import { BannerQueryDto } from '../dto/requests/banner-query.dto.js';
 import {
   bannerWithUsers,
   toBannerResponse,
-} from '../dto/responses/banner-response.mapper';
+} from '../dto/responses/banner-response.mapper.js';
 
-import { BannerListResponseDto } from '../dto/responses/banner-list-response.dto';
+import { BannerListResponseDto } from '../dto/responses/banner-list-response.dto.js';
 
 @Injectable()
 export class GetBannersService {

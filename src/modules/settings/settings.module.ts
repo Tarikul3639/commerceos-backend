@@ -1,20 +1,20 @@
 import { Module } from '@nestjs/common';
 
-import { PrismaModule } from '@/common/prisma/prisma.module';
+import { PrismaModule } from '../../common/prisma/prisma.module.js';
 
-import { SettingsController } from './controllers/settings.controller';
-import { ShippingSettingsController } from './controllers/shipping-settings.controller';
-import { NotificationPreferencesController } from './controllers/notification-preferences.controller';
-import { PaymentGatewayController } from './controllers/payment-gateway.controller';
-import { SecuritySettingsController } from './controllers/security-settings.controller';
+import { SettingsController } from './controllers/settings.controller.js';
+import { ShippingSettingsController } from './controllers/shipping-settings.controller.js';
+import { NotificationPreferencesController } from './controllers/notification-preferences.controller.js';
+import { PaymentGatewayController } from './controllers/payment-gateway.controller.js';
+import { SecuritySettingsController } from './controllers/security-settings.controller.js';
 
 // Services
-import { GetSettingsService } from './services/get-settings.service';
-import { UpdateSettingsService } from './services/update-settings.service';
-import { ShippingSettingsService } from './services/shipping-settings.service';
-import { NotificationPreferencesService } from './services/notification-preferences.service';
-import { PaymentGatewayService } from './services/payment-gateway.service';
-import { SecuritySettingsService } from './services/security-settings.service';
+import { GetSettingsService } from './services/get-settings.service.js';
+import { UpdateSettingsService } from './services/update-settings.service.js';
+import { ShippingSettingsService } from './services/shipping-settings.service.js';
+import { NotificationPreferencesService } from './services/notification-preferences.service.js';
+import { PaymentGatewayService } from './services/payment-gateway.service.js';
+import { SecuritySettingsService } from './services/security-settings.service.js';
 
 @Module({
   imports: [PrismaModule],

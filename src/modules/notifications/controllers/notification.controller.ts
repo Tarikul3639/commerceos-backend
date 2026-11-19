@@ -10,19 +10,19 @@ import {
 
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { UserJwtAuthGuard } from '@/common/guards/user-jwt-auth.guard';
-import { Permissions } from '@/common/decorators/permissions.decorator';
-import { PermissionsGuard } from '@/common/guards/permissions.guard';
-import { Permission } from '@/lib/prisma/enums';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator.js';
+import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
+import { Permissions } from '../../../common/decorators/permissions.decorator.js';
+import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
+import { Permission } from '../../../lib/prisma/enums.js';
 
-import { NotificationQueryDto } from '../dto/requests/notification-query.dto';
+import { NotificationQueryDto } from '../dto/requests/notification-query.dto.js';
 
-import { DeleteNotificationService } from '../services/delete-notification.service';
-import { GetNotificationService } from '../services/get-notification.service';
-import { GetNotificationsService } from '../services/get-notifications.service';
-import { MarkAllNotificationsReadService } from '../services/mark-all-notifications-read.service';
-import { MarkNotificationReadService } from '../services/mark-notification-read.service';
+import { DeleteNotificationService } from '../services/delete-notification.service.js';
+import { GetNotificationService } from '../services/get-notification.service.js';
+import { GetNotificationsService } from '../services/get-notifications.service.js';
+import { MarkAllNotificationsReadService } from '../services/mark-all-notifications-read.service.js';
+import { MarkNotificationReadService } from '../services/mark-notification-read.service.js';
 
 @ApiTags('Notifications')
 @ApiBearerAuth()

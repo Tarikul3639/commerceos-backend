@@ -6,12 +6,15 @@ import {
 
 import { ConfigService } from '@nestjs/config';
 
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '../../../../common/prisma/prisma.service.js';
 
-import { comparePassword, hashPassword } from '@/common/utils/password.util';
+import {
+  comparePassword,
+  hashPassword,
+} from '../../../../common/utils/password.util.js';
 
-import { CustomerRefreshTokenService } from './refresh-token.service';
-import { ChangePasswordDto } from '../dto/requests/change-password.dto';
+import { CustomerRefreshTokenService } from './refresh-token.service.js';
+import { ChangePasswordDto } from '../dto/requests/change-password.dto.js';
 
 @Injectable()
 export class CustomerChangePasswordService {

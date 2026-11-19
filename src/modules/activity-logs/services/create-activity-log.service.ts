@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { Prisma } from '@/lib/prisma/client';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { AuditContextService } from '@/common/audit/audit-context.service';
-import { CreateActivityLogInput } from '../interfaces/activity-log.interface';
+import { Prisma } from '../../../lib/prisma/client.js';
+import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { AuditContextService } from '../../../common/audit/audit-context.service.js';
+import { CreateActivityLogInput } from '../interfaces/activity-log.interface.js';
 
 @Injectable()
 export class CreateActivityLogService {
