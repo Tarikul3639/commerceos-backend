@@ -5,7 +5,10 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../infrastructure/database/generated/prisma/enums.js';
+import {
+  ActivityModule,
+  ActivityType,
+} from '../../../infrastructure/database/generated/prisma/enums.js';
 import { CreateShippingZoneDto } from '../dto/requests/create-shipping-zone.dto.js';
 import { UpdateShippingZoneDto } from '../dto/requests/update-shipping-zone.dto.js';
 import { UpdateShippingSettingsDto } from '../dto/requests/update-shipping-settings.dto.js';

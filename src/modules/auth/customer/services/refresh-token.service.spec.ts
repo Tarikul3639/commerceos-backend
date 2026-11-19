@@ -2,12 +2,15 @@ import { vi } from 'vitest';
 vi.mock('../../../../infrastructure/database/prisma.service.js', () => ({
   PrismaService: class PrismaService {},
 }));
-vi.mock('../../../../infrastructure/database/generated/prisma/client.js', () => ({
-  Prisma: {
-    TransactionIsolationLevel: { Serializable: 'Serializable' },
-  },
-  CustomerStatus: { ACTIVE: 'ACTIVE' },
-}));
+vi.mock(
+  '../../../../infrastructure/database/generated/prisma/client.js',
+  () => ({
+    Prisma: {
+      TransactionIsolationLevel: { Serializable: 'Serializable' },
+    },
+    CustomerStatus: { ACTIVE: 'ACTIVE' },
+  }),
+);
 vi.mock('../../../../common/utils/password.util.js', () => ({
   comparePassword: vi.fn().mockResolvedValue(true),
   hashPassword: vi.fn(),

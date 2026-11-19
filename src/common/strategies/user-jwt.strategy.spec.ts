@@ -6,7 +6,10 @@ vi.mock('../../infrastructure/database/prisma.service.js', () => ({
 import { UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { UserStatus, Role } from '../../infrastructure/database/generated/prisma/enums.js';
+import {
+  UserStatus,
+  Role,
+} from '../../infrastructure/database/generated/prisma/enums.js';
 import { PrismaService } from '../../infrastructure/database/prisma.service.js';
 import { UserJwtStrategy } from './user-jwt.strategy.js';
 

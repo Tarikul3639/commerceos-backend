@@ -9,7 +9,10 @@ import {
 import { Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { BannerPosition, BannerType } from '../../../../infrastructure/database/generated/prisma/client.js';
+import {
+  BannerPosition,
+  BannerType,
+} from '../../../../infrastructure/database/generated/prisma/client.js';
 
 export class BannerQueryDto {
   @ApiPropertyOptional({ description: 'Search banners by title' })

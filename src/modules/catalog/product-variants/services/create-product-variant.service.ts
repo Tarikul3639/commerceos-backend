@@ -7,7 +7,10 @@ import {
 
 import { PrismaService } from '../../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../../infrastructure/database/generated/prisma/client.js';
+import {
+  ActivityModule,
+  ActivityType,
+} from '../../../../infrastructure/database/generated/prisma/client.js';
 
 import { CreateProductVariantDto } from '../dto/requests/create-product-variant.dto.js';
 import { ProductVariantResponseDto } from '../dto/responses/product-variant-response.dto.js';

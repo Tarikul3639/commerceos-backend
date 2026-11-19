@@ -2,7 +2,10 @@ import { ConflictException, Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../infrastructure/database/generated/prisma/client.js';
+import {
+  ActivityModule,
+  ActivityType,
+} from '../../../infrastructure/database/generated/prisma/client.js';
 
 import { CreateSupplierDto } from '../dto/requests/create-supplier.dto.js';
 import { SupplierResponseDto } from '../dto/responses/supplier-response.dto.js';

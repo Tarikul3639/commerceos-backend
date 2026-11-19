@@ -13,7 +13,10 @@ import {
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-import { BannerPosition, BannerType } from '../../../../infrastructure/database/generated/prisma/client.js';
+import {
+  BannerPosition,
+  BannerType,
+} from '../../../../infrastructure/database/generated/prisma/client.js';
 
 export class CreateBannerDto {
   @ApiPropertyOptional({

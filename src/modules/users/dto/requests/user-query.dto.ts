@@ -11,7 +11,10 @@ import { Transform, Type } from 'class-transformer';
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { Role, UserStatus } from '../../../../infrastructure/database/generated/prisma/client.js';
+import {
+  Role,
+  UserStatus,
+} from '../../../../infrastructure/database/generated/prisma/client.js';
 
 export enum UserSortBy {
   CREATED_AT = 'createdAt',

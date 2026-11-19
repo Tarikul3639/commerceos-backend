@@ -8,7 +8,10 @@ import { Prisma } from '../../../infrastructure/database/generated/prisma/client
 import type { Discount } from '../../../infrastructure/database/generated/prisma/client.js';
 import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../infrastructure/database/generated/prisma/client.js';
+import {
+  ActivityModule,
+  ActivityType,
+} from '../../../infrastructure/database/generated/prisma/client.js';
 import { CreateDiscountDto } from '../dto/requests/create-discount.dto.js';
 import { UpdateDiscountDto } from '../dto/requests/update-discount.dto.js';
 import { DiscountQueryDto } from '../dto/requests/discount-query.dto.js';

@@ -6,7 +6,10 @@ import {
 
 import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../infrastructure/database/generated/prisma/client.js';
+import {
+  ActivityModule,
+  ActivityType,
+} from '../../../infrastructure/database/generated/prisma/client.js';
 
 import { UpdateSupplierDto } from '../dto/requests/update-supplier.dto.js';
 import { SupplierResponseDto } from '../dto/responses/supplier-response.dto.js';

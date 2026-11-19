@@ -6,9 +6,12 @@ vi.mock('../../../infrastructure/database/generated/prisma/client.js', () => ({
 vi.mock('../../../infrastructure/database/prisma.service.js', () => ({
   PrismaService: class PrismaService {},
 }));
-vi.mock('../../../infrastructure/storage/cloudinary/services/cloudinary.service.js', () => ({
-  CloudinaryService: class CloudinaryService {},
-}));
+vi.mock(
+  '../../../infrastructure/storage/cloudinary/services/cloudinary.service.js',
+  () => ({
+    CloudinaryService: class CloudinaryService {},
+  }),
+);
 vi.mock('../../activity-logs/services/create-activity-log.service.js', () => ({
   CreateActivityLogService: class CreateActivityLogService {},
 }));

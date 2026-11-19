@@ -5,9 +5,15 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../infrastructure/database/generated/prisma/client.js';
+import {
+  ActivityModule,
+  ActivityType,
+} from '../../../infrastructure/database/generated/prisma/client.js';
 import { UserResponseDto } from '../dto/responses/user-response.dto.js';
-import { Role, UserStatus } from '../../../infrastructure/database/generated/prisma/enums.js';
+import {
+  Role,
+  UserStatus,
+} from '../../../infrastructure/database/generated/prisma/enums.js';
 
 @Injectable()
 export class RestoreUserService {

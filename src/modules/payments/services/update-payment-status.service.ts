@@ -10,7 +10,10 @@ import {
   PaymentType,
 } from '../../../infrastructure/database/generated/prisma/client.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../infrastructure/database/generated/prisma/client.js';
+import {
+  ActivityModule,
+  ActivityType,
+} from '../../../infrastructure/database/generated/prisma/client.js';
 import { PaymentMethod } from '../../../infrastructure/database/generated/prisma/enums.js';
 import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 

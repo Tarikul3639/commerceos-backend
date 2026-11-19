@@ -15,10 +15,16 @@ export class CloudinaryService {
   private readonly apiSecret: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.cloudName = this.configService.getOrThrow<string>('cloudinary.cloudName');
+    this.cloudName = this.configService.getOrThrow<string>(
+      'cloudinary.cloudName',
+    );
     this.apiKey = this.configService.getOrThrow<string>('cloudinary.apiKey');
-    this.apiSecret = this.configService.getOrThrow<string>('cloudinary.apiSecret');
-    this.rootFolder = this.configService.getOrThrow<string>('cloudinary.rootFolder');
+    this.apiSecret = this.configService.getOrThrow<string>(
+      'cloudinary.apiSecret',
+    );
+    this.rootFolder = this.configService.getOrThrow<string>(
+      'cloudinary.rootFolder',
+    );
 
     cloudinary.config({
       cloud_name: this.cloudName,
@@ -27,7 +33,9 @@ export class CloudinaryService {
     });
   }
 
-  generateUploadSignature(folder: CloudinaryFolderType): CloudinaryUploadSignatureDto {
+  generateUploadSignature(
+    folder: CloudinaryFolderType,
+  ): CloudinaryUploadSignatureDto {
     const timestamp = Math.floor(Date.now() / 1000);
     const fullFolder = `${this.rootFolder}/${folder}`;
     const signature = cloudinary.utils.api_sign_request(

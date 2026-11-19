@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { RefreshTokenService } from './refresh-token.service.js';
 import { CreateActivityLogService } from '../../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../../infrastructure/database/generated/prisma/client.js';
+import {
+  ActivityModule,
+  ActivityType,
+} from '../../../../infrastructure/database/generated/prisma/client.js';
 
 @Injectable()
 export class LogoutService {

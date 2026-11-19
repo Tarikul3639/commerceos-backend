@@ -16,7 +16,10 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Permission, Role } from '../../../infrastructure/database/generated/prisma/enums.js';
+import {
+  Permission,
+  Role,
+} from '../../../infrastructure/database/generated/prisma/enums.js';
 
 import { CurrentUser } from '../../../common/decorators/current-user.decorator.js';
 import { Permissions } from '../../../common/decorators/permissions.decorator.js';

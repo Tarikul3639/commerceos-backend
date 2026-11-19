@@ -5,10 +5,16 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { Prisma, OrderStatus } from '../../../infrastructure/database/generated/prisma/client.js';
+import {
+  Prisma,
+  OrderStatus,
+} from '../../../infrastructure/database/generated/prisma/client.js';
 import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../infrastructure/database/generated/prisma/client.js';
+import {
+  ActivityModule,
+  ActivityType,
+} from '../../../infrastructure/database/generated/prisma/client.js';
 
 import { UpdateOrderStatusDto } from '../dto/requests/update-order-status.dto.js';
 

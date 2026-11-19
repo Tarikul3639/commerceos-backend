@@ -3,7 +3,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { OrderReturnStatus, Prisma } from '../../../infrastructure/database/generated/prisma/client.js';
+import {
+  OrderReturnStatus,
+  Prisma,
+} from '../../../infrastructure/database/generated/prisma/client.js';
 
 import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 

@@ -7,7 +7,10 @@ import {
 import { CloudinaryService } from '../../../../infrastructure/storage/cloudinary/services/cloudinary.service.js';
 import { PrismaService } from '../../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../../infrastructure/database/generated/prisma/client.js';
+import {
+  ActivityModule,
+  ActivityType,
+} from '../../../../infrastructure/database/generated/prisma/client.js';
 
 import { UpdateProductImageDto } from '../dto/requests/update-product-image.dto.js';
 import { ProductImageResponseDto } from '../dto/responses/product-image-response.dto.js';

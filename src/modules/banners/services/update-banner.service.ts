@@ -6,7 +6,10 @@ import {
 
 import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../infrastructure/database/generated/prisma/client.js';
+import {
+  ActivityModule,
+  ActivityType,
+} from '../../../infrastructure/database/generated/prisma/client.js';
 import { CloudinaryService } from '../../../infrastructure/storage/cloudinary/services/cloudinary.service.js';
 
 import { UpdateBannerDto } from '../dto/requests/update-banner.dto.js';

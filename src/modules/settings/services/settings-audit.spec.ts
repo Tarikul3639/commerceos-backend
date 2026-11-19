@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../infrastructure/database/generated/prisma/enums.js';
+import {
+  ActivityModule,
+  ActivityType,
+} from '../../../infrastructure/database/generated/prisma/enums.js';
 import { UpdateSettingsService } from './update-settings.service.js';
 import { PaymentGatewayService } from './payment-gateway.service.js';
 import { ShippingSettingsService } from './shipping-settings.service.js';

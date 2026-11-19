@@ -34,7 +34,10 @@ import { Roles } from '../../../common/decorators/roles.decorator.js';
 import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
 import { RolesGuard } from '../../../common/guards/roles.guard.js';
 import { UserJwtAuthGuard } from '../../../common/guards/user-jwt-auth.guard.js';
-import { Permission, Role } from '../../../infrastructure/database/generated/prisma/enums.js';
+import {
+  Permission,
+  Role,
+} from '../../../infrastructure/database/generated/prisma/enums.js';
 
 @ApiTags('Users')
 @Controller('users')

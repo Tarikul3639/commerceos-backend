@@ -8,7 +8,10 @@ import {
 import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { CloudinaryService } from '../../../infrastructure/storage/cloudinary/services/cloudinary.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../infrastructure/database/generated/prisma/client.js';
+import {
+  ActivityModule,
+  ActivityType,
+} from '../../../infrastructure/database/generated/prisma/client.js';
 
 import { UpdateCustomerDto } from '../dto/requests/update-customer.dto.js';
 import { CustomerResponseDto } from '../dto/responses/customer-response.dto.js';

@@ -3,7 +3,10 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import { Permission, Role } from '../../../infrastructure/database/generated/prisma/enums.js';
+import {
+  Permission,
+  Role,
+} from '../../../infrastructure/database/generated/prisma/enums.js';
 
 import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 

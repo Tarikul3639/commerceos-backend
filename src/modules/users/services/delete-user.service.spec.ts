@@ -12,7 +12,10 @@ vi.mock('../../activity-logs/services/create-activity-log.service.js', () => ({
 
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 
-import { Role, UserStatus } from '../../../infrastructure/database/generated/prisma/enums.js';
+import {
+  Role,
+  UserStatus,
+} from '../../../infrastructure/database/generated/prisma/enums.js';
 import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../activity-logs/services/create-activity-log.service.js';
 import { DeleteUserService } from './delete-user.service.js';

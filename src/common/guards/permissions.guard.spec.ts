@@ -8,7 +8,10 @@ import { ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
 import { PermissionsGuard } from './permissions.guard.js';
-import { Permission, Role } from '../../infrastructure/database/generated/prisma/enums.js';
+import {
+  Permission,
+  Role,
+} from '../../infrastructure/database/generated/prisma/enums.js';
 
 describe('PermissionsGuard', () => {
   const handler = () => undefined;

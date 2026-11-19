@@ -7,7 +7,10 @@ import {
 import { ConfigService } from '@nestjs/config';
 import ms, { type StringValue } from 'ms';
 
-import { Prisma, CustomerStatus } from '../../../../infrastructure/database/generated/prisma/client.js';
+import {
+  Prisma,
+  CustomerStatus,
+} from '../../../../infrastructure/database/generated/prisma/client.js';
 import { PrismaService } from '../../../../infrastructure/database/prisma.service.js';
 import { EmailService } from '../../../../infrastructure/messaging/email/email.service.js';
 

@@ -12,7 +12,10 @@ import { AuthTokensPayload } from '../interfaces/auth-tokens.interface.js';
 import { TokenService } from './token.service.js';
 import { RefreshTokenService } from './refresh-token.service.js';
 import { CreateActivityLogService } from '../../../activity-logs/services/create-activity-log.service.js';
-import { ActivityModule, ActivityType } from '../../../../infrastructure/database/generated/prisma/client.js';
+import {
+  ActivityModule,
+  ActivityType,
+} from '../../../../infrastructure/database/generated/prisma/client.js';
 
 @Injectable()
 export class LoginService {
