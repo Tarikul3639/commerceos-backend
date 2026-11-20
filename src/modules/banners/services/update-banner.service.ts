@@ -24,9 +24,8 @@ export class UpdateBannerService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cloudinaryService: CloudinaryService,
-
     private readonly createActivityLogService: CreateActivityLogService,
-  ) {}
+  ) { }
 
   async execute(
     bannerId: string,
@@ -34,23 +33,8 @@ export class UpdateBannerService {
     updateBannerDto: UpdateBannerDto,
   ): Promise<BannerResponseDto> {
     const existingBanner = await this.prisma.banner.findUnique({
-      where: {
-        id: bannerId,
-      },
-      select: {
-        id: true,
-        title: true,
-        imagePublicId: true,
-        mobileImagePublicId: true,
-        type: true,
-        position: true,
-        link: true,
-        buttonText: true,
-        isActive: true,
-        sortOrder: true,
-        startAt: true,
-        endAt: true,
-      },
+      where: { id: bannerId },
+      include: { images: true },
     });
 
     if (!existingBanner) {
@@ -59,10 +43,7 @@ export class UpdateBannerService {
 
     const {
       title,
-      imageUrl,
-      mobileImageUrl,
-      imagePublicId,
-      mobileImagePublicId,
+      images,
       type,
       position,
       link,
@@ -74,21 +55,6 @@ export class UpdateBannerService {
       endAt,
     } = updateBannerDto;
 
-    if ((imageUrl === undefined) !== (imagePublicId === undefined)) {
-      throw new BadRequestException(
-        'Desktop image URL and public ID must be updated together',
-      );
-    }
-
-    if (
-      (mobileImageUrl === undefined) !==
-      (mobileImagePublicId === undefined)
-    ) {
-      throw new BadRequestException(
-        'Mobile image URL and public ID must be updated together',
-      );
-    }
-
     const nextStartAt =
       startAt === undefined ? existingBanner.startAt : startAt;
     const nextEndAt = endAt === undefined ? existingBanner.endAt : endAt;
@@ -96,27 +62,46 @@ export class UpdateBannerService {
       throw new BadRequestException('End date must be after start date');
     }
 
-    const oldImageIds = [
-      imagePublicId && imagePublicId !== existingBanner.imagePublicId
-        ? existingBanner.imagePublicId
-        : null,
-      mobileImagePublicId &&
-      mobileImagePublicId !== existingBanner.mobileImagePublicId
-        ? existingBanner.mobileImagePublicId
-        : null,
-      mobileImageUrl === null ? existingBanner.mobileImagePublicId : null,
+    const orderedImages = images
+      ? [...images]
+        .sort((a, b) => a.sortOrder - b.sortOrder)
+        .map((image, index) => ({ ...image, sortOrder: index }))
+      : undefined;
+    if (orderedImages && orderedImages.length === 0) {
+      throw new BadRequestException('At least one banner image is required');
+    }
+
+    const previousPublicIds = existingBanner.images.map(
+      (image) => image.publicId,
+    );
+    const legacyPublicIds = [
+      existingBanner.imagePublicId,
+      existingBanner.mobileImagePublicId,
     ].filter((publicId): publicId is string => !!publicId);
+    const nextPublicIds = new Set(
+      orderedImages?.map((image) => image.publicId) ?? previousPublicIds,
+    );
+    const removedPublicIds = [
+      ...new Set([...previousPublicIds, ...legacyPublicIds]),
+    ].filter((publicId) => !nextPublicIds.has(publicId));
+    const primaryImage = orderedImages?.[0];
 
     const banner = await this.prisma.$transaction(async (tx) => {
+      if (orderedImages) {
+        await tx.bannerImage.deleteMany({ where: { bannerId } });
+      }
+
       const updated = await tx.banner.update({
         where: { id: bannerId },
         data: {
           updatedById: userId,
           ...(title !== undefined && { title: title.trim() || null }),
-          ...(imageUrl !== undefined && { imageUrl, imagePublicId }),
-          ...(mobileImageUrl !== undefined && {
-            mobileImageUrl,
-            mobileImagePublicId,
+          ...(orderedImages && {
+            imageUrl: primaryImage!.imageUrl,
+            imagePublicId: primaryImage!.publicId,
+            images: { create: orderedImages },
+            mobileImageUrl: null,
+            mobileImagePublicId: null,
           }),
           ...(type !== undefined && { type }),
           ...(position !== undefined && { position }),
@@ -143,8 +128,9 @@ export class UpdateBannerService {
           userId,
           oldValue: {
             title: existingBanner.title,
-            imagePublicId: existingBanner.imagePublicId,
-            mobileImagePublicId: existingBanner.mobileImagePublicId,
+            imagePublicIds: existingBanner.images.map(
+              (image) => image.publicId,
+            ),
             type: existingBanner.type,
             position: existingBanner.position,
             link: existingBanner.link,
@@ -156,8 +142,7 @@ export class UpdateBannerService {
           },
           newValue: {
             title: updated.title,
-            imagePublicId: updated.imagePublicId,
-            mobileImagePublicId: updated.mobileImagePublicId,
+            imagePublicIds: updated.images.map((image) => image.publicId),
             type: updated.type,
             position: updated.position,
             link: updated.link,
@@ -174,7 +159,9 @@ export class UpdateBannerService {
     });
 
     await Promise.all(
-      oldImageIds.map((publicId) => this.cloudinaryService.delete(publicId)),
+      removedPublicIds.map((publicId) =>
+        this.cloudinaryService.delete(publicId),
+      ),
     );
     return toBannerResponse(banner);
   }

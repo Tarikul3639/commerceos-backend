@@ -13,19 +13,13 @@ export class DeleteBannerService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cloudinaryService: CloudinaryService,
-
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
   async execute(bannerId: string, userId: string): Promise<void> {
     const banner = await this.prisma.banner.findUnique({
-      where: {
-        id: bannerId,
-      },
-      select: {
-        imagePublicId: true,
-        mobileImagePublicId: true,
-      },
+      where: { id: bannerId },
+      include: { images: true },
     });
 
     if (!banner) {
@@ -43,21 +37,20 @@ export class DeleteBannerService {
           entityId: bannerId,
           userId,
           oldValue: {
-            imagePublicId: banner.imagePublicId,
-            mobileImagePublicId: banner.mobileImagePublicId,
+            imagePublicIds: banner.images.map((image) => image.publicId),
           },
         },
         tx,
       );
     });
 
-    // Keep the database mutation and audit trail consistent before performing
-    // irreversible external asset cleanup.
-    const publicIds = [banner.imagePublicId, banner.mobileImagePublicId].filter(
-      (publicId): publicId is string => !!publicId,
-    );
+    const publicIds = new Set([
+      ...banner.images.map((image) => image.publicId),
+      banner.imagePublicId,
+      ...(banner.mobileImagePublicId ? [banner.mobileImagePublicId] : []),
+    ]);
     await Promise.all(
-      publicIds.map((publicId) => this.cloudinaryService.delete(publicId)),
+      [...publicIds].map((publicId) => this.cloudinaryService.delete(publicId)),
     );
   }
 }

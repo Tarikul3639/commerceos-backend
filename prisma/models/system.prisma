@@ -264,18 +264,34 @@ model EmailLog {
   @@map("email_logs")
 }
 
+model BannerImage {
+  id        String   @id @default(uuid())
+  imageUrl  String
+  publicId  String
+  sortOrder Int      @default(0)
+  bannerId  String
+  banner    Banner   @relation(fields: [bannerId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([bannerId, sortOrder])
+  @@map("banner_images")
+}
+
 model Banner {
   id String @id @default(uuid())
 
   title String?
 
-  // Desktop banner image
+  // Legacy primary image fields retained for compatibility with older storefront clients.
   imageUrl      String
   imagePublicId String
 
-  // Optional mobile banner image
+  // Legacy mobile fields are deprecated; new banners use one responsive image set.
   mobileImageUrl      String?
   mobileImagePublicId String?
+
+  images BannerImage[]
 
   type     BannerType
   position BannerPosition

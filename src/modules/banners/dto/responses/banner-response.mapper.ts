@@ -16,6 +16,11 @@ export const bannerWithUsers = {
       email: true,
     },
   },
+  images: {
+    orderBy: {
+      sortOrder: 'asc',
+    },
+  },
 } satisfies Prisma.BannerInclude;
 
 export type BannerWithUsers = Prisma.BannerGetPayload<{
@@ -28,6 +33,12 @@ export function toBannerResponse(banner: BannerWithUsers): BannerResponseDto {
     title: banner.title,
     imageUrl: banner.imageUrl,
     imagePublicId: banner.imagePublicId,
+    images: banner.images.map((image) => ({
+      id: image.id,
+      imageUrl: image.imageUrl,
+      publicId: image.publicId,
+      sortOrder: image.sortOrder,
+    })),
     mobileImageUrl: banner.mobileImageUrl,
     mobileImagePublicId: banner.mobileImagePublicId,
     type: banner.type,

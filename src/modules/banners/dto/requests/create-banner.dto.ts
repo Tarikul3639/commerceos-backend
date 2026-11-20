@@ -1,4 +1,6 @@
 import {
+  ArrayMinSize,
+  IsArray,
   IsBoolean,
   IsDate,
   IsEnum,
@@ -8,6 +10,7 @@ import {
   IsUrl,
   MaxLength,
   Min,
+  ValidateNested,
 } from 'class-validator';
 
 import { Type } from 'class-transformer';
@@ -18,62 +21,52 @@ import {
   BannerType,
 } from '../../../../infrastructure/database/generated/prisma/client.js';
 
+class BannerImageInputDto {
+  @ApiProperty({ example: 'https://example.com/banner.jpg' })
+  @IsString()
+  @IsUrl()
+  imageUrl!: string;
+
+  @ApiProperty({ example: 'banners/summer-sale' })
+  @IsString()
+  publicId!: string;
+
+  @ApiProperty({ example: 0 })
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  sortOrder!: number;
+}
+
 export class CreateBannerDto {
-  @ApiPropertyOptional({
-    example: 'Summer Sale',
-  })
+  @ApiPropertyOptional({ example: 'Summer Sale' })
   @IsOptional()
   @IsString()
   @MaxLength(255)
   title?: string;
 
-  @ApiProperty({
-    example: 'https://example.com/banner.jpg',
-  })
-  @IsString()
-  @IsUrl()
-  imageUrl!: string;
+  @ApiProperty({ type: [BannerImageInputDto], minItems: 1 })
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => BannerImageInputDto)
+  images!: BannerImageInputDto[];
 
-  @ApiProperty({ example: 'banners/summer-sale_desktop' })
-  @IsString()
-  imagePublicId!: string;
-
-  @ApiPropertyOptional({
-    example: 'https://example.com/banner-mobile.jpg',
-  })
-  @IsOptional()
-  @IsString()
-  @IsUrl()
-  mobileImageUrl?: string | null;
-
-  @ApiPropertyOptional({ example: 'banners/summer-sale_mobile' })
-  @IsOptional()
-  @IsString()
-  mobileImagePublicId?: string | null;
-
-  @ApiProperty({
-    enum: BannerType,
-  })
+  @ApiProperty({ enum: BannerType })
   @IsEnum(BannerType)
   type!: BannerType;
 
-  @ApiProperty({
-    enum: BannerPosition,
-  })
+  @ApiProperty({ enum: BannerPosition })
   @IsEnum(BannerPosition)
   position!: BannerPosition;
 
-  @ApiPropertyOptional({
-    example: '/products/summer-sale',
-  })
+  @ApiPropertyOptional({ example: '/products/summer-sale' })
   @IsOptional()
   @IsString()
   @MaxLength(500)
   link?: string;
 
-  @ApiPropertyOptional({
-    example: 'Shop Now',
-  })
+  @ApiPropertyOptional({ example: 'Shop Now' })
   @IsOptional()
   @IsString()
   @MaxLength(100)
@@ -84,35 +77,25 @@ export class CreateBannerDto {
   @IsBoolean()
   openInNewTab?: boolean;
 
-  @ApiPropertyOptional({
-    example: 0,
-    default: 0,
-  })
+  @ApiPropertyOptional({ example: 0, default: 0 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(0)
   sortOrder?: number;
 
-  @ApiPropertyOptional({
-    example: true,
-    default: true,
-  })
+  @ApiPropertyOptional({ example: true, default: true })
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
 
-  @ApiPropertyOptional({
-    example: '2026-09-15T00:00:00.000Z',
-  })
+  @ApiPropertyOptional({ example: '2026-09-15T00:00:00.000Z' })
   @IsOptional()
   @Type(() => Date)
   @IsDate()
   startAt?: Date;
 
-  @ApiPropertyOptional({
-    example: '2026-09-30T23:59:59.000Z',
-  })
+  @ApiPropertyOptional({ example: '2026-09-30T23:59:59.000Z' })
   @IsOptional()
   @Type(() => Date)
   @IsDate()

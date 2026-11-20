@@ -20,7 +20,6 @@ export class CreateBannerService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cloudinaryService: CloudinaryService,
-
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
@@ -30,10 +29,7 @@ export class CreateBannerService {
   ): Promise<BannerResponseDto> {
     const {
       title,
-      imageUrl,
-      imagePublicId,
-      mobileImageUrl,
-      mobileImagePublicId,
+      images,
       type,
       position,
       link,
@@ -45,49 +41,37 @@ export class CreateBannerService {
       endAt,
     } = createBannerDto;
 
-    if ((mobileImageUrl == null) !== (mobileImagePublicId == null)) {
-      throw new BadRequestException(
-        'Mobile image URL and public ID must be provided together',
-      );
+    if (!images?.length) {
+      throw new BadRequestException('At least one banner image is required');
     }
-
     if (startAt && endAt && startAt > endAt) {
       throw new BadRequestException('End date must be after start date');
     }
+
+    const orderedImages = [...images]
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .map((image, index) => ({ ...image, sortOrder: index }));
+    const primaryImage = orderedImages[0];
 
     try {
       const banner = await this.prisma.$transaction(async (tx) => {
         const created = await tx.banner.create({
           data: {
-            imageUrl,
-            imagePublicId,
+            imageUrl: primaryImage.imageUrl,
+            imagePublicId: primaryImage.publicId,
+            images: { create: orderedImages },
             type,
             position,
             createdById: userId,
             updatedById: userId,
-
-            ...(title !== undefined && {
-              title: title.trim() || null,
-            }),
-
-            ...(mobileImageUrl != null && {
-              mobileImageUrl,
-              mobileImagePublicId,
-            }),
-
-            ...(link !== undefined && {
-              link: link.trim() || null,
-            }),
-
+            ...(title !== undefined && { title: title.trim() || null }),
+            ...(link !== undefined && { link: link.trim() || null }),
             ...(buttonText !== undefined && {
               buttonText: buttonText.trim() || null,
             }),
-
             ...(openInNewTab !== undefined && { openInNewTab }),
-
             ...(sortOrder !== undefined && { sortOrder }),
             ...(isActive !== undefined && { isActive }),
-
             ...(startAt !== undefined && { startAt }),
             ...(endAt !== undefined && { endAt }),
           },
@@ -104,8 +88,7 @@ export class CreateBannerService {
             userId,
             newValue: {
               title: created.title,
-              imagePublicId: created.imagePublicId,
-              mobileImagePublicId: created.mobileImagePublicId,
+              imagePublicIds: orderedImages.map((image) => image.publicId),
               type: created.type,
               position: created.position,
               isActive: created.isActive,
@@ -121,11 +104,10 @@ export class CreateBannerService {
 
       return toBannerResponse(banner);
     } catch (error) {
-      const uploadedIds = [imagePublicId, mobileImagePublicId].filter(
-        (publicId): publicId is string => !!publicId,
-      );
       await Promise.allSettled(
-        uploadedIds.map((publicId) => this.cloudinaryService.delete(publicId)),
+        orderedImages.map((image) =>
+          this.cloudinaryService.delete(image.publicId),
+        ),
       );
       throw error;
     }
