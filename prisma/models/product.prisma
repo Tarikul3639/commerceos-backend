@@ -32,6 +32,7 @@ model Product {
   // discount      Discount? // TODO: Model will be updated
   purchaseItems PurchaseItem[]
   cartItems     CartItem[]
+  wishlistItems WishlistItem[]
   orderItems    OrderItem[]
 
   createdAt DateTime @default(now())

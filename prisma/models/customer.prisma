@@ -42,8 +42,9 @@ model Customer {
   passwordResetTokens     CustomerPasswordResetToken[]
   emailVerificationTokens CustomerEmailVerificationToken[]
 
-  orders Order[]
-  cart   Cart?
+  orders   Order[]
+  cart     Cart?
+  wishlist Wishlist?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -102,7 +103,7 @@ model CustomerPasswordResetToken {
   // Stores the hashed password reset token
   tokenHash String @unique
 
-  // Defines when the password reset token expires
+  // Defines when the token expires
   expiresAt DateTime
 
   // Stores when the token was successfully used

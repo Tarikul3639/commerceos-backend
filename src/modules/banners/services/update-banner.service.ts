@@ -25,7 +25,7 @@ export class UpdateBannerService {
     private readonly prisma: PrismaService,
     private readonly cloudinaryService: CloudinaryService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(
     bannerId: string,
@@ -64,8 +64,8 @@ export class UpdateBannerService {
 
     const orderedImages = images
       ? [...images]
-        .sort((a, b) => a.sortOrder - b.sortOrder)
-        .map((image, index) => ({ ...image, sortOrder: index }))
+          .sort((a, b) => a.sortOrder - b.sortOrder)
+          .map((image, index) => ({ ...image, sortOrder: index }))
       : undefined;
     if (orderedImages && orderedImages.length === 0) {
       throw new BadRequestException('At least one banner image is required');

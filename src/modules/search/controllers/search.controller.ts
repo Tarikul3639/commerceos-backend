@@ -19,7 +19,7 @@ import { GlobalSearchService } from '../services/global-search.service.js';
 @Controller('search')
 @UseGuards(UserJwtAuthGuard, PermissionsGuard)
 export class SearchController {
-  constructor(private readonly globalSearchService: GlobalSearchService) { }
+  constructor(private readonly globalSearchService: GlobalSearchService) {}
 
   @Get()
   @ApiOperation({

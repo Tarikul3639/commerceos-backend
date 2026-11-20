@@ -1,4 +1,7 @@
-import { Permission, Role } from '../../src/infrastructure/database/generated/prisma/client.js';
+import {
+  Permission,
+  Role,
+} from '../../src/infrastructure/database/generated/prisma/client.js';
 
 import { prisma } from './client.js';
 
@@ -55,6 +58,7 @@ const rolePermissions: Record<Role, Permission[]> = {
     Permission.CART_READ,
     Permission.CART_UPDATE,
     Permission.CART_DELETE,
+    Permission.WISHLIST_READ,
     Permission.BANNER_CREATE,
     Permission.BANNER_READ,
     Permission.BANNER_UPDATE,
@@ -99,9 +103,7 @@ const rolePermissions: Record<Role, Permission[]> = {
   ],
 };
 
-/**
- * Seed the role-to-permission assignments without duplicating existing grants.
- */
+/** Seed the role-to-permission assignments without duplicating existing grants. */
 export async function seedPermissions() {
   console.log('Seeding role permissions...');
 

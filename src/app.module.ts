@@ -35,6 +35,7 @@ import { PurchaseReturnModule } from './modules/purchase-return/purchase-return.
 import { SupplierModule } from './modules/suppliers/supplier.module.js';
 import { OrderModule } from './modules/orders/order.module.js';
 import { CartModule } from './modules/carts/cart.module.js';
+import { WishlistModule } from './modules/wishlists/wishlist.module.js';
 import { BannerModule } from './modules/banners/banner.module.js';
 import { DiscountModule } from './modules/discounts/discount.module.js';
 
@@ -104,6 +105,7 @@ import { SearchModule } from './modules/search/search.module.js';
     SupplierModule,
     OrderModule,
     CartModule,
+    WishlistModule,
 
     BannerModule,
     DiscountModule,
