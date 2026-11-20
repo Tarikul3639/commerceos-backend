@@ -209,7 +209,7 @@ For Bun/server entrypoints:
 
 ```bash
 bunx @prisma/cli@latest app build --build-type bun --entry src/index.ts
-bunx @prisma/cli@latest app run --build-type bun --entry src/index.ts --port 8080
+bunx @prisma/cli@latest app run --build-type bun --entry src/index.ts --port 5000
 ```
 
 For NestJS, use `app build` to validate the Compute artifact and run the framework's own dev command locally:
@@ -223,7 +223,7 @@ With a compute config, pass the target name instead of repeating framework/entry
 
 ```bash
 bunx @prisma/cli@latest app build api
-bunx @prisma/cli@latest app run api --port 8080
+bunx @prisma/cli@latest app run api --port 5000
 ```
 
 `app run --port` sets `PORT` for local development. It does not rewrite an app's explicit host binding, so a local run is not enough to prove the deployed server is reachable from ingress.
@@ -286,7 +286,7 @@ Deploy with framework and port:
 ```bash
 bunx @prisma/cli@latest app deploy \
   --framework hono \
-  --http-port 8080 \
+  --http-port 5000 \
   --prod \
   --yes \
   --env .env
@@ -311,7 +311,7 @@ Deploy a preview branch with framework and port:
 bunx @prisma/cli@latest app deploy \
   --framework hono \
   --branch feature/foo \
-  --http-port 8080 \
+  --http-port 5000 \
   --json \
   --no-interactive \
   --env .env.preview
@@ -323,7 +323,7 @@ Bun-style app with explicit entrypoint:
 bunx @prisma/cli@latest app deploy \
   --framework bun \
   --entry src/index.ts \
-  --http-port 8080 \
+  --http-port 5000 \
   --prod \
   --yes \
   --env .env

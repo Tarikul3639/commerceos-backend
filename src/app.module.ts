@@ -51,6 +51,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module.js';
 import { AnalyticsModule } from './modules/analytics/analytics.module.js';
 import { StockModule } from './modules/inventory/stocks/stock.module.js';
 import { PaymentModule } from './modules/payments/payment.module.js';
+import { SearchModule } from './modules/search/search.module.js';
 
 @Module({
   imports: [
@@ -87,6 +88,7 @@ import { PaymentModule } from './modules/payments/payment.module.js';
     AnalyticsModule,
     StockModule,
     PaymentModule,
+    SearchModule,
 
     AuthModule,
     UsersModule,

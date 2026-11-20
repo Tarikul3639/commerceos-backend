@@ -10,7 +10,8 @@ const envValidationSchema = Joi.object({
   API_VERSION: Joi.number().required(),
   APP_VERSION: Joi.string().required(),
   APP_NAME: Joi.string().required(),
-  FRONTEND_URL: Joi.string().required(),
+  ADMIN_URL: Joi.string().uri().required(),
+  STOREFRONT_URL: Joi.string().uri().required(),
   // Bcrypt salt rounds for hashing passwords
   BCRYPT_SALT_ROUNDS: Joi.number().default(10),
   // ============================

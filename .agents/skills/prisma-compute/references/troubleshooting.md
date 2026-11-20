@@ -73,13 +73,13 @@ Fix:
 Minimal recovery config:
 
 ```typescript
-import { defineComputeConfig } from "@prisma/compute-sdk/config";
+import { defineComputeConfig } from '@prisma/compute-sdk/config';
 
 export default defineComputeConfig({
   app: {
-    framework: "hono",
-    entry: "src/index.ts",
-    httpPort: 8080,
+    framework: 'hono',
+    entry: 'src/index.ts',
+    httpPort: 5000,
   },
 });
 ```
@@ -270,10 +270,10 @@ Fix `next.config.ts`:
 
 ```typescript
 const nextConfig = {
-  output: "standalone",
-}
+  output: 'standalone',
+};
 
-export default nextConfig
+export default nextConfig;
 ```
 
 Then reinstall/build if needed and deploy again.
@@ -352,8 +352,8 @@ Fix:
 - read `process.env.PORT`
 - pass `--http-port <port>` when the app has a fixed port
 - use the generated `compute:deploy` script when it exists
-- remember the `@prisma/cli app deploy` default is HTTP `3000`; generated Hono/Elysia projects usually configure `8080` through `prisma.compute.ts` or flag-backed `--http-port 8080` scripts
-- use the template defaults: Hono/Elysia `8080`, Next/TanStack/Nuxt `3000`, Astro `4321`
+- remember the `@prisma/cli app deploy` default is HTTP `3000`; generated Hono/Elysia projects usually configure `5000` through `prisma.compute.ts` or flag-backed `--http-port 5000` scripts
+- use the template defaults: Hono/Elysia `5000`, Next/TanStack/Nuxt `3000`, Astro `4321`
 
 ## Public URL Smoke Test Fails
 
