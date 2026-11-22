@@ -1,18 +1,7 @@
 import {
-  ArrayMinSize,
-  IsArray,
-  IsBoolean,
-  IsDate,
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString,
-  IsUrl,
-  MaxLength,
-  Min,
-  ValidateNested,
+  IsBoolean, IsDate, IsEnum, IsInt, IsOptional, IsString, IsUrl,
+  MaxLength, Min,
 } from 'class-validator';
-
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -21,37 +10,34 @@ import {
   BannerType,
 } from '../../../../infrastructure/database/generated/prisma/client.js';
 
-class BannerImageInputDto {
-  @ApiPropertyOptional({ example: 'https://example.com/banner.jpg' })
-  @IsString()
-  @IsUrl()
-  imageUrl!: string;
-
-  @ApiPropertyOptional({ example: 'banners/summer-sale' })
-  @IsString()
-  publicId!: string;
-
-  @ApiPropertyOptional({ example: 0 })
-  @Type(() => Number)
-  @IsInt()
-  @Min(0)
-  sortOrder!: number;
-}
-
 export class UpdateBannerDto {
   @ApiPropertyOptional({ example: 'Summer Sale' })
   @IsOptional()
   @IsString()
   @MaxLength(255)
-  title?: string;
+  title?: string | null;
 
-  @ApiPropertyOptional({ type: [BannerImageInputDto], minItems: 1 })
+  @ApiPropertyOptional({ example: 'https://example.com/banner-desktop.jpg' })
   @IsOptional()
-  @IsArray()
-  @ArrayMinSize(1)
-  @ValidateNested({ each: true })
-  @Type(() => BannerImageInputDto)
-  images?: BannerImageInputDto[];
+  @IsString()
+  @IsUrl()
+  imageUrl?: string;
+
+  @ApiPropertyOptional({ example: 'banners/summer-sale-desktop' })
+  @IsOptional()
+  @IsString()
+  imagePublicId?: string;
+
+  @ApiPropertyOptional({ example: 'https://example.com/banner-mobile.jpg', nullable: true })
+  @IsOptional()
+  @IsString()
+  @IsUrl()
+  mobileImageUrl?: string | null;
+
+  @ApiPropertyOptional({ example: 'banners/summer-sale-mobile', nullable: true })
+  @IsOptional()
+  @IsString()
+  mobileImagePublicId?: string | null;
 
   @ApiPropertyOptional({ enum: BannerType })
   @IsOptional()
@@ -63,17 +49,11 @@ export class UpdateBannerDto {
   @IsEnum(BannerPosition)
   position?: BannerPosition;
 
-  @ApiPropertyOptional({ example: '/products/summer-sale' })
+  @ApiPropertyOptional({ example: '/collections/summer' })
   @IsOptional()
   @IsString()
   @MaxLength(500)
-  link?: string;
-
-  @ApiPropertyOptional({ example: 'Shop Now' })
-  @IsOptional()
-  @IsString()
-  @MaxLength(100)
-  buttonText?: string;
+  link?: string | null;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -92,13 +72,13 @@ export class UpdateBannerDto {
   @IsBoolean()
   isActive?: boolean;
 
-  @ApiPropertyOptional({ example: '2026-09-15T00:00:00.000Z' })
+  @ApiPropertyOptional({ example: '2026-09-15T00:00:00.000Z', nullable: true })
   @IsOptional()
   @Type(() => Date)
   @IsDate()
   startAt?: Date | null;
 
-  @ApiPropertyOptional({ example: '2026-09-30T23:59:59.000Z' })
+  @ApiPropertyOptional({ example: '2026-09-30T23:59:59.000Z', nullable: true })
   @IsOptional()
   @Type(() => Date)
   @IsDate()

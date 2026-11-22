@@ -2,25 +2,8 @@ import type { Prisma } from '../../../../infrastructure/database/generated/prism
 import { BannerResponseDto } from './banner-response.dto.js';
 
 export const bannerWithUsers = {
-  createdBy: {
-    select: {
-      id: true,
-      name: true,
-      email: true,
-    },
-  },
-  updatedBy: {
-    select: {
-      id: true,
-      name: true,
-      email: true,
-    },
-  },
-  images: {
-    orderBy: {
-      sortOrder: 'asc',
-    },
-  },
+  createdBy: { select: { id: true, name: true, email: true } },
+  updatedBy: { select: { id: true, name: true, email: true } },
 } satisfies Prisma.BannerInclude;
 
 export type BannerWithUsers = Prisma.BannerGetPayload<{
@@ -33,18 +16,11 @@ export function toBannerResponse(banner: BannerWithUsers): BannerResponseDto {
     title: banner.title,
     imageUrl: banner.imageUrl,
     imagePublicId: banner.imagePublicId,
-    images: banner.images.map((image) => ({
-      id: image.id,
-      imageUrl: image.imageUrl,
-      publicId: image.publicId,
-      sortOrder: image.sortOrder,
-    })),
     mobileImageUrl: banner.mobileImageUrl,
     mobileImagePublicId: banner.mobileImagePublicId,
     type: banner.type,
     position: banner.position,
     link: banner.link,
-    buttonText: banner.buttonText,
     openInNewTab: banner.openInNewTab,
     sortOrder: banner.sortOrder,
     isActive: banner.isActive,

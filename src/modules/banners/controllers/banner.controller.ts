@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  ParseEnumPipe,
   HttpCode,
   HttpStatus,
   Param,
@@ -16,6 +17,7 @@ import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 
@@ -32,11 +34,14 @@ import { BannerQueryDto } from '../dto/requests/banner-query.dto.js';
 
 import { BannerResponseDto } from '../dto/responses/banner-response.dto.js';
 import { BannerListResponseDto } from '../dto/responses/banner-list-response.dto.js';
+import { StorefrontBannerItemResponseDto } from '../dto/responses/storefront-banner-response.dto.js';
+import { BannerPosition } from '../../../infrastructure/database/generated/prisma/client.js';
 
 import { CreateBannerService } from '../services/create-banner.service.js';
 import { DeleteBannerService } from '../services/delete-banner.service.js';
 import { GetBannerService } from '../services/get-banner.service.js';
 import { GetBannersService } from '../services/get-banners.service.js';
+import { GetStorefrontBannersService } from '../services/get-storefront-banners.service.js';
 import { UpdateBannerService } from '../services/update-banner.service.js';
 
 @ApiTags('Banners')
@@ -46,9 +51,10 @@ export class BannerController {
     private readonly createBannerService: CreateBannerService,
     private readonly getBannerService: GetBannerService,
     private readonly getBannersService: GetBannersService,
+    private readonly getStorefrontBannersService: GetStorefrontBannersService,
     private readonly updateBannerService: UpdateBannerService,
     private readonly deleteBannerService: DeleteBannerService,
-  ) {}
+  ) { }
 
   // Create a new banner.
   @Post()
@@ -65,6 +71,21 @@ export class BannerController {
     @CurrentUser('id') userId: string,
   ): Promise<BannerResponseDto> {
     return this.createBannerService.execute(userId, createBannerDto);
+  }
+
+  /**
+   * Public, read-only feed for one storefront placement.
+   * Only active banners within their configured schedule are included.
+   */
+  @Get('storefront')
+  @ApiOperation({ summary: 'Get currently visible banners for a position' })
+  @ApiQuery({ name: 'position', enum: BannerPosition, required: true })
+  @ApiOkResponse({ type: [StorefrontBannerItemResponseDto] })
+  async findStorefrontBanners(
+    @Query('position', new ParseEnumPipe(BannerPosition))
+    position: BannerPosition,
+  ): Promise<StorefrontBannerItemResponseDto[]> {
+    return this.getStorefrontBannersService.execute(position);
   }
 
   // Get all banners with optional filters and pagination.

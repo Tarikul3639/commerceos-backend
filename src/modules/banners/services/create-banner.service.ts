@@ -28,47 +28,34 @@ export class CreateBannerService {
     createBannerDto: CreateBannerDto,
   ): Promise<BannerResponseDto> {
     const {
-      title,
-      images,
-      type,
-      position,
-      link,
-      buttonText,
-      openInNewTab,
-      sortOrder,
-      isActive,
-      startAt,
-      endAt,
+      title, imageUrl, imagePublicId, mobileImageUrl, mobileImagePublicId,
+      type, position, link, openInNewTab, sortOrder, isActive,
+      startAt, endAt,
     } = createBannerDto;
 
-    if (!images?.length) {
-      throw new BadRequestException('At least one banner image is required');
+    if (Boolean(mobileImageUrl) !== Boolean(mobileImagePublicId)) {
+      throw new BadRequestException(
+        'Mobile image URL and public ID must be provided together',
+      );
     }
     if (startAt && endAt && startAt > endAt) {
       throw new BadRequestException('End date must be after start date');
     }
 
-    const orderedImages = [...images]
-      .sort((a, b) => a.sortOrder - b.sortOrder)
-      .map((image, index) => ({ ...image, sortOrder: index }));
-    const primaryImage = orderedImages[0];
-
     try {
       const banner = await this.prisma.$transaction(async (tx) => {
         const created = await tx.banner.create({
           data: {
-            imageUrl: primaryImage.imageUrl,
-            imagePublicId: primaryImage.publicId,
-            images: { create: orderedImages },
+            imageUrl,
+            imagePublicId,
+            mobileImageUrl: mobileImageUrl ?? null,
+            mobileImagePublicId: mobileImagePublicId ?? null,
             type,
             position,
             createdById: userId,
             updatedById: userId,
             ...(title !== undefined && { title: title.trim() || null }),
             ...(link !== undefined && { link: link.trim() || null }),
-            ...(buttonText !== undefined && {
-              buttonText: buttonText.trim() || null,
-            }),
             ...(openInNewTab !== undefined && { openInNewTab }),
             ...(sortOrder !== undefined && { sortOrder }),
             ...(isActive !== undefined && { isActive }),
@@ -88,7 +75,8 @@ export class CreateBannerService {
             userId,
             newValue: {
               title: created.title,
-              imagePublicIds: orderedImages.map((image) => image.publicId),
+              imagePublicId: created.imagePublicId,
+              mobileImagePublicId: created.mobileImagePublicId,
               type: created.type,
               position: created.position,
               isActive: created.isActive,
@@ -104,10 +92,12 @@ export class CreateBannerService {
 
       return toBannerResponse(banner);
     } catch (error) {
+      // Clean up both uploaded assets when the database transaction fails.
+      const publicIds = [imagePublicId, mobileImagePublicId].filter(
+        (publicId): publicId is string => Boolean(publicId),
+      );
       await Promise.allSettled(
-        orderedImages.map((image) =>
-          this.cloudinaryService.delete(image.publicId),
-        ),
+        publicIds.map((publicId) => this.cloudinaryService.delete(publicId)),
       );
       throw error;
     }

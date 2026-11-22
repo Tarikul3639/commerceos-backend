@@ -34,81 +34,61 @@ export class UpdateBannerService {
   ): Promise<BannerResponseDto> {
     const existingBanner = await this.prisma.banner.findUnique({
       where: { id: bannerId },
-      include: { images: true },
     });
-
     if (!existingBanner) {
       throw new NotFoundException('Banner not found');
     }
 
     const {
-      title,
-      images,
-      type,
-      position,
-      link,
-      buttonText,
-      openInNewTab,
-      sortOrder,
-      isActive,
-      startAt,
-      endAt,
+      title, imageUrl, imagePublicId, mobileImageUrl, mobileImagePublicId,
+      type, position, link, openInNewTab, sortOrder, isActive,
+      startAt, endAt,
     } = updateBannerDto;
 
-    const nextStartAt =
-      startAt === undefined ? existingBanner.startAt : startAt;
+    const nextStartAt = startAt === undefined ? existingBanner.startAt : startAt;
     const nextEndAt = endAt === undefined ? existingBanner.endAt : endAt;
     if (nextStartAt && nextEndAt && nextStartAt > nextEndAt) {
       throw new BadRequestException('End date must be after start date');
     }
 
-    const orderedImages = images
-      ? [...images]
-          .sort((a, b) => a.sortOrder - b.sortOrder)
-          .map((image, index) => ({ ...image, sortOrder: index }))
-      : undefined;
-    if (orderedImages && orderedImages.length === 0) {
-      throw new BadRequestException('At least one banner image is required');
+    // Keep mobile URL and Cloudinary ID synchronized when replacing or clearing it.
+    const nextMobileUrl = mobileImageUrl === undefined
+      ? existingBanner.mobileImageUrl
+      : mobileImageUrl;
+    const nextMobilePublicId = mobileImagePublicId === undefined
+      ? existingBanner.mobileImagePublicId
+      : mobileImagePublicId;
+    if (Boolean(nextMobileUrl) !== Boolean(nextMobilePublicId)) {
+      throw new BadRequestException(
+        'Mobile image URL and public ID must be provided together',
+      );
     }
 
-    const previousPublicIds = existingBanner.images.map(
-      (image) => image.publicId,
-    );
-    const legacyPublicIds = [
-      existingBanner.imagePublicId,
-      existingBanner.mobileImagePublicId,
-    ].filter((publicId): publicId is string => !!publicId);
-    const nextPublicIds = new Set(
-      orderedImages?.map((image) => image.publicId) ?? previousPublicIds,
-    );
+    const nextDesktopPublicId = imagePublicId ?? existingBanner.imagePublicId;
+    const retainedPublicIds = new Set([
+      nextDesktopPublicId,
+      ...(nextMobilePublicId ? [nextMobilePublicId] : []),
+    ]);
     const removedPublicIds = [
-      ...new Set([...previousPublicIds, ...legacyPublicIds]),
-    ].filter((publicId) => !nextPublicIds.has(publicId));
-    const primaryImage = orderedImages?.[0];
+      existingBanner.imagePublicId,
+      ...(existingBanner.mobileImagePublicId
+        ? [existingBanner.mobileImagePublicId]
+        : []),
+    ].filter((publicId) => !retainedPublicIds.has(publicId));
 
     const banner = await this.prisma.$transaction(async (tx) => {
-      if (orderedImages) {
-        await tx.bannerImage.deleteMany({ where: { bannerId } });
-      }
-
       const updated = await tx.banner.update({
         where: { id: bannerId },
         data: {
           updatedById: userId,
-          ...(title !== undefined && { title: title.trim() || null }),
-          ...(orderedImages && {
-            imageUrl: primaryImage!.imageUrl,
-            imagePublicId: primaryImage!.publicId,
-            images: { create: orderedImages },
-            mobileImageUrl: null,
-            mobileImagePublicId: null,
-          }),
+          ...(title !== undefined && { title: title?.trim() || null }),
+          ...(imageUrl !== undefined && { imageUrl }),
+          ...(imagePublicId !== undefined && { imagePublicId }),
+          ...(mobileImageUrl !== undefined && { mobileImageUrl }),
+          ...(mobileImagePublicId !== undefined && { mobileImagePublicId }),
           ...(type !== undefined && { type }),
           ...(position !== undefined && { position }),
           ...(link !== undefined && { link: link?.trim() || null }),
-          ...(buttonText !== undefined && {
-            buttonText: buttonText?.trim() || null,
-          }),
           ...(openInNewTab !== undefined && { openInNewTab }),
           ...(sortOrder !== undefined && { sortOrder }),
           ...(isActive !== undefined && { isActive }),
@@ -128,13 +108,11 @@ export class UpdateBannerService {
           userId,
           oldValue: {
             title: existingBanner.title,
-            imagePublicIds: existingBanner.images.map(
-              (image) => image.publicId,
-            ),
+            imagePublicId: existingBanner.imagePublicId,
+            mobileImagePublicId: existingBanner.mobileImagePublicId,
             type: existingBanner.type,
             position: existingBanner.position,
             link: existingBanner.link,
-            buttonText: existingBanner.buttonText,
             isActive: existingBanner.isActive,
             sortOrder: existingBanner.sortOrder,
             startAt: existingBanner.startAt,
@@ -142,11 +120,11 @@ export class UpdateBannerService {
           },
           newValue: {
             title: updated.title,
-            imagePublicIds: updated.images.map((image) => image.publicId),
+            imagePublicId: updated.imagePublicId,
+            mobileImagePublicId: updated.mobileImagePublicId,
             type: updated.type,
             position: updated.position,
             link: updated.link,
-            buttonText: updated.buttonText,
             isActive: updated.isActive,
             sortOrder: updated.sortOrder,
             startAt: updated.startAt,
@@ -158,10 +136,9 @@ export class UpdateBannerService {
       return updated;
     });
 
+    // Delete replaced assets only after the database transaction succeeds.
     await Promise.all(
-      removedPublicIds.map((publicId) =>
-        this.cloudinaryService.delete(publicId),
-      ),
+      removedPublicIds.map((publicId) => this.cloudinaryService.delete(publicId)),
     );
     return toBannerResponse(banner);
   }

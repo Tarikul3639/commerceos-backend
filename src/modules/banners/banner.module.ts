@@ -9,6 +9,7 @@ import { CreateBannerService } from './services/create-banner.service.js';
 import { DeleteBannerService } from './services/delete-banner.service.js';
 import { GetBannerService } from './services/get-banner.service.js';
 import { GetBannersService } from './services/get-banners.service.js';
+import { GetStorefrontBannersService } from './services/get-storefront-banners.service.js';
 import { UpdateBannerService } from './services/update-banner.service.js';
 
 @Module({
@@ -18,6 +19,7 @@ import { UpdateBannerService } from './services/update-banner.service.js';
     CreateBannerService,
     GetBannerService,
     GetBannersService,
+    GetStorefrontBannersService,
     UpdateBannerService,
     DeleteBannerService,
     UserJwtAuthGuard,

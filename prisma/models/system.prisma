@@ -264,23 +264,10 @@ model EmailLog {
   @@map("email_logs")
 }
 
-model BannerImage {
-  id        String   @id @default(uuid())
-  imageUrl  String
-  publicId  String
-  sortOrder Int      @default(0)
-  bannerId  String
-  banner    Banner   @relation(fields: [bannerId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([bannerId, sortOrder])
-  @@map("banner_images")
-}
-
 model Banner {
   id String @id @default(uuid())
 
+  // Internal name used to identify the banner in the admin dashboard.
   title String?
 
   // Legacy primary image fields retained for compatibility with older storefront clients.
@@ -291,15 +278,11 @@ model Banner {
   mobileImageUrl      String?
   mobileImagePublicId String?
 
-  images BannerImage[]
-
   type     BannerType
   position BannerPosition
 
   // Redirect URL when banner is clicked
   link String?
-
-  buttonText String?
 
   // Indicates whether the link should open in a new tab
   openInNewTab Boolean @default(false)
@@ -323,7 +306,7 @@ model Banner {
   updatedAt DateTime @updatedAt
 
   @@index([type])
-  @@index([position])
+  @@index([position, sortOrder])
   @@index([isActive])
   @@index([createdById])
   @@index([updatedById])

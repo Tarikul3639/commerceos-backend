@@ -1,18 +1,7 @@
 import {
-  ArrayMinSize,
-  IsArray,
-  IsBoolean,
-  IsDate,
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString,
-  IsUrl,
-  MaxLength,
-  Min,
-  ValidateNested,
+  IsBoolean, IsDate, IsEnum, IsInt, IsOptional, IsString, IsUrl,
+  MaxLength, Min,
 } from 'class-validator';
-
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -21,23 +10,6 @@ import {
   BannerType,
 } from '../../../../infrastructure/database/generated/prisma/client.js';
 
-class BannerImageInputDto {
-  @ApiProperty({ example: 'https://example.com/banner.jpg' })
-  @IsString()
-  @IsUrl()
-  imageUrl!: string;
-
-  @ApiProperty({ example: 'banners/summer-sale' })
-  @IsString()
-  publicId!: string;
-
-  @ApiProperty({ example: 0 })
-  @Type(() => Number)
-  @IsInt()
-  @Min(0)
-  sortOrder!: number;
-}
-
 export class CreateBannerDto {
   @ApiPropertyOptional({ example: 'Summer Sale' })
   @IsOptional()
@@ -45,12 +17,25 @@ export class CreateBannerDto {
   @MaxLength(255)
   title?: string;
 
-  @ApiProperty({ type: [BannerImageInputDto], minItems: 1 })
-  @IsArray()
-  @ArrayMinSize(1)
-  @ValidateNested({ each: true })
-  @Type(() => BannerImageInputDto)
-  images!: BannerImageInputDto[];
+  @ApiProperty({ example: 'https://example.com/banner-desktop.jpg' })
+  @IsString()
+  @IsUrl()
+  imageUrl!: string;
+
+  @ApiProperty({ example: 'banners/summer-sale-desktop' })
+  @IsString()
+  imagePublicId!: string;
+
+  @ApiPropertyOptional({ example: 'https://example.com/banner-mobile.jpg' })
+  @IsOptional()
+  @IsString()
+  @IsUrl()
+  mobileImageUrl?: string | null;
+
+  @ApiPropertyOptional({ example: 'banners/summer-sale-mobile' })
+  @IsOptional()
+  @IsString()
+  mobileImagePublicId?: string | null;
 
   @ApiProperty({ enum: BannerType })
   @IsEnum(BannerType)
@@ -60,17 +45,11 @@ export class CreateBannerDto {
   @IsEnum(BannerPosition)
   position!: BannerPosition;
 
-  @ApiPropertyOptional({ example: '/products/summer-sale' })
+  @ApiPropertyOptional({ example: '/collections/summer' })
   @IsOptional()
   @IsString()
   @MaxLength(500)
   link?: string;
-
-  @ApiPropertyOptional({ example: 'Shop Now' })
-  @IsOptional()
-  @IsString()
-  @MaxLength(100)
-  buttonText?: string;
 
   @ApiPropertyOptional({ default: false })
   @IsOptional()

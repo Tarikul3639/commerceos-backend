@@ -19,9 +19,7 @@ export class DeleteBannerService {
   async execute(bannerId: string, userId: string): Promise<void> {
     const banner = await this.prisma.banner.findUnique({
       where: { id: bannerId },
-      include: { images: true },
     });
-
     if (!banner) {
       throw new NotFoundException('Banner not found');
     }
@@ -37,7 +35,8 @@ export class DeleteBannerService {
           entityId: bannerId,
           userId,
           oldValue: {
-            imagePublicIds: banner.images.map((image) => image.publicId),
+            imagePublicId: banner.imagePublicId,
+            mobileImagePublicId: banner.mobileImagePublicId,
           },
         },
         tx,
@@ -45,7 +44,6 @@ export class DeleteBannerService {
     });
 
     const publicIds = new Set([
-      ...banner.images.map((image) => image.publicId),
       banner.imagePublicId,
       ...(banner.mobileImagePublicId ? [banner.mobileImagePublicId] : []),
     ]);
