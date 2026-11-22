@@ -3,54 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../infrastructure/database/prisma.service.js';
 
 import { ProductQueryDto } from '../../dto/requests/product-query.dto.js';
-import {
-  StoreProductListItemDto,
-  StoreProductListResponseDto,
-} from '../../dto/responses/store-product-list-response.dto.js';
+import { StoreProductListResponseDto } from '../../dto/responses/store-product-list-response.dto.js';
 import { buildStoreProductWhere } from '../../utils/product-query.util.js';
+import { mapStoreProductListItem } from '../../utils/store-product.mapper.js';
 
 @Injectable()
 export class GetStoreProductsService {
-  constructor(private readonly prisma: PrismaService) { }
-
-  private getActiveDiscount(
-    discount: {
-      isActive: boolean;
-      startsAt: Date | null;
-      endsAt: Date | null;
-    } | null,
-  ): boolean {
-    if (!discount?.isActive) return false;
-    const now = new Date();
-    return (
-      (!discount.startsAt || discount.startsAt <= now) &&
-      (!discount.endsAt || discount.endsAt >= now)
-    );
-  }
-
-  private calculateDiscountedPrice(
-    sellingPrice: { toString(): string },
-    discount: { type: string; value: { toString(): string } },
-  ): string {
-    const price = Number(sellingPrice.toString());
-    const value = Number(discount.value.toString());
-    const discounted =
-      discount.type === 'PERCENTAGE'
-        ? price - (price * value) / 100
-        : price - value;
-    return Math.max(0, discounted).toFixed(2);
-  }
-
-  private calculateDiscountPercentage(
-    sellingPrice: { toString(): string },
-    discount: { type: string; value: { toString(): string } },
-  ): string {
-    const price = Number(sellingPrice.toString());
-    const value = Number(discount.value.toString());
-    const percentage =
-      discount.type === 'PERCENTAGE' ? value : (value / price) * 100;
-    return percentage.toFixed(0);
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
   async execute(query: ProductQueryDto): Promise<StoreProductListResponseDto> {
     const page = query.page ?? 1;
@@ -74,34 +33,8 @@ export class GetStoreProductsService {
       this.prisma.product.count({ where }),
     ]);
 
-    const data: StoreProductListItemDto[] = products.map((product) => ({
-      id: product.id,
-      name: product.name,
-      subDescription: product.subDescription,
-      sellingPrice: this.getActiveDiscount(product.productDiscount)
-        ? this.calculateDiscountedPrice(
-          product.sellingPrice,
-          product.productDiscount!,
-        )
-        : product.sellingPrice.toString(),
-      originalPrice: this.getActiveDiscount(product.productDiscount)
-        ? product.sellingPrice.toString()
-        : null,
-      discountPercentage: this.getActiveDiscount(product.productDiscount)
-        ? this.calculateDiscountPercentage(
-          product.sellingPrice,
-          product.productDiscount!,
-        )
-        : null,
-      categoryId: product.categoryId,
-      brandId: product.brandId,
-      isFeatured: product.isFeatured,
-      createdAt: product.createdAt,
-      images: product.images.map((image) => image.imageUrl),
-    }));
-
     return {
-      data,
+      data: products.map(mapStoreProductListItem),
       total,
       page,
       limit,

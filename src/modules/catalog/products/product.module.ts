@@ -14,6 +14,7 @@ import { UpdateProductService } from './services/admin/update-product.service.js
 
 import { GetStoreProductDetailsService } from './services/store/get-store-product-details.service.js';
 import { GetStoreProductsService } from './services/store/get-store-products.service.js';
+import { GetStoreNewArrivalsService } from './services/store/get-store-new-arrivals.service.js';
 
 @Module({
   imports: [DatabaseModule],
@@ -27,6 +28,7 @@ import { GetStoreProductsService } from './services/store/get-store-products.ser
     GetAdminProductDetailsService,
     GetStoreProductsService,
     GetStoreProductDetailsService,
+    GetStoreNewArrivalsService,
   ],
   exports: [
     CreateProductService,
@@ -37,6 +39,7 @@ import { GetStoreProductsService } from './services/store/get-store-products.ser
     GetAdminProductDetailsService,
     GetStoreProductsService,
     GetStoreProductDetailsService,
+    GetStoreNewArrivalsService,
   ],
 })
 export class ProductModule {}

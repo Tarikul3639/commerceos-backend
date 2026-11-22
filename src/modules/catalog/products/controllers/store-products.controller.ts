@@ -7,11 +7,13 @@ import {
 } from '@nestjs/swagger';
 
 import { ProductQueryDto } from '../dto/requests/product-query.dto.js';
+import { StorefrontNewArrivalsQueryDto } from '../dto/requests/storefront-new-arrivals-query.dto.js';
 import { StoreProductDetailResponseDto } from '../dto/responses/store-product-detail-response.dto.js';
 import { StoreProductListResponseDto } from '../dto/responses/store-product-list-response.dto.js';
 
 import { GetStoreProductDetailsService } from '../services/store/get-store-product-details.service.js';
 import { GetStoreProductsService } from '../services/store/get-store-products.service.js';
+import { GetStoreNewArrivalsService } from '../services/store/get-store-new-arrivals.service.js';
 
 @ApiTags('Store - Products')
 @Controller('store/products')
@@ -19,6 +21,7 @@ export class StoreProductsController {
   constructor(
     private readonly getStoreProductsService: GetStoreProductsService,
     private readonly getStoreProductDetailsService: GetStoreProductDetailsService,
+    private readonly getStoreNewArrivalsService: GetStoreNewArrivalsService,
   ) {}
 
   @Get()
@@ -28,6 +31,18 @@ export class StoreProductsController {
     @Query() query: ProductQueryDto,
   ): Promise<StoreProductListResponseDto> {
     return this.getStoreProductsService.execute(query);
+  }
+
+  @Get('new-arrivals')
+  @ApiOperation({
+    summary:
+      'Get the latest non-featured published products for the storefront homepage',
+  })
+  @ApiOkResponse({ type: StoreProductListResponseDto })
+  async findNewArrivals(
+    @Query() query: StorefrontNewArrivalsQueryDto,
+  ): Promise<StoreProductListResponseDto> {
+    return this.getStoreNewArrivalsService.execute(query);
   }
 
   @Get(':productId')
