@@ -22,6 +22,18 @@ export class CategoryResponseDto {
   })
   description!: string | null;
 
+  @ApiPropertyOptional({
+    example: 'https://res.cloudinary.com/demo/image/upload/category.jpg',
+    nullable: true,
+  })
+  image!: string | null;
+
+  @ApiPropertyOptional({
+    example: 'commerceos/categories/electronics',
+    nullable: true,
+  })
+  publicId!: string | null;
+
   @ApiProperty({
     example: true,
   })

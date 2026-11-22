@@ -15,7 +15,7 @@ export class DeleteCategoryService {
     private readonly prisma: PrismaService,
     private readonly cloudinaryService: CloudinaryService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) {}
+  ) { }
 
   async execute(categoryId: string, userId: string): Promise<void> {
     const category = await this.prisma.category.findFirst({
@@ -38,6 +38,8 @@ export class DeleteCategoryService {
       name: category.name,
       slug: category.slug,
       description: category.description,
+      image: category.image,
+      publicId: category.publicId,
       isActive: category.isActive,
       deletedAt: category.deletedAt,
       productCount: category._count.products,
@@ -83,5 +85,9 @@ export class DeleteCategoryService {
         tx,
       );
     });
+
+    if (category._count.products === 0 && category.publicId) {
+      await this.cloudinaryService.delete(category.publicId);
+    }
   }
 }

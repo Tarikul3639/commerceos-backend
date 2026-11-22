@@ -1,10 +1,12 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 
 import { PrismaService } from '../../../../infrastructure/database/prisma.service.js';
+import { CloudinaryService } from '../../../../infrastructure/storage/cloudinary/services/cloudinary.service.js';
 import { CreateActivityLogService } from '../../../activity-logs/services/create-activity-log.service.js';
 import {
   ActivityModule,
@@ -18,6 +20,7 @@ import { CategoryResponseDto } from '../dto/responses/category-response.dto.js';
 export class UpdateCategoryService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly cloudinaryService: CloudinaryService,
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
@@ -37,7 +40,17 @@ export class UpdateCategoryService {
       throw new NotFoundException('Category not found');
     }
 
-    const { name, slug, description, isActive } = updateCategoryDto;
+    const { name, slug, description, image, publicId, isActive } =
+      updateCategoryDto;
+
+    if (
+      (image !== undefined) !== (publicId !== undefined) ||
+      (image === null) !== (publicId === null)
+    ) {
+      throw new BadRequestException(
+        'Category image URL and Cloudinary public ID must be updated or removed together',
+      );
+    }
 
     if (name !== undefined && name !== category.name) {
       const existingCategory = await this.prisma.category.findUnique({
@@ -78,6 +91,8 @@ export class UpdateCategoryService {
           ...(name !== undefined && { name }),
           ...(slug !== undefined && { slug }),
           ...(description !== undefined && { description }),
+          ...(image !== undefined && { image }),
+          ...(publicId !== undefined && { publicId }),
           ...(isActive !== undefined && { isActive }),
         },
       });
@@ -95,12 +110,16 @@ export class UpdateCategoryService {
             name: category.name,
             slug: category.slug,
             description: category.description,
+            image: category.image,
+            publicId: category.publicId,
             isActive: category.isActive,
           },
           newValue: {
             name: updated.name,
             slug: updated.slug,
             description: updated.description,
+            image: updated.image,
+            publicId: updated.publicId,
             isActive: updated.isActive,
           },
         },
@@ -109,11 +128,21 @@ export class UpdateCategoryService {
       return updated;
     });
 
+    if (
+      publicId !== undefined &&
+      publicId !== category.publicId &&
+      category.publicId
+    ) {
+      await this.cloudinaryService.delete(category.publicId);
+    }
+
     return {
       id: updatedCategory.id,
       name: updatedCategory.name,
       slug: updatedCategory.slug,
       description: updatedCategory.description,
+      image: updatedCategory.image,
+      publicId: updatedCategory.publicId,
       isActive: updatedCategory.isActive,
       createdAt: updatedCategory.createdAt,
       updatedAt: updatedCategory.updatedAt,

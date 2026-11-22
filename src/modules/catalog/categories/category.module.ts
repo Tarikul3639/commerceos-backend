@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { CloudinaryModule } from '../../../infrastructure/storage/cloudinary/cloudinary.module.js';
 
 import { CategoryController } from './controllers/category.controller.js';
 
@@ -10,6 +11,7 @@ import { UpdateCategoryService } from './services/update-category.service.js';
 import { DeleteCategoryService } from './services/delete-category.service.js';
 
 @Module({
+  imports: [CloudinaryModule],
   controllers: [CategoryController],
 
   providers: [

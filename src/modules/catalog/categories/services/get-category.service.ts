@@ -24,6 +24,8 @@ export class GetCategoryService {
       name: category.name,
       slug: category.slug,
       description: category.description,
+      image: category.image,
+      publicId: category.publicId,
       isActive: category.isActive,
       createdAt: category.createdAt,
       updatedAt: category.updatedAt,

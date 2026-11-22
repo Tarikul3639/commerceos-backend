@@ -1,4 +1,8 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  ConflictException,
+} from '@nestjs/common';
 import { PrismaService } from '../../../../infrastructure/database/prisma.service.js';
 import { CreateActivityLogService } from '../../../activity-logs/services/create-activity-log.service.js';
 import {
@@ -19,7 +23,14 @@ export class CreateCategoryService {
     createCategoryDto: CreateCategoryDto,
     userId: string,
   ): Promise<CategoryResponseDto> {
-    const { name, slug, description, isActive } = createCategoryDto;
+    const { name, slug, description, image, publicId, isActive } =
+      createCategoryDto;
+
+    if (Boolean(image) !== Boolean(publicId)) {
+      throw new BadRequestException(
+        'Category image URL and Cloudinary public ID must be provided together',
+      );
+    }
 
     const existingCategory = await this.prisma.category.findFirst({
       where: {
@@ -48,6 +59,8 @@ export class CreateCategoryService {
           name,
           slug,
           ...(description !== undefined && { description }),
+          ...(image !== undefined && { image }),
+          ...(publicId !== undefined && { publicId }),
           ...(isActive !== undefined && { isActive }),
         },
       });
@@ -65,6 +78,8 @@ export class CreateCategoryService {
             name: created.name,
             slug: created.slug,
             description: created.description,
+            image: created.image,
+            publicId: created.publicId,
             isActive: created.isActive,
           },
         },
@@ -78,6 +93,8 @@ export class CreateCategoryService {
       name: newCategory.name,
       slug: newCategory.slug,
       description: newCategory.description ?? null,
+      image: newCategory.image,
+      publicId: newCategory.publicId,
       isActive: newCategory.isActive,
       createdAt: newCategory.createdAt,
       updatedAt: newCategory.updatedAt,
