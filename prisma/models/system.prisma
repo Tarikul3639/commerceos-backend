@@ -92,6 +92,18 @@ enum BannerPosition {
   SIDEBAR
 }
 
+model AnnouncementSettings {
+  id String @id @default("default")
+
+  message  String  @default("Free delivery on orders over $50")
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("announcement_settings")
+}
+
 model NotificationPreferences {
   id String @id @default("default")
 

@@ -41,6 +41,7 @@ import { DiscountModule } from './modules/discounts/discount.module.js';
 
 import { ActivityLogModule } from './modules/activity-logs/activity-log.module.js';
 import { SettingsModule } from './modules/settings/settings.module.js';
+import { AnnouncementModule } from './modules/announcement/announcement.module.js';
 import { NotificationModule } from './modules/notifications/notification.module.js';
 import { EmailModule as EmailLogsModule } from './modules/emails/email.module.js';
 import { AuditModule } from './common/audit/audit.module.js';
@@ -112,6 +113,7 @@ import { SearchModule } from './modules/search/search.module.js';
 
     ActivityLogModule,
     SettingsModule,
+    AnnouncementModule,
     NotificationModule,
     EmailLogsModule,
     AuditModule,
