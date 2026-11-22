@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -10,6 +11,8 @@ import {
 import { Type } from 'class-transformer';
 
 import { ProductStatus } from '../../../../../infrastructure/database/generated/prisma/enums.js';
+import { ProductDiscountDto } from './product-discount.dto.js';
+import { ValidateNested } from 'class-validator';
 
 export class CreateProductDto {
   @ApiProperty({
@@ -56,6 +59,12 @@ export class CreateProductDto {
   @Min(0)
   sellingPrice!: number;
 
+  @ApiPropertyOptional({ type: ProductDiscountDto })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ProductDiscountDto)
+  productDiscount?: ProductDiscountDto | null;
+
   @ApiProperty({
     example: 'cm123category456',
     description: 'Product category ID',
@@ -90,4 +99,14 @@ export class CreateProductDto {
   @IsOptional()
   @IsEnum(ProductStatus)
   status?: ProductStatus;
+
+  @ApiPropertyOptional({
+    example: false,
+    default: false,
+    description: 'Whether the product is featured on the storefront homepage',
+  })
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean()
+  isFeatured?: boolean;
 }

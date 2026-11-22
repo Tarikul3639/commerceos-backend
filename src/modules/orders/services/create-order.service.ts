@@ -10,6 +10,7 @@ import { PrismaService } from '../../../infrastructure/database/prisma.service.j
 
 import { CreateOrderDto } from '../dto/requests/create-order.dto.js';
 import { OrderResponseDto } from '../dto/responses/order-response.dto.js';
+import { getEffectiveProductPrice } from '../../catalog/products/utils/effective-product-price.util.js';
 
 import {
   generateDocumentNumber,
@@ -67,6 +68,7 @@ export class CreateOrderService {
           id: true,
           name: true,
           sellingPrice: true,
+          productDiscount: true,
         },
       });
 
@@ -83,7 +85,10 @@ export class CreateOrderService {
       for (const item of dto.items) {
         const product = products.find(({ id }) => id === item.productId)!;
 
-        const price = product.sellingPrice;
+        const price = getEffectiveProductPrice(
+          product.sellingPrice,
+          product.productDiscount,
+        );
 
         // Validate the variant against the selected product.
         const variant = item.variantId

@@ -13,11 +13,20 @@ export class StoreProductListItemDto {
   @ApiProperty()
   sellingPrice!: string;
 
+  @ApiProperty({ type: String, nullable: true })
+  originalPrice!: string | null;
+
+  @ApiProperty({ type: String, nullable: true })
+  discountPercentage!: string | null;
+
   @ApiProperty()
   categoryId!: string;
 
   @ApiProperty({ nullable: true })
   brandId!: string | null;
+
+  @ApiProperty()
+  isFeatured!: boolean;
 
   @ApiProperty({ type: String, format: 'date-time' })
   createdAt!: Date;

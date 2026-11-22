@@ -14,8 +14,9 @@ model Product {
   purchasePrice Decimal
   sellingPrice  Decimal
 
-  status    ProductStatus @default(DRAFT)
-  deletedAt DateTime?
+  status     ProductStatus @default(DRAFT)
+  isFeatured Boolean       @default(false)
+  deletedAt  DateTime?
 
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
@@ -26,14 +27,14 @@ model Product {
   sizeGuideId String?
   sizeGuide   SizeGuide? @relation(fields: [sizeGuideId], references: [id], onDelete: SetNull)
 
-  images        ProductImage[]
-  variants      ProductVariant[]
-  options       ProductOption[]
-  // discount      Discount? // TODO: Model will be updated
-  purchaseItems PurchaseItem[]
-  cartItems     CartItem[]
-  wishlistItems WishlistItem[]
-  orderItems    OrderItem[]
+  images          ProductImage[]
+  variants        ProductVariant[]
+  options         ProductOption[]
+  productDiscount ProductDiscount?
+  purchaseItems   PurchaseItem[]
+  cartItems       CartItem[]
+  wishlistItems   WishlistItem[]
+  orderItems      OrderItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -42,6 +43,7 @@ model Product {
   @@index([brandId])
   @@index([sizeGuideId])
   @@index([status])
+  @@index([isFeatured, status, deletedAt])
   @@index([deletedAt])
   @@map("products")
 }

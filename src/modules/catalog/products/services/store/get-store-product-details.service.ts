@@ -3,6 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../../../../infrastructure/database/prisma.service.js';
 
 import { StoreProductDetailResponseDto } from '../../dto/responses/store-product-detail-response.dto.js';
+import { getEffectiveProductPrice } from '../../utils/effective-product-price.util.js';
 
 @Injectable()
 export class GetStoreProductDetailsService {
@@ -22,6 +23,7 @@ export class GetStoreProductDetailsService {
         category: true,
         brand: true,
         sizeGuide: true,
+        productDiscount: true,
         options: {
           include: {
             values: {
@@ -51,12 +53,27 @@ export class GetStoreProductDetailsService {
       throw new NotFoundException('Product not found');
     }
 
+    const effectiveSellingPrice = getEffectiveProductPrice(
+      product.sellingPrice,
+      product.productDiscount,
+    );
+    const hasDiscount = effectiveSellingPrice.lessThan(product.sellingPrice);
+    const discountPercentage = hasDiscount
+      ? product.sellingPrice
+          .minus(effectiveSellingPrice)
+          .div(product.sellingPrice)
+          .mul(100)
+          .toFixed(0)
+      : null;
+
     return {
       id: product.id,
       name: product.name,
       subDescription: product.subDescription,
       description: product.description,
-      sellingPrice: product.sellingPrice.toString(),
+      sellingPrice: effectiveSellingPrice.toString(),
+      originalPrice: hasDiscount ? product.sellingPrice.toString() : null,
+      discountPercentage,
 
       category: {
         id: product.category.id,

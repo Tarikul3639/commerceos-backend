@@ -10,6 +10,7 @@ import {
 import { CreateProductDto } from '../../dto/requests/create-product.dto.js';
 import { AdminProductDetailResponseDto } from '../../dto/responses/admin-product-detail-response.dto.js';
 import { GetAdminProductDetailsService } from './get-admin-product-details.service.js';
+import { parseProductDiscountDate } from '../../utils/product-discount.util.js';
 
 /** Creates a product and returns its complete details. */
 @Injectable()
@@ -17,7 +18,6 @@ export class CreateProductService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly getAdminProductDetailsService: GetAdminProductDetailsService,
-
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
@@ -62,28 +62,32 @@ export class CreateProductService {
         ...(dto.subDescription !== undefined && {
           subDescription: dto.subDescription,
         }),
-        ...(dto.description !== undefined && {
-          description: dto.description,
-        }),
+        ...(dto.description !== undefined && { description: dto.description }),
         purchasePrice: dto.purchasePrice,
         sellingPrice: dto.sellingPrice,
         categoryId: category.id,
-        ...(dto.brandId !== undefined && {
-          brandId: dto.brandId,
-        }),
-        ...(dto.sizeGuideId !== undefined && {
-          sizeGuideId: dto.sizeGuideId,
-        }),
-        ...(dto.status !== undefined && {
-          status: dto.status,
+        ...(dto.brandId !== undefined && { brandId: dto.brandId }),
+        ...(dto.sizeGuideId !== undefined && { sizeGuideId: dto.sizeGuideId }),
+        ...(dto.status !== undefined && { status: dto.status }),
+        ...(dto.isFeatured !== undefined && { isFeatured: dto.isFeatured }),
+        ...(dto.productDiscount && {
+          productDiscount: {
+            create: {
+              isActive: dto.productDiscount.isActive,
+              type: dto.productDiscount.type,
+              value: dto.productDiscount.value,
+              startsAt: parseProductDiscountDate(dto.productDiscount.startsAt),
+              endsAt: parseProductDiscountDate(
+                dto.productDiscount.endsAt,
+                true,
+              ),
+            },
+          },
         }),
       },
-      select: {
-        id: true,
-      },
+      select: { id: true },
     });
 
-    // Activity Log Creation
     await this.createActivityLogService.execute({
       type: ActivityType.CREATE,
       module: ActivityModule.PRODUCT,
@@ -102,6 +106,7 @@ export class CreateProductService {
         brandId: dto.brandId ?? null,
         sizeGuideId: dto.sizeGuideId ?? null,
         status: dto.status ?? null,
+        isFeatured: dto.isFeatured ?? false,
       },
     });
 

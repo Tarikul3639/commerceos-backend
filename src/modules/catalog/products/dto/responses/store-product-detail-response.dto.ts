@@ -168,6 +168,12 @@ export class StoreProductDetailResponseDto {
   })
   sellingPrice!: string;
 
+  @ApiProperty({ type: String, nullable: true })
+  originalPrice!: string | null;
+
+  @ApiProperty({ type: String, nullable: true })
+  discountPercentage!: string | null;
+
   @ApiProperty({ type: StoreProductCategoryDto })
   category!: StoreProductCategoryDto;
 

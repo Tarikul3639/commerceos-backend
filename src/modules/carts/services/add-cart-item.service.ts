@@ -6,6 +6,7 @@ import {
 import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { AddCartItemDto } from '../dto/requests/add-cart-item.dto.js';
 import { CartResponseDto } from '../dto/responses/cart-response.dto.js';
+import { getEffectiveProductPrice } from '../../catalog/products/utils/effective-product-price.util.js';
 
 @Injectable()
 export class AddCartItemService {
@@ -67,7 +68,10 @@ export class AddCartItemService {
         items: {
           include: {
             product: {
-              include: { images: { orderBy: { sortOrder: 'asc' }, take: 1 } },
+              include: {
+                images: { orderBy: { sortOrder: 'asc' }, take: 1 },
+                productDiscount: true,
+              },
             },
             variant: true,
           },
@@ -93,7 +97,10 @@ export class AddCartItemService {
           product: {
             id: itemProduct.id,
             name: itemProduct.name,
-            price: itemProduct.sellingPrice.toString(),
+            price: getEffectiveProductPrice(
+              itemProduct.sellingPrice,
+              itemProduct.productDiscount,
+            ).toString(),
             imageUrl: itemProduct.images[0]?.imageUrl ?? null,
           },
         }),

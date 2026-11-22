@@ -1,6 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { CartResponseDto } from '../dto/responses/cart-response.dto.js';
+import { getEffectiveProductPrice } from '../../catalog/products/utils/effective-product-price.util.js';
 
 export async function getCartResponse(
   prisma: PrismaService,
@@ -12,7 +13,10 @@ export async function getCartResponse(
       items: {
         include: {
           product: {
-            include: { images: { orderBy: { sortOrder: 'asc' }, take: 1 } },
+            include: {
+              images: { orderBy: { sortOrder: 'asc' }, take: 1 },
+              productDiscount: true,
+            },
           },
           variant: true,
         },
@@ -38,7 +42,10 @@ export async function getCartResponse(
       product: {
         id: product.id,
         name: product.name,
-        price: product.sellingPrice.toString(),
+        price: getEffectiveProductPrice(
+          product.sellingPrice,
+          product.productDiscount,
+        ).toString(),
         imageUrl: product.images[0]?.imageUrl ?? null,
       },
     })),

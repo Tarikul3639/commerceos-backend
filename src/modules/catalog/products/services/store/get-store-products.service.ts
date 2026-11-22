@@ -11,7 +11,46 @@ import { buildStoreProductWhere } from '../../utils/product-query.util.js';
 
 @Injectable()
 export class GetStoreProductsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
+
+  private getActiveDiscount(
+    discount: {
+      isActive: boolean;
+      startsAt: Date | null;
+      endsAt: Date | null;
+    } | null,
+  ): boolean {
+    if (!discount?.isActive) return false;
+    const now = new Date();
+    return (
+      (!discount.startsAt || discount.startsAt <= now) &&
+      (!discount.endsAt || discount.endsAt >= now)
+    );
+  }
+
+  private calculateDiscountedPrice(
+    sellingPrice: { toString(): string },
+    discount: { type: string; value: { toString(): string } },
+  ): string {
+    const price = Number(sellingPrice.toString());
+    const value = Number(discount.value.toString());
+    const discounted =
+      discount.type === 'PERCENTAGE'
+        ? price - (price * value) / 100
+        : price - value;
+    return Math.max(0, discounted).toFixed(2);
+  }
+
+  private calculateDiscountPercentage(
+    sellingPrice: { toString(): string },
+    discount: { type: string; value: { toString(): string } },
+  ): string {
+    const price = Number(sellingPrice.toString());
+    const value = Number(discount.value.toString());
+    const percentage =
+      discount.type === 'PERCENTAGE' ? value : (value / price) * 100;
+    return percentage.toFixed(0);
+  }
 
   async execute(query: ProductQueryDto): Promise<StoreProductListResponseDto> {
     const page = query.page ?? 1;
@@ -29,6 +68,7 @@ export class GetStoreProductsService {
           images: {
             orderBy: { sortOrder: 'asc' },
           },
+          productDiscount: true,
         },
       }),
       this.prisma.product.count({ where }),
@@ -38,9 +78,24 @@ export class GetStoreProductsService {
       id: product.id,
       name: product.name,
       subDescription: product.subDescription,
-      sellingPrice: product.sellingPrice.toString(),
+      sellingPrice: this.getActiveDiscount(product.productDiscount)
+        ? this.calculateDiscountedPrice(
+          product.sellingPrice,
+          product.productDiscount!,
+        )
+        : product.sellingPrice.toString(),
+      originalPrice: this.getActiveDiscount(product.productDiscount)
+        ? product.sellingPrice.toString()
+        : null,
+      discountPercentage: this.getActiveDiscount(product.productDiscount)
+        ? this.calculateDiscountPercentage(
+          product.sellingPrice,
+          product.productDiscount!,
+        )
+        : null,
       categoryId: product.categoryId,
       brandId: product.brandId,
+      isFeatured: product.isFeatured,
       createdAt: product.createdAt,
       images: product.images.map((image) => image.imageUrl),
     }));

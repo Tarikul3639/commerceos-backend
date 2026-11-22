@@ -29,3 +29,21 @@ model Discount {
   @@index([startsAt, endsAt])
   @@map("discounts")
 }
+
+model ProductDiscount {
+  id       String       @id @default(uuid())
+  type     DiscountType
+  value    Decimal
+  startsAt DateTime?
+  endsAt   DateTime?
+  isActive Boolean      @default(true)
+
+  productId String  @unique
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, startsAt, endsAt])
+  @@map("product_discounts")
+}

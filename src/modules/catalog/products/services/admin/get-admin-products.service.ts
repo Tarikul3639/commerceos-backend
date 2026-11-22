@@ -58,6 +58,7 @@ export class GetAdminProductsService {
       purchasePrice: product.purchasePrice.toString(),
       sellingPrice: product.sellingPrice.toString(),
       status: product.status,
+      isFeatured: product.isFeatured,
       category: {
         id: product.category.id,
         name: product.category.name,

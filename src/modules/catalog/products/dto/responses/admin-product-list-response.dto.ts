@@ -44,6 +44,9 @@ export class AdminProductListItemDto {
   @ApiProperty({ enum: ProductStatus, enumName: 'ProductStatus' })
   status!: ProductStatus;
 
+  @ApiProperty()
+  isFeatured!: boolean;
+
   @ApiProperty({ type: RelationSummaryDto })
   category!: RelationSummaryDto;
 

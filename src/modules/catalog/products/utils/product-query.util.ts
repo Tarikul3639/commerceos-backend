@@ -50,5 +50,9 @@ export function buildStoreProductWhere(
     ...(query.brandId && {
       brandId: query.brandId,
     }),
+
+    ...(query.isFeatured !== undefined && {
+      isFeatured: query.isFeatured,
+    }),
   };
 }

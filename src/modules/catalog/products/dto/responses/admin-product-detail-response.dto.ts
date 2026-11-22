@@ -3,6 +3,7 @@ import {
   ProductOptionType,
   ProductStatus,
 } from '../../../../../infrastructure/database/generated/prisma/enums.js';
+import { ProductDiscountResponseDto } from './product-discount-response.dto.js';
 
 /* ============================================================================
  * RELATION DTO
@@ -194,11 +195,19 @@ export class AdminProductDetailResponseDto {
   @ApiProperty()
   sellingPrice!: string;
 
+  @ApiPropertyOptional({ type: ProductDiscountResponseDto, nullable: true })
+  productDiscount!: ProductDiscountResponseDto | null;
+
   @ApiProperty({
     enum: ProductStatus,
     enumName: 'ProductStatus',
   })
   status!: ProductStatus;
+
+  @ApiProperty({
+    description: 'Whether the product is featured on the homepage',
+  })
+  isFeatured!: boolean;
 
   @ApiProperty()
   categoryId!: string;

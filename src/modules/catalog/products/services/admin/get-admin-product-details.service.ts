@@ -41,6 +41,7 @@ export class GetAdminProductDetailsService {
         },
 
         sizeGuide: true,
+        productDiscount: true,
 
         images: {
           orderBy: {
@@ -162,8 +163,19 @@ export class GetAdminProductDetailsService {
 
       purchasePrice: product.purchasePrice.toString(),
       sellingPrice: product.sellingPrice.toString(),
+      productDiscount: product.productDiscount
+        ? {
+            id: product.productDiscount.id,
+            type: product.productDiscount.type,
+            value: product.productDiscount.value.toString(),
+            isActive: product.productDiscount.isActive,
+            startsAt: product.productDiscount.startsAt,
+            endsAt: product.productDiscount.endsAt,
+          }
+        : null,
 
       status: product.status,
+      isFeatured: product.isFeatured,
 
       categoryId: product.categoryId,
       category,
