@@ -14,6 +14,7 @@ import { StoreProductListResponseDto } from '../dto/responses/store-product-list
 import { GetStoreProductDetailsService } from '../services/store/get-store-product-details.service.js';
 import { GetStoreProductsService } from '../services/store/get-store-products.service.js';
 import { GetStoreNewArrivalsService } from '../services/store/get-store-new-arrivals.service.js';
+import { GetStoreBestSellersService } from '../services/store/get-store-best-sellers.service.js';
 
 @ApiTags('Store - Products')
 @Controller('store/products')
@@ -22,6 +23,7 @@ export class StoreProductsController {
     private readonly getStoreProductsService: GetStoreProductsService,
     private readonly getStoreProductDetailsService: GetStoreProductDetailsService,
     private readonly getStoreNewArrivalsService: GetStoreNewArrivalsService,
+    private readonly getStoreBestSellersService: GetStoreBestSellersService,
   ) {}
 
   @Get()
@@ -43,6 +45,18 @@ export class StoreProductsController {
     @Query() query: StorefrontNewArrivalsQueryDto,
   ): Promise<StoreProductListResponseDto> {
     return this.getStoreNewArrivalsService.execute(query);
+  }
+
+  @Get('best-sellers')
+  @ApiOperation({
+    summary:
+      'Get best-selling published products based on paid order quantities',
+  })
+  @ApiOkResponse({ type: StoreProductListResponseDto })
+  async findBestSellers(
+    @Query() query: StorefrontNewArrivalsQueryDto,
+  ): Promise<StoreProductListResponseDto> {
+    return this.getStoreBestSellersService.execute(query);
   }
 
   @Get(':productId')
