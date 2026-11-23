@@ -154,8 +154,8 @@ describe('Admin settings and size-guide audit transactions', () => {
   });
 
   it('audits notification preference updates in the same transaction', async () => {
-    const previous = { id: 'default', emailOrders: false };
-    const saved = { id: 'default', emailOrders: true };
+    const previous = { id: 'default', ordersEmail: false };
+    const saved = { id: 'default', ordersEmail: true };
     const tx = {
       notificationPreferences: {
         findUnique: vi.fn().mockResolvedValue(previous),
@@ -168,7 +168,7 @@ describe('Admin settings and size-guide audit transactions', () => {
       deps.activityLog,
     );
 
-    await service.update({ emailOrders: true }, 'actor-4');
+    await service.update({ ordersEmail: true }, 'actor-4');
 
     expect(deps.transaction).toHaveBeenCalledOnce();
     expect(deps.executeLog).toHaveBeenCalledWith(

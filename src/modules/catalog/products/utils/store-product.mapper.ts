@@ -6,6 +6,7 @@ import { getEffectiveProductPrice } from './effective-product-price.util.js';
 type StoreProductWithRelations = Prisma.ProductGetPayload<{
   include: {
     images: true;
+    variants: { select: { stock: true } };
     productDiscount: true;
   };
 }>;
@@ -36,6 +37,10 @@ export function mapStoreProductListItem(
     categoryId: product.categoryId,
     brandId: product.brandId,
     isFeatured: product.isFeatured,
+    stock: product.variants.reduce(
+      (total, variant) => total + variant.stock,
+      0,
+    ),
     createdAt: product.createdAt,
     images: product.images.map((image) => image.imageUrl),
   };

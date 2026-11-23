@@ -28,6 +28,9 @@ export class StoreProductListItemDto {
   @ApiProperty()
   isFeatured!: boolean;
 
+  @ApiProperty()
+  stock!: number;
+
   @ApiProperty({ type: String, format: 'date-time' })
   createdAt!: Date;
 

@@ -28,6 +28,7 @@ export class GetStoreProductsService {
             orderBy: { sortOrder: 'asc' },
           },
           productDiscount: true,
+          variants: { select: { stock: true } },
         },
       }),
       this.prisma.product.count({ where }),

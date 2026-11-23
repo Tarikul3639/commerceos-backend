@@ -16,6 +16,10 @@ export async function getCartResponse(
             include: {
               images: { orderBy: { sortOrder: 'asc' }, take: 1 },
               productDiscount: true,
+              variants: {
+                where: { deletedAt: null, isActive: true },
+                select: { stock: true },
+              },
             },
           },
           variant: true,
@@ -24,16 +28,28 @@ export async function getCartResponse(
       },
     },
   });
-  if (!cart) throw new NotFoundException('Cart not found');
+
+  if (!cart) {
+    throw new NotFoundException('Cart not found');
+  }
+
   return {
     id: cart.id,
     customerId: cart.customerId,
     items: cart.items.map(({ product, variant, ...item }) => ({
       ...item,
+      // Variant lines use their own stock; non-variant lines use aggregate product stock.
+      stock:
+        variant?.stock ??
+        product.variants.reduce(
+          (total, productVariant) => total + productVariant.stock,
+          0,
+        ),
       variant: variant
         ? {
             id: variant.id,
             sku: variant.sku,
+            stock: variant.stock,
             colorName: null,
             colorHex: null,
             size: null,

@@ -6,7 +6,7 @@ import {
 import { PrismaService } from '../../../infrastructure/database/prisma.service.js';
 import { AddCartItemDto } from '../dto/requests/add-cart-item.dto.js';
 import { CartResponseDto } from '../dto/responses/cart-response.dto.js';
-import { getEffectiveProductPrice } from '../../catalog/products/utils/effective-product-price.util.js';
+import { getCartResponse } from './get-cart-response.js';
 
 @Injectable()
 export class AddCartItemService {
@@ -18,28 +18,37 @@ export class AddCartItemService {
   ): Promise<CartResponseDto> {
     const product = await this.prisma.product.findFirst({
       where: { id: dto.productId, deletedAt: null },
-      select: { id: true },
+      select: {
+        id: true,
+        variants: {
+          where: { deletedAt: null, isActive: true },
+          select: { id: true, stock: true },
+        },
+      },
     });
-    if (!product) throw new NotFoundException('Product not found or inactive');
+
+    if (!product) {
+      throw new NotFoundException('Product not found or inactive');
+    }
+
     const variant = dto.variantId
-      ? await this.prisma.productVariant.findFirst({
-          where: {
-            id: dto.variantId,
-            productId: product.id,
-            deletedAt: null,
-            isActive: true,
-          },
-          select: { id: true },
-        })
+      ? product.variants.find((item) => item.id === dto.variantId)
       : null;
-    if (dto.variantId && !variant)
+
+    if (dto.variantId && !variant) {
       throw new NotFoundException('Product variant not found or inactive');
+    }
+
+    const availableStock = variant
+      ? variant.stock
+      : product.variants.reduce((total, item) => total + item.stock, 0);
 
     const cart = await this.prisma.cart.upsert({
       where: { customerId },
       update: {},
       create: { customerId },
     });
+
     const existingItem = await this.prisma.cartItem.findFirst({
       where: {
         cartId: cart.id,
@@ -47,6 +56,15 @@ export class AddCartItemService {
         variantId: variant?.id ?? null,
       },
     });
+
+    const requestedTotal = (existingItem?.quantity ?? 0) + dto.quantity;
+
+    if (requestedTotal > availableStock) {
+      throw new BadRequestException(
+        `Only ${availableStock} item(s) are currently available`,
+      );
+    }
+
     if (existingItem) {
       await this.prisma.cartItem.update({
         where: { id: existingItem.id },
@@ -62,51 +80,7 @@ export class AddCartItemService {
         },
       });
     }
-    const updatedCart = await this.prisma.cart.findUnique({
-      where: { id: cart.id },
-      include: {
-        items: {
-          include: {
-            product: {
-              include: {
-                images: { orderBy: { sortOrder: 'asc' }, take: 1 },
-                productDiscount: true,
-              },
-            },
-            variant: true,
-          },
-        },
-      },
-    });
-    if (!updatedCart) throw new BadRequestException('Failed to retrieve cart');
-    return {
-      id: updatedCart.id,
-      customerId: updatedCart.customerId,
-      items: updatedCart.items.map(
-        ({ product: itemProduct, variant: itemVariant, ...item }) => ({
-          ...item,
-          variant: itemVariant
-            ? {
-                id: itemVariant.id,
-                sku: itemVariant.sku,
-                colorName: null,
-                colorHex: null,
-                size: null,
-              }
-            : null,
-          product: {
-            id: itemProduct.id,
-            name: itemProduct.name,
-            price: getEffectiveProductPrice(
-              itemProduct.sellingPrice,
-              itemProduct.productDiscount,
-            ).toString(),
-            imageUrl: itemProduct.images[0]?.imageUrl ?? null,
-          },
-        }),
-      ),
-      createdAt: updatedCart.createdAt,
-      updatedAt: updatedCart.updatedAt,
-    };
+
+    return getCartResponse(this.prisma, customerId);
   }
 }

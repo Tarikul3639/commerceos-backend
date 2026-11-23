@@ -10,6 +10,7 @@ export class CartProductResponseDto {
 export class CartVariantResponseDto {
   @ApiProperty() id!: string;
   @ApiProperty() sku!: string;
+  @ApiProperty() stock!: number;
   @ApiPropertyOptional({ nullable: true }) colorName!: string | null;
   @ApiPropertyOptional({ nullable: true }) colorHex!: string | null;
   @ApiPropertyOptional({ nullable: true }) size!: string | null;
@@ -24,6 +25,8 @@ export class CartItemResponseDto {
   variant!: CartVariantResponseDto | null;
   @ApiProperty({ type: CartProductResponseDto })
   product!: CartProductResponseDto;
+  @ApiProperty({ description: 'Available stock for the selected variant' })
+  stock!: number;
   @ApiProperty() createdAt!: Date;
   @ApiProperty() updatedAt!: Date;
 }
