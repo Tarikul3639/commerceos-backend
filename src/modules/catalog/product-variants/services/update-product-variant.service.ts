@@ -28,161 +28,95 @@ export class UpdateProductVariantService {
     userId: string,
   ): Promise<ProductVariantResponseDto> {
     const variant = await this.prisma.productVariant.findFirst({
-      where: {
-        id: variantId,
-        deletedAt: null,
-      },
-      select: {
-        id: true,
-        productId: true,
-        title: true,
-        sku: true,
-        barcode: true,
-        stock: true,
-        isActive: true,
-        deletedAt: true,
-        createdAt: true,
-        updatedAt: true,
-        options: {
-          include: {
-            option: true,
-          },
-        },
-      },
+      where: { id: variantId, deletedAt: null },
     });
+    if (!variant) throw new NotFoundException('Product variant not found');
 
-    if (!variant) {
-      throw new NotFoundException('Product variant not found');
-    }
-
-    if (dto.sku !== undefined) {
-      const existingSku = await this.prisma.productVariant.findUnique({
-        where: { sku: dto.sku },
+    if (dto.sku !== undefined && dto.sku.trim() !== variant.sku) {
+      const duplicate = await this.prisma.productVariant.findUnique({
+        where: { sku: dto.sku.trim() },
         select: { id: true },
       });
-
-      if (existingSku && existingSku.id !== variant.id) {
-        throw new ConflictException('SKU already exists');
-      }
+      if (duplicate) throw new ConflictException('SKU already exists');
     }
 
-    if (dto.barcode !== undefined) {
-      const existingBarcode = await this.prisma.productVariant.findUnique({
-        where: { barcode: dto.barcode },
+    const barcode =
+      dto.barcode === undefined ? undefined : dto.barcode?.trim() || null;
+    if (barcode && barcode !== variant.barcode) {
+      const duplicate = await this.prisma.productVariant.findUnique({
+        where: { barcode },
         select: { id: true },
       });
-
-      if (existingBarcode && existingBarcode.id !== variant.id) {
-        throw new ConflictException('Barcode already exists');
-      }
+      if (duplicate) throw new ConflictException('Barcode already exists');
     }
 
-    if (dto.optionValueIds !== undefined) {
-      const optionValueIds = dto.optionValueIds;
+    if (dto.options !== undefined) {
+      const productOptions = await this.prisma.productOption.findMany({
+        where: { productId: variant.productId },
+      });
+      this.validateOptions(productOptions, dto.options);
 
-      const optionValues =
-        optionValueIds.length === 0
-          ? []
-          : await this.prisma.productOptionValue.findMany({
-              where: {
-                id: { in: optionValueIds },
-                option: {
-                  productId: variant.productId,
-                },
-              },
-              select: { id: true },
-            });
-
-      if (optionValues.length !== optionValueIds.length) {
-        throw new BadRequestException(
-          'One or more option values are invalid for this product',
+      const existingVariants = await this.prisma.productVariant.findMany({
+        where: {
+          productId: variant.productId,
+          id: { not: variant.id },
+          deletedAt: null,
+        },
+        select: { options: true },
+      });
+      if (
+        existingVariants.some(
+          (item) =>
+            JSON.stringify(item.options) === JSON.stringify(dto.options),
+        )
+      ) {
+        throw new ConflictException(
+          'A variant with this option combination already exists',
         );
       }
     }
 
-    const updatedVariant = await this.prisma.productVariant.update({
-      where: {
-        id: variant.id,
-      },
+    const updated = await this.prisma.productVariant.update({
+      where: { id: variant.id },
       data: {
-        ...(dto.title !== undefined && { title: dto.title }),
-        ...(dto.sku !== undefined && { sku: dto.sku }),
-        ...(dto.barcode !== undefined && { barcode: dto.barcode }),
-        ...(dto.optionValueIds !== undefined && {
-          options: {
-            set: dto.optionValueIds.map((id) => ({ id })),
-          },
-        }),
-      },
-      include: {
-        options: {
-          include: {
-            option: true,
-          },
-        },
+        ...(dto.sku !== undefined && { sku: dto.sku.trim() }),
+        ...(barcode !== undefined && { barcode }),
+        ...(dto.options !== undefined && { options: dto.options }),
+        ...(dto.isActive !== undefined && { isActive: dto.isActive }),
       },
     });
 
-    // Activity Log Creation
     await this.createActivityLogService.execute({
       type: ActivityType.UPDATE,
       module: ActivityModule.PRODUCT,
       action: 'UPDATE_PRODUCT_VARIANT',
-      description: `Product variant "${updatedVariant.title ?? updatedVariant.sku}" was updated`,
+      description: `Product variant "${updated.sku}" was updated`,
       entityType: 'ProductVariant',
-      entityId: updatedVariant.id,
+      entityId: updated.id,
       userId,
-      oldValue: {
-        title: variant.title,
-        sku: variant.sku,
-        barcode: variant.barcode,
-        stock: variant.stock,
-        isActive: variant.isActive,
-        options: variant.options.map((value) => ({
-          id: value.id,
-          value: value.value,
-          colorHex: value.colorHex,
-          optionId: value.optionId,
-          optionName: value.option.name,
-          optionType: value.option.type,
-        })),
-      },
-      newValue: {
-        title: updatedVariant.title,
-        sku: updatedVariant.sku,
-        barcode: updatedVariant.barcode,
-        stock: updatedVariant.stock,
-        isActive: updatedVariant.isActive,
-        options: updatedVariant.options.map((value) => ({
-          id: value.id,
-          value: value.value,
-          colorHex: value.colorHex,
-          optionId: value.optionId,
-          optionName: value.option.name,
-          optionType: value.option.type,
-        })),
-      },
+      oldValue: variant,
+      newValue: updated,
     });
 
-    return {
-      id: updatedVariant.id,
-      productId: updatedVariant.productId,
-      title: updatedVariant.title,
-      sku: updatedVariant.sku,
-      barcode: updatedVariant.barcode,
-      stock: updatedVariant.stock,
-      isActive: updatedVariant.isActive,
-      deletedAt: updatedVariant.deletedAt,
-      createdAt: updatedVariant.createdAt,
-      updatedAt: updatedVariant.updatedAt,
-      options: updatedVariant.options.map((value) => ({
-        id: value.id,
-        value: value.value,
-        colorHex: value.colorHex,
-        optionId: value.optionId,
-        optionName: value.option.name,
-        optionType: value.option.type,
-      })),
-    };
+    return updated as unknown as ProductVariantResponseDto;
+  }
+
+  private validateOptions(
+    productOptions: Array<{ id: string; values: unknown }>,
+    selectedOptions: Record<string, string>,
+  ): void {
+    if (Object.keys(selectedOptions).length !== productOptions.length) {
+      throw new BadRequestException(
+        'Select exactly one value for every product option',
+      );
+    }
+    for (const option of productOptions) {
+      const values = option.values as Array<{ id: string }>;
+      if (!values.some((value) => value.id === selectedOptions[option.id])) {
+        throw new BadRequestException(
+          'One or more selected option values are invalid',
+        );
+      }
+    }
   }
 }

@@ -13,7 +13,9 @@ export class GetStorefrontBannersService {
    * Returns currently visible banners for one requested placement.
    * Results are ordered by sortOrder, then newest creation time.
    */
-  async execute(position: BannerPosition): Promise<StorefrontBannerItemResponseDto[]> {
+  async execute(
+    position: BannerPosition,
+  ): Promise<StorefrontBannerItemResponseDto[]> {
     const now = new Date();
 
     return this.prisma.banner.findMany({

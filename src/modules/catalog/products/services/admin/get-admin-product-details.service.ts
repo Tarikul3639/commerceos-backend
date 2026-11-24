@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../../../../infrastructure/database/prisma.service.js';
-
 import {
   AdminProductDetailResponseDto,
   AdminProductImageDto,
@@ -9,86 +8,29 @@ import {
   AdminProductRelationDto,
   AdminProductSizeGuideDto,
   AdminProductVariantDto,
-  AdminProductVariantOptionDto,
 } from '../../dto/responses/admin-product-detail-response.dto.js';
 
-/**
- * Retrieves complete admin product details.
- */
 @Injectable()
 export class GetAdminProductDetailsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(productId: string): Promise<AdminProductDetailResponseDto> {
     const product = await this.prisma.product.findFirst({
-      where: {
-        id: productId,
-        deletedAt: null,
-      },
+      where: { id: productId, deletedAt: null },
       include: {
-        category: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-
-        brand: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-
+        category: { select: { id: true, name: true } },
+        brand: { select: { id: true, name: true } },
         sizeGuide: true,
         productDiscount: true,
-
-        images: {
-          orderBy: {
-            sortOrder: 'asc',
-          },
-        },
-
-        options: {
-          include: {
-            values: true,
-          },
-        },
-
-        variants: {
-          where: {
-            deletedAt: null,
-          },
-          include: {
-            options: {
-              include: {
-                option: true,
-              },
-            },
-          },
-        },
+        images: { orderBy: { sortOrder: 'asc' } },
+        options: { orderBy: { sortOrder: 'asc' } },
+        variants: { where: { deletedAt: null } },
       },
     });
+    if (!product) throw new NotFoundException('Product not found');
 
-    if (!product) {
-      throw new NotFoundException('Product not found');
-    }
-
-    // Category DTO mapping.
-    const category: AdminProductRelationDto = {
-      id: product.category.id,
-      name: product.category.name,
-    };
-
-    // Brand DTO mapping.
-    const brand: AdminProductRelationDto | null = product.brand
-      ? {
-          id: product.brand.id,
-          name: product.brand.name,
-        }
-      : null;
-
-    // Size guide DTO mapping.
+    const category: AdminProductRelationDto = product.category;
+    const brand: AdminProductRelationDto | null = product.brand;
     const sizeGuide: AdminProductSizeGuideDto | null = product.sizeGuide
       ? {
           id: product.sizeGuide.id,
@@ -100,7 +42,6 @@ export class GetAdminProductDetailsService {
         }
       : null;
 
-    // Product image DTO mapping.
     const images: AdminProductImageDto[] = product.images.map((image) => ({
       id: image.id,
       imageUrl: image.imageUrl,
@@ -108,59 +49,43 @@ export class GetAdminProductDetailsService {
       sortOrder: image.sortOrder,
     }));
 
-    // Product option DTO mapping.
-    const options: AdminProductOptionDto[] = product.options.map((option) => {
-      const values: AdminProductOptionValueDto[] = option.values.map(
-        (value) => ({
-          id: value.id,
-          value: value.value,
-          colorHex: value.colorHex,
-        }),
-      );
+    const options: AdminProductOptionDto[] = product.options.map((option) => ({
+      id: option.id,
+      name: option.name,
+      type: option.type,
+      sortOrder: option.sortOrder,
+      values: (
+        option.values as Array<{
+          id: string;
+          label: string;
+          colorCode?: string;
+        }>
+      ).map((value): AdminProductOptionValueDto => ({
+        id: value.id,
+        label: value.label,
+        colorCode: value.colorCode ?? null,
+      })),
+    }));
 
-      return {
-        id: option.id,
-        name: option.name,
-        type: option.type,
-        values,
-      };
-    });
-
-    // Product variant DTO mapping.
     const variants: AdminProductVariantDto[] = product.variants.map(
-      (variant) => {
-        const variantOptions: AdminProductVariantOptionDto[] =
-          variant.options.map((optionValue) => ({
-            id: optionValue.id,
-            value: optionValue.value,
-            colorHex: optionValue.colorHex,
-            optionId: optionValue.optionId,
-            name: optionValue.option.name,
-            type: optionValue.option.type,
-          }));
-
-        return {
-          id: variant.id,
-          title: variant.title,
-          sku: variant.sku,
-          barcode: variant.barcode,
-          stock: variant.stock,
-          isActive: variant.isActive,
-          deletedAt: variant.deletedAt,
-          options: variantOptions,
-          createdAt: variant.createdAt,
-          updatedAt: variant.updatedAt,
-        };
-      },
+      (variant) => ({
+        id: variant.id,
+        sku: variant.sku,
+        barcode: variant.barcode,
+        stock: variant.stock,
+        isActive: variant.isActive,
+        deletedAt: variant.deletedAt,
+        options: variant.options as Record<string, string>,
+        createdAt: variant.createdAt,
+        updatedAt: variant.updatedAt,
+      }),
     );
 
-    // Final response.
     return {
       id: product.id,
       name: product.name,
       subDescription: product.subDescription,
       description: product.description,
-
       purchasePrice: product.purchasePrice.toString(),
       sellingPrice: product.sellingPrice.toString(),
       productDiscount: product.productDiscount
@@ -173,23 +98,17 @@ export class GetAdminProductDetailsService {
             endsAt: product.productDiscount.endsAt,
           }
         : null,
-
       status: product.status,
       isFeatured: product.isFeatured,
-
       categoryId: product.categoryId,
       category,
-
       brandId: product.brandId,
       brand,
-
       sizeGuideId: product.sizeGuideId,
       sizeGuide,
-
       images,
       options,
       variants,
-
       deletedAt: product.deletedAt,
       createdAt: product.createdAt,
       updatedAt: product.updatedAt,

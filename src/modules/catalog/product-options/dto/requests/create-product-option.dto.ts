@@ -3,6 +3,8 @@ import {
   ArrayMinSize,
   IsArray,
   IsEnum,
+  IsInt,
+  Min,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -14,61 +16,48 @@ import { Type } from 'class-transformer';
 import { ProductOptionType } from '../../../../../infrastructure/database/generated/prisma/enums.js';
 
 export class CreateProductOptionValueDto {
-  @ApiProperty({
-    example: 'Red',
-    description: 'Option value',
-  })
+  @ApiProperty({ example: 'v1', description: 'Stable option value identifier' })
   @IsString()
   @IsNotEmpty()
-  value!: string;
+  id!: string;
 
-  @ApiPropertyOptional({
-    example: '#FF0000',
-    description: 'Hex color code for color options',
-  })
+  @ApiProperty({ example: 'Black' })
+  @IsString()
+  @IsNotEmpty()
+  label!: string;
+
+  @ApiPropertyOptional({ example: '#000000' })
   @IsOptional()
   @IsString()
   @Matches(/^#(?:[0-9a-fA-F]{3}){1,2}$/)
-  colorHex?: string;
+  colorCode?: string;
 }
 
 export class CreateProductOptionDto {
-  @ApiProperty({
-    example: 'cm123product456',
-    description: 'ID of the product this option belongs to',
-  })
+  @ApiProperty({ example: 'product-id' })
   @IsString()
   @IsNotEmpty()
   productId!: string;
 
-  @ApiProperty({
-    example: 'Color',
-    description: 'Name of the product option',
-  })
+  @ApiProperty({ example: 'Color' })
   @IsString()
   @IsNotEmpty()
   name!: string;
 
-  @ApiProperty({
-    enum: ProductOptionType,
-    enumName: 'ProductOptionType',
-    example: ProductOptionType.COLOR,
-    description: 'Type of the product option',
-  })
+  @ApiProperty({ enum: ProductOptionType, enumName: 'ProductOptionType' })
   @IsEnum(ProductOptionType)
   type!: ProductOptionType;
 
-  @ApiProperty({
-    type: [CreateProductOptionValueDto],
-    description: 'Initial values for this option',
-    example: [
-      { value: 'Red', colorHex: '#FF0000' },
-      { value: 'Blue', colorHex: '#0000FF' },
-    ],
-  })
+  @ApiProperty({ type: [CreateProductOptionValueDto] })
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => CreateProductOptionValueDto)
   values!: CreateProductOptionValueDto[];
+
+  @ApiPropertyOptional({ minimum: 0, default: 0 })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  sortOrder?: number;
 }

@@ -1,6 +1,13 @@
 import {
-  IsBoolean, IsDate, IsEnum, IsInt, IsOptional, IsString, IsUrl,
-  MaxLength, Min,
+  IsBoolean,
+  IsDate,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUrl,
+  MaxLength,
+  Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
@@ -28,13 +35,19 @@ export class UpdateBannerDto {
   @IsString()
   imagePublicId?: string;
 
-  @ApiPropertyOptional({ example: 'https://example.com/banner-mobile.jpg', nullable: true })
+  @ApiPropertyOptional({
+    example: 'https://example.com/banner-mobile.jpg',
+    nullable: true,
+  })
   @IsOptional()
   @IsString()
   @IsUrl()
   mobileImageUrl?: string | null;
 
-  @ApiPropertyOptional({ example: 'banners/summer-sale-mobile', nullable: true })
+  @ApiPropertyOptional({
+    example: 'banners/summer-sale-mobile',
+    nullable: true,
+  })
   @IsOptional()
   @IsString()
   mobileImagePublicId?: string | null;

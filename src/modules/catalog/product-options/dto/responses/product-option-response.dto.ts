@@ -3,24 +3,23 @@ import { ProductOptionType } from '../../../../../infrastructure/database/genera
 import { ProductOptionValueResponseDto } from './product-option-value-response.dto.js';
 
 export class ProductOptionResponseDto {
-  @ApiProperty({ example: 'cm123coloroption' })
+  @ApiProperty()
   id!: string;
 
-  @ApiProperty({ example: 'Color' })
+  @ApiProperty()
   name!: string;
 
-  @ApiProperty({
-    enum: ProductOptionType,
-    enumName: 'ProductOptionType',
-    example: ProductOptionType.COLOR,
-  })
+  @ApiProperty({ enum: ProductOptionType, enumName: 'ProductOptionType' })
   type!: ProductOptionType;
 
-  @ApiProperty({ example: 'cm123product456' })
+  @ApiProperty()
   productId!: string;
 
   @ApiProperty({ type: [ProductOptionValueResponseDto] })
   values!: ProductOptionValueResponseDto[];
+
+  @ApiProperty()
+  sortOrder!: number;
 
   @ApiProperty({ type: String, format: 'date-time' })
   createdAt!: Date;

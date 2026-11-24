@@ -51,7 +51,8 @@ export async function seedOrderReturns(): Promise<void> {
       id: 'commerceos-return-test-product',
       name: 'Order Return Test Product',
       subDescription: 'Development-only fixture',
-      description: 'Used to verify approve, reject and complete return workflows.',
+      description:
+        'Used to verify approve, reject and complete return workflows.',
       purchasePrice: new Prisma.Decimal(500),
       sellingPrice: new Prisma.Decimal(1000),
       status: ProductStatus.PUBLISHED,
@@ -61,11 +62,19 @@ export async function seedOrderReturns(): Promise<void> {
 
   const variant = await prisma.productVariant.upsert({
     where: { sku: 'COS-RETURN-TEST-SKU' },
-    update: { productId: product.id, stock: 25, isActive: true, deletedAt: null },
+    update: {
+      productId: product.id,
+      barcode: null,
+      options: {},
+      stock: 25,
+      isActive: true,
+      deletedAt: null,
+    },
     create: {
       productId: product.id,
-      title: 'Default test variant',
       sku: 'COS-RETURN-TEST-SKU',
+      barcode: null,
+      options: {},
       stock: 25,
       isActive: true,
     },
@@ -102,7 +111,9 @@ export async function seedOrderReturns(): Promise<void> {
     });
 
     if (existingReturn) {
-      console.log(`  ↷ ${scenario.key}: already exists; leaving current test state unchanged.`);
+      console.log(
+        `  ↷ ${scenario.key}: already exists; leaving current test state unchanged.`,
+      );
       continue;
     }
 
@@ -166,6 +177,7 @@ export async function seedOrderReturns(): Promise<void> {
   console.log('\n✅ Order Returns test fixtures are ready.');
   console.log('Use the APPROVE and REJECT fixtures for pending actions.');
   console.log('Use the COMPLETE fixture to test stock restoration.');
-  console.log('The script does not reset or overwrite an existing return decision.');
+  console.log(
+    'The script does not reset or overwrite an existing return decision.',
+  );
 }
-

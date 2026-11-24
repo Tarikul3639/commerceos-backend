@@ -9,7 +9,7 @@ import { mapStoreProductListItem } from '../../utils/store-product.mapper.js';
 
 @Injectable()
 export class GetStoreNewArrivalsService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async execute(
     query: StorefrontNewArrivalsQueryDto,

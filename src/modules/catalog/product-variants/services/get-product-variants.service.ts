@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { PrismaService } from '../../../../infrastructure/database/prisma.service.js';
-
 import { ProductVariantResponseDto } from '../dto/responses/product-variant-response.dto.js';
 
 @Injectable()
@@ -10,54 +9,14 @@ export class GetProductVariantsService {
 
   async execute(productId: string): Promise<ProductVariantResponseDto[]> {
     const product = await this.prisma.product.findFirst({
-      where: {
-        id: productId,
-        deletedAt: null,
-      },
-      select: {
-        id: true,
-      },
+      where: { id: productId, deletedAt: null },
+      select: { id: true },
     });
+    if (!product) throw new NotFoundException('Product not found');
 
-    if (!product) {
-      throw new NotFoundException('Product not found');
-    }
-
-    const variants = await this.prisma.productVariant.findMany({
-      where: {
-        productId: product.id,
-      },
-      include: {
-        options: {
-          include: {
-            option: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-
-    return variants.map((variant) => ({
-      id: variant.id,
-      productId: variant.productId,
-      title: variant.title,
-      sku: variant.sku,
-      barcode: variant.barcode,
-      stock: variant.stock,
-      isActive: variant.isActive,
-      deletedAt: variant.deletedAt,
-      createdAt: variant.createdAt,
-      updatedAt: variant.updatedAt,
-      options: variant.options.map((value) => ({
-        id: value.id,
-        value: value.value,
-        colorHex: value.colorHex,
-        optionId: value.optionId,
-        optionName: value.option.name,
-        optionType: value.option.type,
-      })),
-    }));
+    return (await this.prisma.productVariant.findMany({
+      where: { productId: product.id },
+      orderBy: { createdAt: 'desc' },
+    })) as unknown as ProductVariantResponseDto[];
   }
 }

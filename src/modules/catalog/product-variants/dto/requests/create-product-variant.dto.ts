@@ -1,54 +1,28 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  ArrayUnique,
-  IsArray,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
 
 export class CreateProductVariantDto {
-  @ApiProperty({
-    example: 'cm123product456',
-    description: 'ID of the product this variant belongs to',
-  })
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   productId!: string;
 
-  @ApiPropertyOptional({
-    example: 'Red / Large',
-    description: 'Optional display title for the variant',
-  })
-  @IsOptional()
-  @IsString()
-  title?: string;
-
-  @ApiProperty({
-    example: 'TSHIRT-RED-L',
-    description: 'Unique SKU for this variant',
-  })
+  @ApiProperty({ example: 'TSHIRT-BLACK-M' })
   @IsString()
   @IsNotEmpty()
   sku!: string;
 
-  @ApiPropertyOptional({
-    example: '1234567890123',
-    description: 'Unique barcode for this variant',
-  })
+  @ApiPropertyOptional({ example: '8901234567895', nullable: true })
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  barcode?: string;
+  barcode?: string | null;
 
-  @ApiPropertyOptional({
-    type: [String],
-    example: ['cm123redvalue', 'cm123largevalue'],
-    description: 'IDs of existing ProductOptionValue records',
+  @ApiProperty({
+    type: 'object',
+    additionalProperties: { type: 'string' },
+    example: { colorOptionId: 'blackValueId', sizeOptionId: 'mediumValueId' },
   })
-  @IsOptional()
-  @IsArray()
-  @ArrayUnique()
-  @IsString({ each: true })
-  optionValueIds?: string[];
+  @IsObject()
+  options!: Record<string, string>;
 }

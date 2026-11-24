@@ -29,19 +29,11 @@ export class UpdateProductOptionService {
   ): Promise<ProductOptionResponseDto> {
     const option = await this.prisma.productOption.findUnique({
       where: { id: optionId },
-      include: {
-        values: {
-          orderBy: { createdAt: 'asc' },
-        },
-      },
     });
-
-    if (!option) {
-      throw new NotFoundException('Product option not found');
-    }
+    if (!option) throw new NotFoundException('Product option not found');
 
     if (dto.name !== undefined) {
-      const existingOption = await this.prisma.productOption.findFirst({
+      const duplicate = await this.prisma.productOption.findFirst({
         where: {
           productId: option.productId,
           name: dto.name.trim(),
@@ -49,43 +41,74 @@ export class UpdateProductOptionService {
         },
         select: { id: true },
       });
-
-      if (existingOption) {
+      if (duplicate)
         throw new ConflictException(
           'An option with this name already exists for this product',
+        );
+    }
+
+    if (dto.values !== undefined) {
+      const labels = dto.values.map((value) =>
+        value.label.trim().toLowerCase(),
+      );
+      const ids = dto.values.map((value) => value.id);
+      if (
+        new Set(labels).size !== labels.length ||
+        new Set(ids).size !== ids.length
+      ) {
+        throw new ConflictException(
+          'Option value labels and IDs must be unique',
+        );
+      }
+
+      const variants = await this.prisma.productVariant.findMany({
+        where: { productId: option.productId, deletedAt: null },
+        select: { options: true },
+      });
+      const retainedIds = new Set(ids);
+      const removedInUse = variants.some((variant) => {
+        const selected = variant.options as Record<string, string>;
+        return (
+          selected[option.id] !== undefined &&
+          !retainedIds.has(selected[option.id])
+        );
+      });
+      if (removedInUse) {
+        throw new BadRequestException(
+          'One or more values are used by existing variants. Remove or update those variants first.',
         );
       }
     }
 
     if (dto.type !== undefined && dto.type !== option.type) {
-      const variantsUsingOption = await this.prisma.productVariant.count({
-        where: {
-          productId: option.productId,
-          options: { some: { optionId: option.id } },
-        },
+      const variants = await this.prisma.productVariant.findMany({
+        where: { productId: option.productId, deletedAt: null },
+        select: { options: true },
       });
-
-      if (variantsUsingOption > 0) {
+      if (
+        variants.some(
+          (variant) => (variant.options as Record<string, string>)[option.id],
+        )
+      ) {
         throw new BadRequestException(
-          'Option type cannot change while product variants use this option',
+          'Option type cannot change while variants use this option',
         );
       }
     }
 
-    const updatedOption = await this.prisma.productOption.update({
+    const updated = await this.prisma.productOption.update({
       where: { id: option.id },
       data: {
-        ...(dto.name !== undefined && {
-          name: dto.name.trim(),
+        ...(dto.name !== undefined && { name: dto.name.trim() }),
+        ...(dto.type !== undefined && { type: dto.type }),
+        ...(dto.values !== undefined && {
+          values: dto.values.map((value) => ({
+            id: value.id,
+            label: value.label.trim(),
+            ...(value.colorCode ? { colorCode: value.colorCode } : {}),
+          })),
         }),
-        ...(dto.type !== undefined && {
-          type: dto.type,
-        }),
-      },
-      include: {
-        values: {
-          orderBy: { createdAt: 'asc' },
-        },
+        ...(dto.sortOrder !== undefined && { sortOrder: dto.sortOrder }),
       },
     });
 
@@ -93,32 +116,14 @@ export class UpdateProductOptionService {
       type: ActivityType.UPDATE,
       module: ActivityModule.PRODUCT,
       action: 'UPDATE_PRODUCT_OPTION',
-      description: `Product option "${updatedOption.name}" was updated`,
+      description: `Product option "${updated.name}" was updated`,
       entityType: 'ProductOption',
-      entityId: updatedOption.id,
+      entityId: updated.id,
       userId,
-      oldValue: {
-        productId: option.productId,
-        name: option.name,
-        type: option.type,
-        values: option.values.map((value) => ({
-          id: value.id,
-          value: value.value,
-          colorHex: value.colorHex,
-        })),
-      },
-      newValue: {
-        productId: updatedOption.productId,
-        name: updatedOption.name,
-        type: updatedOption.type,
-        values: updatedOption.values.map((value) => ({
-          id: value.id,
-          value: value.value,
-          colorHex: value.colorHex,
-        })),
-      },
+      oldValue: option,
+      newValue: updated,
     });
 
-    return updatedOption;
+    return updated as unknown as ProductOptionResponseDto;
   }
 }

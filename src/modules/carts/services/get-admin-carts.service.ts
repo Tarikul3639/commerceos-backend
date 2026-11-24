@@ -4,6 +4,23 @@ import { PrismaService } from '../../../infrastructure/database/prisma.service.j
 import { AdminCartQueryDto } from '../dto/requests/admin-cart-query.dto.js';
 import { AdminCartsPaginatedResponseDto } from '../dto/responses/admin-cart-response.dto.js';
 
+type OptionValue = { id: string; label: string };
+
+function getVariantTitle(
+  selectedOptions: Prisma.JsonValue,
+  productOptions: Array<{ id: string; name: string; values: Prisma.JsonValue }>,
+): string {
+  const selected = selectedOptions as Record<string, string>;
+  return productOptions
+    .flatMap((option) => {
+      const value = (option.values as OptionValue[]).find(
+        (item) => item.id === selected[option.id],
+      );
+      return value ? [`${option.name}: ${value.label}`] : [];
+    })
+    .join(' · ');
+}
+
 @Injectable()
 export class GetAdminCartsService {
   constructor(private readonly prisma: PrismaService) {}
@@ -16,7 +33,6 @@ export class GetAdminCartsService {
     const search = query.search?.trim();
 
     const where: Prisma.CartWhereInput = {
-      // Only carts with items are considered active shopping carts.
       items: { some: {} },
       ...(search && {
         OR: [
@@ -60,6 +76,7 @@ export class GetAdminCartsService {
                   id: true,
                   name: true,
                   sellingPrice: true,
+                  options: { select: { id: true, name: true, values: true } },
                   images: {
                     orderBy: { sortOrder: 'asc' },
                     take: 1,
@@ -68,7 +85,7 @@ export class GetAdminCartsService {
                 },
               },
               variant: {
-                select: { id: true, sku: true, title: true, stock: true },
+                select: { id: true, sku: true, stock: true, options: true },
               },
             },
           },
@@ -99,7 +116,17 @@ export class GetAdminCartsService {
             price: item.product.sellingPrice.toString(),
             imageUrl: item.product.images[0]?.imageUrl ?? null,
           },
-          variant: item.variant,
+          variant: item.variant
+            ? {
+                id: item.variant.id,
+                sku: item.variant.sku,
+                stock: item.variant.stock,
+                title: getVariantTitle(
+                  item.variant.options,
+                  item.product.options,
+                ),
+              }
+            : null,
         })),
         itemCount: cart.items.length,
         totalQuantity: cart.items.reduce((sum, item) => sum + item.quantity, 0),
@@ -110,7 +137,6 @@ export class GetAdminCartsService {
     });
 
     const totalPages = Math.ceil(total / limit);
-
     return {
       data,
       meta: {

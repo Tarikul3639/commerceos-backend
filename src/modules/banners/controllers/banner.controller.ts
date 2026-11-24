@@ -54,7 +54,7 @@ export class BannerController {
     private readonly getStorefrontBannersService: GetStorefrontBannersService,
     private readonly updateBannerService: UpdateBannerService,
     private readonly deleteBannerService: DeleteBannerService,
-  ) { }
+  ) {}
 
   // Create a new banner.
   @Post()

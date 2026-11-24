@@ -28,9 +28,19 @@ export class CreateBannerService {
     createBannerDto: CreateBannerDto,
   ): Promise<BannerResponseDto> {
     const {
-      title, imageUrl, imagePublicId, mobileImageUrl, mobileImagePublicId,
-      type, position, link, openInNewTab, sortOrder, isActive,
-      startAt, endAt,
+      title,
+      imageUrl,
+      imagePublicId,
+      mobileImageUrl,
+      mobileImagePublicId,
+      type,
+      position,
+      link,
+      openInNewTab,
+      sortOrder,
+      isActive,
+      startAt,
+      endAt,
     } = createBannerDto;
 
     if (Boolean(mobileImageUrl) !== Boolean(mobileImagePublicId)) {

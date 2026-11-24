@@ -69,6 +69,7 @@ export class CreateOrderService {
           name: true,
           sellingPrice: true,
           productDiscount: true,
+          options: true,
         },
       });
 
@@ -101,6 +102,7 @@ export class CreateOrderService {
               select: {
                 id: true,
                 sku: true,
+                options: true,
               },
             })
           : null;
@@ -113,10 +115,25 @@ export class CreateOrderService {
         const amount = price.mul(item.quantity);
         subtotal = subtotal.plus(amount);
 
+        const selectedOptions = (variant?.options ?? {}) as Record<
+          string,
+          string
+        >;
+        const selectedValues = variant
+          ? product.options.flatMap((option) => {
+              const value = (
+                option.values as Array<{ id: string; label: string }>
+              ).find((item) => item.id === selectedOptions[option.id]);
+              return value ? [{ type: option.type, label: value.label }] : [];
+            })
+          : [];
+        const color = selectedValues.find((value) => value.type === 'COLOR');
+        const size = selectedValues.find((value) => value.type === 'SIZE');
+
         orderItems.push({
           variantSku: variant?.sku ?? null,
-          variantColor: null,
-          variantSize: null,
+          variantColor: color?.label ?? null,
+          variantSize: size?.label ?? null,
           quantity: item.quantity,
           unitPrice: price,
           subtotal: amount,

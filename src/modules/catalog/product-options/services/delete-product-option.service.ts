@@ -18,9 +18,6 @@ export class DeleteProductOptionService {
     private readonly createActivityLogService: CreateActivityLogService,
   ) {}
 
-  /**
-   * Delete an unused product option without removing variant attributes from order history.
-   */
   async execute(
     optionId: string,
     userId: string,
@@ -28,38 +25,24 @@ export class DeleteProductOptionService {
     return this.prisma.$transaction(async (tx) => {
       const option = await tx.productOption.findUnique({
         where: { id: optionId },
-        include: {
-          values: {
-            orderBy: { createdAt: 'asc' },
-          },
-        },
       });
+      if (!option) throw new NotFoundException('Product option not found');
 
-      if (!option) {
-        throw new NotFoundException('Product option not found');
-      }
-
-      const variantsUsingOption = await tx.productVariant.count({
-        where: {
-          productId: option.productId,
-          options: {
-            some: {
-              optionId: option.id,
-            },
-          },
-        },
+      const variants = await tx.productVariant.findMany({
+        where: { productId: option.productId, deletedAt: null },
+        select: { options: true },
       });
-
-      if (variantsUsingOption > 0) {
+      const isUsed = variants.some(
+        (variant) =>
+          (variant.options as Record<string, string>)[option.id] !== undefined,
+      );
+      if (isUsed) {
         throw new BadRequestException(
-          'Product options used by variants cannot be deleted; remove unused variants first or keep the option for historical records',
+          'This option is used by existing variants. Remove those variants before deleting the option.',
         );
       }
 
-      await tx.productOption.delete({
-        where: { id: option.id },
-      });
-
+      await tx.productOption.delete({ where: { id: option.id } });
       await this.createActivityLogService.execute(
         {
           type: ActivityType.DELETE,
@@ -69,16 +52,7 @@ export class DeleteProductOptionService {
           entityType: 'ProductOption',
           entityId: option.id,
           userId,
-          oldValue: {
-            productId: option.productId,
-            name: option.name,
-            type: option.type,
-            values: option.values.map((value) => ({
-              id: value.id,
-              value: value.value,
-              colorHex: value.colorHex,
-            })),
-          },
+          oldValue: option,
           newValue: 'Product option permanently deleted',
         },
         tx,

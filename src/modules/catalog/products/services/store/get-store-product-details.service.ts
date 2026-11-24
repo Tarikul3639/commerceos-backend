@@ -1,7 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-
 import { PrismaService } from '../../../../../infrastructure/database/prisma.service.js';
-
 import { StoreProductDetailResponseDto } from '../../dto/responses/store-product-detail-response.dto.js';
 import { getEffectiveProductPrice } from '../../utils/effective-product-price.util.js';
 
@@ -11,47 +9,21 @@ export class GetStoreProductDetailsService {
 
   async execute(productId: string): Promise<StoreProductDetailResponseDto> {
     const product = await this.prisma.product.findFirst({
-      where: {
-        id: productId,
-        deletedAt: null,
-        status: 'PUBLISHED',
-      },
+      where: { id: productId, deletedAt: null, status: 'PUBLISHED' },
       include: {
-        images: {
-          orderBy: { sortOrder: 'asc' },
-        },
+        images: { orderBy: { sortOrder: 'asc' } },
         category: true,
         brand: true,
         sizeGuide: true,
         productDiscount: true,
-        options: {
-          include: {
-            values: {
-              orderBy: { createdAt: 'asc' },
-            },
-          },
-          orderBy: { createdAt: 'asc' },
-        },
+        options: { orderBy: { sortOrder: 'asc' } },
         variants: {
-          where: {
-            isActive: true,
-            deletedAt: null,
-          },
-          include: {
-            options: {
-              include: {
-                option: true,
-              },
-            },
-          },
+          where: { isActive: true, deletedAt: null },
           orderBy: { createdAt: 'asc' },
         },
       },
     });
-
-    if (!product) {
-      throw new NotFoundException('Product not found');
-    }
+    if (!product) throw new NotFoundException('Product not found');
 
     const effectiveSellingPrice = getEffectiveProductPrice(
       product.sellingPrice,
@@ -66,6 +38,23 @@ export class GetStoreProductDetailsService {
           .toFixed(0)
       : null;
 
+    const options = product.options.map((option) => ({
+      id: option.id,
+      name: option.name,
+      type: option.type,
+      values: (
+        option.values as Array<{
+          id: string;
+          label: string;
+          colorCode?: string;
+        }>
+      ).map((value) => ({
+        id: value.id,
+        label: value.label,
+        colorCode: value.colorCode ?? null,
+      })),
+    }));
+
     return {
       id: product.id,
       name: product.name,
@@ -74,55 +63,51 @@ export class GetStoreProductDetailsService {
       sellingPrice: effectiveSellingPrice.toString(),
       originalPrice: hasDiscount ? product.sellingPrice.toString() : null,
       discountPercentage,
-
-      category: {
-        id: product.category.id,
-        name: product.category.name,
-      },
-
+      category: { id: product.category.id, name: product.category.name },
       brand: product.brand
-        ? {
-            id: product.brand.id,
-            name: product.brand.name,
-          }
+        ? { id: product.brand.id, name: product.brand.name }
         : null,
-
       sizeGuide: product.sizeGuide,
-
       images: product.images.map((image) => ({
         id: image.id,
         imageUrl: image.imageUrl,
         publicId: image.publicId,
         sortOrder: image.sortOrder,
       })),
+      options,
+      variants: product.variants.map((variant) => {
+        const selected = variant.options as Record<string, string>;
+        const variantOptions = product.options.flatMap((option) => {
+          const valueId = selected[option.id];
+          const value = (
+            option.values as Array<{
+              id: string;
+              label: string;
+              colorCode?: string;
+            }>
+          ).find((item) => item.id === valueId);
+          return value
+            ? [
+                {
+                  id: value.id,
+                  label: value.label,
+                  colorCode: value.colorCode ?? null,
+                  optionId: option.id,
+                  optionName: option.name,
+                  optionType: option.type,
+                },
+              ]
+            : [];
+        });
 
-      options: product.options.map((option) => ({
-        id: option.id,
-        name: option.name,
-        type: option.type,
-        values: option.values.map((value) => ({
-          id: value.id,
-          value: value.value,
-          colorHex: value.colorHex,
-        })),
-      })),
-
-      variants: product.variants.map((variant) => ({
-        id: variant.id,
-        title: variant.title,
-        sku: variant.sku,
-        stock: variant.stock,
-        isAvailable: variant.stock > 0,
-        options: variant.options.map((value) => ({
-          id: value.id,
-          value: value.value,
-          colorHex: value.colorHex,
-          optionId: value.optionId,
-          optionName: value.option.name,
-          optionType: value.option.type,
-        })),
-      })),
-
+        return {
+          id: variant.id,
+          sku: variant.sku,
+          stock: variant.stock,
+          isAvailable: variant.stock > 0,
+          options: variantOptions,
+        };
+      }),
       createdAt: product.createdAt,
       updatedAt: product.updatedAt,
     };

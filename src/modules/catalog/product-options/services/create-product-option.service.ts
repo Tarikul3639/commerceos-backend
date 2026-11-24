@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 
 import { PrismaService } from '../../../../infrastructure/database/prisma.service.js';
@@ -26,37 +27,40 @@ export class CreateProductOptionService {
     userId: string,
   ): Promise<ProductOptionResponseDto> {
     const product = await this.prisma.product.findFirst({
-      where: {
-        id: dto.productId,
-        deletedAt: null,
-      },
+      where: { id: dto.productId, deletedAt: null },
       select: { id: true },
     });
 
-    if (!product) {
-      throw new NotFoundException('Product not found');
-    }
+    if (!product) throw new NotFoundException('Product not found');
 
-    const existingOption = await this.prisma.productOption.findUnique({
-      where: {
-        productId_name: {
-          productId: product.id,
-          name: dto.name,
+    const [optionCount, existingOption] = await Promise.all([
+      this.prisma.productOption.count({ where: { productId: product.id } }),
+      this.prisma.productOption.findUnique({
+        where: {
+          productId_name: { productId: product.id, name: dto.name.trim() },
         },
-      },
-      select: { id: true },
-    });
+        select: { id: true },
+      }),
+    ]);
 
+    if (optionCount >= 2) {
+      throw new BadRequestException(
+        'A product can have at most two option groups',
+      );
+    }
     if (existingOption) {
       throw new ConflictException(
         'An option with this name already exists for this product',
       );
     }
 
-    const values = dto.values.map((item) => item.value.trim());
-
-    if (new Set(values).size !== values.length) {
-      throw new ConflictException('Duplicate option values are not allowed');
+    const labels = dto.values.map((value) => value.label.trim().toLowerCase());
+    const ids = dto.values.map((value) => value.id);
+    if (
+      new Set(labels).size !== labels.length ||
+      new Set(ids).size !== ids.length
+    ) {
+      throw new ConflictException('Option value labels and IDs must be unique');
     }
 
     const option = await this.prisma.productOption.create({
@@ -64,23 +68,15 @@ export class CreateProductOptionService {
         productId: product.id,
         name: dto.name.trim(),
         type: dto.type,
-        values: {
-          create: dto.values.map((item) => ({
-            value: item.value.trim(),
-            ...(item.colorHex !== undefined && {
-              colorHex: item.colorHex,
-            }),
-          })),
-        },
-      },
-      include: {
-        values: {
-          orderBy: { createdAt: 'asc' },
-        },
+        sortOrder: dto.sortOrder ?? optionCount,
+        values: dto.values.map((value) => ({
+          id: value.id,
+          label: value.label.trim(),
+          ...(value.colorCode ? { colorCode: value.colorCode } : {}),
+        })),
       },
     });
 
-    // Activity Log Creation
     await this.createActivityLogService.execute({
       type: ActivityType.CREATE,
       module: ActivityModule.PRODUCT,
@@ -89,18 +85,9 @@ export class CreateProductOptionService {
       entityType: 'ProductOption',
       entityId: option.id,
       userId,
-      newValue: {
-        productId: option.productId,
-        name: option.name,
-        type: option.type,
-        values: option.values.map((value) => ({
-          id: value.id,
-          value: value.value,
-          colorHex: value.colorHex,
-        })),
-      },
+      newValue: option,
     });
 
-    return option;
+    return option as unknown as ProductOptionResponseDto;
   }
 }

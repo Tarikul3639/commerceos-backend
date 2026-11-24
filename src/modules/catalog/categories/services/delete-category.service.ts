@@ -15,7 +15,7 @@ export class DeleteCategoryService {
     private readonly prisma: PrismaService,
     private readonly cloudinaryService: CloudinaryService,
     private readonly createActivityLogService: CreateActivityLogService,
-  ) { }
+  ) {}
 
   async execute(categoryId: string, userId: string): Promise<void> {
     const category = await this.prisma.category.findFirst({

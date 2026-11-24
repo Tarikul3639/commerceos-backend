@@ -17,7 +17,6 @@ export class AdminCartProductResponseDto {
 export class AdminCartVariantResponseDto {
   @ApiProperty() id!: string;
   @ApiProperty() sku!: string;
-  @ApiPropertyOptional({ nullable: true }) title!: string | null;
   @ApiProperty() stock!: number;
 }
 

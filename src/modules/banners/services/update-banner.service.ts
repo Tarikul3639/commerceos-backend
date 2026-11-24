@@ -40,24 +40,37 @@ export class UpdateBannerService {
     }
 
     const {
-      title, imageUrl, imagePublicId, mobileImageUrl, mobileImagePublicId,
-      type, position, link, openInNewTab, sortOrder, isActive,
-      startAt, endAt,
+      title,
+      imageUrl,
+      imagePublicId,
+      mobileImageUrl,
+      mobileImagePublicId,
+      type,
+      position,
+      link,
+      openInNewTab,
+      sortOrder,
+      isActive,
+      startAt,
+      endAt,
     } = updateBannerDto;
 
-    const nextStartAt = startAt === undefined ? existingBanner.startAt : startAt;
+    const nextStartAt =
+      startAt === undefined ? existingBanner.startAt : startAt;
     const nextEndAt = endAt === undefined ? existingBanner.endAt : endAt;
     if (nextStartAt && nextEndAt && nextStartAt > nextEndAt) {
       throw new BadRequestException('End date must be after start date');
     }
 
     // Keep mobile URL and Cloudinary ID synchronized when replacing or clearing it.
-    const nextMobileUrl = mobileImageUrl === undefined
-      ? existingBanner.mobileImageUrl
-      : mobileImageUrl;
-    const nextMobilePublicId = mobileImagePublicId === undefined
-      ? existingBanner.mobileImagePublicId
-      : mobileImagePublicId;
+    const nextMobileUrl =
+      mobileImageUrl === undefined
+        ? existingBanner.mobileImageUrl
+        : mobileImageUrl;
+    const nextMobilePublicId =
+      mobileImagePublicId === undefined
+        ? existingBanner.mobileImagePublicId
+        : mobileImagePublicId;
     if (Boolean(nextMobileUrl) !== Boolean(nextMobilePublicId)) {
       throw new BadRequestException(
         'Mobile image URL and public ID must be provided together',
@@ -138,7 +151,9 @@ export class UpdateBannerService {
 
     // Delete replaced assets only after the database transaction succeeds.
     await Promise.all(
-      removedPublicIds.map((publicId) => this.cloudinaryService.delete(publicId)),
+      removedPublicIds.map((publicId) =>
+        this.cloudinaryService.delete(publicId),
+      ),
     );
     return toBannerResponse(banner);
   }
