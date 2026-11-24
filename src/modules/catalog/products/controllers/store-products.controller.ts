@@ -1,5 +1,6 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import {
+  ApiBody,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -7,6 +8,7 @@ import {
 } from '@nestjs/swagger';
 
 import { ProductQueryDto } from '../dto/requests/product-query.dto.js';
+import { RecentlyViewedProductsDto } from '../dto/requests/recently-viewed-products.dto.js';
 import { StorefrontNewArrivalsQueryDto } from '../dto/requests/storefront-new-arrivals-query.dto.js';
 import { StoreProductDetailResponseDto } from '../dto/responses/store-product-detail-response.dto.js';
 import { StoreProductListResponseDto } from '../dto/responses/store-product-list-response.dto.js';
@@ -15,6 +17,7 @@ import { GetStoreProductDetailsService } from '../services/store/get-store-produ
 import { GetStoreProductsService } from '../services/store/get-store-products.service.js';
 import { GetStoreNewArrivalsService } from '../services/store/get-store-new-arrivals.service.js';
 import { GetStoreBestSellersService } from '../services/store/get-store-best-sellers.service.js';
+import { GetRecentlyViewedProductsService } from '../services/store/get-recently-viewed-products.service.js';
 
 @ApiTags('Store - Products')
 @Controller('store/products')
@@ -24,6 +27,7 @@ export class StoreProductsController {
     private readonly getStoreProductDetailsService: GetStoreProductDetailsService,
     private readonly getStoreNewArrivalsService: GetStoreNewArrivalsService,
     private readonly getStoreBestSellersService: GetStoreBestSellersService,
+    private readonly getRecentlyViewedProductsService: GetRecentlyViewedProductsService,
   ) {}
 
   @Get()
@@ -33,6 +37,18 @@ export class StoreProductsController {
     @Query() query: ProductQueryDto,
   ): Promise<StoreProductListResponseDto> {
     return this.getStoreProductsService.execute(query);
+  }
+
+  @Post('recently-viewed')
+  @ApiOperation({
+    summary: 'Get published products in recently viewed order',
+  })
+  @ApiBody({ type: RecentlyViewedProductsDto })
+  @ApiOkResponse({ type: StoreProductListResponseDto })
+  async findRecentlyViewed(
+    @Body() query: RecentlyViewedProductsDto,
+  ): Promise<StoreProductListResponseDto> {
+    return this.getRecentlyViewedProductsService.execute(query);
   }
 
   @Get('new-arrivals')

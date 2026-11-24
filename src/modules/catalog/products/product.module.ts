@@ -16,6 +16,7 @@ import { GetStoreProductDetailsService } from './services/store/get-store-produc
 import { GetStoreProductsService } from './services/store/get-store-products.service.js';
 import { GetStoreNewArrivalsService } from './services/store/get-store-new-arrivals.service.js';
 import { GetStoreBestSellersService } from './services/store/get-store-best-sellers.service.js';
+import { GetRecentlyViewedProductsService } from './services/store/get-recently-viewed-products.service.js';
 
 @Module({
   imports: [DatabaseModule],
@@ -31,6 +32,7 @@ import { GetStoreBestSellersService } from './services/store/get-store-best-sell
     GetStoreProductDetailsService,
     GetStoreNewArrivalsService,
     GetStoreBestSellersService,
+    GetRecentlyViewedProductsService,
   ],
   exports: [
     CreateProductService,
@@ -43,6 +45,7 @@ import { GetStoreBestSellersService } from './services/store/get-store-best-sell
     GetStoreProductDetailsService,
     GetStoreNewArrivalsService,
     GetStoreBestSellersService,
+    GetRecentlyViewedProductsService,
   ],
 })
 export class ProductModule {}
