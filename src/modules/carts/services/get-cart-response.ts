@@ -66,6 +66,14 @@ export async function getCartResponse(
               colorName: color?.value.label ?? null,
               colorHex: color?.value.colorCode ?? null,
               size: size?.value.label ?? null,
+              options: selectedValues.map(({ option, value }) => ({
+                id: value.id,
+                label: value.label,
+                colorCode: value.colorCode ?? null,
+                optionId: option.id,
+                optionName: option.name,
+                optionType: option.type,
+              })),
             }
           : null,
         product: {
