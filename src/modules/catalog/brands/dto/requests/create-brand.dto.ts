@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -40,7 +41,7 @@ export class CreateBrandDto {
 
   @IsOptional()
   @IsUrl()
-  @MaxLength(500)
+  @MaxLength(2048)
   @ApiPropertyOptional({
     description: 'Brand image URL',
     example: 'https://example.com/brands/nike.jpg',
@@ -50,14 +51,15 @@ export class CreateBrandDto {
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  @MaxLength(100)
+  @MaxLength(255)
   @ApiPropertyOptional({
-    description: 'Public ID of the brand for external references',
+    description: 'Cloudinary public ID of the brand image',
     example: '5f8d0d55b54764421b7156c5',
   })
   publicId?: string;
 
   @IsOptional()
+  @IsBoolean()
   @ApiPropertyOptional({
     description: 'Whether the brand is active',
     example: true,
