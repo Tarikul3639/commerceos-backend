@@ -16,13 +16,20 @@ export class GetStoreProductsService {
     const limit = Math.min(query.limit ?? 10, 100);
     const skip = (page - 1) * limit;
     const where = buildStoreProductWhere(query);
+    const sortOrder = query.sortOrder ?? 'desc';
+    const orderBy =
+      query.sortBy === 'name'
+        ? { name: sortOrder }
+        : query.sortBy === 'sellingPrice'
+          ? { sellingPrice: sortOrder }
+          : { createdAt: sortOrder };
 
     const [products, total] = await this.prisma.$transaction([
       this.prisma.product.findMany({
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy,
         include: {
           images: {
             orderBy: { sortOrder: 'asc' },

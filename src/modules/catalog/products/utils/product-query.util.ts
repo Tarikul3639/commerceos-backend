@@ -36,9 +36,9 @@ export function buildStoreProductWhere(
     deletedAt: null,
     status: 'PUBLISHED',
 
-    ...(query.search && {
+    ...(query.search?.trim() && {
       name: {
-        contains: query.search,
+        contains: query.search.trim(),
         mode: 'insensitive',
       },
     }),
@@ -49,6 +49,23 @@ export function buildStoreProductWhere(
 
     ...(query.brandId && {
       brandId: query.brandId,
+    }),
+
+    ...((query.minPrice !== undefined || query.maxPrice !== undefined) && {
+      sellingPrice: {
+        ...(query.minPrice !== undefined && { gte: query.minPrice }),
+        ...(query.maxPrice !== undefined && { lte: query.maxPrice }),
+      },
+    }),
+
+    ...(query.inStock && {
+      variants: {
+        some: {
+          stock: {
+            gt: 0,
+          },
+        },
+      },
     }),
 
     ...(query.isFeatured !== undefined && {

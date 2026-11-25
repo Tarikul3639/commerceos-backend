@@ -3,7 +3,9 @@ import { Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
+  IsIn,
   IsInt,
+  IsNumber,
   IsOptional,
   IsString,
   Min,
@@ -62,6 +64,39 @@ export class ProductQueryDto {
   brandId?: string;
 
   @ApiPropertyOptional({
+    example: 500,
+    minimum: 0,
+    description: 'Minimum listed product price',
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({ allowNaN: false, allowInfinity: false })
+  @Min(0)
+  minPrice?: number;
+
+  @ApiPropertyOptional({
+    example: 5000,
+    minimum: 0,
+    description: 'Maximum listed product price',
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({ allowNaN: false, allowInfinity: false })
+  @Min(0)
+  maxPrice?: number;
+
+  @ApiPropertyOptional({
+    example: true,
+    description: 'Only include products with available variant stock',
+  })
+  @IsOptional()
+  @Transform(
+    ({ value }: { value: unknown }) => value === true || value === 'true',
+  )
+  @IsBoolean()
+  inStock?: boolean;
+
+  @ApiPropertyOptional({
     enum: ProductStatus,
     enumName: 'ProductStatus',
     description: 'Filter by product status',
@@ -80,4 +115,22 @@ export class ProductQueryDto {
   )
   @IsBoolean()
   isFeatured?: boolean;
+
+  @ApiPropertyOptional({
+    enum: ['createdAt', 'name', 'sellingPrice'],
+    default: 'createdAt',
+    description: 'Product sort field',
+  })
+  @IsOptional()
+  @IsIn(['createdAt', 'name', 'sellingPrice'])
+  sortBy?: 'createdAt' | 'name' | 'sellingPrice' = 'createdAt';
+
+  @ApiPropertyOptional({
+    enum: ['asc', 'desc'],
+    default: 'desc',
+    description: 'Product sort direction',
+  })
+  @IsOptional()
+  @IsIn(['asc', 'desc'])
+  sortOrder?: 'asc' | 'desc' = 'desc';
 }
