@@ -9,6 +9,7 @@ import { GetCategoriesService } from './services/get-categories.service.js';
 import { GetCategoryService } from './services/get-category.service.js';
 import { UpdateCategoryService } from './services/update-category.service.js';
 import { DeleteCategoryService } from './services/delete-category.service.js';
+import { GetNavigationCategoriesService } from './services/get-navigation-categories.service.js';
 
 @Module({
   imports: [CloudinaryModule],
@@ -20,6 +21,7 @@ import { DeleteCategoryService } from './services/delete-category.service.js';
     GetCategoryService,
     UpdateCategoryService,
     DeleteCategoryService,
+    GetNavigationCategoriesService,
   ],
 })
 export class CategoryModule {}

@@ -30,6 +30,7 @@ import { GetCategoriesService } from '../services/get-categories.service.js';
 import { GetCategoryService } from '../services/get-category.service.js';
 import { UpdateCategoryService } from '../services/update-category.service.js';
 import { DeleteCategoryService } from '../services/delete-category.service.js';
+import { GetNavigationCategoriesService } from '../services/get-navigation-categories.service.js';
 
 @ApiTags('Categories')
 @Controller('categories')
@@ -40,6 +41,7 @@ export class CategoryController {
     private readonly getCategoryService: GetCategoryService,
     private readonly updateCategoryService: UpdateCategoryService,
     private readonly deleteCategoryService: DeleteCategoryService,
+    private readonly getNavigationCategoriesService: GetNavigationCategoriesService,
   ) {}
 
   /**
@@ -77,6 +79,18 @@ export class CategoryController {
   })
   async findAll(@Query() query: CategoryQueryDto) {
     return this.getCategoriesService.execute(query);
+  }
+
+  /**
+   * Get a small list of active categories for storefront navigation
+   */
+  @Get('navigation')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Get storefront navigation categories',
+  })
+  async getNavigationCategories() {
+    return this.getNavigationCategoriesService.execute();
   }
 
   /**
