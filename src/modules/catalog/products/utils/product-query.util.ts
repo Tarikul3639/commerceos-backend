@@ -32,15 +32,29 @@ export function buildAdminProductWhere(
 export function buildStoreProductWhere(
   query: ProductQueryDto,
 ): Prisma.ProductWhereInput {
+  const search = query.search?.trim();
+
   return {
     deletedAt: null,
     status: 'PUBLISHED',
 
-    ...(query.search?.trim() && {
-      name: {
-        contains: query.search.trim(),
-        mode: 'insensitive',
-      },
+    ...(search && {
+      OR: [
+        { name: { contains: search, mode: 'insensitive' } },
+        { subDescription: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+        { category: { name: { contains: search, mode: 'insensitive' } } },
+        { brand: { name: { contains: search, mode: 'insensitive' } } },
+        {
+          variants: {
+            some: {
+              sku: { contains: search, mode: 'insensitive' },
+              isActive: true,
+              deletedAt: null,
+            },
+          },
+        },
+      ],
     }),
 
     ...(query.categoryId && {
